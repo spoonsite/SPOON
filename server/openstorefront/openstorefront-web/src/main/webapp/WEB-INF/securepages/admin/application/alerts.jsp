@@ -1,5 +1,5 @@
 <%--
-/* 
+/*
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,15 +22,15 @@
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
 	<stripes:layout-component name="contents">
 
-		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
-		</stripes:layout-render>		
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">
+		</stripes:layout-render>
 
 		<style>
 			.alert-entry-type-tree .x-tree-icon {
 				display: none;
 			}
 		</style>
-		
+
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
@@ -56,7 +56,7 @@
 							name: 'updateDts',
 							type: 'date',
 							dateFormat: 'c'
-						}						
+						}
 					],
 					proxy: {
 						id: 'alertStoreProxy',
@@ -88,7 +88,7 @@
 										emailList += index === value.length-1 ? '<br />' : ', <br />';
 									});
 									return emailList;
-								} else { 
+								} else {
 									return value[0].email;
 								}
 							}
@@ -113,7 +113,7 @@
 									}
 									if (option.alertOnContactUpdate) {
 										listOfOptions.push('<span class="alerts-option-items"> Contact Update </span>');
-									}																		
+									}
 									if (option.alertOnUserAttributeCodes) {
 										listOfOptions.push('<span class="alerts-option-items"> User-Created Attribute Codes </span>');
 									}
@@ -124,9 +124,6 @@
 									}
 									if (option.alertOnREST) {
 										listOfOptions.push('<span class="alerts-option-items"> API Errors </span>');
-									}
-									if (option.alertOnIntegration) {
-										listOfOptions.push('<span class="alerts-option-items"> Integration Errors </span>');
 									}
 									if (option.alertOnReport) {
 										listOfOptions.push('<span class="alerts-option-items"> Report Errors </span>');
@@ -152,16 +149,16 @@
 						},
 						{
 							text: 'Create User', dataIndex: 'createUser', width: 150, hidden: true
-						},				
+						},
 						{
 							text: 'Create Date', dataIndex: 'createDts', xtype: 'datecolumn', format: 'm/d/y H:i:s', width: 150, hidden: true
-						},						
+						},
 						{
 							text: 'Update User', dataIndex: 'updateUser', width: 150, hidden: true
 						},
 						{
 							text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format: 'm/d/y H:i:s', width: 150, hidden: true
-						}						
+						}
 					],
 					dockedItems: [
 						{
@@ -354,7 +351,6 @@
 						se.alertOnSystem = (flatData.alertOnSystem === "true");
 						se.alertOnREST = (flatData.alertOnREST === "true");
 						se.alertOnReport = (flatData.alertOnReport === "true");
-						se.alertOnIntegration = (flatData.alertOnIntegration === "true");
 						data.systemErrorAlertOption = se;
 					}
 
@@ -463,9 +459,9 @@
 										change: function (combo, newValue, oldValue, opts) {
 											Ext.getCmp('systemErrorOptions').hide();
 											Ext.getCmp('userDataOptions').hide();
-											Ext.getCmp('userManagementOptions').hide();											
+											Ext.getCmp('userManagementOptions').hide();
 											Ext.getCmp('alertEntryForm-entryTypes-label').hide();
-											Ext.getCmp('alertEntryForm-entryTypes').hide();										
+											Ext.getCmp('alertEntryForm-entryTypes').hide();
 											switch (newValue) {
 												case 'SYSERROR':
 													Ext.getCmp('systemErrorOptions').show();
@@ -476,7 +472,7 @@
 												case 'USERMANG':
 													Ext.getCmp('userManagementOptions').show();
 													break;
-												case 'CHGREQ': case 'CMPSUB':													
+												case 'CHGREQ': case 'CMPSUB':
 													Ext.getCmp('alertEntryForm-entryTypes-label').show();
 													Ext.getCmp('alertEntryForm-entryTypes').show();
 													break;
@@ -494,13 +490,13 @@
 								{
 									xtype: 'label',
 									id: 'alertEntryForm-entryTypes-label',
-									html: '<b>Component Types:</b>  <span class="field-required" />'									
+									html: '<b>Component Types:</b>  <span class="field-required" />'
 								},
 								{
 									xtype: 'treepanel',
 									id: 'alertEntryForm-entryTypes',
 									cls: 'alert-entry-type-tree',
-									name: 'entryTypeAlertOption',								
+									name: 'entryTypeAlertOption',
 									rootVisible: false,
 									checkPropagation: 'down',
 									canClickItem: true,
@@ -577,8 +573,8 @@
 									id: 'systemErrorOptions',
 									name: 'systemErrorAlertOption',
 									fieldLabel: 'System Error Options',
-									defaultType: 'checkboxfield',																		
-									hidden: true,									
+									defaultType: 'checkboxfield',
+									hidden: true,
 									items: [
 										// The names in this section
 										// must correspond to the names
@@ -592,11 +588,6 @@
 											boxLabel: 'API Errors',
 											name: 'alertOnREST',
 											id: 'sysErrors-apiErrors'
-										},
-										{
-											boxLabel: 'Integration Errors',
-											name: 'alertOnIntegration',
-											id: 'sysErrors-integrationErrors'
 										},
 										{
 											boxLabel: 'Report Errors',
@@ -638,7 +629,7 @@
 											labelWidth: 250,
 											name: 'alertOnUserAttributeCodes',
 											id: 'userData-attributeCodes'
-										}							
+										}
 									]
 								},
 								{
@@ -646,9 +637,9 @@
 									id: 'userManagementOptions',
 									name: 'userManagementAlertOption',
 									fieldLabel: 'User Management Options',
-									defaultType: 'checkboxfield',																		
-									hidden: true,									
-									items: [										
+									defaultType: 'checkboxfield',
+									hidden: true,
+									items: [
 										{
 											boxLabel: 'User Registration',
 											name: 'alertOnUserRegistration',
@@ -659,7 +650,7 @@
 											name: 'alertOnUserNeedsApproval',
 											id: 'usermanage-approval'
 										}
-									]									
+									]
 								}
 							],
 							dockedItems: [
@@ -674,29 +665,29 @@
 											handler: function () {
 												//case 'CHGREQ': case 'CMPSUB':
 												var alertType = alertAddEditWin.queryById('alertEntryForm-Type').getValue();
-												
+
 												if (alertType === 'CHGREQ' || alertType === 'CMPSUB') {
 													var alertsTreePanel = alertAddEditWin.queryById('alertEntryForm-entryTypes');
 
 													// component types are required
 													if (alertsTreePanel.getChecked().length > 0) {
 														saveAlerts();
-													} else {														
+													} else {
 														Ext.Msg.show({
 															title:'Validation Error',
 															message: 'Specify at least one component type.',
 															buttons: Ext.Msg.OK,
 															icon: Ext.Msg.ERROR,
-															fn: function(btn) {																
+															fn: function(btn) {
 															}
 														});
 													}
-													
+
 												} else {
 													saveAlerts();
 												}
 
-												
+
 											}
 										},
 										{
