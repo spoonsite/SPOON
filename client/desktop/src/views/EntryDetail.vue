@@ -287,7 +287,15 @@
               item-key="name"
               >
                 <template slot="items" slot-scope="props">
-                  <td>{{ props.item.typeDescription }}</td>
+                  <td>
+                    {{ props.item.typeDescription }}
+                    <div v-if="props.item.comment">
+                      <v-divider class="mb-1"/>
+                      <strong>Comment:</strong>
+                      <br/>
+                      {{ props.item.comment }}
+                    </div>
+                  </td>
                   <td>{{ props.item.codeDescription }} <span v-if="props.item.unit" v-html="props.item.unit"></span></td>
                 </template>
               </v-data-table>
@@ -919,6 +927,7 @@ export default {
     getAddDetail () {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}`)
         .then(response => {
+          console.log(response)
           this.addDetail = response.data
         })
         .finally(() => {
@@ -938,6 +947,7 @@ export default {
       this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/detail`)
         .then(response => {
+          console.log(response)
           this.detail = response.data
         })
         .catch(e => this.errors.push(e))
