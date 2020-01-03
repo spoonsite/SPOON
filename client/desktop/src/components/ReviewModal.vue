@@ -1,14 +1,14 @@
 <template>
-  <v-dialog
-    :value="value"
-    @input="$emit('close')"
-    max-width='50em'
-  >
+  <v-dialog :value="value" @input="$emit('close')" max-width="50em">
     <v-card>
-      <ModalTitle title='Write a Review' @close="$emit('close')" />
+      <ModalTitle title="Write a Review" @close="$emit('close')" />
       <v-card-text>
-        <v-alert class="w-100" type="warning" :value="true" v-if="$store.state.branding.userInputWarning !== null"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
-        <v-alert class="w-100" type="info" :value="true" v-if="$store.state.branding.submissionFormWarning !== null"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
+        <v-alert class="w-100" type="warning" :value="true" v-if="$store.state.branding.userInputWarning !== null"
+          ><span v-html="$store.state.branding.userInputWarning"></span
+        ></v-alert>
+        <v-alert class="w-100" type="info" :value="true" v-if="$store.state.branding.submissionFormWarning !== null"
+          ><span v-html="$store.state.branding.submissionFormWarning"></span
+        ></v-alert>
         <v-form v-model="reviewValid">
           <v-container>
             <v-text-field
@@ -46,15 +46,9 @@
               disabled
             ></v-text-field>
 
-            <v-date-picker
-              v-model="review.lastUsed"
-              :allowed-dates="todaysDateFormatted"
-              no-title
-              reactive
-              full-width
-            >
+            <v-date-picker v-model="review.lastUsed" :allowed-dates="todaysDateFormatted" no-title reactive full-width>
               <v-spacer></v-spacer>
-              <v-btn flat color="accent" @click="review.lastUsed=''">Cancel</v-btn>
+              <v-btn text color="accent" @click="review.lastUsed = ''">Cancel</v-btn>
             </v-date-picker>
 
             <v-spacer style="height: 1em"></v-spacer>
@@ -67,25 +61,11 @@
               required
             ></v-select>
 
-            <v-select
-              v-model="review.pros"
-              :items="prosSelectOptions"
-              label="Pros"
-              chips
-              multiple
-            ></v-select>
+            <v-select v-model="review.pros" :items="prosSelectOptions" label="Pros" chips multiple></v-select>
 
-            <v-select
-              v-model="review.cons"
-              :items="consSelectOptions"
-              label="Cons"
-              chips
-              multiple
-            ></v-select>
+            <v-select v-model="review.cons" :items="consSelectOptions" label="Cons" chips multiple></v-select>
 
-            <p>
-              Comment: <span v-if="review.comment === ''" class="red--text">comment is required *</span>
-            </p>
+            <p>Comment: <span v-if="review.comment === ''" class="red--text">comment is required *</span></p>
 
             <quill-editor
               style="background-color: white;"
@@ -95,13 +75,12 @@
             ></quill-editor>
           </v-container>
           <v-card-actions>
-            <v-spacer/>
+            <v-spacer />
 
             <v-btn color="success" :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
             <v-btn @click="$emit('close')">Cancel</v-btn>
           </v-card-actions>
         </v-form>
-
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -110,7 +89,7 @@
 <script>
 import ModalTitle from '@/components/ModalTitle'
 import StarRating from 'vue-star-rating'
-import isFuture from 'date-fns/is_future'
+import isFuture from 'date-fns/isFuture'
 
 export default {
   name: 'ReviewsModal',
@@ -125,13 +104,13 @@ export default {
     ModalTitle,
     StarRating
   },
-  mounted () {
+  mounted() {
     this.timeSelectOptions = []
     this.prosSelectOptions = []
     this.consSelectOptions = []
     this.lookupTypes()
   },
-  data () {
+  data() {
     return {
       timeSelectOptions: [],
       prosSelectOptions: [],
@@ -142,33 +121,27 @@ export default {
         v => !!v || 'Title is required',
         v => (v && v.length <= 255) || 'Title must be less than 255 characters'
       ],
-      lastUsedRules: [
-        v => !!v || 'Date is required'
-      ],
-      timeUsedRules: [
-        v => !!v || 'Time used is required'
-      ],
-      commentRules: [
-        v => !!v || 'Comment is required'
-      ]
+      lastUsedRules: [v => !!v || 'Date is required'],
+      timeUsedRules: [v => !!v || 'Time used is required'],
+      commentRules: [v => !!v || 'Comment is required']
     }
   },
   watch: {
-    'review.comment': function (val) {
+    'review.comment': function(val) {
       if (val !== '' && this.reviewValid && this.review.rating !== 0) {
         this.reviewSubmit = true
       } else {
         this.reviewSubmit = false
       }
     },
-    'review.rating': function (val) {
+    'review.rating': function(val) {
       if (val !== 0 && this.reviewValid && this.review.comment !== '') {
         this.reviewSubmit = true
       } else {
         this.reviewSubmit = false
       }
     },
-    reviewValid: function (val) {
+    reviewValid: function(val) {
       if (val && this.review.comment !== '' && this.review.rating !== 0) {
         this.reviewSubmit = true
       } else {
@@ -177,11 +150,12 @@ export default {
     }
   },
   methods: {
-    todaysDateFormatted (val) {
+    todaysDateFormatted(val) {
       return !isFuture(val)
     },
-    lookupTypes () {
-      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
+    lookupTypes() {
+      this.$http
+        .get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
         .then(response => {
           if (response.data) {
             this.timeOptions = response.data
@@ -192,7 +166,8 @@ export default {
         })
         .catch(e => this.errors.push(e))
 
-      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
+      this.$http
+        .get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
         .then(response => {
           if (response.data) {
             this.prosOptions = response.data
@@ -203,7 +178,8 @@ export default {
         })
         .catch(e => this.errors.push(e))
 
-      this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
+      this.$http
+        .get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
         .then(response => {
           if (response.data) {
             this.consOptions = response.data
@@ -214,7 +190,7 @@ export default {
         })
         .catch(e => this.errors.push(e))
     },
-    submitReview () {
+    submitReview() {
       let data = {
         comment: this.review.comment,
         cons: [],
@@ -252,7 +228,11 @@ export default {
         }
       })
       if (this.review.editReviewId) {
-        this.$http.put(`/openstorefront/api/v1/resource/components/${this.review.componentId}/reviews/${this.review.editReviewId}/detail`, data)
+        this.$http
+          .put(
+            `/openstorefront/api/v1/resource/components/${this.review.componentId}/reviews/${this.review.editReviewId}/detail`,
+            data
+          )
           .then(response => {
             this.review.editReviewId = ''
             this.$toasted.show('Review Submitted')
@@ -260,7 +240,8 @@ export default {
           })
           .catch(e => this.$toasted.error('There was a problem submitting the review.'))
       } else {
-        this.$http.post(`/openstorefront/api/v1/resource/components/${this.review.componentId}/reviews/detail`, data)
+        this.$http
+          .post(`/openstorefront/api/v1/resource/components/${this.review.componentId}/reviews/detail`, data)
           .then(response => {
             this.close()
             this.$toasted.show('Review Submitted')
@@ -273,7 +254,7 @@ export default {
 </script>
 
 <style>
-  .w-100 {
-    width: 100%;
-  }
+.w-100 {
+  width: 100%;
+}
 </style>
