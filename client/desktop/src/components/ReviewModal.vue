@@ -1,16 +1,14 @@
-
-
 <template>
   <v-dialog
     :value="value"
-    @input="close"
+    @input="$emit('close')"
     max-width='50em'
   >
     <v-card>
-      <ModalTitle title='Write a Review' @close='close' />
+      <ModalTitle title='Write a Review' @close="$emit('close')" />
       <v-card-text>
-        <v-alert class="w-100" type="warning" :value="true"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
-        <v-alert class="w-100" type="info" :value="true"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
+        <v-alert class="w-100" type="warning" :value="true" v-if="$store.state.branding.userInputWarning !== null"><span v-html="$store.state.branding.userInputWarning"></span></v-alert>
+        <v-alert class="w-100" type="info" :value="true" v-if="$store.state.branding.submissionFormWarning !== null"><span v-html="$store.state.branding.submissionFormWarning"></span></v-alert>
         <v-form v-model="reviewValid">
           <v-container>
             <v-text-field
@@ -100,10 +98,10 @@
             <v-spacer/>
 
             <v-btn color="success" :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
-            <v-btn @click="close">Cancel</v-btn>
+            <v-btn @click="$emit('close')">Cancel</v-btn>
           </v-card-actions>
         </v-form>
-      
+
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -117,8 +115,11 @@ import isFuture from 'date-fns/is_future'
 export default {
   name: 'ReviewsModal',
   props: {
-    value: false,
-    review: {},
+    value: {
+      type: Boolean,
+      default: false
+    },
+    review: Object
   },
   components: {
     ModalTitle,
@@ -149,38 +150,35 @@ export default {
       ],
       commentRules: [
         v => !!v || 'Comment is required'
-      ],
+      ]
     }
   },
   watch: {
     'review.comment': function (val) {
       if (val !== '' && this.reviewValid && this.review.rating !== 0) {
-        this.reviewSubmit = true;
+        this.reviewSubmit = true
       } else {
-        this.reviewSubmit = false;
+        this.reviewSubmit = false
       }
     },
     'review.rating': function (val) {
       if (val !== 0 && this.reviewValid && this.review.comment !== '') {
-        this.reviewSubmit = true;
+        this.reviewSubmit = true
       } else {
-        this.reviewSubmit = false;
+        this.reviewSubmit = false
       }
     },
     reviewValid: function (val) {
       if (val && this.review.comment !== '' && this.review.rating !== 0) {
-        this.reviewSubmit = true;
+        this.reviewSubmit = true
       } else {
-        this.reviewSubmit = false;
+        this.reviewSubmit = false
       }
-    },
+    }
   },
   methods: {
     todaysDateFormatted (val) {
       return !isFuture(val)
-    },
-    close () {
-      this.$emit('close')
     },
     lookupTypes () {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
@@ -264,12 +262,12 @@ export default {
       } else {
         this.$http.post(`/openstorefront/api/v1/resource/components/${this.review.componentId}/reviews/detail`, data)
           .then(response => {
-            this.close() 
+            this.close()
             this.$toasted.show('Review Submitted')
           })
           .catch(e => this.$toasted.error('There was a problem submitting the review.'))
       }
-    },
+    }
   }
 }
 </script>

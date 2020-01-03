@@ -20,7 +20,7 @@ import ModalTitle from '@/components/ModalTitle'
 
 export default {
   name: 'DisclaimerModal',
-  props: ["value"],
+  props: ['value'],
   components: {
     ModalTitle
   },
@@ -28,6 +28,6 @@ export default {
     close () {
       this.$emit('close')
     }
-  },
+  }
 }
 </script>

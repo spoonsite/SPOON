@@ -492,7 +492,7 @@
             </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
-        
+
       <ReviewModal
         v-model="writeReviewDialog"
         @close="writeReviewDialog = false; getDetail(); isLoading = false"
@@ -582,7 +582,6 @@ import Lightbox from '../components/Lightbox'
 import Question from '../components/Question'
 import ModalTitle from '@/components/ModalTitle'
 import format from 'date-fns/format'
-import isFuture from 'date-fns/is_future'
 import ReviewModal from '../components/ReviewModal'
 import DeleteReviewModal from '../components/DeleteReviewModal'
 
@@ -910,15 +909,12 @@ export default {
       }
       if (alreadyExists) {
         this.tagEmpty = true
-      }
-      else if (this.allTags.includes(this.tagName)) {
+      } else if (this.allTags.includes(this.tagName)) {
         this.tagEmpty = false
         this.submitTag(this.tagName)
-      }
-      else if (this.tagName === '') {
+      } else if (this.tagName === '') {
         this.tagEmpty = true
-      }
-      else {
+      } else {
         this.tagEmpty = false
         this.getRelatedTags()
         this.selectedTag = ''

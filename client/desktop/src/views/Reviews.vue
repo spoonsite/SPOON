@@ -27,8 +27,6 @@
               <v-btn small fab class="grey lighten-2" @click.stop="setUpEditDialog(props.item)"><v-icon>fas fa-pencil-alt</v-icon></v-btn>
               <v-btn small fab class="table-buttons red lighten-3" @click.stop="setUpDeleteDialog(props.item)"><v-icon>fas fa-trash</v-icon></v-btn>
             </td>
-            <td>
-            </td>
           </template>
         </v-data-table>
         <ReviewModal v-model="editReviewDialog" @close="editReviewDialog = false" :review="currentReview"></ReviewModal>
@@ -40,7 +38,6 @@
 
 <script lang="js">
 import StarRating from 'vue-star-rating'
-import ModalTitle from '@/components/ModalTitle'
 import ReviewModal from '../components/ReviewModal'
 import DeleteReviewModal from '../components/DeleteReviewModal'
 import format from 'date-fns/format'
@@ -48,11 +45,10 @@ export default {
   name: 'reviews-page',
   components: {
     StarRating,
-    ModalTitle,
     ReviewModal,
     DeleteReviewModal
   },
- mounted () {
+  mounted () {
     if (this.$store.state.currentUser.username) {
       this.username = this.$store.state.currentUser.username
       this.getUserReviews()
@@ -119,8 +115,7 @@ export default {
     determineActiveOrPending (review) {
       if (review.activeStatus === 'A') {
         return 'Approved'
-      }
-      else {
+      } else {
         return 'Pending'
       }
     },
@@ -160,7 +155,7 @@ export default {
       this.currentReview.comment = tableReview.comment
       this.currentReview.editReviewId = tableReview.editReviewId
       this.currentReview.componentId = tableReview.componentId
-    },
+    }
   }
 }
 </script>
