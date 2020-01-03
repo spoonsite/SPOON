@@ -27,31 +27,8 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
  * @author gfowler
  */
 public class ComponentSubmissionView
+    extends SubmissionView
 {
-    @ConsumeField
-    private String name;
-
-    @ConsumeField
-    private String status;
-
-    @ConsumeField
-    private String type;
-
-    @ConsumeField
-	private Date approveDts;
-
-    @ConsumeField
-    private Date lastActivityDts;
-
-    @ConsumeField
-    private String submissionId;
-
-    @ConsumeField
-    private String componentId;
-
-    @ConsumeField
-    private Boolean isChangeRequest;
-
     @ConsumeField
     private String workPlanID;
 
@@ -65,7 +42,8 @@ public class ComponentSubmissionView
         this.status = component.getApprovalState();
         this.type = component.getComponentType();
         this.approveDts = component.getApprovedDts();
-        this.lastActivityDts = component.getLastActivityDts();
+        this.lastActivityDts = component.getLastActivityDts(); 
+        this.pendingChangeId = component.getPendingChangeId();
         this.submissionId = null;
         this.componentId = component.getComponentId();
         this.isChangeRequest = false;
@@ -81,6 +59,7 @@ public class ComponentSubmissionView
         this.lastActivityDts = userSubmission.getUpdateDts();
         this.submissionId = userSubmission.getUserSubmissionId();
         this.componentId = null;
+        this.pendingChangeId = null;
         this.isChangeRequest = (userSubmission.getOriginalComponentId() != null ? true : false);
         this.workPlanID = null;
         this.stepId = null;
@@ -164,5 +143,13 @@ public class ComponentSubmissionView
 
     public void setIsChangeRequest(Boolean isChangeRequest) {
         this.isChangeRequest = isChangeRequest;
+    }
+
+    public String getPendingChangeId() {
+        return pendingChangeId;
+    }
+
+    public void setPendingChangeId(String pendingChangeId) {
+        this.pendingChangeId = pendingChangeId;
     }
 }

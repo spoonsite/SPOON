@@ -78,16 +78,16 @@
                     - Edit
                     - Delete
                     - Comments -->
-                <v-btn icon class="pa-4 grey lighten-2" v-if="props.item.componentId" @click="viewComponent(props.item.componentID)">
+          <v-btn small fab icon class="grey lighten-2" v-if="props.item.componentId" @click="viewComponent(props.item.componentId)">
                   <v-icon>far fa-eye</v-icon>
                 </v-btn>
-                <v-btn icon class="pa-4 grey lighten-2">
+                <v-btn small fab icon class="grey lighten-2">
                   <v-icon>fas fa-pencil-alt</v-icon>
                 </v-btn>
-                <v-btn icon class="pa-4 grey lighten-2" @click="getComments(props.item)">
+                <v-btn small fab icon class="grey lighten-2" @click="getComments(props.item)">
                   <v-icon>far fa-comment</v-icon>
                 </v-btn>
-                <v-btn icon class="pa-4 red lighten-3">
+                <v-btn small fab icon class="red lighten-3" v-if="props.item.status !== 'P'" @click="deleteDialog = true; currentComponent = props.item">
                   <v-icon>fas fa-trash</v-icon>
                 </v-btn>
               </div>
@@ -133,6 +133,23 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="deleteDialog" width="35em">
+      <v-card>
+        <ModalTitle title="Delete?" @close="deleteDialog = false" />
+        <v-card-text>
+          <p v-if="currentComponent.status === 'N'">Are you sure you want to delete: {{ currentComponent.name }}?</p>
+          <p>{{currentComponent}}</p>
+          <!-- <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p> -->
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn v-if="currentComponent.isChangeRequest" @click="requestRemoval = true; deleteChange = false;">Request Removal</v-btn>
+          <v-btn v-if="currentComponent.isChangeRequest" @click="deleteChange = true; requestRemoval = false;">Delete Change</v-btn>
+          <v-btn color=warning>Yes</v-btn>
+          <v-btn>No</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -183,6 +200,10 @@ export default {
       counter: 0,
       bulkUploadDialog: false,
       commentsDialog: false,
+      deleteDialog: false,
+      requestRemoval: false,
+      deleteChange: false,
+      currentComponent: {},
     }
   },
   methods: {
