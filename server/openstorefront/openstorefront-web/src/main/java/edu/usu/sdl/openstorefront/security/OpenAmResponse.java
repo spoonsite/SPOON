@@ -84,5 +84,5 @@ public class OpenAmResponse
 	{
 		this.message = message;
 	}
-	
+
 }

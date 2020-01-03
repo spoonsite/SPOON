@@ -21,6 +21,7 @@ import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import edu.usu.sdl.openstorefront.core.annotation.FK;
 import edu.usu.sdl.openstorefront.core.annotation.PK;
 import edu.usu.sdl.openstorefront.core.annotation.ValidValueType;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -57,12 +58,6 @@ public class AttributeXRefType
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	private String issueType;
-
-	@NotNull
-	@ValidValueType(value = {}, lookupClass = IntegrationType.class)
-	@ConsumeField
-	@FK(IntegrationType.class)
-	private String integrationType;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public AttributeXRefType()
@@ -108,16 +103,6 @@ public class AttributeXRefType
 	public void setIssueType(String issueType)
 	{
 		this.issueType = issueType;
-	}
-
-	public String getIntegrationType()
-	{
-		return integrationType;
-	}
-
-	public void setIntegrationType(String integrationType)
-	{
-		this.integrationType = integrationType;
 	}
 
 	public String getFieldId()

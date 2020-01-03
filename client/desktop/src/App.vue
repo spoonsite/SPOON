@@ -1,104 +1,115 @@
 <template>
   <div id="app">
     <v-app>
-      <header>
-        <div :style="topbarStyle">
-        <v-toolbar color="primary" dense dark flat>
-          <router-link style="height: 100%;" to="/"><img height="100%" src="./assets/SPOONlogohorz.png" alt="SPOON logo"></router-link>
-          <v-spacer></v-spacer>
-          <v-toolbar-title class="white--text">{{ $route.name }}</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-toolbar-items>
-            <Notifications/>
-            <v-tooltip bottom>
-              <v-btn
-                slot="activator"
-                icon
-                to="/profile"
-              >
-                <v-icon>fas fa-user</v-icon>
-              </v-btn>
-              <span>User Profile</span>
-            </v-tooltip>
-            <!-- <v-btn icon @click="alert = !alert"><v-icon>fas fa-times</v-icon></v-btn> -->
-          </v-toolbar-items>
-          <v-menu offset-y>
-            <v-toolbar-side-icon slot="activator"></v-toolbar-side-icon>
+      <v-app-bar app color="primary" dark dense elevate-on-scroll :height="appBarHeight">
+        <router-link style="height: 100%;" to="/">
+          <img height="100%" src="./assets/SPOONlogohorz.png" alt="SPOON logo" />
+        </router-link>
+        <v-spacer></v-spacer>
+        <Notifications />
+        <v-menu offset-y :close-on-content-click="false" v-model="menu" max-width="500px">
+          <template v-slot:activator="{ on }">
+            <v-btn icon v-on="on" @click="menu = true">
+              <v-icon>fa fa-bars</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
             <v-list>
-              <!-- Add permissions check. -->
-              <v-list-tile
-                v-for="link in filteredLinks"
+              <v-list-item
+                v-for="link in beginningLinks"
                 :key="link.name"
-                class="menu-item"
+                link
+                @click="menu = false"
                 :to="link.link ? link.link : undefined"
                 :href="link.href ? link.href : undefined"
-                active-class="menu-item-active"
               >
-                <v-list-tile-action>
+                <v-list-item-action>
                   <v-icon>fa fa-{{ link.icon }}</v-icon>
-                </v-list-tile-action>
-                <v-content>
-                  <v-list-tile-title>{{ link.name }}</v-list-tile-title>
-                </v-content>
-              </v-list-tile>
-              <v-list-tile
-                class="menu-item"
-                @click="showDisclaimer = true"
-                @keyup.enter="showDisclaimer = true"
-                role="button"
-                aria-pressed="false"
+                </v-list-item-action>
+                <v-list-item-title v-text="link.name" />
+              </v-list-item>
+              <v-list-group
+                prepend-icon="fa fa-user-circle"
+                :append-icon="userToolsExpand ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
+                :value="userToolsExpand"
               >
-                <v-list-tile-action>
+                <template v-slot:activator>
+                  <v-list-item-title style="margin-right: 2em;">User Tools</v-list-item-title>
+                </template>
+                <v-list-item
+                  v-for="link in userToolLinks"
+                  :key="link.name"
+                  link
+                  @click="menu = false"
+                  :to="link.link ? link.link : undefined"
+                  :href="link.href ? link.href : undefined"
+                  style="margin-left: 2em"
+                >
+                  <v-list-item-action>
+                    <v-icon>fa fa-{{ link.icon }}</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-title v-text="link.name" />
+                </v-list-item>
+              </v-list-group>
+              <v-list-item
+                v-for="link in endLinks"
+                :key="link.name"
+                link
+                @click="menu = false"
+                :to="link.link ? link.link : undefined"
+                :href="link.href ? link.href : undefined"
+              >
+                <v-list-item-action>
+                  <v-icon>fa fa-{{ link.icon }}</v-icon>
+                </v-list-item-action>
+                <v-list-item-title v-text="link.name" />
+              </v-list-item>
+              <v-list-item class="menu-item" @click.stop="showDisclaimer = true" role="button" aria-pressed="false">
+                <v-list-item-action>
                   <v-icon>fas fa-exclamation-triangle</v-icon>
-                </v-list-tile-action>
-                <v-content>
-                  <v-list-tile-title>Disclaimer</v-list-tile-title>
-                </v-content>
-              </v-list-tile>
+                </v-list-item-action>
+                <v-list-item-title>Disclaimer</v-list-item-title>
+              </v-list-item>
               <v-divider></v-divider>
-              <v-list-tile class="menu-item" @click="logout()">
-                <v-list-tile-action>
+              <v-list-item class="menu-item" @click="logout()">
+                <v-list-item-action>
                   <v-icon>fas fa-sign-out-alt</v-icon>
-                </v-list-tile-action>
-                <v-content>
-                  <v-list-tile-title>Logout</v-list-tile-title>
-                </v-content>
-              </v-list-tile>
+                </v-list-item-action>
+                <v-list-item-title>Logout</v-list-item-title>
+              </v-list-item>
             </v-list>
-          </v-menu>
-        </v-toolbar>
-        </div>
-        <v-alert
-          :value="alert"
-          color="warning"
-          style="margin: 0; height: 30px; text-align: center;"
-        >Security Banner</v-alert>
-      </header>
+          </v-card>
+        </v-menu>
+      </v-app-bar>
+      <div :hidden="hideSecurityBanner" class="securityDiv" :style="securityBannerColors">
+        {{ $store.state.branding.securityBannerText }}
+      </div>
 
       <!-- Request Error Dialog -->
-      <v-dialog
-        v-model="errorDialog"
-        >
+      <v-dialog v-model="errorDialog" max-width="75em">
         <v-card>
-          <v-card-title>
-            <h2>Error</h2>
-          </v-card-title>
+          <ModalTitle title="Error" @close="errorDialog = false" />
           <v-card-text>
             <p>Oops! Something went wrong. Please contact the admin.</p>
             <v-btn depressed small v-if="currentError" @click="showErrorDetails = !showErrorDetails">Details</v-btn>
             <div v-if="showErrorDetails && currentError">
-              <strong>STATUS CODE:</strong> {{ currentError.status }} {{ currentError.statusText }}
-              <br>
-              <strong>METHOD:</strong>{{ currentError.config.method }}
-              <br>
-              <strong>URL:</strong>{{ currentError.config.url}}
+              <strong>STATUS CODE:</strong>
+              {{ currentError.status }} {{ currentError.statusText }}
+              <br />
+              <strong>METHOD:</strong>
+              {{ currentError.config.method }}
+              <br />
+              <strong>URL:</strong>
+              {{ currentError.config.url }}
               <span v-if="parseJSON(currentError.config.data)">
-              <br>
-              <strong>REQUEST DATA:</strong><pre style="overflow-x: scroll;">{{ parseJSON(currentError.config.data) }}</pre>
+                <br />
+                <strong>REQUEST DATA:</strong>
+                <pre style="overflow-x: scroll;">{{ parseJSON(currentError.config.data) }}</pre>
               </span>
             </div>
           </v-card-text>
           <v-card-actions>
+            <v-spacer />
             <v-btn @click="submitErrorReport" color="success">Send Error Report</v-btn>
             <v-btn @click.stop="errorDialog = false">Close</v-btn>
           </v-card-actions>
@@ -122,45 +133,50 @@
             <v-btn @click="firstTimeDialog = false">Close</v-btn>
           </v-card-actions>
         </v-card>
-      </v-dialog> -->
-      <DisclaimerModal v-model="showDisclaimer"></DisclaimerModal>
+      </v-dialog>-->
+      <DisclaimerModal v-model="showDisclaimer" @close="showDisclaimer = false"></DisclaimerModal>
 
-      <main class="offset-banner" :class="{ offset: !alert }">
-        <router-view/>
+      <main :style="hideSecurityBanner ? 'padding-top: 48px' : ''">
+        <router-view />
       </main>
-
     </v-app>
   </div>
 </template>
 
 <script>
-import router from './router.js'
+import router from '@/router'
 import safeParse from 'safe-json-parse/callback'
-import permissions from './util/permissions.js'
-import Notifications from './components/Notifications'
-import DisclaimerModal from './components/DisclaimerModal'
+import permissions from '@/util/permissions'
+import Notifications from '@/components/Notifications'
+import DisclaimerModal from '@/components/DisclaimerModal'
+import ModalTitle from '@/components/ModalTitle'
 
 export default {
   name: 'App',
   components: {
     Notifications,
-    DisclaimerModal
+    DisclaimerModal,
+    ModalTitle
   },
-  mounted () {
-    this.$http.interceptors.response.use(response => {
-      if (typeof response.data === 'string' &&
+  mounted() {
+    this.$http.interceptors.response.use(
+      response => {
+        if (
+          typeof response.data === 'string' &&
           response.data.includes('<!-- ***USER-NOT-LOGIN*** -->') &&
-          !this.loggingOut) {
-        window.location.href = 'openstorefront'
+          !this.loggingOut
+        ) {
+          window.location.href = 'openstorefront'
+        }
+        return response
+      },
+      error => {
+        this.errors.push(error.response)
+        this.currentError = error.response
+        this.errorDialog = true
+        return Promise.reject(error)
       }
-      return response
-    },
-    error => {
-      this.errors.push(error.response)
-      this.currentError = error.response
-      this.errorDialog = true
-      return Promise.reject(error)
-    })
+    )
 
     this.checkFirstTime()
     // pass in current axios instance
@@ -170,12 +186,32 @@ export default {
     this.$store.dispatch('getAttributeMap')
   },
   computed: {
-    filteredLinks () {
-      return this.links.filter(link => this.checkPermissions(link.permissions))
+    filteredBeginningLinks() {
+      return this.beginningLinks.filter(link => this.checkPermissions(link.permissions))
+    },
+    filteredGroupLinks() {
+      return this.groupLinks.filter(link => this.checkPermissions(link.permissions))
+    },
+    filteredEndLinks() {
+      return this.endLinks.filter(link => this.checkPermissions(link.permissions))
+    },
+    securityBannerColors() {
+      return `background-color: ${this.$store.state.branding.securityBannerBackgroundColor};
+        color: ${this.$store.state.branding.securityBannerTextColor};
+      ${this.hideSecurityBanner ? '' : 'margin-top: 48px;'}`
+    },
+    accentBarColor() {
+      return `background-color: ${this.$store.state.branding.vueAccentColor};`
+    },
+    hideSecurityBanner() {
+      if (this.$store.state.branding['securityBannerText']) return false
+      else return true
     }
   },
-  data () {
+  data() {
     return {
+      appBarHeight: '48px',
+      menu: false,
       errors: [],
       currentError: {},
       errorDialog: false,
@@ -186,52 +222,85 @@ export default {
       loggingOut: false,
       drawer: false,
       watchNumber: 0,
-      links: [ // Leave a permission array empty if no permissions are needed.
-        { link: '/',
+      beginningLinks: [
+        // Leave a permission array empty if no permissions are needed.
+        {
+          link: '/',
           icon: 'home',
           name: 'Home',
-          permissions: [] },
-        { href: '/openstorefront/AdminTool.action',
+          hasChildren: false,
+          permissions: []
+        },
+        {
+          link: '/profile',
+          icon: 'user',
+          name: 'Profile',
+          hasChildren: false,
+          permissions: []
+        },
+        {
+          href: '/openstorefront/AdminTool.action',
           icon: 'cog',
           name: 'Admin Tools',
-          permissions: permissions.ADMIN },
-        { href: '/openstorefront/UserTool.action',
-          icon: 'user',
-          name: 'User Tools',
-          permissions: [] },
-        { link: '/watches',
+          hasChildren: false,
+          permissions: permissions.ADMIN
+        }
+      ],
+      userToolsExpand: false,
+      userToolLinks: [
+        {
+          link: '/watches',
           icon: 'binoculars',
           name: 'Watches',
-          permissions: [] },
-        { link: '/faq',
+          hasChildren: false,
+          permissions: []
+        },
+        {
+          href: '/openstorefront/UserTool.action',
+          icon: 'list',
+          name: 'Submissions',
+          hasChildren: false,
+          permissions: []
+        },
+        {
+          href: '/openstorefront/UserTool.action',
+          icon: 'question-circle',
+          name: 'Questions',
+          hasChildren: false,
+          permissions: []
+        },
+        {
+          href: '/openstorefront/UserTool.action',
+          icon: 'star-half-alt',
+          name: 'Reviews',
+          hasChildren: false,
+          permissions: []
+        }
+      ],
+      endLinks: [
+        // Leave a permission array empty if no permissions are needed.
+        {
+          link: '/faq',
           icon: 'question',
           name: 'F.A.Q.',
-          permissions: [] },
-        { link: '/contact',
+          hasChildren: false,
+          permissions: []
+        },
+        {
+          link: '/contact',
           icon: 'comment',
           name: 'Contact',
-          permissions: [] },
-        { href: (this.$store.state.helpUrl ? this.$store.state.helpUrl : 'https://spoonsite.github.io/'),
+          hasChildren: false,
+          permissions: []
+        },
+        {
+          href: this.$store.state.helpUrl ? this.$store.state.helpUrl : 'https://spoonsite.github.io/',
           icon: 'question-circle',
           name: 'Help',
           newTab: true,
-          permissions: [] }
-        // { link: '/sme-approval',
-        //   icon: 'check',
-        //   name: 'SME Approval',
-        //   permissions: [ 'WORKPLAN-PROGRESS-MANAGEMENT-PAGE' ] },
-        // { link: '/submission-status',
-        //   icon: 'sticky-note',
-        //   name: 'Submission Status',
-        //   permissions: [] },
-        // { link: '/profile',
-        //   icon: 'user-edit',
-        //   name: 'Manage Profile',
-        //   permissions: [] },
-        // { link: '/reset-password',
-        //   icon: 'key',
-        //   name: 'Reset Password',
-        //   permissions: [] }
+          hasChildren: false,
+          permissions: []
+        }
       ],
       topbarStyle: {
         'border-bottom': `4px solid ${this.$store.state.branding.vueAccentColor}`
@@ -240,16 +309,17 @@ export default {
     }
   },
   methods: {
-    logout () {
+    logout() {
       this.loggingOut = true
-      this.$http.get('/openstorefront/Login.action?Logout')
+      this.$http
+        .get('/openstorefront/Login.action?Logout')
         .then(response => {
           window.location.href = 'openstorefront'
         })
         .catch(e => this.errors.push(e))
     },
-    parseJSON (obj) {
-      safeParse(obj, function (err, json) {
+    parseJSON(obj) {
+      safeParse(obj, function(err, json) {
         if (err) {
           return undefined
         } else {
@@ -257,7 +327,7 @@ export default {
         }
       })
     },
-    submitErrorReport () {
+    submitErrorReport() {
       this.errorDialog = false
       if (this.currentError) {
         router.push({
@@ -270,13 +340,13 @@ export default {
         router.push({ name: 'Contact' })
       }
     },
-    checkFirstTime () {
+    checkFirstTime() {
       if (this.$cookies.get('visited') !== 'yes') {
         this.firstTimeDialog = true
         this.$cookies.set('visited', 'yes')
       }
     },
-    checkPermissions (has) {
+    checkPermissions(has) {
       let ret = false
       if (has.length === 0) {
         ret = true
@@ -289,8 +359,9 @@ export default {
       }
       return ret
     },
-    checkWatches () {
-      this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
+    checkWatches() {
+      this.$http
+        .get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
         .then(response => {
           if (response.data && response.data.length > 0) {
             for (var i = 0; i < response.data.length; i++) {
@@ -303,16 +374,19 @@ export default {
         .catch(e => this.errors.push(e))
         .finally(() => {
           if (this.watchNumber > 0) {
-            this.$toasted.show(this.watchNumber + (this.watchNumber === 1 ? ' entry has' : ' entries have') + ' been updated.', {
-              icon: 'binoculars',
-              action: {
-                text: 'View',
-                onClick: (e, toastObject) => {
-                  this.$router.push('Watches')
-                  toastObject.goAway(0)
+            this.$toasted.show(
+              this.watchNumber + (this.watchNumber === 1 ? ' entry has' : ' entries have') + ' been updated.',
+              {
+                icon: 'binoculars',
+                action: {
+                  text: 'View',
+                  onClick: (e, toastObject) => {
+                    this.$router.push('Watches')
+                    toastObject.goAway(0)
+                  }
                 }
               }
-            })
+            )
           }
         })
     }
@@ -321,32 +395,30 @@ export default {
 </script>
 
 <style lang="scss">
-$toolbar-height: 48px;
-$goldbar-height: 4px;
-$banner-height: 30px;
-
-$offset: $toolbar-height + $goldbar-height;
-$offset-banner: $offset + $banner-height;
+$appBarHeight: 48px;
 
 html {
   overflow: auto !important;
 }
 #app {
-  font-family: "Roboto";
+  font-family: 'Roboto';
   color: #333;
 }
 .menu-item:hover {
-  background-color: rgba(0,0,0,0.1);
+  background-color: rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 .menu-item-active {
-  background-color: rgba(0,0,0,0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
-.offset-banner {
-  margin-top: $offset-banner;
+.accentDiv {
+  height: 3px;
+  margin-top: $appBarHeight;
 }
-.offset {
-  margin-top: $offset;
+.securityDiv {
+  height: 20px;
+  text-align: center;
+  font-size: small;
 }
 header {
   position: fixed;
@@ -357,5 +429,8 @@ header {
 .nav-drawer {
   background-color: white;
   z-index: 999;
+}
+.v-card__title {
+  word-break: normal;
 }
 </style>
