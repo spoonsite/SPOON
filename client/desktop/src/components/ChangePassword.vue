@@ -32,15 +32,14 @@
         v-model="confirmPassword"
         :append-icon="showConfirmation ? 'fas fa-eye' : 'fas fa-eye-slash'"
         :type="showConfirmation ? 'text' : 'password'"
-
         @click:append="showConfirmation = !showConfirmation"
       ></v-text-field>
       <v-flex xs12 pt-0 pb-0>
         <v-btn
           block
           style="margin-left: 0px;"
-          color="accent"
-          :disabled="existingPassword == '' || newPassword == ''|| confirmPassword == ''"
+          color="success"
+          :disabled="existingPassword == '' || newPassword == '' || confirmPassword == ''"
           @click="submitPassword()"
         >
           Update Password
@@ -54,7 +53,7 @@
 
 export default {
   name: 'change-password-page',
-  data () {
+  data() {
     return {
       existingPassword: '',
       newPassword: '',
@@ -66,37 +65,35 @@ export default {
       showConfirmation: false
     }
   },
-methods: {
-  submitPassword () {
-    this.errorMessages = []
-    if (this.newPassword !== this.confirmPassword) {
-      this.errorMessages.push("The new password and confirmation doen't match.")
-    }
-    else {
-      this.checkPasswordChange()
-    }
-  },
-  checkPasswordChange () {
-    let data = {
-      password: this.newPassword,
-      existingPassword: this.existingPassword
-    }
-    this.$http.post(`/openstorefront/api/v1/service/security/checkPassword`, data)
-      .then(response => {
-        var validation = response.data
-        if (validation.success === false){
-          this.errorMessages.push(validation.errors.entry[0].value)
-        }
-        else {
-          this.resetUserPassword()
-          this.confirmPassword = ''
-          this.existingPassword = ''
-          this.newPassword = ''
-        }
-      })
-      .catch(e => this.$toasted.error('There was a problem submitting your password change request.'))
+  methods: {
+    submitPassword() {
+      this.errorMessages = []
+      if (this.newPassword !== this.confirmPassword) {
+        this.errorMessages.push("The new password and confirmation doen't match.")
+      } else {
+        this.checkPasswordChange()
+      }
     },
-    resetUserPassword () {
+    checkPasswordChange() {
+      let data = {
+        password: this.newPassword,
+        existingPassword: this.existingPassword
+      }
+      this.$http.post(`/openstorefront/api/v1/service/security/checkPassword`, data)
+        .then(response => {
+          var validation = response.data
+          if (validation.success === false) {
+            this.errorMessages.push(validation.errors.entry[0].value)
+          } else {
+            this.resetUserPassword()
+            this.confirmPassword = ''
+            this.existingPassword = ''
+            this.newPassword = ''
+          }
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting your password change request.'))
+    },
+    resetUserPassword() {
       let data = {
         password: this.newPassword,
         existingPassword: this.existingPassword
@@ -104,19 +101,16 @@ methods: {
       this.$http.put(`/openstorefront/api/v1/resource/users/currentuser/resetpassword`, data)
         .then(response => {
           var validation = response.data
-          if (validation.success === false){
+          if (validation.success === false) {
             this.existingPasswordError.push(validation.errors.entry[0].value)
+          } else {
+            this.$toasted.show('Password changed successfully.')
           }
-          else {
-            this.$toasted.show("Password changed successfully.")
-          }
-
-      })
-      .catch(e => this.$toasted.error('There was a problem submitting your password change request.'))
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting your password change request.'))
     }
   }
 }
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>
