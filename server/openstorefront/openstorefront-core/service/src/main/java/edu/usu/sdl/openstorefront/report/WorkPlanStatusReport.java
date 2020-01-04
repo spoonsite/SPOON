@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -105,6 +106,12 @@ public class WorkPlanStatusReport
 				Evaluation evaluation = new Evaluation();
 				evaluation.setEvaluationId(link.getEvaluationId());
 				evaluation = evaluation.find();
+				
+				// There can be cases where a faulty workPlan Link exists that doesn't represent a real component. In these cases we skip them.
+				if(evaluation == null){
+					LOG.log(Level.WARNING, "WorkPlanStatus Report rejected an item because it claimed to have an attached evaluation, but the reference to the evaluation was null.");
+					continue;
+				}
 
 				linkName = service.getComponentService().getComponentName(evaluation.getComponentId());
 
@@ -119,6 +126,12 @@ public class WorkPlanStatusReport
 				UserSubmission userSubmission = new UserSubmission();
 				userSubmission.setUserSubmissionId(link.getUserSubmissionId());
 				userSubmission = userSubmission.find();
+				
+				// There can be cases where a faulty workPlan Link exists that doesn't represent a real component. In these cases we skip them.
+				if(userSubmission == null){
+				LOG.log(Level.WARNING, "WorkPlanStatus Report rejected an workPlanLink for reporting because it claimed to represent a submission, but the reference to the submission was null.");
+					continue;
+				}
 
 				linkName = userSubmission.getSubmissionName();
 			}
