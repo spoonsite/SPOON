@@ -51,9 +51,8 @@
           <p>Are you sure you want to delete all notifications?</p>
         </v-card-text>
         <v-card-actions>
-          <v-spacer />
           <v-btn :loading="deletingAllNotifications" color="warning" @click="deleteAllNotifications()">
-            <v-icon>delete</v-icon>Delete
+            Delete
           </v-btn>
           <v-btn @click="deleteAllDialog = false">Cancel</v-btn>
         </v-card-actions>
