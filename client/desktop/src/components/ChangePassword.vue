@@ -66,35 +66,34 @@ export default {
       showConfirmation: false
     }
   },
-methods: {
-  submitPassword () {
-    this.errorMessages = []
-    if (this.newPassword !== this.confirmPassword) {
-      this.errorMessages.push("The new password and confirmation doen't match.")
-    }
-    else {
-      this.checkPasswordChange()
-    }
-  },
-  checkPasswordChange () {
-    let data = {
-      password: this.newPassword,
-      existingPassword: this.existingPassword
-    }
-    this.$http.post(`/openstorefront/api/v1/service/security/checkPassword`, data)
-      .then(response => {
-        var validation = response.data
-        if (validation.success === false){
-          this.errorMessages.push(validation.errors.entry[0].value)
-        }
-        else {
-          this.resetUserPassword()
-          this.confirmPassword = ''
-          this.existingPassword = ''
-          this.newPassword = ''
-        }
-      })
-      .catch(e => this.$toasted.error('There was a problem submitting your password change request.'))
+  methods: {
+    submitPassword () {
+      this.errorMessages = []
+      if (this.newPassword !== this.confirmPassword) {
+        this.errorMessages.push("The new password and confirmation don't match.")
+      }
+      else {
+        this.checkPasswordChange()
+      }
+    },
+    checkPasswordChange () {
+      let data = {
+        password: this.newPassword,
+        existingPassword: this.existingPassword
+      }
+      this.$http.post(`/openstorefront/api/v1/service/security/checkPassword`, data)
+        .then(response => {
+          var validation = response.data
+          if (validation.success === false) {
+            this.errorMessages.push(validation.errors.entry[0].value)
+          } else {
+            this.resetUserPassword()
+            this.confirmPassword = ''
+            this.existingPassword = ''
+            this.newPassword = ''
+          }
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting your password change request.'))
     },
     resetUserPassword () {
       let data = {
