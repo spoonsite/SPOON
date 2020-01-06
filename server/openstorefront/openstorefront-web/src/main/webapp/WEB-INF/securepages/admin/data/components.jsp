@@ -42,7 +42,7 @@
 			Ext.require('OSF.form.Attributes');
 			Ext.require('OSF.form.Contacts');
 			Ext.require('OSF.form.Dependencies');
-			Ext.require('OSF.form.Media');			
+			Ext.require('OSF.form.Media');
 			Ext.require('OSF.form.Relationships');
 			Ext.require('OSF.form.Resources');
 			Ext.require('OSF.form.EntryQuestions');
@@ -52,16 +52,12 @@
 			Ext.require('OSF.form.Comments');
 			Ext.require('OSF.common.ValidHtmlEditor');
 			Ext.require('OSF.customSubmission.SubmissionFormFullControl');
-			
+
 			Ext.onReady(function() {
 				//Add/Edit forms ------>
 
 				//External Windows
 				var importWindow = Ext.create('OSF.component.ImportWindow', {
-				});
-
-				var integrationWindow = Ext.create('OSF.component.IntegrationWindow', {
-					alwaysOnTop: true
 				});
 
 				var changeRequestWindow = Ext.create('OSF.component.EntryChangeRequestWindow', {
@@ -84,7 +80,7 @@
 
 				//Sub Forms
 				var handleAttributes = function(componentType, loadingForm) {
-										
+
 					loadingForm.setLoading(true);
 					Ext.Ajax.request({
 						url: 'api/v1/resource/attributes/required?componentType=' + componentType,
@@ -94,14 +90,14 @@
 						success: function(response, opt) {
 							var requiredStore = Ext.data.StoreManager.lookup('requiredAttributeStore');
 							var data = Ext.decode(response.responseText);
-							
+
 							Ext.Array.sort(data, function(a, b) {
-								return a.description.localeCompare(b.description);								
+								return a.description.localeCompare(b.description);
 							});
-							
+
 							requiredStore.loadData(data);
 						}
-					});					
+					});
 				};
 
 				var allComponentTypes = [];
@@ -124,33 +120,33 @@
 								panel.removeAll();
 
 								store.each(function(record) {
-									
+
 									var field = Ext.create('OSF.common.AttributeCodeSelect', {
-											fieldConfig: {	
+											fieldConfig: {
 												record: record,
 												listeners: {
 													change: function(fieldLocal, newValue, oldValue, opts) {
 														var recordLocal = fieldLocal.record;
 														if (recordLocal) {
-															recordLocal.set('attributeCode', newValue);															
+															recordLocal.set('attributeCode', newValue);
 														}
 													}
 												},
 												unitListeners: {
 													change: function(fieldLocal, newValue, oldValue, opts) {
 														var recordLocal = fieldLocal.record;
-														if (recordLocal) {															
+														if (recordLocal) {
 															recordLocal.set('preferredUnit', fieldLocal.fullAttributeField.getUnit());
 														}
 													}
 												}
 											},
-											attributeTypeView: record.data,	
+											attributeTypeView: record.data,
 											showDefaultUnit: true,
 											attributeUnit: record.data.attributeUnit,
 											attributeUnitList: record.data.attributeUnitList,
 											record: record
-									});																				
+									});
 									record.formField = field;
 									panel.add(field);
 								});
@@ -235,19 +231,6 @@
 											}
 
 										}
-									},
-									{
-										xtype: 'tbseparator'
-									},
-									{
-										text: 'Integration',
-										itemId: 'integrationBtn',
-										iconCls: 'fa fa-lg fa-gear icon-button-color-default icon-top-padding',
-										disabled: true,
-										handler: function() {
-											integrationWindow.show();
-											integrationWindow.loadConfigs(generalForm.componentRecord.get('componentId'));
-										}
 									}
 								]
 							},
@@ -281,7 +264,7 @@
 											};
 
 											Ext.data.StoreManager.lookup('requiredAttributeStore').each(function(record){
-												
+
 												if (Ext.isArray(record.get('attributeCode'))) {
 													Ext.Array.each(record.get('attributeCode'), function(code) {
 														requireComponent.attributes.push({
@@ -300,7 +283,7 @@
 														},
 														preferredUnit: record.get('preferredUnit')
 													});
-												}												
+												}
 											});
 
 											if (!data.description) {
@@ -664,9 +647,9 @@
 									var data = Ext.decode(response.responseText);
 									var requiredStore = Ext.data.StoreManager.lookup('requiredAttributeStore');
 
-									var attributeTypeToValue = {										
+									var attributeTypeToValue = {
 									};
-									Ext.Array.each(data, function(attribute) {										
+									Ext.Array.each(data, function(attribute) {
 										if (attributeTypeToValue[attribute.type]) {
 											attributeTypeToValue[attribute.type].push(attribute.code);
 										} else {
@@ -678,7 +661,7 @@
 
 									Ext.Array.each(data, function(attribute) {
 										var required = false;
-										
+
 										if (attribute.requiredRestrictions) {
 											Ext.Array.each(attribute.requiredRestrictions, function(restriction) {
 												if (restriction.componentType === generalForm.componentRecord.get('componentType')) {
@@ -686,19 +669,19 @@
 												}
 											});
 										}
-										
+
 										if (required) {
 
 											//group values of same type
 											var value = attribute.code;
-											if (attributeTypeToValue[attribute.type] && 
+											if (attributeTypeToValue[attribute.type] &&
 												attributeTypeToValue[attribute.type].length > 1) {
 												value = attributeTypeToValue[attribute.type];
 											}
-											
+
 											requiredStore.each(function(record){
 												if (record.get('attributeType') === attribute.type) {
-													
+
 													if (attribute.preferredUnit && attribute.preferredUnit.unit) {
 														record.formField.setUnit(attribute.preferredUnit.unit);
 														record.set('attributeCode', attribute.preferredUnit.convertedValue, { dirty: false });
@@ -708,7 +691,7 @@
 														record.set('attributeCode', value, { dirty: false });
 														record.formField.setValue(value);
 													}
-													
+
 												}
 											});
 
@@ -751,7 +734,7 @@
 										// defer to push the check for valid permissions back on the stack
 										Ext.defer(function () {
 											if (!item.hasValidPermissions) {
-												
+
 												// check to see which tab to hide
 												var tabToHide = tabPanel.getTabBar().getRefItems().reduce(function (acc, tab) {
 													if (tab.title === item.title) {
@@ -763,7 +746,7 @@
 											}
 										}, 1);
 										return true;
-									}	
+									}
 								},
 								items: [
 									generalForm
@@ -1165,9 +1148,9 @@
 						Ext.getCmp('previewWinTools-nextBtn').setDisabled(true);
 					}
 				};
-				
+
 				var showMultiApproveForm = function(componentId, componentName) {
-					
+
 					var approveWin = Ext.create('Ext.window.Window', {
 						title: 'Approve Related Entries',
 						layout: 'fit',
@@ -1192,8 +1175,8 @@
 								columns: [
 									{ text: 'Origin Entry', dataIndex: 'ownerComponentName', width: 175, hidden: true },
 									{ text: 'Relationship', dataIndex: 'relationshipTypeDescription', width: 175 },
-									{ text: 'Related Entry', dataIndex: 'targetComponentName', flex: 1, minWidth: 150 },									
-									{ text: 'Approved', dataIndex: 'targetApproved', align: 'center', 
+									{ text: 'Related Entry', dataIndex: 'targetComponentName', flex: 1, minWidth: 150 },
+									{ text: 'Approved', dataIndex: 'targetApproved', align: 'center',
 										renderer: CoreUtil.renderer.booleanRenderer
 									},
 									{
@@ -1209,7 +1192,7 @@
 												}
  											}
 										]
-										
+
 									}
 								],
 								dockedItems: [
@@ -1229,16 +1212,16 @@
 												iconCls: 'fa fa-2x fa-check-square-o icon-button-color-save icon-vertical-correction',
 												handler: function() {
 													var grid = this.up('grid');
-													
+
 													var idsToApprove = [];
 													idsToApprove.push(componentId);
 													var records = grid.getSelection();
 													Ext.Array.each(records, function(item){
 														idsToApprove.push(item.get('targetComponentId'));
 													});
-													
-													approveWin.setLoading('Approving Entries');												
-													
+
+													approveWin.setLoading('Approving Entries');
+
 													Ext.Ajax.request({
 														url: 'api/v1/resource/components/approve',
 														method: 'PUT',
@@ -1251,7 +1234,7 @@
 															approveWin.close();
 														}
 													});
-													
+
 												}
 											},
 											{
@@ -1269,12 +1252,12 @@
 									}
 								]
 							}
-						]						
+						]
 					});
-		
-					approveWin.show();					
+
+					approveWin.show();
 				};
-				
+
 				var toggleWin = Ext.create('Ext.window.Window',{
 					id: 'toggleWin',
 					title: 'Toggle ',
@@ -1590,10 +1573,10 @@
 						}},
 						{name: 'notifyOfApprovalEmail', mapping: function(data){
 							return data.component.notifyOfApprovalEmail;
-						}},					
+						}},
 						{name: 'currentDataOwner', mapping: function(data){
 							return data.component.currentDataOwner;
-						}},					
+						}},
 						{name: 'dataSource', mapping: function(data){
 							return data.component.dataSource;
 						}},
@@ -1668,7 +1651,7 @@
 					bodyCls: 'border_accent',
 					viewConfig: {
 						enableTextSelection: true
-					},					
+					},
 					selModel: {
 						   selType: 'checkboxmodel'
 					},
@@ -1689,7 +1672,7 @@
 							}
 						},
 						{ text: 'Description', dataIndex: 'description', flex: 1, minWidth: 150, hidden:true,
-						 renderer: function(value){
+						renderer: function(value){
 							return Ext.util.Format.stripTags(value);
 						}},
 						{ text: 'Pending Changes', tooltip: 'See Action->Change Requests to view', align: 'center', dataIndex: 'numberOfPendingChanges', width: 150 },
@@ -1702,7 +1685,6 @@
 						},
 						{ text: 'Approval Date', dataIndex: 'approvedDts', width: 150, xtype: 'datecolumn', format:'m/d/y H:i:s' },
 						{ text: 'Active Status', align: 'center', dataIndex: 'activeStatus', width: 125 },
-						{ text: 'Integration Management', dataIndex: 'integrationManagement', width: 175, sortable: false },
 						{ text: 'Current Owner', dataIndex: 'currentDataOwner', width: 175, sortable: false },
 						{ text: 'Update Date', dataIndex: 'updateDts', width: 175, hidden: true, xtype: 'datecolumn', format:'m/d/y H:i:s'},
 						{ text: 'Update User', dataIndex: 'updateUser', width: 175, hidden: true },
@@ -1862,9 +1844,9 @@
 								},
 								{
 									xtype: 'splitbutton',
-									text: 'View',									
+									text: 'View',
 									id: 'lookupGrid-tools-preview',
-									scale: 'medium',									
+									scale: 'medium',
 									iconCls: 'fa fa-2x fa-eye icon-button-color-view icon-vertical-correction-view',
 									disabled: true,
 									requiredPermissions: ['ADMIN-ENTRY-READ'],
@@ -1875,7 +1857,7 @@
 										items: [
 											{
 												text: 'View Submission Form',
-												iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',											
+												iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',
 												handler: function() {
 													var record = Ext.getCmp('componentGrid').getSelection()[0];
 													actionViewSubmission(record);
@@ -1902,7 +1884,7 @@
 										items: [
 											{
 												text: 'Approve Related Entries',
-												iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',											
+												iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',
 												handler: function() {
 													var record = Ext.getCmp('componentGrid').getSelection()[0];
 													showMultiApproveForm(record.get('componentId'), record.get('name'));
@@ -1955,13 +1937,13 @@
 										},
 										{
 											text: 'Approve Related Entries',
-											iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',											
+											iconCls: 'fa fa-lg fa-share icon-small-vertical-correction',
 											requiredPermissions: ['ADMIN-ENTRY-APPROVE'],
 											handler: function() {
 												var record = Ext.getCmp('componentGrid').getSelection()[0];
 												showMultiApproveForm(record.get('componentId'), record.get('name'));
 											}
-										},										
+										},
 										{
 											xtype: 'menuseparator',
 											requiredPermissions: ['ADMIN-ENTRY-CREATE', 'ADMIN-ENTRY-MERGE', 'ADMIN-ENTRY-VERSION-READ']
@@ -2129,7 +2111,7 @@
 					changeRequestWindow.show();
 					changeRequestWindow.loadComponent(componentId, name);
 				};
-				
+
 				var changeOwnerWinCreated = false;
 
 				var actionChangeOwner = function() {
@@ -2370,8 +2352,6 @@
 							mainAddEditWin.generalForm.loadComponentAttributes();
 						});
 
-
-						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(false);
 						mainAddEditWin.generalForm.queryById('changeHistoryBtn').setDisabled(false);
 					} else {
 						mainAddEditWin.setTitle('Entry Form:  NEW ENTRY');
@@ -2380,13 +2360,12 @@
 						requiredStore.removeAll();
 
 						Ext.getCmp('componentGrid').getSelectionModel().deselectAll();
-						mainAddEditWin.generalForm.queryById('integrationBtn').setDisabled(true);
 						mainAddEditWin.generalForm.queryById('changeHistoryBtn').setDisabled(true);
 
 					}
 					mainAddEditWin.generalForm.queryById('componentTypeMainCB').resumeEvent('change');
 
-				   return mainAddEditWin;
+					return mainAddEditWin;
 				};
 
 				var checkFormTabs = function(mainAddEditWin, record, componentType) {
@@ -2437,7 +2416,7 @@
 								}
 								if (type.dataEntryDependencies) {
 									addSubTab('OSF.form.Dependencies', 'Dependencies', 'Manage Dependencies');
-								}							
+								}
 								if (type.dataEntryEvaluationInformation) {
 									addSubTab('OSF.form.OldEvaluationSummary', 'Evaluation Summary', 'This is Deprecatied');
 								}
@@ -2531,10 +2510,10 @@
 
 					/**
 					 * Recursive Function To Send Delete Requests
-					 * 
+					 *
 					 * @param {Array} selection -  list of elements from the grid that have been check-box'd as needing to be deleted
 					 * @param {Array} originalTotal - length of selection.
-					 * 
+					 *
 					 * @returns {undefined} Void function
 					 */
 					function sendDeleteRequests(selection, originalTotal) {
@@ -2550,7 +2529,7 @@
 									{
 										// Fail The Progress Bar
 										deleteRequestFail("There was an internal error that occured on the server. Please contact SPOON support via the Contact Us button in your site menu found in the top right part of the screen.", selection[0]);
-										
+
 										// Provide Error Notification
 										Ext.toast('An Entry Failed To Delete', 'Error');
 
@@ -2576,7 +2555,7 @@
 								}
 							});
 						}
-						else // Else there are no more elements to delete, Inform User 
+						else // Else there are no more elements to delete, Inform User
 						{
 							Ext.MessageBox.hide();
 							Ext.Msg.show({
@@ -2595,23 +2574,23 @@
 							Ext.getCmp('componentGrid').setLoading(false);
 						}
 					}
-						
+
 					/**
 					 * Displays error message to user, exits the screen overlay safely, in case of problems.
-					 * 
+					 *
 					 * @params {String} reason - custom message to help user know On Whose End The Issue Originated?
 					 * @params {Object} failedElement - the element that failed to successfully delete
 					 * @params {Object} serverResponse - the Ajax response, gives info on why it failed
-					 * 
-					 * @returns {undefined} This is a Void function.  
+					 *
+					 * @returns {undefined} This is a Void function.
 					 */
 					var deleteRequestFail = function(reason, failedElement, serverResponse){
 						// Halt Deletion By Setting External Flag
 						sendDeleteRequests.hasFailed = true;
-						
-						// Build String To Pass Additional Information - On Whose End The Issue Originated? 
+
+						// Build String To Pass Additional Information - On Whose End The Issue Originated?
 						reason = reason || " Unknown.";
-						
+
 						// Build String To Pass Additional Information - Which Element Could Not Be Deleted?
 						errorOn = "";
 						try{
@@ -2633,7 +2612,7 @@
 
 						// Inform User Of Fail
 						Ext.Msg.show({title:"Deletion Halted", message:"There was an error which interrupted the delete order. Reasons: " + reason + errorOn + serverResponse})
-						
+
 						// Unlock the Screen
 						// Refresh Grid
 						actionRefreshComponentGrid();
@@ -2641,7 +2620,7 @@
 						// Unmask Grid
 						Ext.getCmp('componentGrid').setLoading(false);
 					}
-					
+
 
 				};
 
@@ -2723,9 +2702,9 @@
 					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + id);
 					previewCheckButtons();
 				};
-				
+
 				var actionViewSubmission = function(record) {
-					
+
 					var previewWin = Ext.create('Ext.window.Window', {
 						title: 'Preview',
 						layout: 'fit',
@@ -2750,7 +2729,7 @@
 								hideSave: true,
 								customButtonHandler: function() {
 									previewWin.close();
-								}								
+								}
 							}
 						]
 					});
@@ -2763,9 +2742,9 @@
 						callback: function() {
 							previewWin.setLoading(false);
 						},
-						success: function(response, opts) {							
+						success: function(response, opts) {
 							var userSubmission = Ext.decode(response.responseText);
-							
+
 							previewWin.setLoading('Loading Submission Form template...');
 							Ext.Ajax.request({
 								url: 'api/v1/resource/submissiontemplates/' + userSubmission.templateId,
@@ -2774,14 +2753,14 @@
 								},
 								success: function(responseTemplate, opts) {
 									var template = Ext.decode(responseTemplate.responseText);
-									
+
 									previewWin.queryById('form').load(template, record.get('componentType'), userSubmission);
 								}
-							});							
+							});
 						}
-					});		
+					});
 				};
-				
+
 
 			});
 

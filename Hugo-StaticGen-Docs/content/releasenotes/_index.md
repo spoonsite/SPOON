@@ -6,11 +6,24 @@ weight = 9999
 
 For more information, please see [GitHub](https://github.com/spoonsite/SPOON/releases).
 
+## Release Notes for v2.11.1
+
+* Fixed a small bug that prevented viewing of some entries for Admins reviewing submission
+
+## Release Notes for v2.11
+
+This release started the process to remove ExtJS pages and convert them to VueJS. Most of the **User Tools** area was implemented. A lot of work was done previously in VueJS to make a mobile version of the site. The mobile pages were taken and made responsive for desktop and mobile.
+
+* Redesigned landing page
+* Remove the separate mobile VueJS site
+* Search speed improvements
+* Search page user interaction redesign
+
 ## Release Notes for v2.10
 
 * Removed Solr as a search engine option.
-* Updated Elasticsearch to version 7.2.0.
-* Removed the move submission buttons in the WorkPlan if you did not have the correct permissions.
+* Updated Elasticsearch to Version 7.2.0.
+* Removed the "Move Submission" buttons in the WorkPlan if you did not have the correct permissions.
 * Updated branding and removed non-functional sections of branding.
 
 ## Release Notes for v2.9.2
@@ -25,7 +38,7 @@ For more information, please see [GitHub](https://github.com/spoonsite/SPOON/rel
 
 * Added a Vendor Last Update date to all entries.
 * Vendor Last Update date is shown on all entry views.
-* Emails are sent when a entry or change request is approved.
+* Emails are sent when an entry or change request is approved.
 * User submissions will now enter a queued state while being processed.
 
 ## Release Notes for v2.8
@@ -38,9 +51,9 @@ For more information, please see [GitHub](https://github.com/spoonsite/SPOON/rel
 ## Release Notes for v2.7
 
 * Improved feedback to users about submission status while editing a submission.
-* Major improvements to search including better search filters.
+* Made major improvements to search including better search filters.
 * Fixed issues with reports.
-* Mobile search filters improved.
+* Improved mobile search filters.
 
 ### Administrator Release Notes for v2.7
 
@@ -48,7 +61,7 @@ For more information, please see [GitHub](https://github.com/spoonsite/SPOON/rel
 
 ## Release Notes for v2.6.6
 
-* Issues fixed with contact us form.
+* Issues fixed with "Contact Us" form.
 * Video support added for media on mobile.
 
 ### Administrator Notes for v2.6.6
@@ -72,7 +85,7 @@ For more information, please see [GitHub](https://github.com/spoonsite/SPOON/rel
 
 * New login page released.
 * New mobile site released.
-* Users can view entries on mobile and adjust their account settings such as changing a password, or email.
+* Users can view entries on mobile and adjust their account settings such as changing a password or email.
 * Mobile site supports viewing updates on watches, requesting feedback, registering for an account, updating account information, and more.
 
 ### Administrator Notes for v2.6.3
@@ -81,20 +94,20 @@ For more information, please see [GitHub](https://github.com/spoonsite/SPOON/rel
 
 ## Release Notes for v2.6.2
 
-* Some adjustments to the Custom SubmissionForm
+* Some adjustments to the Custom Submission Form.
 
 ## Release Notes for v2.6
 
-* The Submission Process now allows for forms that closer match the input expected for a given entry type.
-* Multiple Entry types/Topics can now be selected in the search
+* The Submission Process now allows for forms that more closely match the input expected for a given entry type.
+* Multiple Entry types/Topics can now be selected in the search.
 
 ### Administrator Notes for v2.6
 
-* Evaluation Form has been updated to improve distinguishing Entry from Evaluation
+* Evaluation Form has been updated to improve distinguishing Entry from Evaluation.
 * Published Evaluations are now visible.
-* A JIRA ticket link will now show in the evaluation table if configured
-* Improvements to the confluence report
-* Fix issues with change request merging of tags, media, and resources
-* Attribute can now be flagged private and have comments
-* Resources can now be marked private
-* Entry type can now have sub type and be nested
+* A Jira ticket link will now show in the evaluation table if configured.
+* Improvements made to the Confluence report.
+* Issues fixed with change request merging of tags, media, and resources.
+* Attribute can now be flagged private and have comments.
+* Resources can now be marked private.
+* Entry type can now have sub type and be nested.
