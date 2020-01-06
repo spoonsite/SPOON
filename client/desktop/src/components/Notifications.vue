@@ -33,6 +33,7 @@
           >No Notifications</v-card-text
         >
         <v-card-actions>
+          <v-spacer />
           <v-btn
             v-if="notifications && notifications.length > 0"
             color="primary"
@@ -51,6 +52,7 @@
           <p>Are you sure you want to delete all notifications?</p>
         </v-card-text>
         <v-card-actions>
+          <v-spacer />
           <v-btn :loading="deletingAllNotifications" color="warning" @click="deleteAllNotifications()">
             Delete
           </v-btn>
