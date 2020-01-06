@@ -67,20 +67,6 @@ public class ComponentSubmissionView
 		super.setEvaluationsAttached(submissionView.getEvaluationsAttached());
         this.workPlanID = workPlanId;
         this.stepId = stepId;
-		this.isChangeRequest = (submissionView.getComponentId() != null ? true : false);
-		
-//		super.setReleaseDate(submissionView.getReleaseDate());
-//		super.setDataSource(submissionView.getDataSource());
-//		super.setSubmissionTemplateId(submissionView.getSubmissionTemplateId());
-//		super.setSubmissionOriginalComponentId(submissionView.getSubmissionOriginalComponentId());
-//		super.setPendingChangeSubmitUser(submissionView.getPendingChangeSubmitUser());
-//		super.setOwnerEmail(submissionView.getOwnerEmail());
-//		super.setSecurityMarkingDescription(submissionView.getSecurityMarkingDescription());
-//		super.setComponentIconId(submissionView.getComponentIconId());
-//		super.setComponentTypeIconUrl(submissionView.getComponentTypeIconUrl());
-//		super.setComponentTypeNestedModel(submissionView.getComponentTypeNestedModel());
-//		super.setCurrentDataOwner(submissionView.getCurrentDataOwner());
-
     }
 
 

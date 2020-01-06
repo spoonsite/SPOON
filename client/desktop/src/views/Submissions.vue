@@ -16,84 +16,95 @@
         <v-data-table
           :headers="tableHeaders"
           :items="componentData"
+          :items-per-page="1500"
           :loading="isLoading"
           class="tableLayout"
-          hide-actions
+          hide-default-footer
         >
-          <template slot="items" slot-scope="props">
-            <td>
-              <div>{{ props.item.name }}</div>
-              <div v-if="props.item.submissionOriginalComponentId" class="red">Incomplete Change Request</div>
-              <div v-else-if="props.item.userSubmissionId" class="red">Incomplete Submission</div>
-              <div v-else-if="props.item.evaluationsAttached" class="red">Evaluations Are In Progress</div>
-            </td>
-            <td>
-              <div v-if="props.item.status === 'A'">Approved</div>
-              <div v-if="props.item.status === 'P'">Pending</div>
-              <div v-if="props.item.status === 'N'">Not Submitted</div>
-            </td>
-
-            <td>{{ props.item.type }}</td>
-            <td>
-              <div v-if="props.item.submitDate">{{ props.item.submitDate | formatDate }}</div>
-              <div v-else-if="props.item.status === 'P'">{{ props.item.lastUpdate | formatDate }}</div>
-              <!-- <div v-else="props.item.approvedDate">{{ props.item.approvedDate | formatDate }}</div> -->
-            </td>
-            <td>
-              <div v-if="props.item.lastUpdate">{{ props.item.lastUpdate | formatDate }}</div>
-            </td>
-            <td>
-              <div>
-                <svg width="200" height="50">
-                  <g v-for="(step, i) in props.item.steps"
-                    :key="step.name"
-                    :id="step.name"
+          <template v-slot:item.name="{ item }">
+            {{ item.name }}
+            <div v-if="item.submissionOriginalComponentId" class="red">Incomplete Change Request</div>
+            <div v-else-if="item.submissionId" class="red">Incomplete Submission</div>
+            <div v-else-if="item.evaluationsAttached" class="red">Evaluations Are In Progress</div>
+          </template>
+          <template v-slot:item.status="{ item }">
+            <div v-if="item.status === 'A'">Active</div>
+            <div v-else-if="item.status === 'P'">Pending</div>
+            <div v-else-if="item.status === 'N'">Not Submitted</div>
+            <div v-else>{{ item.status }}</div>
+          </template>
+          <template v-slot:item.submitDate="{ item }">
+            <div v-if="item.submitDate">{{ item.submitDate | formatDate }}</div>
+            <div v-else-if="item.status === 'P'">{{ item.lastUpdate | formatDate }}</div>
+          </template>
+          <template v-slot:item.pendingChange="{ item }">
+            <div v-if="item.hasChangeRequest">Pending</div>
+          </template>
+          <template v-slot:item.lastUpdate="{ item }">
+            {{ item.lastUpdate | formatDate }}
+          </template>
+          <template v-slot:item.approvalWorkflow="{ item }">
+            <svg width="200" height="50">
+              <g v-for="(step, i) in item.steps"
+                :key="step.name"
+                :id="step.name"
+              >
+                <circle
+                  :cx="20 + i * 50"
+                  cy="25"
+                  r="15"
+                  stroke="black"
+                  :fill="'#' + step.color"
+                />
+                <line
+                  v-if="i !== item.steps.length - 1"
+                  :x1="35 + i * 50"
+                  y1="25"
+                  :x2="55 + i * 50"
+                  y2="25"
+                  style="stroke:black; stroke-width:2"
+                ></line>
+              </g>
+            </svg>
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <div style="display: flex; flex-direction: row;">
+              <v-tooltip bottom v-if="item.componentId">
+                <template v-slot:activator="{ on }">
+                  <v-btn icon v-on="on">
+                    <v-icon>fas fa-eye</v-icon>
+                  </v-btn>
+                </template>
+                <span>View Entry</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn icon  v-on="on">
+                    <v-icon>fas fa-pencil-alt</v-icon>
+                  </v-btn>
+                </template>
+                <span>Edit</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn icon  v-on="on">
+                    <v-icon>far fa-comment</v-icon>
+                  </v-btn>
+                </template>
+                <span>Comment</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="item.status !== 'P'">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    v-on="on"
                   >
-                    <circle
-                      :cx="20 + i * 50"
-                      cy="25"
-                      r="15"
-                      stroke="black"
-                      :fill="'#' + step.color"
-                    />
-                    <line
-                      v-if="i !== props.item.steps.length - 1"
-                      :x1="35 + i * 50"
-                      y1="25"
-                      :x2="55 + i * 50"
-                      y2="25"
-                      style="stroke:black; stroke-width:2"
-                    ></line>
-                  </g>
-                </svg>
-              </div>
-            </td>
-            <td>
-              <div style="display: flex; flex-direction: row;">
-                <!-- TODO: Add tool tips:
-                  Component:
-                    - Request Change
-                    - Comments
-                    - Request Removal
-                    - View
-                  Submission:
-                    - Edit
-                    - Delete
-                    - Comments -->
-                <v-btn small fab icon class="grey lighten-2" v-if="props.item.componentId" @click="viewComponent(props.item.componentId)">
-                  <v-icon>far fa-eye</v-icon>
-                </v-btn>
-                <v-btn small fab icon class="grey lighten-2">
-                  <v-icon>fas fa-pencil-alt</v-icon>
-                </v-btn>
-                <v-btn small fab icon class="grey lighten-2" @click="getComments(props.item)">
-                  <v-icon>far fa-comment</v-icon>
-                </v-btn>
-                <v-btn small fab icon class="red lighten-3" v-if="props.item.status !== 'P'" @click="deleteDialog = true; currentComponent = props.item">
-                  <v-icon>fas fa-trash</v-icon>
-                </v-btn>
-              </div>
-            </td>
+                    <v-icon>fas fa-trash</v-icon>
+                  </v-btn>
+                </template>
+                <span>Delete</span>
+              </v-tooltip>
+            </div>
           </template>
         </v-data-table>
       </div>
@@ -122,7 +133,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <!-- <v-file-input label="File input"></v-file-input> -->
+          <v-file-input label="File input"></v-file-input>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -185,8 +196,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn v-if="currentComponent.isChangeRequest" @click="requestRemoval = true; deleteChange = false;">Request Removal</v-btn>
-          <v-btn v-if="currentComponent.isChangeRequest" @click="deleteChange = true; requestRemoval = false;">Delete Change</v-btn>
+          <v-btn v-if="currentComponent.hasChangeRequest" @click="requestRemoval = true; deleteChange = false;">Request Removal</v-btn>
+          <v-btn v-if="currentComponent.hasChangeRequest" @click="deleteChange = true; requestRemoval = false;">Delete Change</v-btn>
           <v-btn color=warning>Yes</v-btn>
           <v-btn>No</v-btn>
         </v-card-actions>
@@ -203,17 +214,17 @@ export default {
   components: {
     ModalTitle
   },
-  mounted () {
+  mounted() {
     this.getUserParts()
   },
-  data () {
+  data() {
     return {
       tableHeaders: [
         { text: 'Name', value: 'name' },
         { text: 'Status', value: 'status' },
         { text: 'Type', value: 'type' },
         { text: 'Submit/Approved Date', value: 'submitDate' },
-        // { text: 'Pending Change', value: 'pendingChange' },
+        { text: 'Pending Change', value: 'pendingChange' },
         { text: 'Last Update', value: 'lastUpdate' },
         { text: 'Approval Workflow', value: 'approvalWorkflow', sortable: false },
         { text: 'Actions', value: 'actions', sortable: false }
@@ -260,25 +271,25 @@ export default {
       ],
       formMessageRules: [
         v => !!v || 'A message is required'
-      ],
+      ]
     }
   },
   methods: {
-    getUserParts () {
+    getUserParts() {
       this.counter = 0
       this.isLoading = true
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions/user')
         .then(response => {
-          this.isLoading = false
           // console.log(response)
+          this.isLoading = false
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
           // console.log(this.componentData)
         }).catch(error => {
           this.isLoading = false
-          console.error(error)
+          this.errors.push(error)
         })
     },
-    getComments (component) {
+    getComments(component) {
       if (component.componentId) {
         this.$http.get(`/openstorefront/api/v1/resource/components/${component.componentId}/comments`)
           .then(response => {
@@ -286,8 +297,7 @@ export default {
             this.commentsDialog = true
           })
           .catch(e => this.errors.push(e))
-      }
-      else {
+      } else {
         this.$http.get(`/openstorefront/api/v1/resource/usersubmissions/${component.submissionId}/comments`)
           .then(response => {
             this.comments = response.data
@@ -296,12 +306,12 @@ export default {
           .catch(e => this.errors.push(e))
       }
     },
-    viewComponent (componentId) {
+    viewComponent(componentId) {
       this.$router.push({ name: 'Entry Detail', params: { id: componentId } })
     },
-    combineComponentsAndWorkPlans (allComponents, workPlans) {
-      for(var i =0; i<allComponents.length; i++) {
-        if(allComponents[i].componentId === undefined) {
+    combineComponentsAndWorkPlans(allComponents, workPlans) {
+      for (var i = 0; i < allComponents.length; i++) {
+        if (allComponents[i].componentId === undefined) {
           console.log(allComponents[i])
         }
       }
@@ -309,8 +319,8 @@ export default {
       let submissions = allComponents.filter(e => e.userSubmissionId !== undefined)
       let updatedComponents = []
 
-// console.log(components)
-// console.log(submissions)
+      // console.log(components)
+      // console.log(submissions)
       components.forEach(component => {
         let myWorkPlan = null
         workPlans.forEach(workPlan => {
@@ -329,7 +339,7 @@ export default {
 
       return updatedComponents
     },
-    generateComponent (component, workPlan) {
+    generateComponent(component, workPlan) {
       let seenCurrStep = false
       let steps = []
 
@@ -373,20 +383,24 @@ export default {
         componentId: component.componentId,
         status: component.approvalState,
         submitDate: component.approvedDts,
-        steps: steps
+        steps: steps,
+        submissionOriginalComponentId: component.submissionOriginalComponentId,
+        evaluationsAttached: component.evaluationsAttached,
+        hasChangeRequest: component.statusOfPendingChange != null
       }
 
       return updatedComponent
     },
-    generateSubmission (submission) {
+    generateSubmission(submission) {
       return {
         name: submission.name,
-        submissionId: submission.submissionId,
+        submissionId: submission.userSubmissionId,
         type: submission.componentTypeLabel,
         status: submission.approvalState,
-        isChangeRequest: submission.isChangeRequest,
         lastUpdate: submission.updateDts,
-        steps: null
+        steps: null,
+        submissionOriginalComponentId: submission.submissionOriginalComponentId,
+        evaluationsAttached: submission.evaluationsAttached
       }
     }
   }
