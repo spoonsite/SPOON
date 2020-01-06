@@ -1,18 +1,20 @@
 <template>
-<v-layout my-5 mx-3>
-  <v-flex xs12 md8 offset-md2>
-    <h2 class="headline text-xs-center mb-4">Frequently Asked Questions</h2>
-
-    <v-expansion-panel popout>
-      <v-expansion-panel-content v-for="entry in questions" :key="entry.faqSortOrder" ripple>
-      <div slot="header" class="title">{{entry.question}}</div>
-      <v-card>
-        <v-card-text class="grey lighten-5" v-html="entry.answer"></v-card-text>
-      </v-card>
-      </v-expansion-panel-content>
-    </v-expansion-panel>
-  </v-flex>
-</v-layout>
+  <div>
+    <h2 class="text-center">Frequently Asked Questions</h2>
+    <v-layout my-5 mx-3>
+      <v-flex xs12 md8 offset-md2>
+        <v-expansion-panels popout max-width="700px">
+          <v-expansion-panel v-for="(entry, index) in questions" :key="index" ripple>
+            <v-expansion-panel-header>{{ entry.question }}</v-expansion-panel-header>
+            <v-expansion-panel-content
+              v-html="entry.answer"
+              style="flex-direction: column; margin: 20px"
+            ></v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>
@@ -23,7 +25,7 @@ export default {
     errors: []
   }),
   methods: {
-    getQuestions: function () {
+    getQuestions: function() {
       let that = this
 
       this.$http
@@ -35,11 +37,8 @@ export default {
         .catch(e => this.errors.push(e))
     }
   },
-  mounted () {
+  mounted() {
     this.getQuestions()
   }
 }
 </script>
-
-<style>
-</style>
