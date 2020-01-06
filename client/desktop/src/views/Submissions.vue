@@ -23,8 +23,9 @@
           <template slot="items" slot-scope="props">
             <td>
               <div>{{ props.item.name }}</div>
-              <div v-if="props.item.isChangeRequest" class="red">Incomplete Change Request</div>
-              <div v-else-if="props.item.submissionId" class="red">Incomplete Submission</div>
+              <div v-if="props.item.submissionOriginalComponentId" class="red">Incomplete Change Request</div>
+              <div v-else-if="props.item.userSubmissionId" class="red">Incomplete Submission</div>
+              <div v-else-if="props.item.evaluationsAttached" class="red">Evaluations Are In Progress</div>
             </td>
             <td>
               <div v-if="props.item.status === 'A'">Approved</div>
@@ -36,6 +37,7 @@
             <td>
               <div v-if="props.item.submitDate">{{ props.item.submitDate | formatDate }}</div>
               <div v-else-if="props.item.status === 'P'">{{ props.item.lastUpdate | formatDate }}</div>
+              <!-- <div v-else="props.item.approvedDate">{{ props.item.approvedDate | formatDate }}</div> -->
             </td>
             <td>
               <div v-if="props.item.lastUpdate">{{ props.item.lastUpdate | formatDate }}</div>
@@ -67,7 +69,7 @@
               </div>
             </td>
             <td>
-              <div>
+              <div style="display: flex; flex-direction: row;">
                 <!-- TODO: Add tool tips:
                   Component:
                     - Request Change
@@ -78,7 +80,7 @@
                     - Edit
                     - Delete
                     - Comments -->
-          <v-btn small fab icon class="grey lighten-2" v-if="props.item.componentId" @click="viewComponent(props.item.componentId)">
+                <v-btn small fab icon class="grey lighten-2" v-if="props.item.componentId" @click="viewComponent(props.item.componentId)">
                   <v-icon>far fa-eye</v-icon>
                 </v-btn>
                 <v-btn small fab icon class="grey lighten-2">
@@ -142,6 +144,43 @@
         <v-card-text>
           <p v-if="currentComponent.status === 'N'">Are you sure you want to delete: {{ currentComponent.name }}?</p>
           <p>{{currentComponent}}</p>
+          <v-form>
+            <v-container>
+              <p>Reason:*</p>
+              <v-textarea
+                style="background-color: white;"
+                v-model="removalForm.message"
+                outline
+              ></v-textarea>
+              <p>Contact Information:</p>
+              <v-text-field
+                :rules="formNameRules"
+                single-line
+                label="Name*"
+                v-model="removalForm.name"
+              >
+              </v-text-field>
+              <v-text-field
+                :rules="formEmailRules"
+                single-line
+                label="Email*"
+                v-model="removalForm.email"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                label="Phone"
+                v-model="removalForm.phone"
+              >
+              </v-text-field>
+              <v-text-field
+                single-line
+                label="Organization"
+                v-model="removalForm.organization"
+              >
+              </v-text-field>
+            </v-container>
+          </v-form>
           <!-- <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p> -->
         </v-card-text>
         <v-card-actions>
@@ -204,6 +243,24 @@ export default {
       requestRemoval: false,
       deleteChange: false,
       currentComponent: {},
+      removalForm: {
+        name: '',
+        email: '',
+        phone: '',
+        organization: ''
+      },
+      formNameRules: [
+        v => !!v || 'Name is required'
+      ],
+      formEmailRules: [
+        v => !!v || 'Email is required'
+      ],
+      formReasonRules: [
+        v => !!v || 'A reason is required'
+      ],
+      formMessageRules: [
+        v => !!v || 'A message is required'
+      ],
     }
   },
   methods: {
@@ -215,7 +272,7 @@ export default {
           this.isLoading = false
           // console.log(response)
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
-          console.log(this.componentData)
+          // console.log(this.componentData)
         }).catch(error => {
           this.isLoading = false
           console.error(error)
@@ -243,10 +300,17 @@ export default {
       this.$router.push({ name: 'Entry Detail', params: { id: componentId } })
     },
     combineComponentsAndWorkPlans (allComponents, workPlans) {
+      for(var i =0; i<allComponents.length; i++) {
+        if(allComponents[i].componentId === undefined) {
+          console.log(allComponents[i])
+        }
+      }
       let components = allComponents.filter(e => e.componentId !== undefined)
-      let submissions = allComponents.filter(e => e.submissionId !== undefined)
+      let submissions = allComponents.filter(e => e.userSubmissionId !== undefined)
       let updatedComponents = []
 
+// console.log(components)
+// console.log(submissions)
       components.forEach(component => {
         let myWorkPlan = null
         workPlans.forEach(workPlan => {
@@ -305,10 +369,10 @@ export default {
       updatedComponent = {
         name: component.name,
         lastUpdate: component.lastActivityDts,
-        type: component.type,
+        type: component.componentTypeLabel,
         componentId: component.componentId,
-        status: component.status,
-        submitDate: component.approveDts,
+        status: component.approvalState,
+        submitDate: component.approvedDts,
         steps: steps
       }
 
@@ -318,10 +382,10 @@ export default {
       return {
         name: submission.name,
         submissionId: submission.submissionId,
-        type: submission.type,
-        status: submission.status,
+        type: submission.componentTypeLabel,
+        status: submission.approvalState,
         isChangeRequest: submission.isChangeRequest,
-        lastUpdate: submission.lastActivityDts,
+        lastUpdate: submission.updateDts,
         steps: null
       }
     }

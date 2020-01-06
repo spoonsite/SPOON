@@ -123,6 +123,12 @@ public class ComponentSubmissionResource
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
 			pullOldOwnedComponents(componentExample, components);
 
+			List<ComponentView> views = ComponentView.toViewList(components);
+
+			List<SubmissionView> submissionViews = flagSubmissionsWithEvaluations(views);
+			processPendingChanges(submissionViews);
+			findUserSubmissionForView(submissionViews);
+
 			WorkPlan workPlanExample = new WorkPlan();
 			workPlanExample.setActiveStatus(WorkPlan.ACTIVE_STATUS);
 
@@ -130,26 +136,33 @@ public class ComponentSubmissionResource
 
 			List<ComponentSubmissionView> componentSubmissionViews = new ArrayList<ComponentSubmissionView>();
 
-			for(Component component : components){
+			for(SubmissionView view : submissionViews){
 				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 				workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
-				workPlanLinkExample.setComponentId(component.getComponentId());
+				workPlanLinkExample.setComponentId(view.getComponentId());
 				WorkPlanLink workPlanLink = service.getPersistenceService().queryOneByExample(workPlanLinkExample);
 
-				componentSubmissionViews.add(new ComponentSubmissionView(component, workPlanLink.getWorkPlanId(), workPlanLink.getCurrentStepId()));
+				componentSubmissionViews.add(new ComponentSubmissionView(view, workPlanLink.getWorkPlanId(), workPlanLink.getCurrentStepId()));
 			}
 
-			List<UserSubmission> userSubmissions = service.getSubmissionFormService().getUserSubmissions(SecurityUtil.getCurrentUserName());
-			for(UserSubmission userSubmission : userSubmissions){
-				componentSubmissionViews.add(new ComponentSubmissionView(userSubmission));
-			}
+			// List<UserSubmission> userSubmissions = service.getSubmissionFormService().getUserSubmissions(SecurityUtil.getCurrentUserName());
+			// for(UserSubmission userSubmission : userSubmissions){
+			// 	componentSubmissionViews.add(new ComponentSubmissionView(userSubmission));
+			// }
 
 			UserSubmissionPageView userSubmissionPageView = new UserSubmissionPageView(componentSubmissionViews, workPlans);
-
-			return Response.ok(userSubmissionPageView).build();
+			
+			GenericEntity<UserSubmissionPageView> entity = new GenericEntity<UserSubmissionPageView>(userSubmissionPageView)
+			{
+			};
+			return sendSingleEntityResponse(entity);
 		} else {
 			return Response.status(Response.Status.FORBIDDEN).build();
 		}
+//			return Response.ok(userSubmissionPageView).build();
+//		} else {
+//			return Response.status(Response.Status.FORBIDDEN).build();
+//		}
 	}
 
 	private List<SubmissionView> flagSubmissionsWithEvaluations(List<ComponentView> componentViews)

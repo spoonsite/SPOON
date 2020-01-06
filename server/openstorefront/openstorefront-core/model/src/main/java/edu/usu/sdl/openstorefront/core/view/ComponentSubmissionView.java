@@ -15,11 +15,8 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
-import java.util.Date;
 
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
-import edu.usu.sdl.openstorefront.core.entity.Component;
-import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 
 /**
  * This is a wrapper class of the basic component. It includes the workPlanId of which workPlan it is in.
@@ -29,97 +26,63 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 public class ComponentSubmissionView
     extends SubmissionView
 {
+
     @ConsumeField
     private String workPlanID;
 
     @ConsumeField
     private String stepId;
+	
+	@ConsumeField
+    private Boolean isChangeRequest;
 
     public ComponentSubmissionView(){}
 
-    public ComponentSubmissionView(Component component, String workPlanId, String stepId){
-        this.name = component.getName();
-        this.status = component.getApprovalState();
-        this.type = component.getComponentType();
-        this.approveDts = component.getApprovedDts();
-        this.lastActivityDts = component.getLastActivityDts(); 
-        this.pendingChangeId = component.getPendingChangeId();
-        this.submissionId = null;
-        this.componentId = component.getComponentId();
-        this.isChangeRequest = false;
+    public ComponentSubmissionView(SubmissionView submissionView, String workPlanId, String stepId){
+//		ComponentSubmissionView componentSubmission = new ComponentSubmissionView();
+//		try {
+//			BeanUtils.copyProperties(submission, componentSubmission);
+//		} catch (IllegalAccessException | InvocationTargetException ex) {
+//			throw new OpenStorefrontRuntimeException(ex);
+//		}
+//		super.updateFields(submission);
+//		Component component = (Component) submissionView;
+//		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, component);
+		
+		super.setComponentTypeLabel(submissionView.getComponentTypeLabel());
+		super.setApprovalStateLabel(submissionView.getApprovalStateLabel());
+		super.setNumberOfPendingChanges(submissionView.getNumberOfPendingChanges());
+		super.setStatusOfPendingChange(submissionView.getStatusOfPendingChange());
+		super.setPendingChangeComponentId(submissionView.getPendingChangeComponentId());
+		super.setPendingChangeSubmitDts(submissionView.getPendingChangeSubmitDts());
+		super.setUserSubmissionId(submissionView.getUserSubmissionId());
+		super.setName(submissionView.getName());
+		super.setApprovalState(submissionView.getApprovalState());
+		super.setApprovedDts(submissionView.getApprovedDts());
+		super.setDescription(submissionView.getDescription());
+		super.setLastActivityDts(submissionView.getLastActivityDts());
+		super.setComponentId(submissionView.getComponentId());
+		super.setUpdateDts(submissionView.getUpdateDts());
+		super.setSubmissionOriginalComponentId(submissionView.getSubmissionOriginalComponentId());
+		super.setEvaluationsAttached(submissionView.getEvaluationsAttached());
         this.workPlanID = workPlanId;
         this.stepId = stepId;
+		this.isChangeRequest = (submissionView.getComponentId() != null ? true : false);
+		
+//		super.setReleaseDate(submissionView.getReleaseDate());
+//		super.setDataSource(submissionView.getDataSource());
+//		super.setSubmissionTemplateId(submissionView.getSubmissionTemplateId());
+//		super.setSubmissionOriginalComponentId(submissionView.getSubmissionOriginalComponentId());
+//		super.setPendingChangeSubmitUser(submissionView.getPendingChangeSubmitUser());
+//		super.setOwnerEmail(submissionView.getOwnerEmail());
+//		super.setSecurityMarkingDescription(submissionView.getSecurityMarkingDescription());
+//		super.setComponentIconId(submissionView.getComponentIconId());
+//		super.setComponentTypeIconUrl(submissionView.getComponentTypeIconUrl());
+//		super.setComponentTypeNestedModel(submissionView.getComponentTypeNestedModel());
+//		super.setCurrentDataOwner(submissionView.getCurrentDataOwner());
+
     }
 
-    public ComponentSubmissionView(UserSubmission userSubmission){
-        this.name = userSubmission.getSubmissionName();
-        this.status = "N";
-        this.type = userSubmission.getComponentType();
-        this.approveDts = null;
-        this.lastActivityDts = userSubmission.getUpdateDts();
-        this.submissionId = userSubmission.getUserSubmissionId();
-        this.componentId = null;
-        this.pendingChangeId = null;
-        this.isChangeRequest = (userSubmission.getOriginalComponentId() != null ? true : false);
-        this.workPlanID = null;
-        this.stepId = null;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Date getApproveDts() {
-        return approveDts;
-    }
-
-    public void setApproveDts(Date approveDts) {
-        this.approveDts = approveDts;
-    }
-
-    public Date getLastActivityDts() {
-        return lastActivityDts;
-    }
-
-    public void setLastActivityDts(Date lastActivityDts) {
-        this.lastActivityDts = lastActivityDts;
-    }
-
-    public String getSubmissionId() {
-        return submissionId;
-    }
-
-    public void setSubmissionId(String submissionId) {
-        this.submissionId = submissionId;
-    }
-
-    public String getComponentId() {
-        return componentId;
-    }
-
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
-    }
 
     public String getWorkPlanID() {
         return workPlanID;
@@ -136,20 +99,12 @@ public class ComponentSubmissionView
     public void setStepId(String stepId) {
         this.stepId = stepId;
     }
-
-    public Boolean getIsChangeRequest() {
+	
+	public Boolean getIsChangeRequest() {
         return isChangeRequest;
     }
 
     public void setIsChangeRequest(Boolean isChangeRequest) {
         this.isChangeRequest = isChangeRequest;
-    }
-
-    public String getPendingChangeId() {
-        return pendingChangeId;
-    }
-
-    public void setPendingChangeId(String pendingChangeId) {
-        this.pendingChangeId = pendingChangeId;
     }
 }
