@@ -38,6 +38,24 @@ public class WorkPlanStatusReportModel
 	 */
 	private HashMap<String, Integer> stepEntryInstanceCount = new HashMap<>();
 
+	/**
+	 * This is a boolean flag denoting whether there were faulty work plan links that
+	 * were in the workplan, yet did not correspond with an actual component in the database
+	 * as all workplan links should.
+	 *
+	 * Should be TRUE if there are deficient work links, FALSE if no such faulty work links were detected.
+	 *
+	 * In v2.12, this flag gets set when a query for the component that a workplan link is
+	 * meant to represent returns null @see{WorkPlanStatusReport#gatherData()}
+	 *
+	 * In v2.12, this flag is checked, and if found true, a warning message is appended to
+	 * the report for the user to see. @see{WorkPlanStatusReport#
+	 */
+	private boolean areFaultyWorkPlanLinks = false;
+	
+	private List<String> faultyWorkLinksList = new ArrayList<>();
+
+
 	public WorkPlanStatusReportModel()
 	{
 	}
@@ -61,5 +79,30 @@ public class WorkPlanStatusReportModel
 	public void setStepEntryInstanceCount(HashMap<String, Integer> metaData)
 	{
 		this.stepEntryInstanceCount = metaData;
+	}
+
+	public boolean isAreFaultyWorkPlanLinks()
+	{
+		return areFaultyWorkPlanLinks;
+	}
+
+	public void setAreFaultyWorkPlanLinks(boolean areFaultyWorkPlanLinks)
+	{
+		this.areFaultyWorkPlanLinks = areFaultyWorkPlanLinks;
+	}
+	
+	public List<String> getFaultyWorkLinksList()
+	{
+		return faultyWorkLinksList;
+	}
+
+	public void setFaultyWorkLinksList(List<String> faultyWorkLinksList)
+	{
+		this.faultyWorkLinksList = faultyWorkLinksList;
+	}
+	
+	public void addToFaultyWorkLinksList(String faultyWorkLink)
+	{
+		this.faultyWorkLinksList.add(faultyWorkLink);
 	}
 }

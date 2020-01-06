@@ -110,6 +110,8 @@ public class WorkPlanStatusReport
 				// There can be cases where a faulty workPlan Link exists that doesn't represent a real component. In these cases we skip them.
 				if(evaluation == null){
 					LOG.log(Level.WARNING, "WorkPlanStatus Report rejected an item because it claimed to have an attached evaluation, but the reference to the evaluation was null.");
+					reportModel.setAreFaultyWorkPlanLinks(true);
+					reportModel.addToFaultyWorkLinksList(linkName);
 					continue;
 				}
 
@@ -129,7 +131,9 @@ public class WorkPlanStatusReport
 				
 				// There can be cases where a faulty workPlan Link exists that doesn't represent a real component. In these cases we skip them.
 				if(userSubmission == null){
-				LOG.log(Level.WARNING, "WorkPlanStatus Report rejected an workPlanLink for reporting because it claimed to represent a submission, but the reference to the submission was null.");
+					LOG.log(Level.WARNING, "WorkPlanStatus Report rejected an workPlanLink for reporting because it claimed to represent a submission, but the reference to the submission was null.");
+					reportModel.setAreFaultyWorkPlanLinks(true);
+					reportModel.addToFaultyWorkLinksList(linkName);
 					continue;
 				}
 
@@ -272,6 +276,13 @@ public class WorkPlanStatusReport
 				}
 			}
 		});
+		
+		if(workPlanStatusModel.isAreFaultyWorkPlanLinks()){
+			cvsGenerator.addLine(
+				"The numbers shown above may not be accurate, due to issues that arose while reading some parts: " 
+				+ workPlanStatusModel.getFaultyWorkLinksList().toString()
+			);
+		}
 
 		cvsGenerator.addLine(""); // Empty space for clarity
 		cvsGenerator.addLine(
