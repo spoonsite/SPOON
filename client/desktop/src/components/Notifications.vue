@@ -33,6 +33,7 @@
           >No Notifications</v-card-text
         >
         <v-card-actions>
+          <v-spacer />
           <v-btn
             v-if="notifications && notifications.length > 0"
             color="primary"
@@ -53,7 +54,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn :loading="deletingAllNotifications" color="warning" @click="deleteAllNotifications()">
-            <v-icon>mdi-delete</v-icon>Delete
+            Delete
           </v-btn>
           <v-btn @click="deleteAllDialog = false">Cancel</v-btn>
         </v-card-actions>
