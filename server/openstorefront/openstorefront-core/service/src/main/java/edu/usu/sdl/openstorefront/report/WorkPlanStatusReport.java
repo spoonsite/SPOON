@@ -112,17 +112,18 @@ public class WorkPlanStatusReport
 					LOG.log(Level.WARNING, "WorkPlanStatus Report rejected an item because it claimed to have an attached evaluation, but the reference to the evaluation was null.");
 					reportModel.setAreFaultyWorkPlanLinks(true);
 					reportModel.addToFaultyWorkLinksList(linkName);
-					continue;
-				}
+					//continue;  uncomment to omit any reference to undefined WorkPlanLinks
+				} else{
 
-				linkName = service.getComponentService().getComponentName(evaluation.getComponentId());
+					linkName = service.getComponentService().getComponentName(evaluation.getComponentId());
 
-				String componentType = service.getComponentService().getComponentTypeForComponent(link.getComponentId());
-				lineModel.setComponentType(service.getComponentService().getComponentTypeParentsString(componentType, false));
-				if (StringUtils.isBlank(linkName)) {
-					linkName = service.getComponentService().getComponentName(evaluation.getOriginComponentId());
-					//can't switch type on evals
-					//lineModel.setComponentType(service.getComponentService().getComponentTypeParentsString(evaluation.getOriginComponentId(), false));
+					String componentType = service.getComponentService().getComponentTypeForComponent(link.getComponentId());
+					lineModel.setComponentType(service.getComponentService().getComponentTypeParentsString(componentType, false));
+					if (StringUtils.isBlank(linkName)) {
+						linkName = service.getComponentService().getComponentName(evaluation.getOriginComponentId());
+						//can't switch type on evals
+						//lineModel.setComponentType(service.getComponentService().getComponentTypeParentsString(evaluation.getOriginComponentId(), false));
+					}
 				}
 			} else if (link.getUserSubmissionId() != null) {
 				UserSubmission userSubmission = new UserSubmission();
@@ -134,10 +135,11 @@ public class WorkPlanStatusReport
 					LOG.log(Level.WARNING, "WorkPlanStatus Report rejected an workPlanLink for reporting because it claimed to represent a submission, but the reference to the submission was null.");
 					reportModel.setAreFaultyWorkPlanLinks(true);
 					reportModel.addToFaultyWorkLinksList(linkName);
-					continue;
-				}
+					//continue;  uncomment to omit any refernece to undefined WorkPlanLinks
+				} else {
 
-				linkName = userSubmission.getSubmissionName();
+					linkName = userSubmission.getSubmissionName();
+				}
 			}
 			lineModel.setLinkName(linkName);
 
