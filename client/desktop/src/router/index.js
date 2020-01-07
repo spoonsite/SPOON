@@ -7,6 +7,7 @@ import ContactUs from '@/views/ContactUs'
 import Profile from '@/views/Profile'
 import EntryDetail from '@/views/EntryDetail'
 import Watches from '@/views/Watches'
+import SubmissionForm from '@/views/SubmissionForm'
 
 Vue.use(VueRouter)
 
@@ -46,6 +47,11 @@ const routes = [
     path: '/watches',
     name: 'Watches',
     component: Watches
+  },
+  {
+    path: '/submissionForm',
+    name: 'SubmissionForm',
+    component: SubmissionForm
   }
   // {
   //   path: '/about',
