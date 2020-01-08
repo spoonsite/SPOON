@@ -1,6 +1,10 @@
 <template>
   <div>
     <h1 class="text-center">Submission Form</h1>
+    <div class="text-center" style="color: red;">
+      <h2>Caution!</h2>
+      <p>{{ this.$store.state.branding.userInputWarning }}</p>
+    </div>
     <v-form v-model="isFormValid" ref="submissionForm" style="width: 80%;" class="mx-auto">
       <fieldset>
         <legend>Title</legend>
@@ -10,7 +14,7 @@
       </fieldset>
       <fieldset>
         <legend>Image Upload</legend>
-        <v-file-input label="Upload Image" />
+        <v-file-input v-model="images" label="Upload Image(s)" chips multiple />
       </fieldset>
       <fieldset>
         <legend>Description</legend>
@@ -23,6 +27,7 @@
       <fieldset>
         <legend>Resources</legend>
         <h3>Resources here</h3>
+        <v-text-field label="Media Description" />
         <v-file-input label="Add file" />
       </fieldset>
       <fieldset>
@@ -46,14 +51,13 @@
 <script>
 export default {
   name: 'SubmissionForm',
-  mounted() {
-    this.$ref.entryTitle.focus()
-  },
+  mounted() {},
   data: () => ({
     isFormValid: false,
     rules: {
       required: value => !!value || 'Required'
-    }
+    },
+    images: []
   }),
   methods: {
     submit() {
@@ -62,6 +66,11 @@ export default {
       } else {
         console.log('Form is invalid')
       }
+    }
+  },
+  watch: {
+    images: function() {
+      console.log(this.images)
     }
   }
 }
