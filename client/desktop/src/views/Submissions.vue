@@ -27,9 +27,9 @@
         >
           <template v-slot:item.name="{ item }">
             {{ item.name }}
-            <div v-if="item.submissionOriginalComponentId" class="red">Incomplete Change Request</div>
-            <div v-else-if="item.submissionId" class="red">Incomplete Submission</div>
-            <div v-else-if="item.evaluationsAttached" class="red">Evaluations Are In Progress</div>
+            <div v-if="item.submissionOriginalComponentId" style="color: red;">Incomplete Change Request</div>
+            <div v-else-if="item.submissionId" style="color: red;">Incomplete Submission</div>
+            <div v-else-if="item.evaluationsAttached" style="color: red;">Evaluations Are In Progress</div>
           </template>
           <template v-slot:item.status="{ item }">
             <div v-if="item.status === 'A'">Active</div>
@@ -162,13 +162,27 @@
           >
             Delete Change
           </v-btn>
-          <p v-if="deleteChange || !currentComponent.hasChangeRequest" style="padding-top: 1em;">
+          <p
+            v-if="currentComponent.hasChangeRequest && deleteChange"
+            style="padding-top: 1em;"
+          >
+            Are you sure you want to delete the change request for: {{ currentComponent.name }}?
+          </p>
+          <p
+            v-else-if="!currentComponent.hasChangeRequest && !requestRemoval"
+            style="padding-top: 1em;"
+          >
             Are you sure you want to delete: {{ currentComponent.name }}?
           </p>
-          <v-form v-if="requestRemoval">
+          <v-form v-if="requestRemoval" v-model="isFormValid">
             <v-container>
               <p>Reason:*</p>
-              <v-textarea style="background-color: white;" v-model="removalForm.message" outline></v-textarea>
+              <v-textarea
+                style="background-color: white;"
+                v-model="removalForm.message"
+                :rules="formMessageRules"
+                outlined
+              ></v-textarea>
               <p>Contact Information:</p>
               <v-text-field :rules="formNameRules" single-line label="Name*" v-model="removalForm.name"> </v-text-field>
               <v-text-field :rules="formEmailRules" single-line label="Email*" v-model="removalForm.email">
@@ -180,14 +194,19 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="warning" v-if="requestRemoval" @click="submitRemoval()">
+          <v-btn
+            v-if="requestRemoval"
+            color="warning"
+            @click="submitRemoval()"
+            :disabled="!isFormValid"
+          >
             Submit
           </v-btn>
           <p v-else-if="currentComponent.hasChangeRequest && !requestRemoval && !deleteChange"></p>
           <v-btn color="warning" v-else @click="submitDeletion()">
-            Submit
+            Delete
           </v-btn>
-          <v-btn @click="deleteDialog = false">Cancel</v-btn>
+          <v-btn @click="deleteDialog = false; removalForm.message = '';">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -223,6 +242,7 @@ export default {
         type: '',
         submitDate: '',
         pendingChange: false,
+        isFormValid: false,
         lastUpdate: '',
         steps: [
           {
@@ -254,7 +274,8 @@ export default {
         v => !!v || 'Name is required'
       ],
       formEmailRules: [
-        v => !!v || 'Email is required'
+        v => !!v || 'E-mail is required',
+        v => /.+@.+/.test(v) || 'E-mail must be valid'
       ],
       formReasonRules: [
         v => !!v || 'A reason is required'
