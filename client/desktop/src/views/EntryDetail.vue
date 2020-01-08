@@ -869,7 +869,6 @@ export default {
     getAddDetail() {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}`)
         .then(response => {
-          console.log(response)
           this.addDetail = response.data
         })
         .finally(() => {
@@ -889,7 +888,6 @@ export default {
       this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/detail`)
         .then(response => {
-          console.log(response)
           this.detail = response.data
         })
         .catch(e => this.errors.push(e))
