@@ -2,12 +2,8 @@
   <div>
     <v-form style="padding: 1em; padding-top: 2em;">
       <v-flex class="d-flex" xs5>
-        <v-btn class="top-buttons" @click="getUserParts()"
-          ><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn
-        >
-        <v-btn class="top-buttons" @click="showData()"
-          ><v-icon left>fas fa-plus</v-icon>Add New</v-btn
-        >
+        <v-btn class="top-buttons" @click="getUserParts()"><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn>
+        <v-btn class="top-buttons" @click="showData()"><v-icon left>fas fa-plus</v-icon>Add New</v-btn>
         <v-btn class="top-buttons" @click="bulkUploadDialog = true"
           ><v-icon left>fas fa-upload</v-icon>Bulk Upload</v-btn
         >
@@ -53,17 +49,8 @@
           </template>
           <template v-slot:item.approvalWorkflow="{ item }">
             <svg width="200" height="50">
-              <g v-for="(step, i) in item.steps"
-                :key="step.name"
-                :id="step.name"
-              >
-                <circle
-                  :cx="20 + i * 50"
-                  cy="25"
-                  r="15"
-                  stroke="black"
-                  :fill="'#' + step.color"
-                />
+              <g v-for="(step, i) in item.steps" :key="step.name" :id="step.name">
+                <circle :cx="20 + i * 50" cy="25" r="15" stroke="black" :fill="'#' + step.color" />
                 <line
                   v-if="i !== item.steps.length - 1"
                   :x1="35 + i * 50"
@@ -87,7 +74,7 @@
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-btn icon  v-on="on">
+                  <v-btn icon v-on="on">
                     <v-icon>fas fa-pencil-alt</v-icon>
                   </v-btn>
                 </template>
@@ -103,11 +90,7 @@
               </v-tooltip>
               <v-tooltip bottom v-if="item.status !== 'P'">
                 <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    v-on="on"
-                    @click="determineDeleteForm(item)"
-                  >
+                  <v-btn icon v-on="on" @click="determineDeleteForm(item)">
                     <v-icon>fas fa-trash</v-icon>
                   </v-btn>
                 </template>
@@ -124,21 +107,18 @@
         <ModalTitle title="Bulk Uploads" @close="bulkUploadDialog = false" />
         <v-card-text>
           <p>
-            This bulk upload tool is designed to help you submit a part or parts
-            into our database. You can upload a zip file containing PDFs, excel
-            spreadsheets, or other human readable files. The SPOON support team
-            will then do all the data entry for you.
+            This bulk upload tool is designed to help you submit a part or parts into our database. You can upload a zip
+            file containing PDFs, excel spreadsheets, or other human readable files. The SPOON support team will then do
+            all the data entry for you.
           </p>
           <p>
-            Once SPOON support is done entering your information, you will then
-            need to review and submit the information for Subject Matter Expert
-            (SME) review. Once the SME has approved your information your part
+            Once SPOON support is done entering your information, you will then need to review and submit the
+            information for Subject Matter Expert (SME) review. Once the SME has approved your information your part
             will become searchable on the site.
           </p>
           <p style="color: red;">
-            The information submitted to this site will be made publicly
-            available. Please do not submit any sensitive information such as
-            proprietary or ITAR restricted information.
+            The information submitted to this site will be made publicly available. Please do not submit any sensitive
+            information such as proprietary or ITAR restricted information.
           </p>
         </v-card-text>
         <v-card-actions>
@@ -166,78 +146,48 @@
         <v-card-text>
           <v-btn
             v-if="currentComponent.hasChangeRequest"
-            @click="requestRemoval = true; deleteChange = false;"
+            @click="
+              requestRemoval = true
+              deleteChange = false
+            "
           >
             Request Removal
           </v-btn>
           <v-btn
             v-if="currentComponent.hasChangeRequest"
-            @click="deleteChange = true; requestRemoval = false;"
+            @click="
+              deleteChange = true
+              requestRemoval = false
+            "
           >
             Delete Change
           </v-btn>
-          <p
-            v-if="deleteChange || !currentComponent.hasChangeRequest"
-            style="padding-top: 1em;"
-          >
+          <p v-if="deleteChange || !currentComponent.hasChangeRequest" style="padding-top: 1em;">
             Are you sure you want to delete: {{ currentComponent.name }}?
           </p>
           <v-form v-if="requestRemoval">
             <v-container>
               <p>Reason:*</p>
-              <v-textarea
-                style="background-color: white;"
-                v-model="removalForm.message"
-                outline
-              ></v-textarea>
+              <v-textarea style="background-color: white;" v-model="removalForm.message" outline></v-textarea>
               <p>Contact Information:</p>
-              <v-text-field
-                :rules="formNameRules"
-                single-line
-                label="Name*"
-                v-model="removalForm.name"
-              >
+              <v-text-field :rules="formNameRules" single-line label="Name*" v-model="removalForm.name"> </v-text-field>
+              <v-text-field :rules="formEmailRules" single-line label="Email*" v-model="removalForm.email">
               </v-text-field>
-              <v-text-field
-                :rules="formEmailRules"
-                single-line
-                label="Email*"
-                v-model="removalForm.email"
-              >
-              </v-text-field>
-              <v-text-field
-                single-line
-                label="Phone"
-                v-model="removalForm.phone"
-              >
-              </v-text-field>
-              <v-text-field
-                single-line
-                label="Organization"
-                v-model="removalForm.organization"
-              >
-              </v-text-field>
+              <v-text-field single-line label="Phone" v-model="removalForm.phone"> </v-text-field>
+              <v-text-field single-line label="Organization" v-model="removalForm.organization"> </v-text-field>
             </v-container>
           </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            color=warning
-            v-if="requestRemoval"
-            @click="submitRemoval()"
-          >
+          <v-btn color="warning" v-if="requestRemoval" @click="submitRemoval()">
             Submit
           </v-btn>
           <p v-else-if="currentComponent.hasChangeRequest && !requestRemoval && !deleteChange"></p>
-          <v-btn
-            color=warning
-            v-else
-            @click="submitDeletion()"
-          >
+          <v-btn color="warning" v-else @click="submitDeletion()">
             Submit
           </v-btn>
-          <v-btn @click="deleteDialog=false;">Cancel</v-btn>
+          <v-btn @click="deleteDialog = false">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -315,6 +265,7 @@ export default {
   },
   methods: {
     getUserParts() {
+      this.componentData = []
       this.counter = 0
       this.isLoading = true
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions/user')
@@ -350,6 +301,12 @@ export default {
       let components = allComponents.filter(e => e.componentId !== undefined)
       let submissions = allComponents.filter(e => e.userSubmissionId !== undefined)
       let updatedComponents = []
+
+      for (var i = 0; i < components.length; i++) {
+        if (components[i].statusOfPendingChange) {
+          console.log(components[i])
+        }
+      }
 
       components.forEach(component => {
         let myWorkPlan = null
@@ -416,7 +373,8 @@ export default {
         steps: steps,
         submissionOriginalComponentId: component.submissionOriginalComponentId,
         evaluationsAttached: component.evaluationsAttached,
-        hasChangeRequest: component.statusOfPendingChange != null
+        hasChangeRequest: component.statusOfPendingChange != null,
+        pendingChangeComponentId: component.pendingChangeComponentId
       }
 
       return updatedComponent
@@ -448,7 +406,33 @@ export default {
       alert('removal')
     },
     submitDeletion() {
-      alert('deletion')
+      this.isLoading = true
+      if (this.currentComponent.submissionId) {
+        this.$http.delete(`/openstorefront/api/v1/resource/usersubmissions/${this.currentComponent.submissionId}`)
+          .then(response => {
+            this.$toasted.show('Submission Deleted')
+            this.getUserParts()
+            this.deleteDialog = false
+          })
+          .catch(error => {
+            this.$toasted.error('Submission could not be deleted.')
+            this.errors.push(error)
+            this.isLoading = false
+          })
+      } else {
+        this.$http.delete(`/openstorefront/api/v1/resource/components/${this.currentComponent.pendingChangeComponentId}/cascade`)
+          .then(response => {
+            this.$toasted.show('Submission Deleted')
+            this.getUserParts()
+            this.deleteDialog = false
+          })
+          .catch(error => {
+            this.$toasted.error('Submission could not be deleted.')
+            this.errors.push(error)
+            this.isLoading = false
+          })
+        console.log(this.currentComponent)
+      }
     }
   }
 }
