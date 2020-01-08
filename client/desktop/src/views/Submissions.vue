@@ -244,6 +244,7 @@ export default {
       deleteChange: false,
       currentComponent: {},
       removalForm: {
+        message: '',
         name: '',
         email: '',
         phone: '',
@@ -301,12 +302,6 @@ export default {
       let components = allComponents.filter(e => e.componentId !== undefined)
       let submissions = allComponents.filter(e => e.userSubmissionId !== undefined)
       let updatedComponents = []
-
-      for (var i = 0; i < components.length; i++) {
-        if (components[i].statusOfPendingChange) {
-          console.log(components[i])
-        }
-      }
 
       components.forEach(component => {
         let myWorkPlan = null
@@ -403,7 +398,24 @@ export default {
       this.deleteDialog = true
     },
     submitRemoval() {
-      alert('removal')
+      let data = {
+        securityMarkingType: '',
+        dataSensitivity: '',
+        description: 'Entry Name: ' + this.currentComponent.name + '\n\n' + this.removalForm.message,
+        fullname: this.removalForm.name,
+        email: this.removalForm.email,
+        organization: this.removalForm.organization,
+        phone: this.removalForm.phone,
+        summary: this.currentComponent.name,
+        ticketType: 'Request entry to be Unapproved'
+      }
+      this.$http.post(`/openstorefront/api/v1/resource/feedbacktickets`, data)
+        .then(response => {
+          this.deleteDialog = false
+          this.removalForm.message = ''
+          this.$toasted.show('Sent Sucessfully.')
+        })
+        .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
     },
     submitDeletion() {
       this.isLoading = true
@@ -431,7 +443,6 @@ export default {
             this.errors.push(error)
             this.isLoading = false
           })
-        console.log(this.currentComponent)
       }
     }
   }
