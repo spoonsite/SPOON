@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
     <v-form style="padding: 1em; padding-top: 2em;">
-      <div>
+      <v-flex class="d-flex" xs5>
         <v-btn class="top-buttons" @click="getUserParts()"
           ><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn
         >
@@ -11,15 +11,23 @@
         <v-btn class="top-buttons" @click="bulkUploadDialog = true"
           ><v-icon left>fas fa-upload</v-icon>Bulk Upload</v-btn
         >
-      </div>
+        <v-text-field
+          v-model="search"
+          append-icon="fas fa-search"
+          label="Search"
+          single-line
+          hide-details
+          style="padding-left: 1em; margin-bottom: 10px;"
+        ></v-text-field>
+      </v-flex>
       <div class="d-flex">
         <v-data-table
           :headers="tableHeaders"
           :items="componentData"
-          :items-per-page="1500"
+          :items-per-page="10"
           :loading="isLoading"
           class="tableLayout"
-          hide-default-footer
+          :search="search"
         >
           <template v-slot:item.name="{ item }">
             {{ item.name }}
@@ -71,7 +79,7 @@
             <div style="display: flex; flex-direction: row;">
               <v-tooltip bottom v-if="item.componentId">
                 <template v-slot:activator="{ on }">
-                  <v-btn icon v-on="on">
+                  <v-btn icon v-on="on" :to="{ name: 'Entry Detail', params: { id: item.componentId } }">
                     <v-icon>fas fa-eye</v-icon>
                   </v-btn>
                 </template>
@@ -87,7 +95,7 @@
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-btn icon  v-on="on">
+                  <v-btn icon>
                     <v-icon>far fa-comment</v-icon>
                   </v-btn>
                 </template>
@@ -98,6 +106,7 @@
                   <v-btn
                     icon
                     v-on="on"
+                    @click="determineDeleteForm(item)"
                   >
                     <v-icon>fas fa-trash</v-icon>
                   </v-btn>
@@ -109,6 +118,7 @@
         </v-data-table>
       </div>
     </v-form>
+
     <v-dialog v-model="bulkUploadDialog" width="35em">
       <v-card>
         <ModalTitle title="Bulk Uploads" @close="bulkUploadDialog = false" />
@@ -137,11 +147,11 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
     <v-dialog v-model="commentsDialog" width="35em">
       <v-card>
         <ModalTitle title="Comments" @close="commentsDialog = false" />
         <v-card-text>
-          <!-- <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p> -->
           <p>{{ comments }}</p>
         </v-card-text>
         <v-card-actions>
@@ -149,13 +159,30 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
     <v-dialog v-model="deleteDialog" width="35em">
       <v-card>
         <ModalTitle title="Delete?" @close="deleteDialog = false" />
         <v-card-text>
-          <p v-if="currentComponent.status === 'N'">Are you sure you want to delete: {{ currentComponent.name }}?</p>
-          <p>{{currentComponent}}</p>
-          <v-form>
+          <v-btn
+            v-if="currentComponent.hasChangeRequest"
+            @click="requestRemoval = true; deleteChange = false;"
+          >
+            Request Removal
+          </v-btn>
+          <v-btn
+            v-if="currentComponent.hasChangeRequest"
+            @click="deleteChange = true; requestRemoval = false;"
+          >
+            Delete Change
+          </v-btn>
+          <p
+            v-if="deleteChange || !currentComponent.hasChangeRequest"
+            style="padding-top: 1em;"
+          >
+            Are you sure you want to delete: {{ currentComponent.name }}?
+          </p>
+          <v-form v-if="requestRemoval">
             <v-container>
               <p>Reason:*</p>
               <v-textarea
@@ -192,14 +219,25 @@
               </v-text-field>
             </v-container>
           </v-form>
-          <!-- <p>Tag to be removed: <strong style="color: red;">{{ tagName }}</strong></p> -->
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn v-if="currentComponent.hasChangeRequest" @click="requestRemoval = true; deleteChange = false;">Request Removal</v-btn>
-          <v-btn v-if="currentComponent.hasChangeRequest" @click="deleteChange = true; requestRemoval = false;">Delete Change</v-btn>
-          <v-btn color=warning>Yes</v-btn>
-          <v-btn>No</v-btn>
+          <v-btn
+            color=warning
+            v-if="requestRemoval"
+            @click="submitRemoval()"
+          >
+            Submit
+          </v-btn>
+          <p v-else-if="currentComponent.hasChangeRequest && !requestRemoval && !deleteChange"></p>
+          <v-btn
+            color=warning
+            v-else
+            @click="submitDeletion()"
+          >
+            Submit
+          </v-btn>
+          <v-btn @click="deleteDialog=false;">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -248,6 +286,7 @@ export default {
       comments: [],
       isLoading: true,
       counter: 0,
+      search: '',
       bulkUploadDialog: false,
       commentsDialog: false,
       deleteDialog: false,
@@ -280,10 +319,8 @@ export default {
       this.isLoading = true
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions/user')
         .then(response => {
-          // console.log(response)
           this.isLoading = false
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
-          // console.log(this.componentData)
         }).catch(error => {
           this.isLoading = false
           this.errors.push(error)
@@ -310,17 +347,10 @@ export default {
       this.$router.push({ name: 'Entry Detail', params: { id: componentId } })
     },
     combineComponentsAndWorkPlans(allComponents, workPlans) {
-      for (var i = 0; i < allComponents.length; i++) {
-        if (allComponents[i].componentId === undefined) {
-          console.log(allComponents[i])
-        }
-      }
       let components = allComponents.filter(e => e.componentId !== undefined)
       let submissions = allComponents.filter(e => e.userSubmissionId !== undefined)
       let updatedComponents = []
 
-      // console.log(components)
-      // console.log(submissions)
       components.forEach(component => {
         let myWorkPlan = null
         workPlans.forEach(workPlan => {
@@ -402,6 +432,23 @@ export default {
         submissionOriginalComponentId: submission.submissionOriginalComponentId,
         evaluationsAttached: submission.evaluationsAttached
       }
+    },
+    determineDeleteForm(item) {
+      this.currentComponent = item
+      this.requestRemoval = false
+      this.deleteChange = false
+      if (this.currentComponent.status === 'A' && this.currentComponent.hasChangeRequest) {
+        this.requestRemoval = false
+      } else if (this.currentComponent.status === 'A') {
+        this.requestRemoval = true
+      }
+      this.deleteDialog = true
+    },
+    submitRemoval() {
+      alert('removal')
+    },
+    submitDeletion() {
+      alert('deletion')
     }
   }
 }
