@@ -14,7 +14,12 @@
       </fieldset>
       <fieldset>
         <legend>Image Upload</legend>
-        <v-file-input v-model="images" label="Upload Image(s)" chips multiple />
+        <v-btn color="grey lighten-2" class="ma-2" @click="addImage"><v-icon left>mdi-plus</v-icon>Add image</v-btn>
+        <div v-for="(item, index) in images" :key="index">
+          <v-file-input v-model="item.file" label="Upload Image" />
+          <v-text-field v-model="item.caption" label="Image Caption" />
+          <v-btn icon><v-icon>mdi-delete</v-icon></v-btn>
+        </div>
       </fieldset>
       <fieldset>
         <legend>Description</legend>
@@ -66,6 +71,9 @@ export default {
       } else {
         console.log('Form is invalid')
       }
+    },
+    addImage() {
+      this.images.push({ file: null, caption: '' })
     }
   },
   watch: {
@@ -76,4 +84,14 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+fieldset {
+  border: 0px;
+  /* background-color: hsl(0, 0%, 90%); */
+  border-radius: 10px;
+  margin: 2em 0;
+}
+legend {
+  margin-left: 1em;
+}
+</style>
