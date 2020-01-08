@@ -387,11 +387,6 @@ export default {
           this.answer.isLoading = false
         })
     }
-  },
-  watch: {
-    expanded(val) {
-      console.log(val)
-    }
   }
 }
 </script>
