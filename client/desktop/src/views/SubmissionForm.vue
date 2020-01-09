@@ -14,12 +14,27 @@
       </fieldset>
       <fieldset>
         <legend>Image Upload</legend>
-        <v-btn color="grey lighten-2" class="ma-2" @click="addImage"><v-icon left>mdi-plus</v-icon>Add image</v-btn>
-        <div v-for="(item, index) in images" :key="index">
-          <v-file-input v-model="item.file" label="Upload Image" />
-          <v-text-field v-model="item.caption" label="Image Caption" />
-          <v-btn icon><v-icon>mdi-delete</v-icon></v-btn>
-        </div>
+        <v-btn color="grey lighten-2" class="ma-4" @click="addImage"><v-icon left>mdi-plus</v-icon>Add image</v-btn>
+        <v-row v-for="(item, index) in images" :key="index" class="mx-4">
+          <v-col cols="12" md="1">
+            <v-img :src="item.img" alt="No preview available" max-height="80px" max-width="80px" contain />
+          </v-col>
+          <v-col cols="12" md="5">
+            <v-file-input
+              v-model="item.file"
+              label="Upload Image*"
+              required
+              :rules="[rules.required]"
+              @change="imageChange(index)"
+            />
+          </v-col>
+          <v-col cols="12" md="5">
+            <v-text-field v-model="item.caption" label="Image Caption*" required :rules="[rules.required]" />
+          </v-col>
+          <v-col cols="12" md="1">
+            <v-btn @click="removeImage(index)"><v-icon left>mdi-delete</v-icon>Delete</v-btn>
+          </v-col>
+        </v-row>
       </fieldset>
       <fieldset>
         <legend>Description</legend>
@@ -73,21 +88,32 @@ export default {
       }
     },
     addImage() {
-      this.images.push({ file: null, caption: '' })
+      this.images.push({ file: null, caption: '', img: '' })
+    },
+    removeImage(index) {
+      this.images.splice(index, 1)
+    },
+    imageChange(index) {
+      let e = this.images[index]
+      let reader = new FileReader()
+      reader.onloadend = function() {
+        e.img = reader.result
+      }
+      if (e.file) {
+        reader.readAsDataURL(e.file)
+      } else {
+        e.img = ''
+      }
     }
   },
-  watch: {
-    images: function() {
-      console.log(this.images)
-    }
-  }
+  watch: {}
 }
 </script>
 
 <style>
 fieldset {
   border: 0px;
-  /* background-color: hsl(0, 0%, 90%); */
+  background-color: hsl(0, 0%, 90%);
   border-radius: 10px;
   margin: 2em 0;
 }
