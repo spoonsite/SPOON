@@ -7,10 +7,56 @@
     </div>
     <v-form v-model="isFormValid" ref="submissionForm" style="width: 80%;" class="mx-auto">
       <fieldset>
-        <legend>Title</legend>
-        <v-text-field label="Entry Title*" required :rules="[rules.required]" class="mx-4" autofocus />
-        <v-text-field label="Entry Title*" required :rules="[rules.required]" class="mx-4" />
-        <v-text-field label="Organization*" required :rules="[rules.required]" class="mx-4" />
+        <legend>Entry Details*</legend>
+        <v-text-field
+          label="Entry Title*"
+          v-model="entryDetails.entryTitle"
+          required
+          :rules="[rules.required]"
+          class="mx-4"
+          autofocus
+        />
+        <v-text-field
+          label="Entry Type*"
+          v-model="entryDetails.entryType"
+          required
+          :rules="[rules.required]"
+          class="mx-4"
+        />
+        <v-text-field
+          label="Organization*"
+          v-model="entryDetails.organization"
+          required
+          :rules="[rules.required]"
+          class="mx-4"
+        />
+        <v-text-field
+          label="Security Marking*"
+          v-model="entryDetails.securityMarking"
+          required
+          :rules="[rules.required]"
+          class="mx-4"
+        />
+      </fieldset>
+      <fieldset>
+        <legend>Primary Point of Contact*</legend>
+        <v-text-field
+          label="First Name*"
+          v-model="primaryPOC.firstName"
+          required
+          :rules="[rules.required]"
+          class="mx-4"
+          autofocus
+        />
+        <v-text-field
+          label="Last Name*"
+          v-model="primaryPOC.lastName"
+          required
+          :rules="[rules.required]"
+          class="mx-4"
+        />
+        <v-text-field label="Email*" v-model="primaryPOC.email" required :rules="[rules.required]" class="mx-4" />
+        <v-text-field label="Phone*" v-model="primaryPOC.phone" required :rules="[rules.required]" class="mx-4" />
       </fieldset>
       <fieldset>
         <legend>Image Upload</legend>
@@ -37,12 +83,20 @@
         </v-row>
       </fieldset>
       <fieldset>
-        <legend>Description</legend>
+        <legend>Description*</legend>
         <v-textarea label="Description*" required :rules="[rules.required]" class="mx-4" />
       </fieldset>
       <fieldset>
         <legend>Attributes</legend>
         <h3>Attributes here</h3>
+        <div class="mx-4 mt-4">
+          <strong>Request New Attribute</strong>
+          <p class="mb-0">Please describe the attribute you would like to have added.</p>
+          <p class="mb-0">
+            Include the value for your entry, a brief description, and how your part is defined by the attribute.
+          </p>
+          <v-textarea label="Request New Attribute (opt.)" />
+        </div>
       </fieldset>
       <fieldset>
         <legend>Resources</legend>
@@ -74,10 +128,28 @@ export default {
   mounted() {},
   data: () => ({
     isFormValid: false,
+    entryDetails: {
+      entryTitle: '',
+      entryType: '',
+      organization: '',
+      securityMarking: ''
+    },
+    primaryPOC: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: ''
+    },
+    images: [],
+    description: '',
+    attributes: {
+      required: [],
+      optional: []
+    },
+
     rules: {
       required: value => !!value || 'Required'
-    },
-    images: []
+    }
   }),
   methods: {
     submit() {
@@ -106,7 +178,12 @@ export default {
       }
     }
   },
-  watch: {}
+  watch: {
+    entryType: function(oldVal, newVal) {
+      console.log(oldVal)
+      console.log(newVal)
+    }
+  }
 }
 </script>
 
