@@ -1,8 +1,5 @@
-# So you want to start up a docker container that is using mongo and then be able to connect to it?
 
-## Here we present the primary method for standing up a mongo db instance for developers
-
-### METHOD #1 Build a Docker Container with a Dockerfile
+## METHOD #1 Build a Docker Container with a Dockerfile
 
 1. First we need to create a file called "Dockerfile" and it has to have the following contents:
 
@@ -20,16 +17,12 @@ This docker file must be all by itself inside of its own directory.
 
 ```sh
 docker build -t spoon-mongo .
-```
 
-Followed by:
-
-```sh
 docker run -it --name some-mongo -p 27017:27017 spoon-mongo --config /etc/mongo/mongod.conf
 ```
 
 1. Finally you need to change some property lines inside of the openstorefront.properties file of your database directory.
-For example, the openstorefront.properties file might be found in: "C:\dev\...\SPOON_DEAD_STAGING\config"
+For example, the openstorefront.properties file might be found in: `C:\dev\SPOON_DATA\config`
 The following properties need to be added near the top of the file.
 
 ```ini
@@ -40,9 +33,7 @@ mongo.database=storefront
 1. Now that you have performed all the above steps, you just need to shutdown your tomcat server and restart it along with elasticsearch. After a few minutes your
 spoonsite instance should be up and running along all the data found in the aforementioned directory.
 
-## Here we show a secondary method to standing up a mongo instance, although this has had limited success
-
-### METHOD #2 Mount the mongod.conf file into the container
+## METHOD #2 Mount the mongod.conf file into the container
 
 1. First you need to make a mongod.conf file and give it the following contents:
 
@@ -54,7 +45,7 @@ net:
 ```
 
 1. Now that you have that file made, you need to take note of its parent directory location on disk.
-For example, the directory containing the file could be at "C:\dev\tempdir\".
+For example, the directory containing the file could be at `C:\dev\tempdir\`.
 
 1. Now you need to run the following command:
 
