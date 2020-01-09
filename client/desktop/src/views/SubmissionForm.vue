@@ -24,15 +24,23 @@
           required
           :rules="[rules.required]"
           class="mx-4"
-        >
-          <template v-slot:selection="data">
-            <p>{{ data.parentLabel }}</p>
-          </template>
-        </v-autocomplete>
-        <v-autocomplete label="Organization*" v-model="organization" required :rules="[rules.required]" class="mx-4" />
-        <v-text-field
+        />
+        <v-autocomplete
+          label="Organization*"
+          v-model="organization"
+          :items="organizationList"
+          item-text="name"
+          item-value="name"
+          required
+          :rules="[rules.required]"
+          class="mx-4"
+        />
+        <v-autocomplete
           label="Security Marking*"
           v-model="securityMarking"
+          :items="securityMarkingList"
+          item-text="description"
+          item-value="code"
           required
           :rules="[rules.required]"
           class="mx-4"
@@ -69,9 +77,9 @@
           </v-col>
         </v-row>
       </fieldset>
-      <fieldset>
+      <fieldset style="min-height: 300px">
         <legend>Description*</legend>
-        <v-textarea label="Description*" required :rules="[rules.required]" class="mx-4" />
+        <quill-editor style="height:200px;" class="ma-2" v-model="description" />
       </fieldset>
       <fieldset>
         <legend>Attributes</legend>
@@ -79,11 +87,31 @@
           <div v-if="attributes.required.length === 0">
             No required attributes available, please select an entry type
           </div>
-          <div v-else>Here are those required attributes: {{ attributes.required }}</div>
+          <div v-else>
+            Required Attributes:
+            <v-row v-for="attribute in attributes.required" :key="attribute.attributeType" class="mx-2">
+              <v-col cols="12" md="3" class="text-wrap: wrap">
+                {{ attribute.description }}
+              </v-col>
+              <v-col cols="12" md="7">
+                <v-text-field label="Value" />
+              </v-col>
+              <v-col cols="12" md="2">
+                <v-text-field label="Unit" />
+              </v-col>
+            </v-row>
+            <br />
+          </div>
           <div v-if="attributes.suggested.length === 0">
             No suggested attributes available, please select an entry type
           </div>
-          <div v-else>Here are those suggested attributes: {{ attributes.suggested }}</div>
+          <div v-else>
+            Suggested Attributes:
+            <div v-for="attribute in attributes.suggested" :key="attribute.attributeType">
+              {{ attribute.attributeType }}: {{ attribute.description }}
+            </div>
+            <br />
+          </div>
         </div>
         <div class="mx-4 mt-4">
           <strong>Request New Attribute</strong>
@@ -91,7 +119,7 @@
           <p class="mb-0">
             Include the value for your entry, a brief description, and how your part is defined by the attribute.
           </p>
-          <v-textarea label="Request New Attribute (opt.)" />
+          <v-textarea label="Request New Attribute (opt.)" v-model="attributes.missingAttribute" />
         </div>
       </fieldset>
       <fieldset>
@@ -122,7 +150,30 @@
 export default {
   name: 'SubmissionForm',
   mounted() {
-    console.log(this.$store.state.componentTypeList)
+    if (this.$store.state.currentUser.username) {
+      this.setName()
+    } else {
+      // trigger an update once the user has been fetched
+      this.$store.watch(
+        (state, getters) => state.currentUser,
+        (newValue, oldValue) => {
+          this.setName()
+        }
+      )
+    }
+    this.$http.get('openstorefront/api/v1/resource/organizations').then(response => {
+      this.organizationList = response.data.data
+    })
+    this.$http.get('openstorefront/api/v1/resource/lookuptypes/SecurityMarkingType').then(response => {
+      this.securityMarkingList = response.data
+    })
+    this.$http.get('openstorefront/api/v1/resource/attributes/required?componentType=CNDHE').then(response => {
+      this.attributes.required = response.data
+      console.log(response.data)
+    })
+    this.$http.get('openstorefront/api/v1/resource/attributes/optional?componentType=CNDHE').then(response => {
+      this.attributes.suggested = response.data.filter(e => e.attributeType !== 'MISSINGATTRIBUTE')
+    })
   },
   data: () => ({
     isFormValid: false,
@@ -132,6 +183,7 @@ export default {
     organization: '',
     organizationList: [],
     securityMarking: '',
+    securityMarkingList: [],
     // primaryPOC:
     firstName: '',
     lastName: '',
@@ -141,7 +193,8 @@ export default {
     description: '',
     attributes: {
       required: [],
-      suggested: []
+      suggested: [],
+      missingAttribute: ''
     },
 
     rules: {
@@ -149,6 +202,12 @@ export default {
     }
   }),
   methods: {
+    setName() {
+      this.firstName = this.$store.state.currentUser.firstName
+      this.lastName = this.$store.state.currentUser.lastName
+      this.phone = this.$store.state.currentUser.phone
+      this.email = this.$store.state.currentUser.email
+    },
     submit() {
       if (this.$refs.submissionForm.validate()) {
         console.log('Form is valid')
@@ -167,6 +226,7 @@ export default {
       let reader = new FileReader()
       reader.onloadend = function() {
         e.img = reader.result
+        console.log(e.img)
       }
       if (e.file) {
         reader.readAsDataURL(e.file)
