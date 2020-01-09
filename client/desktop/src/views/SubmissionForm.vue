@@ -10,29 +10,29 @@
         <legend>Entry Details*</legend>
         <v-text-field
           label="Entry Title*"
-          v-model="entryDetails.entryTitle"
+          v-model="entryTitle"
           required
           :rules="[rules.required]"
           class="mx-4"
           autofocus
         />
-        <v-text-field
+        <v-autocomplete
           label="Entry Type*"
-          v-model="entryDetails.entryType"
+          v-model="entryType"
+          :items="this.$store.state.componentTypeList"
+          item-text="parentLabel"
           required
           :rules="[rules.required]"
           class="mx-4"
-        />
-        <v-text-field
-          label="Organization*"
-          v-model="entryDetails.organization"
-          required
-          :rules="[rules.required]"
-          class="mx-4"
-        />
+        >
+          <template v-slot:selection="data">
+            <p>{{ data.parentLabel }}</p>
+          </template>
+        </v-autocomplete>
+        <v-autocomplete label="Organization*" v-model="organization" required :rules="[rules.required]" class="mx-4" />
         <v-text-field
           label="Security Marking*"
-          v-model="entryDetails.securityMarking"
+          v-model="securityMarking"
           required
           :rules="[rules.required]"
           class="mx-4"
@@ -40,23 +40,10 @@
       </fieldset>
       <fieldset>
         <legend>Primary Point of Contact*</legend>
-        <v-text-field
-          label="First Name*"
-          v-model="primaryPOC.firstName"
-          required
-          :rules="[rules.required]"
-          class="mx-4"
-          autofocus
-        />
-        <v-text-field
-          label="Last Name*"
-          v-model="primaryPOC.lastName"
-          required
-          :rules="[rules.required]"
-          class="mx-4"
-        />
-        <v-text-field label="Email*" v-model="primaryPOC.email" required :rules="[rules.required]" class="mx-4" />
-        <v-text-field label="Phone*" v-model="primaryPOC.phone" required :rules="[rules.required]" class="mx-4" />
+        <v-text-field label="First Name*" v-model="firstName" required :rules="[rules.required]" class="mx-4" />
+        <v-text-field label="Last Name*" v-model="lastName" required :rules="[rules.required]" class="mx-4" />
+        <v-text-field label="Email*" v-model="email" required :rules="[rules.required]" class="mx-4" />
+        <v-text-field label="Phone*" v-model="phone" required :rules="[rules.required]" class="mx-4" />
       </fieldset>
       <fieldset>
         <legend>Image Upload</legend>
@@ -88,7 +75,16 @@
       </fieldset>
       <fieldset>
         <legend>Attributes</legend>
-        <h3>Attributes here</h3>
+        <div class="mx-4 mt-4">
+          <div v-if="attributes.required.length === 0">
+            No required attributes available, please select an entry type
+          </div>
+          <div v-else>Here are those required attributes: {{ attributes.required }}</div>
+          <div v-if="attributes.suggested.length === 0">
+            No suggested attributes available, please select an entry type
+          </div>
+          <div v-else>Here are those suggested attributes: {{ attributes.suggested }}</div>
+        </div>
         <div class="mx-4 mt-4">
           <strong>Request New Attribute</strong>
           <p class="mb-0">Please describe the attribute you would like to have added.</p>
@@ -125,26 +121,27 @@
 <script>
 export default {
   name: 'SubmissionForm',
-  mounted() {},
+  mounted() {
+    console.log(this.$store.state.componentTypeList)
+  },
   data: () => ({
     isFormValid: false,
-    entryDetails: {
-      entryTitle: '',
-      entryType: '',
-      organization: '',
-      securityMarking: ''
-    },
-    primaryPOC: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: ''
-    },
+    // entryDetails:
+    entryTitle: '',
+    entryType: '',
+    organization: '',
+    organizationList: [],
+    securityMarking: '',
+    // primaryPOC:
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
     images: [],
     description: '',
     attributes: {
       required: [],
-      optional: []
+      suggested: []
     },
 
     rules: {
