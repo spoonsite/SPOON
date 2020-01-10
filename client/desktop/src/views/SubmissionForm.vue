@@ -35,7 +35,7 @@
           :rules="[rules.required]"
           class="mx-4"
         />
-        <v-autocomplete
+        <v-select
           label="Security Marking*"
           v-model="securityMarking"
           :items="securityMarkingList"
@@ -77,9 +77,9 @@
           </v-col>
         </v-row>
       </fieldset>
-      <fieldset style="min-height: 300px">
+      <fieldset style="height: 500px">
         <legend>Description*</legend>
-        <quill-editor style="height:200px;" class="ma-2" v-model="description" />
+        <quill-editor style="height:400px;" class="ma-2" v-model="description" />
       </fieldset>
       <fieldset>
         <legend>Attributes</legend>
@@ -88,27 +88,59 @@
             No required attributes available, please select an entry type
           </div>
           <div v-else>
-            Required Attributes:
-            <v-row v-for="attribute in attributes.required" :key="attribute.attributeType" class="mx-2">
-              <v-col cols="12" md="3" class="text-wrap: wrap">
-                {{ attribute.description }}
-              </v-col>
-              <v-col cols="12" md="7">
-                <v-text-field label="Value" />
-              </v-col>
-              <v-col cols="12" md="2">
-                <v-text-field label="Unit" />
-              </v-col>
-            </v-row>
+            <h2>Required Attributes:</h2>
+            <div v-for="attribute in attributes.required" :key="attribute.attributeType" class="mx-2">
+              <p style="word-wrap: wrap" class="pt-5 pr-4">{{ attribute.description }}</p>
+              <v-text-field
+                v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
+                v-model="attribute.selectedCodes"
+                label="Value"
+              />
+              <v-text-field
+                v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
+                v-model="attribute.selectedCodes"
+                label="Value"
+                :rules="[rules.numberOnly]"
+              />
+              <v-select v-else label="Value" :items="attribute.codes" item-text="label" item-code="code" />
+              <v-select
+                label="Unit"
+                v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+                :value="attribute.attributeUnit"
+                :items="attribute.attributeUnitList"
+                item-text="unit"
+                item-value="unit"
+              />
+            </div>
             <br />
           </div>
           <div v-if="attributes.suggested.length === 0">
-            No suggested attributes available, please select an entry type
+            No required attributes available, please select an entry type
           </div>
           <div v-else>
-            Suggested Attributes:
-            <div v-for="attribute in attributes.suggested" :key="attribute.attributeType">
-              {{ attribute.attributeType }}: {{ attribute.description }}
+            <h2>Suggested Attributes:</h2>
+            <div v-for="attribute in attributes.suggested" :key="attribute.attributeType" class="mx-2">
+              <p style="word-wrap: wrap" class="pt-5 pr-4">{{ attribute.description }}</p>
+              <v-text-field
+                v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
+                v-model="attribute.selectedCodes"
+                label="Value"
+              />
+              <v-text-field
+                v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
+                v-model="attribute.selectedCodes"
+                label="Value"
+                :rules="[rules.numberOnly]"
+              />
+              <v-select v-else label="Value" :items="attribute.codes" item-text="label" item-code="code" />
+              <v-select
+                label="Unit"
+                v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+                :value="attribute.attributeUnit"
+                :items="attribute.attributeUnitList"
+                item-text="unit"
+                item-value="unit"
+              />
             </div>
             <br />
           </div>
@@ -136,7 +168,7 @@
         <legend>Contacts</legend>
         <h3>Contacts here here</h3>
       </fieldset>
-      <v-btn color="primary">
+      <v-btn color="primary" @click="submit">
         Save and close
       </v-btn>
       <v-btn :disabled="!isFormValid" color="success" class="mr-4" @click="submit">
@@ -198,7 +230,8 @@ export default {
     },
 
     rules: {
-      required: value => !!value || 'Required'
+      required: value => !!value || 'Required',
+      numberOnly: value => !Number.isNaN(Number.parseFloat(value)) || 'This field only allows numbers'
     }
   }),
   methods: {
@@ -208,7 +241,7 @@ export default {
       this.phone = this.$store.state.currentUser.phone
       this.email = this.$store.state.currentUser.email
     },
-    submit() {
+    submit(data) {
       if (this.$refs.submissionForm.validate()) {
         console.log('Form is valid')
       } else {
