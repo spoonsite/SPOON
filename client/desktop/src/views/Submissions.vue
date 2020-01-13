@@ -13,7 +13,7 @@
           label="Search"
           single-line
           hide-details
-          style="padding-left: 1em; margin-bottom: 10px;"
+          style="padding-top: 0; margin-bottom: 1em;"
         ></v-text-field>
       </v-flex>
       <div class="d-flex">
@@ -250,6 +250,7 @@ export default {
       },
       componentDisplay: [],
       componentData: [],
+      errors: [],
       isLoading: true,
       counter: 0,
       search: '',
@@ -456,6 +457,7 @@ export default {
 .top-buttons {
   text-transform: none;
   background-color: #e0e0e0 !important;
+  margin-right: 1em;
 }
 .tableLayout {
   display: flex;
