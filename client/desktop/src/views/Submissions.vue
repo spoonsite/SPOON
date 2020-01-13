@@ -4,7 +4,7 @@
       <v-flex class="d-flex" xs5>
         <v-btn class="top-buttons" @click="getUserParts()"><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn>
         <v-btn class="top-buttons" @click="showData()"><v-icon left>fas fa-plus</v-icon>Add New</v-btn>
-        <v-btn class="top-buttons" @click="bulkUploadDialog = true"
+        <v-btn class="top-buttons" @click="openBulkUpload()"
           ><v-icon left>fas fa-upload</v-icon>Bulk Upload</v-btn
         >
         <v-text-field
@@ -63,7 +63,7 @@
             </svg>
           </template>
           <template v-slot:item.actions="{ item }">
-            <div style="display: flex; flex-direction: row;">
+            <div >
               <v-tooltip bottom v-if="item.componentId">
                 <template v-slot:activator="{ on }">
                   <v-btn icon v-on="on" :to="{ name: 'Entry Detail', params: { id: item.componentId } }">
@@ -82,7 +82,7 @@
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-btn icon>
+                  <v-btn icon v-on="on" @click="$refs.comment.getComments(item); currentComponent = item; commentsDialog = true">
                     <v-icon>far fa-comment</v-icon>
                   </v-btn>
                 </template>
@@ -101,8 +101,8 @@
         </v-data-table>
       </div>
     </v-form>
-
-    <v-dialog v-model="bulkUploadDialog" width="35em">
+    <!-- Display for new Bulk Upload Dialog -->
+    <!-- <v-dialog v-model="bulkUploadDialog" width="35em">
       <v-card>
         <ModalTitle title="Bulk Uploads" @close="bulkUploadDialog = false" />
         <v-card-text>
@@ -120,25 +120,18 @@
             The information submitted to this site will be made publicly available. Please do not submit any sensitive
             information such as proprietary or ITAR restricted information.
           </p>
+          <v-file-input
+            style="width: 100%;"
+            label="Upload Resource (Limit of 2.15 GB)"
+          ></v-file-input>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-file-input label="File input"></v-file-input>
+          <v-btn>Upload</v-btn>
+          <v-btn @click="bulkUploadDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="commentsDialog" width="35em">
-      <v-card>
-        <ModalTitle title="Comments" @close="commentsDialog = false" />
-        <v-card-text>
-          <p>{{ comments }}</p>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    </v-dialog> -->
 
     <v-dialog v-model="deleteDialog" width="35em">
       <v-card>
@@ -210,16 +203,20 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <CommentModal v-model="commentsDialog" ref="comment" :component="currentComponent" @close="commentsDialog = false"></CommentModal>
   </div>
 </template>
 
 <script lang="js">
 import ModalTitle from '@/components/ModalTitle'
+import CommentModal from '@/components/CommentModal'
 
 export default {
   name: 'submissions-page',
   components: {
-    ModalTitle
+    ModalTitle,
+    CommentModal
   },
   mounted() {
     this.getUserParts()
@@ -253,7 +250,6 @@ export default {
       },
       componentDisplay: [],
       componentData: [],
-      comments: [],
       isLoading: true,
       counter: 0,
       search: '',
@@ -298,23 +294,6 @@ export default {
           this.isLoading = false
           this.errors.push(error)
         })
-    },
-    getComments(component) {
-      if (component.componentId) {
-        this.$http.get(`/openstorefront/api/v1/resource/components/${component.componentId}/comments`)
-          .then(response => {
-            this.comments = response.data
-            this.commentsDialog = true
-          })
-          .catch(e => this.errors.push(e))
-      } else {
-        this.$http.get(`/openstorefront/api/v1/resource/usersubmissions/${component.submissionId}/comments`)
-          .then(response => {
-            this.comments = response.data
-            this.commentsDialog = true
-          })
-          .catch(e => this.errors.push(e))
-      }
     },
     viewComponent(componentId) {
       this.$router.push({ name: 'Entry Detail', params: { id: componentId } })
@@ -465,6 +444,9 @@ export default {
             this.isLoading = false
           })
       }
+    },
+    openBulkUpload() {
+      window.open('openstorefront/bulkUpload.jsp', 'uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440')
     }
   }
 }
