@@ -3,11 +3,11 @@
     <h1 class="text-center">Submission Form</h1>
     <div class="text-center" style="color: red;">
       <h2>Caution!</h2>
-      <p>{{ this.$store.state.branding.userInputWarning }}</p>
+      <p>{{ $store.state.branding.userInputWarning }}</p>
     </div>
     <v-form v-model="isFormValid" ref="submissionForm" style="width: 80%;" class="mx-auto">
       <fieldset>
-        <legend>Entry Details*</legend>
+        <legend class="title">Entry Details*</legend>
         <v-text-field
           label="Entry Title*"
           v-model="entryTitle"
@@ -47,20 +47,19 @@
         />
       </fieldset>
       <fieldset>
-        <legend>Primary Point of Contact*</legend>
+        <legend class="title">Primary Point of Contact*</legend>
         <v-text-field label="First Name*" v-model="firstName" required :rules="[rules.required]" class="mx-4" />
         <v-text-field label="Last Name*" v-model="lastName" required :rules="[rules.required]" class="mx-4" />
         <v-text-field label="Email*" v-model="email" required :rules="[rules.required]" class="mx-4" />
         <v-text-field label="Phone*" v-model="phone" required :rules="[rules.required]" class="mx-4" />
       </fieldset>
       <fieldset>
-        <legend>Image Upload</legend>
-        <v-btn color="grey lighten-2" class="ma-4" @click="addImage"><v-icon left>mdi-plus</v-icon>Add image</v-btn>
+        <legend class="title">Image Upload</legend>
         <v-row v-for="(item, index) in images" :key="index" class="mx-4">
-          <v-col cols="12" md="1">
-            <v-img :src="item.img" alt="No preview available" max-height="80px" max-width="80px" contain />
+          <v-col cols="12" md="2">
+            <v-img :src="item.img" alt="No preview available" max-height="90px" max-width="120px" contain />
           </v-col>
-          <v-col cols="12" md="5">
+          <v-col cols="12" md="4">
             <v-file-input
               v-model="item.file"
               label="Upload Image*"
@@ -73,16 +72,17 @@
             <v-text-field v-model="item.caption" label="Image Caption*" required :rules="[rules.required]" />
           </v-col>
           <v-col cols="12" md="1">
-            <v-btn @click="removeImage(index)"><v-icon left>mdi-delete</v-icon>Delete</v-btn>
+            <v-btn class="mt-3" icon @click="removeImage(index)"><v-icon>mdi-delete</v-icon></v-btn>
           </v-col>
         </v-row>
+        <v-btn color="grey lighten-2" class="ma-4" @click="addImage"><v-icon left>mdi-plus</v-icon>Add image</v-btn>
       </fieldset>
       <fieldset style="height: 500px">
-        <legend>Description*</legend>
+        <legend class="title">Description*</legend>
         <quill-editor style="height:400px;" class="ma-2" v-model="description" />
       </fieldset>
       <fieldset>
-        <legend>Attributes</legend>
+        <legend class="title">Attributes</legend>
         <div class="mx-4 mt-4">
           <div v-if="attributes.required.length === 0">
             No required attributes available, please select an entry type
@@ -102,7 +102,7 @@
                 label="Value"
                 :rules="[rules.numberOnly]"
               />
-              <v-select v-else label="Value" :items="attribute.codes" item-text="label" item-code="code" />
+              <v-select v-else label="Value" clearable :items="attribute.codes" item-text="label" item-code="code" />
               <v-select
                 label="Unit"
                 v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
@@ -132,7 +132,7 @@
                 label="Value"
                 :rules="[rules.numberOnly]"
               />
-              <v-select v-else label="Value" :items="attribute.codes" item-text="label" item-code="code" />
+              <v-select v-else label="Value" clearable :items="attribute.codes" item-text="label" item-code="code" />
               <v-select
                 label="Unit"
                 v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
@@ -155,17 +155,17 @@
         </div>
       </fieldset>
       <fieldset>
-        <legend>Resources</legend>
+        <legend class="title">Resources</legend>
         <h3>Resources here</h3>
         <v-text-field label="Media Description" />
         <v-file-input label="Add file" />
       </fieldset>
       <fieldset>
-        <legend>Tags</legend>
+        <legend class="title">Tags</legend>
         <h3>Tags here</h3>
       </fieldset>
       <fieldset>
-        <legend>Contacts</legend>
+        <legend class="title">Contacts</legend>
         <h3>Contacts here here</h3>
       </fieldset>
       <v-btn color="primary" @click="submit">
@@ -221,7 +221,7 @@ export default {
     lastName: '',
     email: '',
     phone: '',
-    images: [],
+    images: [{ file: null, caption: '', img: '' }],
     description: '',
     attributes: {
       required: [],
@@ -279,10 +279,11 @@ export default {
 
 <style>
 fieldset {
-  border: 0px;
-  background-color: hsl(0, 0%, 90%);
+  border: 1px solid rgba(0,0,0,0.2);
+  background-color: white;
   border-radius: 10px;
   margin: 2em 0;
+  padding: 6px;
 }
 legend {
   margin-left: 1em;
