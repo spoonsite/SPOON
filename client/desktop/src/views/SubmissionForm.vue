@@ -156,9 +156,49 @@
       </fieldset>
       <fieldset>
         <legend class="title">Resources</legend>
-        <h3>Resources here</h3>
-        <v-text-field label="Media Description" />
-        <v-file-input label="Add file" />
+        <div class="pa-4">
+          <p>Local Files</p>
+          <div v-for="(file, index) in resources.localFiles" :key="index">
+            <v-select
+              label="Resource Type"
+              v-model="file.resourceType"
+              :items="resourceType"
+              item-text="description"
+              item-value="code"
+            />
+            <v-file-input label="Add File" v-model="file.file" />
+            <v-text-field label="Description" v-model="file.description" />
+            <v-select
+              label="Security Marking"
+              v-model="file.securityMarking"
+              :items="securityMarkingList"
+              item-text="description"
+              item-value="code"
+            />
+            <v-btn icon @click="removeLocalFile"><v-icon>mdi-delete</v-icon></v-btn>
+          </div>
+          <v-btn @click="addLocalFile" color="primary" block class="mb-2">Add Local File</v-btn>
+          <p>Links</p>
+          <div v-for="(link, index) in resources.links" :key="index">
+            <v-select
+              label="Resource Type"
+              v-model="link.resourceType"
+              :items="resourceType"
+              item-text="description"
+              item-value="code"
+            />
+            <v-text-field label="Link" v-model="link.link" />
+            <v-text-field label="Description" v-model="link.description" />
+            <v-select
+              label="Security Marking"
+              v-model="link.securityMarking"
+              :items="securityMarkingList"
+              item-text="description"
+              item-value="code"
+            />
+          </div>
+          <v-btn @click="addLink" block color="primary">Add Link</v-btn>
+        </div>
       </fieldset>
       <fieldset>
         <legend class="title">Tags</legend>
@@ -206,6 +246,9 @@ export default {
     this.$http.get('openstorefront/api/v1/resource/attributes/optional?componentType=CNDHE').then(response => {
       this.attributes.suggested = response.data.filter(e => e.attributeType !== 'MISSINGATTRIBUTE')
     })
+    this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ResourceType').then(response => {
+      this.resourceType = response.data
+    })
   },
   data: () => ({
     isFormValid: false,
@@ -228,6 +271,11 @@ export default {
       suggested: [],
       missingAttribute: ''
     },
+    resources: {
+      localFiles: [{ resourceType: '', file: null, description: '', securityMarking: '' }],
+      links: [{ resourceType: '', link: '', description: '', securityMarking: '' }]
+    },
+    resourceType: [],
 
     rules: {
       required: value => !!value || 'Required',
@@ -266,6 +314,18 @@ export default {
       } else {
         e.img = ''
       }
+    },
+    addLocalFile() {
+      this.resources.localFiles.push({ resourceType: '', file: null, description: '', securityMarking: '' })
+    },
+    removeLocalFile(index) {
+      this.resources.localFiles.splice(index, 1)
+    },
+    addLink() {
+      this.resources.links.push({ resourceType: '', link: '', description: '', securityMarking: '' })
+    },
+    removeLink(index) {
+      this.resources.links.splice(index, 1)
     }
   },
   watch: {
@@ -279,7 +339,7 @@ export default {
 
 <style>
 fieldset {
-  border: 1px solid rgba(0,0,0,0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   background-color: white;
   border-radius: 10px;
   margin: 2em 0;
