@@ -309,7 +309,7 @@ export default {
 
     rules: {
       required: value => !!value || 'Required',
-      numberOnly: value => !Number.isNaN(Number.parseFloat(value)) || 'This field only allows numbers'
+      numberOnly: value => /\d+(\.\d+)?/.exec(value)[0] === value || 'This field only allows numbers'
     }
   }),
   methods: {
