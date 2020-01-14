@@ -5,9 +5,9 @@
       <h2>Caution!</h2>
       <p>{{ $store.state.branding.userInputWarning }}</p>
     </div>
-    <v-form v-model="isFormValid" ref="submissionForm" style="width: 80%;" class="mx-auto">
+    <v-form v-model="isFormValid" id="submissionForm" style="width: 80%;" class="mx-auto">
       <fieldset class="fieldset">
-        <legend class="legend title">Entry Details*</legend>
+        <legend class="legend title" >Entry Details*</legend>
         <v-text-field
           label="Entry Title*"
           v-model="entryTitle"
@@ -35,7 +35,7 @@
           :rules="[rules.required]"
           class="mx-4"
         />
-        <v-select
+        <!-- <v-select
           label="Security Marking*"
           v-model="securityMarking"
           :items="securityMarkingList"
@@ -44,46 +44,40 @@
           required
           :rules="[rules.required]"
           class="mx-4"
-        />
+        /> -->
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend">Primary Point of Contact*</legend>
+        <legend class="title legend" >Primary Point of Contact*</legend>
         <v-text-field label="First Name*" v-model="firstName" required :rules="[rules.required]" class="mx-4" />
         <v-text-field label="Last Name*" v-model="lastName" required :rules="[rules.required]" class="mx-4" />
         <v-text-field label="Email*" v-model="email" required :rules="[rules.required]" class="mx-4" />
         <v-text-field label="Phone*" v-model="phone" required :rules="[rules.required]" class="mx-4" />
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend">Image Upload</legend>
-        <v-row v-for="(item, index) in images" :key="index" class="mx-4">
-          <v-col cols="12" md="2">
-            <v-img :src="item.img" alt="No preview available" max-height="90px" max-width="120px" contain />
-          </v-col>
-          <v-col cols="12" md="4">
-            <v-file-input
-              v-model="item.file"
-              label="Upload Image*"
-              required
-              :rules="[rules.image, rules.required]"
-              @change="imageChange(index)"
-              :accept="allowedImageTypesString"
-            />
-          </v-col>
-          <v-col cols="12" md="5">
-            <v-text-field v-model="item.caption" label="Image Caption*" required :rules="[rules.required]" />
-          </v-col>
-          <v-col cols="12" md="1">
-            <v-btn class="mt-3" icon @click="removeImage(index)"><v-icon>mdi-delete</v-icon></v-btn>
-          </v-col>
-        </v-row>
+        <legend class="title legend" >Image Upload</legend>
+        <div class="image-row" v-for="(item, index) in images" :key="index">
+          <div>
+            <v-btn title="delete" icon @click="removeImage(index)"><v-icon>mdi-delete</v-icon></v-btn>
+          </div>
+          <v-img :src="item.img" alt="No preview available" max-height="90px" max-width="120px" contain />
+          <v-file-input
+            v-model="item.file"
+            label="Upload Image*"
+            required
+            :rules="[rules.image, rules.required]"
+            @change="imageChange(index)"
+            :accept="allowedImageTypesString"
+          />
+          <v-text-field v-model="item.caption" label="Image Caption*" required :rules="[rules.required]" />
+        </div>
         <v-btn color="grey lighten-2" class="ma-4" @click="addImage"><v-icon left>mdi-plus</v-icon>Add image</v-btn>
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend">Description*</legend>
-        <quill-editor class="ma-2" v-model="description" />
+        <legend class="title legend ">Description*</legend>
+        <quill-editor class="ma-2" v-model="description"/>
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend">Attributes</legend>
+        <legend class="title legend" >Attributes</legend>
         <!-- TODO: Fix the issue with multiple select -->
         <div class="mx-4 mt-4">
           <div v-if="attributes.required.length === 0">
@@ -91,7 +85,7 @@
           </div>
           <div v-else>
             <fieldset class="fieldset">
-              <legend class="title legend">Required Attributes</legend>
+              <legend class="title legend" >Required Attributes</legend>
               <div class="attribute-row" v-for="attribute in attributes.required" :key="attribute.attributeType">
                 <label :for="attribute.description" class="mr-3">{{ attribute.description }}</label>
                 <v-text-field
@@ -100,14 +94,17 @@
                   label="Value"
                   class="mr-3"
                   :id="attribute.description"
+                  required
+                  :rules="[rules.required]"
                 />
                 <v-text-field
                   v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
                   v-model="attribute.selectedCodes"
                   label="Value"
-                  :rules="[rules.numberOnly]"
+                  :rules="[rules.numberOnly, rules.required]"
                   class="mr-3"
                   :id="attribute.description"
+                  required
                 />
                 <v-select
                   v-else
@@ -117,6 +114,8 @@
                   item-text="label"
                   item-code="code"
                   :id="attribute.description"
+                  required
+                  :rules="[rules.required]"
                 />
                 <v-select
                   label="Unit"
@@ -126,6 +125,8 @@
                   item-text="unit"
                   item-value="unit"
                   class="mr-3"
+                  required
+                  :rules="[rules.required]"
                 />
               </div>
             </fieldset>
@@ -135,7 +136,7 @@
           </div>
           <div v-else>
             <fieldset class="fieldset">
-              <legend class="title legend">Suggested Attributes</legend>
+              <legend class="title legend" >Suggested Attributes</legend>
               <div class="attribute-row" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
                 <label :for="attribute.description" class="mr-3">{{ attribute.description }}</label>
                 <v-text-field
@@ -186,10 +187,13 @@
         </div>
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend">Resources</legend>
+        <legend class="title legend" >Resources</legend>
         <fieldset class="fieldset">
-          <legend class="title legend">Local Files</legend>
-          <div v-for="(file, index) in resources.localFiles" :key="index">
+          <legend class="title legend" >Local Files</legend>
+          <div class="resource-row" v-for="(file, index) in resources.localFiles" :key="index">
+            <div>
+              <v-btn title="delete" icon @click="removeLocalFile(index)"><v-icon>mdi-delete</v-icon></v-btn>
+            </div>
             <v-select
               label="Resource Type"
               v-model="file.resourceType"
@@ -199,20 +203,22 @@
             />
             <v-file-input label="Add File" v-model="file.file" />
             <v-text-field label="Description" v-model="file.description" />
-            <v-select
+            <!-- <v-select
               label="Security Marking"
               v-model="file.securityMarking"
               :items="securityMarkingList"
               item-text="description"
               item-value="code"
-            />
-            <v-btn icon @click="removeLocalFile(index)"><v-icon>mdi-delete</v-icon></v-btn>
+            /> -->
           </div>
-          <v-btn @click="addLocalFile" color="primary" block class="mb-2">Add Local File</v-btn>
+          <v-btn color="grey lighten-2" @click="addLocalFile" class="mb-2">Add Local File</v-btn>
         </fieldset>
         <fieldset class="fieldset">
-          <legend class="title legend">Links</legend>
-          <div v-for="(link, index) in resources.links" :key="index">
+          <legend class="title legend" >Links</legend>
+          <div class="resource-row" v-for="(link, index) in resources.links" :key="index">
+            <div>
+              <v-btn title="delete" icon @click="removeLink(index)"><v-icon>mdi-delete</v-icon></v-btn>
+            </div>
             <v-select
               label="Resource Type"
               v-model="link.resourceType"
@@ -222,20 +228,19 @@
             />
             <v-text-field label="Link" v-model="link.link" />
             <v-text-field label="Description" v-model="link.description" />
-            <v-select
+            <!-- <v-select
               label="Security Marking"
               v-model="link.securityMarking"
               :items="securityMarkingList"
               item-text="description"
               item-value="code"
-            />
-            <v-btn icon @click="removeLink(index)"><v-icon>mdi-delete</v-icon></v-btn>
+            /> -->
           </div>
-          <v-btn @click="addLink" block color="primary">Add Link</v-btn>
+          <v-btn @click="addLink" color="grey lighten-2">Add Link</v-btn>
         </fieldset>
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend">Tags</legend>
+        <legend class="title legend" >Tags</legend>
         <v-autocomplete
           label="Add tags"
           v-model="tags"
@@ -248,15 +253,28 @@
         />
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend">Contacts</legend>
+        <legend class="title legend" >Contacts</legend>
         <h3>Contacts here here</h3>
       </fieldset>
-      <v-btn color="primary" @click="submit">
-        Save and close
-      </v-btn>
-      <v-btn :disabled="!isFormValid" color="success" class="mr-4" @click="submit">
-        Submit
-      </v-btn>
+      <div class="mb-8">
+        <h2 class="mb-2 title">Form validation errors</h2>
+        <ul class="form-errors">
+          <li>entry description</li>
+          <li>contacts</li>
+          <li>required attributes</li>
+        </ul>
+      </div>
+      <div class="mb-5">
+        <p>
+          If you save and close the entry you will need to come back and finish to submit the entry.
+        </p>
+        <v-btn class="mr-4" color="primary" @click="submit">
+          Save and close
+        </v-btn>
+        <v-btn :disabled="!isFormValid" color="success" class="mr-4" @click="submit">
+          Submit
+        </v-btn>
+      </div>
     </v-form>
   </div>
 </template>
@@ -437,6 +455,7 @@ export default {
 }
 .legend {
   margin-left: 1em;
+  padding: 0 0.5em;
 }
 .attribute-row {
   display: grid;
@@ -444,5 +463,28 @@ export default {
   grid-template-columns: 1fr 3fr 1fr;
   align-items: center;
   padding: 0 1em;
+}
+.resource-row {
+  display: grid;
+  grid-gap: 1em;
+  grid-template-columns: 1fr 2fr 4fr 8fr;
+  align-items: center;
+  padding: 0 1em;
+}
+.image-row {
+  display: grid;
+  grid-gap: 1em;
+  grid-template-columns: 1fr 1fr 4fr 12fr;
+  align-items: center;
+  padding: 0 1em;
+  margin-bottom: 2em;
+}
+.form-errors {
+  border-radius: 10px;
+  color: #610000;
+  background-color: #ffa0a081;
+  display: inline-block;
+  padding: 1em;
+  padding-left: 2em;
 }
 </style>
