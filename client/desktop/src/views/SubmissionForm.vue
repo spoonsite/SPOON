@@ -66,7 +66,7 @@
               required
               :rules="[rules.image, rules.required]"
               @change="imageChange(index)"
-              accept=".png,.svg,.jpeg,.jpg"
+              :accept="allowedImageTypesString"
             />
           </v-col>
           <v-col cols="12" md="5">
@@ -327,6 +327,7 @@ export default {
     phone: '',
     // Images
     images: [{ file: null, caption: '', img: '' }],
+    allowedImageTypes: ['image/png', 'image/jpeg', 'image/jpg'],
     // Description
     description: '',
     // Attributes
@@ -351,11 +352,16 @@ export default {
       // TODO: Fix issue with null values
       numberOnly: value => /\d+(\.\d+)?/.exec(value)[0] === value || 'Invalid Number',
       image: value => {
-        let validImageTypes = ['image/png', 'image/svg', 'image/jpeg', 'image/jpg']
-        return validImageTypes.includes(value['type']) || 'Not a valid image'
+        let allowedImageTypes = ['image/png', 'image/jpeg', 'image/jpg']
+        return allowedImageTypes.includes(value['type']) || 'Not a valid image'
       }
     }
   }),
+  computed: {
+    allowedImageTypesString() {
+      return this.allowedImageTypes.join(',')
+    }
+  },
   methods: {
     setName() {
       this.firstName = this.$store.state.currentUser.firstName
