@@ -427,8 +427,33 @@ export default {
     rules: {
       required: value => !!value || 'Required',
       // TODO: Fix issue with null values
-      numberOnly: value => /\d+(\.\d+)?/.exec(value)[0] === value || 'Invalid Number',
+      numberOnly: value => {
+        // If the value is null, we don't care about validation, in this case
+        if (value === null) {
+          return true
+        }
+        // if the value is an array, iterate over it and check each selection
+        if (Array.isArray(value)) {
+          let valid = true
+          value.forEach(e => {
+            if (/\d+(\.\d+)?/.exec(e)[0] === e) {
+              valid = false
+            }
+          })
+          // if we found one invalid piece, invalidate the whole field
+          if (valid === false) {
+            return 'Invalid Number'
+          } else {
+            return true
+          }
+        }
+        // else it is just a string, so check that
+        return /\d+(\.\d+)?/.exec(value)[0] === value || 'Invalid Number'
+      },
       image: value => {
+        if (value === null) {
+          return true
+        }
         let allowedImageTypes = ['image/png', 'image/jpeg', 'image/jpg']
         return allowedImageTypes.includes(value['type']) || 'Not a valid image'
       }
