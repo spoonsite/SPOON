@@ -6,14 +6,14 @@
       <p>{{ $store.state.branding.userInputWarning }}</p>
     </div>
     <v-form v-model="isFormValid" id="submissionForm" style="width: 80%;" class="mx-auto">
-      <fieldset class="fieldset">
+      <fieldset class="fieldset flex-wrap">
         <legend class="legend title" >Entry Details*</legend>
         <v-text-field
           label="Entry Title*"
           v-model="entryTitle"
           required
           :rules="[rules.required]"
-          class="mx-4"
+          class="mx-4 mw-18"
           autofocus
         />
         <v-autocomplete
@@ -23,7 +23,7 @@
           item-text="parentLabel"
           required
           :rules="[rules.required]"
-          class="mx-4"
+          class="mx-4 mw-18"
         />
         <v-autocomplete
           label="Organization*"
@@ -33,7 +33,7 @@
           item-value="name"
           required
           :rules="[rules.required]"
-          class="mx-4"
+          class="mx-4 mw-18"
         />
         <!-- <v-select
           label="Security Marking*"
@@ -43,15 +43,21 @@
           item-value="code"
           required
           :rules="[rules.required]"
-          class="mx-4"
+          class="mx-4 mw-14"
         /> -->
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend" >Primary Point of Contact*</legend>
-        <v-text-field label="First Name*" v-model="firstName" required :rules="[rules.required]" class="mx-4" />
-        <v-text-field label="Last Name*" v-model="lastName" required :rules="[rules.required]" class="mx-4" />
-        <v-text-field label="Email*" v-model="email" required :rules="[rules.required]" class="mx-4" />
-        <v-text-field label="Phone*" v-model="phone" required :rules="[rules.required]" class="mx-4" />
+        <div class="flex-wrap">
+          <div class="flex-wrap w-100">
+            <v-text-field label="First Name*" v-model="firstName" required :rules="[rules.required]" class="mx-4 mw-14" />
+            <v-text-field label="Last Name*" v-model="lastName" required :rules="[rules.required]" class="mx-4 mw-14" />
+          </div>
+          <div class="flex-wrap w-100">
+            <v-text-field label="Email*" v-model="email" required :rules="[rules.required]" class="mx-4 mw-14" />
+            <v-text-field label="Phone*" v-model="phone" required :rules="[rules.required]" class="mx-4 mw-14" />
+          </div>
+        </div>
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend" >Image Upload</legend>
@@ -59,16 +65,28 @@
           <div>
             <v-btn title="delete" icon @click="removeImage(index)"><v-icon>mdi-delete</v-icon></v-btn>
           </div>
-          <v-img :src="item.img" alt="No preview available" max-height="90px" max-width="120px" contain />
-          <v-file-input
-            v-model="item.file"
-            label="Upload Image*"
-            required
-            :rules="[rules.image, rules.required]"
-            @change="imageChange(index)"
-            :accept="allowedImageTypesString"
-          />
-          <v-text-field v-model="item.caption" label="Image Caption*" required :rules="[rules.required]" />
+          <div class="flex-wrap pb-4">
+            <div class="image-wrapper mb-4">
+              <v-img class="mw-14 mb-2 image-container" :src="item.img" alt="Image preview" max-height="90px" max-width="120px" contain/>
+              <div class="image-label">Image Preview</div>
+            </div>
+            <v-file-input
+              v-model="item.file"
+              label="Upload Image*"
+              required
+              :rules="[rules.image, rules.required]"
+              @change="imageChange(index)"
+              :accept="allowedImageTypesString"
+              class="mx-4 mw-14"
+            />
+            <v-text-field
+              v-model="item.caption"
+              label="Image Caption*"
+              required
+              :rules="[rules.required]"
+              class="mx-4 mw-14"
+            />
+          </div>
         </div>
         <v-btn color="grey lighten-2" class="ma-4" @click="addImage"><v-icon left>mdi-plus</v-icon>Add image</v-btn>
       </fieldset>
@@ -194,22 +212,25 @@
             <div>
               <v-btn title="delete" icon @click="removeLocalFile(index)"><v-icon>mdi-delete</v-icon></v-btn>
             </div>
-            <v-select
-              label="Resource Type"
-              v-model="file.resourceType"
-              :items="resourceType"
-              item-text="description"
-              item-value="code"
-            />
-            <v-file-input label="Add File" v-model="file.file" />
-            <v-text-field label="Description" v-model="file.description" />
-            <!-- <v-select
-              label="Security Marking"
-              v-model="file.securityMarking"
-              :items="securityMarkingList"
-              item-text="description"
-              item-value="code"
-            /> -->
+            <div class="flex-wrap">
+              <v-select
+                label="Resource Type"
+                v-model="file.resourceType"
+                :items="resourceType"
+                item-text="description"
+                item-value="code"
+                class="mw-14"
+              />
+              <v-file-input class="mw-14" label="Add File" v-model="file.file" />
+              <v-text-field label="Description" v-model="file.description" />
+              <!-- <v-select
+                label="Security Marking"
+                v-model="file.securityMarking"
+                :items="securityMarkingList"
+                item-text="description"
+                item-value="code"
+              /> -->
+            </div>
           </div>
           <v-btn color="grey lighten-2" @click="addLocalFile" class="mb-2">Add Local File</v-btn>
         </fieldset>
@@ -219,22 +240,25 @@
             <div>
               <v-btn title="delete" icon @click="removeLink(index)"><v-icon>mdi-delete</v-icon></v-btn>
             </div>
-            <v-select
-              label="Resource Type"
-              v-model="link.resourceType"
-              :items="resourceType"
-              item-text="description"
-              item-value="code"
-            />
-            <v-text-field label="Link" v-model="link.link" />
-            <v-text-field label="Description" v-model="link.description" />
-            <!-- <v-select
-              label="Security Marking"
-              v-model="link.securityMarking"
-              :items="securityMarkingList"
-              item-text="description"
-              item-value="code"
-            /> -->
+            <div>
+              <v-select
+                label="Resource Type"
+                v-model="link.resourceType"
+                :items="resourceType"
+                item-text="description"
+                item-value="code"
+              />
+              <v-text-field label="Link" v-model="link.link" />
+              <v-text-field label="Description" v-model="link.description" />
+              <!-- <v-select
+                label="Security Marking"
+                v-model="link.securityMarking"
+                :items="securityMarkingList"
+                item-text="description"
+                item-value="code"
+              /> -->
+
+            </div>
           </div>
           <v-btn @click="addLink" color="grey lighten-2">Add Link</v-btn>
         </fieldset>
@@ -254,15 +278,17 @@
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Contacts</legend>
-        <div v-for="(contact, index) in contacts" :key="index">
-          <v-text-field v-model="contact.firstName" label="First Name" />
-          <v-text-field v-model="contact.lastName" label="Last Name" />
-          <v-text-field v-model="contact.type" label="Contact Type" />
-          <v-text-field v-model="contact.email" label="Email" />
-          <v-text-field v-model="contact.phone" label="Phone" />
-          <v-btn icon @click="removeContact(index)"><v-icon>mdi-delete</v-icon></v-btn>
+        <div class="contact-row" v-for="(contact, index) in contacts" :key="index">
+          <div          class="delete">
+            <v-btn icon @click="removeContact(index)"><v-icon>mdi-delete</v-icon></v-btn>
+          </div>
+          <v-text-field class="type" v-model="contact.type" label="Contact Type" />
+          <v-text-field class="first" v-model="contact.firstName" label="First Name" />
+          <v-text-field class="last" v-model="contact.lastName" label="Last Name" />
+          <v-text-field class="email" v-model="contact.email" label="Email" />
+          <v-text-field class="phone" v-model="contact.phone" label="Phone" />
         </div>
-        <v-btn block @click="addContact" color="primary">Add Contact</v-btn>
+        <v-btn color="grey lighten-2" @click="addContact">Add Contact</v-btn>
       </fieldset>
       <div class="mb-8">
         <h2 class="mb-2 title">Form validation errors</h2>
@@ -473,6 +499,25 @@ export default {
   margin-left: 1em;
   padding: 0 0.5em;
 }
+.image-wrapper {
+  background:rgba(190, 190, 190, 0.2);
+}
+.image-label {
+  width: 100%;
+  text-align: center;
+  font-weight: 700;
+  color:rgba(0, 0, 0, 0.5);
+}
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+.mw-14 {
+  min-width: 14em;
+}
+.mw-18 {
+  min-width: 18em;
+}
 .attribute-row {
   display: grid;
   grid-gap: 1em;
@@ -483,17 +528,50 @@ export default {
 .resource-row {
   display: grid;
   grid-gap: 1em;
-  grid-template-columns: 1fr 2fr 4fr 8fr;
+  grid-template-columns: 1fr 14fr;
   align-items: center;
   padding: 0 1em;
 }
 .image-row {
   display: grid;
   grid-gap: 1em;
-  grid-template-columns: 1fr 1fr 4fr 12fr;
+  grid-template-columns: 1fr 14fr;
   align-items: center;
   padding: 0 1em;
   margin-bottom: 2em;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.contact-row {
+  display: grid;
+  grid-gap: 1em;
+  grid-template-columns: 1fr 4fr 4fr;
+  grid-template-rows: 1fr 1fr;
+  align-items: center;
+  padding: 0 1em;
+  margin-bottom: 2em;
+  grid-template-areas:
+    "delete type type"
+    "delete first last"
+    "delete email phone";
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.delete {
+  grid-area: delete;
+}
+.type {
+  grid-area: type;
+}
+.first {
+  grid-area: first;
+}
+.last {
+  grid-area: last;
+}
+.email {
+  grid-area: email;
+}
+.phone {
+  grid-area: phone;
 }
 .form-errors {
   border-radius: 10px;
