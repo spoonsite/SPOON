@@ -249,7 +249,15 @@
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Contacts</legend>
-        <h3>Contacts here here</h3>
+        <div v-for="(contact, index) in contacts" :key="index">
+          <v-text-field v-model="contact.firstName" label="First Name" />
+          <v-text-field v-model="contact.lastName" label="Last Name" />
+          <v-text-field v-model="contact.type" label="Contact Type" />
+          <v-text-field v-model="contact.email" label="Email" />
+          <v-text-field v-model="contact.phone" label="Phone" />
+          <v-btn icon @click="removeContact(index)"><v-icon>mdi-delete</v-icon></v-btn>
+        </div>
+        <v-btn block @click="addContact" color="primary">Add Contact</v-btn>
       </fieldset>
       <v-btn color="primary" @click="submit">
         Save and close
@@ -345,6 +353,8 @@ export default {
     tagSearchText: '',
     tags: [],
     tagsList: [],
+    // Contacts
+    contacts: [{ firstName: '', lastName: '', type: '', organization: '', email: '', phone: '' }],
 
     rules: {
       required: value => !!value || 'Required',
@@ -414,6 +424,12 @@ export default {
       this.tagsList.push(this.tagSearchText)
       this.tags.push(this.tagSearchText)
       this.tagSearchText = ''
+    },
+    addContact() {
+      this.contacts.push({ firstName: '', lastName: '', type: '', organization: '', email: '', phone: '' })
+    },
+    removeContact(index) {
+      this.contacts.splice(index, 1)
     }
   },
   watch: {
