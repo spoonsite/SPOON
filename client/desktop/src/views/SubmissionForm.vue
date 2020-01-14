@@ -84,6 +84,7 @@
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Attributes</legend>
+        <!-- TODO: Fix the issue with multiple select -->
         <div class="mx-4 mt-4">
           <div v-if="attributes.required.length === 0">
             No required attributes available, please select an entry type
@@ -184,10 +185,10 @@
           <quill-editor id="request-new-attribute" class="ma-2" v-model="attributes.missingAttribute" />
         </div>
       </fieldset>
-      <fieldset>
-        <legend class="title">Resources</legend>
-        <div class="pa-4">
-          <p>Local Files</p>
+      <fieldset class="fieldset">
+        <legend class="title legend">Resources</legend>
+        <fieldset class="fieldset">
+          <legend class="title legend">Local Files</legend>
           <div v-for="(file, index) in resources.localFiles" :key="index">
             <v-select
               label="Resource Type"
@@ -205,10 +206,12 @@
               item-text="description"
               item-value="code"
             />
-            <v-btn icon @click="removeLocalFile"><v-icon>mdi-delete</v-icon></v-btn>
+            <v-btn icon @click="removeLocalFile(index)"><v-icon>mdi-delete</v-icon></v-btn>
           </div>
           <v-btn @click="addLocalFile" color="primary" block class="mb-2">Add Local File</v-btn>
-          <p>Links</p>
+        </fieldset>
+        <fieldset class="fieldset">
+          <legend class="title legend">Links</legend>
           <div v-for="(link, index) in resources.links" :key="index">
             <v-select
               label="Resource Type"
@@ -226,13 +229,24 @@
               item-text="description"
               item-value="code"
             />
+            <v-btn icon @click="removeLink(index)"><v-icon>mdi-delete</v-icon></v-btn>
           </div>
           <v-btn @click="addLink" block color="primary">Add Link</v-btn>
-        </div>
+        </fieldset>
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Tags</legend>
         <h3>Tags here</h3>
+        <v-autocomplete
+          label="Add tags"
+          v-model="tags"
+          multiple
+          :items="tagsList"
+          chips
+          deletable-chips
+          @keypress.enter="addTag"
+          :search-input.sync="tagSearchText"
+        />
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Contacts</legend>
@@ -269,15 +283,32 @@ export default {
     this.$http.get('openstorefront/api/v1/resource/lookuptypes/SecurityMarkingType').then(response => {
       this.securityMarkingList = response.data
     })
+    // TODO: fix these hardcoded values
     this.$http.get('openstorefront/api/v1/resource/attributes/required?componentType=CNDHE').then(response => {
       this.attributes.required = response.data
-      console.log(response.data)
+      this.attributes.required.forEach(e => {
+        if (e.allowMultipleFlg) {
+          e.selectedCodes = []
+        } else {
+          e.selectedCodes = ''
+        }
+      })
     })
     this.$http.get('openstorefront/api/v1/resource/attributes/optional?componentType=CNDHE').then(response => {
       this.attributes.suggested = response.data.filter(e => e.attributeType !== 'MISSINGATTRIBUTE')
+      this.attributes.suggested.forEach(e => {
+        if (e.allowMultipleFlg) {
+          e.selectedCodes = []
+        } else {
+          e.selectedCodes = ''
+        }
+      })
     })
     this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ResourceType').then(response => {
       this.resourceType = response.data
+    })
+    this.$http.get(`/openstorefront/api/v1/resource/components/tags`).then(response => {
+      this.tagsList = response.data
     })
   },
   data: () => ({
@@ -294,22 +325,31 @@ export default {
     lastName: '',
     email: '',
     phone: '',
+    // Images
     images: [{ file: null, caption: '', img: '' }],
+    // Description
     description: '',
+    // Attributes
     attributes: {
       required: [],
       suggested: [],
       missingAttribute: ''
     },
+    // Resources
     resources: {
       localFiles: [{ resourceType: '', file: null, description: '', securityMarking: '' }],
       links: [{ resourceType: '', link: '', description: '', securityMarking: '' }]
     },
     resourceType: [],
+    // Tags
+    tagSearchText: '',
+    tags: [],
+    tagsList: [],
 
     rules: {
       required: value => !!value || 'Required',
-      numberOnly: value => /\d+(\.\d+)?/.exec(value)[0] === value || 'This field only allows numbers'
+      // TODO: Fix issue with null values
+      numberOnly: value => /\d+(\.\d+)?/.exec(value)[0] === value || 'Invalid Number'
     }
   }),
   methods: {
@@ -357,10 +397,16 @@ export default {
     },
     removeLink(index) {
       this.resources.links.splice(index, 1)
+    },
+    addTag() {
+      this.tagsList.push(this.tagSearchText)
+      this.tags.push(this.tagSearchText)
+      this.tagSearchText = ''
     }
   },
   watch: {
     entryType: function(oldVal, newVal) {
+      // TODO: Deal with entryType state change
       console.log(oldVal)
       console.log(newVal)
     }
@@ -370,7 +416,7 @@ export default {
 
 <style lang="css" scoped>
 .fieldset {
-  border: 1px solid rgba(0,0,0,0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   background-color: white;
   border-radius: 10px;
   margin: 2em 0;
