@@ -64,7 +64,7 @@
               v-model="item.file"
               label="Upload Image*"
               required
-              :rules="[rules.required]"
+              :rules="[rules.image, rules.required]"
               @change="imageChange(index)"
               accept=".png,.svg,.jpeg,.jpg"
             />
@@ -349,7 +349,11 @@ export default {
     rules: {
       required: value => !!value || 'Required',
       // TODO: Fix issue with null values
-      numberOnly: value => /\d+(\.\d+)?/.exec(value)[0] === value || 'Invalid Number'
+      numberOnly: value => /\d+(\.\d+)?/.exec(value)[0] === value || 'Invalid Number',
+      image: value => {
+        let validImageTypes = ['image/png', 'image/svg', 'image/jpeg', 'image/jpg']
+        return validImageTypes.includes(value['type']) || 'Not a valid image'
+      }
     }
   }),
   methods: {
@@ -375,15 +379,18 @@ export default {
     imageChange(index) {
       let e = this.images[index]
       // test that the file is an image
-      let reader = new FileReader()
-      reader.onloadend = function() {
-        e.img = reader.result
-        console.log(e.img)
-      }
-      if (e.file) {
-        reader.readAsDataURL(e.file)
-      } else {
-        e.img = ''
+      let validImageTypes = ['image/png', 'image/svg', 'image/jpeg', 'image/jpg']
+      if (validImageTypes.includes(e.file['type'])) {
+        let reader = new FileReader()
+        reader.onloadend = function() {
+          e.img = reader.result
+          console.log(e.img)
+        }
+        if (e.file) {
+          reader.readAsDataURL(e.file)
+        } else {
+          e.img = ''
+        }
       }
     },
     addLocalFile() {
