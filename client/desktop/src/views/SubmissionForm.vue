@@ -182,7 +182,7 @@
             Include the value for your entry, a brief description, and how your part is defined by the attribute.
           </p>
           <label class="title" for="request-new-attribute">Request New Attribute (opt.)</label>
-          <quill-editor id="request-new-attribute" class="ma-2" v-model="attributes.missingAttribute" />
+          <v-textarea outlined placeholder="Request new attribute" class="ma-2" v-model="attributes.missingAttribute" />
         </div>
       </fieldset>
       <fieldset class="fieldset">
@@ -236,7 +236,6 @@
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Tags</legend>
-        <h3>Tags here</h3>
         <v-autocomplete
           label="Add tags"
           v-model="tags"
