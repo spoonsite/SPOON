@@ -7,7 +7,7 @@
     </div>
     <v-form v-model="isFormValid" id="submissionForm" style="width: 80%;" class="mx-auto">
       <fieldset class="fieldset flex-wrap">
-        <legend class="legend title" >Entry Details*</legend>
+        <legend class="legend title">Entry Details*</legend>
         <v-text-field
           label="Entry Title*"
           v-model="entryTitle"
@@ -47,10 +47,16 @@
         /> -->
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend" >Primary Point of Contact*</legend>
+        <legend class="title legend">Primary Point of Contact*</legend>
         <div class="flex-wrap">
           <div class="flex-wrap w-100">
-            <v-text-field label="First Name*" v-model="firstName" required :rules="[rules.required]" class="mx-4 mw-14" />
+            <v-text-field
+              label="First Name*"
+              v-model="firstName"
+              required
+              :rules="[rules.required]"
+              class="mx-4 mw-14"
+            />
             <v-text-field label="Last Name*" v-model="lastName" required :rules="[rules.required]" class="mx-4 mw-14" />
           </div>
           <div class="flex-wrap w-100">
@@ -60,14 +66,21 @@
         </div>
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend" >Image Upload</legend>
+        <legend class="title legend">Image Upload</legend>
         <div class="image-row" v-for="(item, index) in images" :key="index">
           <div>
             <v-btn title="delete" icon @click="removeImage(index)"><v-icon>mdi-delete</v-icon></v-btn>
           </div>
           <div class="flex-wrap pb-4">
             <div class="image-wrapper mb-4">
-              <v-img class="mw-14 mb-2 image-container" :src="item.img" alt="Image preview" max-height="90px" max-width="120px" contain/>
+              <v-img
+                class="mw-14 mb-2 image-container"
+                :src="item.img"
+                alt="Image preview"
+                max-height="90px"
+                max-width="120px"
+                contain
+              />
               <div class="image-label">Image Preview</div>
             </div>
             <v-file-input
@@ -92,10 +105,10 @@
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend ">Description*</legend>
-        <quill-editor class="ma-2" v-model="description"/>
+        <quill-editor class="ma-2" v-model="description" />
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend" >Attributes</legend>
+        <legend class="title legend">Attributes</legend>
         <!-- TODO: Fix the issue with multiple select -->
         <div class="mx-4 mt-4">
           <div v-if="attributes.required.length === 0">
@@ -103,7 +116,7 @@
           </div>
           <div v-else>
             <fieldset class="fieldset">
-              <legend class="title legend" >Required Attributes</legend>
+              <legend class="title legend">Required Attributes</legend>
               <div class="attribute-row" v-for="attribute in attributes.required" :key="attribute.attributeType">
                 <label :for="attribute.description" class="mr-3">{{ attribute.description }}</label>
                 <v-text-field
@@ -154,7 +167,7 @@
           </div>
           <div v-else>
             <fieldset class="fieldset">
-              <legend class="title legend" >Suggested Attributes</legend>
+              <legend class="title legend">Suggested Attributes</legend>
               <div class="attribute-row" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
                 <label :for="attribute.description" class="mr-3">{{ attribute.description }}</label>
                 <v-text-field
@@ -205,9 +218,9 @@
         </div>
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend" >Resources</legend>
+        <legend class="title legend">Resources</legend>
         <fieldset class="fieldset">
-          <legend class="title legend" >Local Files</legend>
+          <legend class="title legend">Local Files</legend>
           <div class="resource-row" v-for="(file, index) in resources.localFiles" :key="index">
             <div>
               <v-btn title="delete" icon @click="removeLocalFile(index)"><v-icon>mdi-delete</v-icon></v-btn>
@@ -235,7 +248,7 @@
           <v-btn color="grey lighten-2" @click="addLocalFile" class="mb-2">Add Local File</v-btn>
         </fieldset>
         <fieldset class="fieldset">
-          <legend class="title legend" >Links</legend>
+          <legend class="title legend">Links</legend>
           <div class="resource-row" v-for="(link, index) in resources.links" :key="index">
             <div>
               <v-btn title="delete" icon @click="removeLink(index)"><v-icon>mdi-delete</v-icon></v-btn>
@@ -257,14 +270,13 @@
                 item-text="description"
                 item-value="code"
               /> -->
-
             </div>
           </div>
           <v-btn @click="addLink" color="grey lighten-2">Add Link</v-btn>
         </fieldset>
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend" >Tags</legend>
+        <legend class="title legend">Tags</legend>
         <v-autocomplete
           label="Add tags"
           v-model="tags"
@@ -279,7 +291,7 @@
       <fieldset class="fieldset">
         <legend class="title legend">Contacts</legend>
         <div class="contact-row" v-for="(contact, index) in contacts" :key="index">
-          <div          class="delete">
+          <div class="delete">
             <v-btn icon @click="removeContact(index)"><v-icon>mdi-delete</v-icon></v-btn>
           </div>
           <v-text-field class="type" v-model="contact.type" label="Contact Type" />
@@ -343,6 +355,12 @@ export default {
         } else {
           e.selectedCodes = ''
         }
+        if (e.attributeUnitList) {
+          e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
+          if (e.attributeUnitList.length === 0) {
+            e.attributeUnit = ''
+          }
+        }
       })
     })
     this.$http.get('openstorefront/api/v1/resource/attributes/optional?componentType=CNDHE').then(response => {
@@ -352,6 +370,12 @@ export default {
           e.selectedCodes = []
         } else {
           e.selectedCodes = ''
+        }
+        if (e.attributeUnitList) {
+          e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
+          if (e.attributeUnitList.length === 0) {
+            e.attributeUnit = ''
+          }
         }
       })
     })
@@ -500,13 +524,13 @@ export default {
   padding: 0 0.5em;
 }
 .image-wrapper {
-  background:rgba(190, 190, 190, 0.2);
+  background: rgba(190, 190, 190, 0.2);
 }
 .image-label {
   width: 100%;
   text-align: center;
   font-weight: 700;
-  color:rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.5);
 }
 .flex-wrap {
   display: flex;
@@ -539,7 +563,7 @@ export default {
   align-items: center;
   padding: 0 1em;
   margin-bottom: 2em;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 .contact-row {
   display: grid;
@@ -550,10 +574,10 @@ export default {
   padding: 0 1em;
   margin-bottom: 2em;
   grid-template-areas:
-    "delete type type"
-    "delete first last"
-    "delete email phone";
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+    'delete type type'
+    'delete first last'
+    'delete email phone';
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 .delete {
   grid-area: delete;
