@@ -1,10 +1,10 @@
 <template>
-  <v-dialog :value="value" @input="close" width="40em">
+  <div>
+    <v-dialog :value="value" @input="close" width="40em">
       <v-card>
         <ModalTitle title="Workflow Comments" @close="close" />
         <v-card-text>
           <p>{{ component.name }}</p>
-          <p>Click a comment you are an author of to edit/delete it.</p>
           <v-tabs
             v-model="tab"
           >
@@ -28,22 +28,42 @@
                   <div
                     v-for="comment in comments"
                       :key="comment.comment"
-                      style="overflow: hidden; margin: 1em;"
+                      style="overflow: hidden; margin-right: 1em; margin-left: 1em;"
                   >
                     <div v-if="!comment.privateComment && i === 1">
                       <v-flex xs6
                         v-if="comment.updateUser === $store.state.currentUser.username"
                         class="user-text-location"
                       >
-                        <p class="center-text">{{ comment.createUser }}</p>
-                        <p class="center-text">{{ comment.createDts | formatDate("Pp") }}</p>
+                        <p class="right-text">{{ comment.createUser }}</p>
+                        <p class="right-text">{{ comment.createDts | formatDate("Pp") }}</p>
                         <div class="user-comments" v-html="comment.comment"/>
+                        <v-menu offset-y nudge-left="20em">
+                          <template v-slot:activator="{ on }">
+                            <v-btn
+                              icon
+                              style="float: right;"
+                              v-on="on"
+                            >
+                              <v-icon>fas fa-ellipsis-h</v-icon>
+                            </v-btn>
+                          </template>
+                          <v-list>
+                            <v-list-item @click="editing = true">
+                              <v-list-item-title>Edit</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @click="currentComment=comment; deleteDialog = true;">
+                              <v-list-item-title>Delete</v-list-item-title>
+                            </v-list-item>
+                          </v-list>
+                        </v-menu>
                       </v-flex>
-                      <v-flex xs6
+                      <v-flex
+                        xs6
                         v-else
                       >
-                        <p class="center-text">{{ comment.createUser }}</p>
-                        <p class="center-text">{{ comment.createDts | formatDate("Pp") }}</p>
+                        <p class="left-text">{{ comment.createUser }}</p>
+                        <p class="left-text">{{ comment.createDts | formatDate("Pp") }}</p>
                         <div class="contact-comments" v-html="comment.comment"/>
                       </v-flex>
                     </div>
@@ -53,15 +73,34 @@
                         v-if="comment.updateUser === $store.state.currentUser.username"
                         class="user-text-location"
                       >
-                        <p class="center-text">{{ comment.createUser }}</p>
-                        <p class="center-text">{{ comment.createDts | formatDate("Pp") }}</p>
+                        <p class="right-text">{{ comment.createUser }}</p>
+                        <p class="right-text">{{ comment.createDts | formatDate("Pp") }}</p>
                         <div class="user-comments" v-html="comment.comment"/>
+                        <v-menu offset-y nudge-left="20em">
+                          <template v-slot:activator="{ on }">
+                            <v-btn
+                              icon
+                              style="float: right;"
+                              v-on="on"
+                            >
+                              <v-icon>fas fa-ellipsis-h</v-icon>
+                            </v-btn>
+                          </template>
+                          <v-list>
+                            <v-list-item @click="editing = true">
+                              <v-list-item-title>Edit</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @click="currentComment=comment; deleteDialog = true;">
+                              <v-list-item-title>Delete</v-list-item-title>
+                            </v-list-item>
+                          </v-list>
+                        </v-menu>
                       </v-flex>
                       <v-flex xs6
                         v-else
                       >
-                        <p class="center-text">{{ comment.createUser }}</p>
-                        <p class="center-text">{{ comment.createDts | formatDate("Pp") }}</p>
+                        <p class="left-text">{{ comment.createUser }}</p>
+                        <p class="left-text">{{ comment.createDts | formatDate("Pp") }}</p>
                         <div class="contact-comments" v-html="comment.comment"/>
                       </v-flex>
                     </div>
@@ -71,15 +110,33 @@
                   style="background-color: white;"
                   v-model="newComment"
                 ></quill-editor>
-                <v-btn v-if="i === 1" @click="submitPublicComment()">Post Comment</v-btn>
-                <v-btn v-else @click="submitPrivateComment()">Post Comment</v-btn>
+                <v-btn v-if="i === 1 && !editing" @click="submitPublicComment()">Post Comment</v-btn>
+                <v-btn v-else-if="i ===2 && !editing" @click="submitPrivateComment()">Post Comment</v-btn>
+                <v-btn v-else-if="i===1 && editing" @click="editPublicComment()">Post Comment</v-btn>
+                <v-btn v-else-if="i===2 && editing" @click="editPrivateComment()">Post Comment</v-btn>
               </v-card>
             </v-tab-item>
           </v-tabs-items>
         </v-card-text>
       </v-card>
-
     </v-dialog>
+
+    <v-dialog v-model="deleteDialog" width="30em">
+      <v-card>
+        <ModalTitle title="Delete Comment?" @close="deleteDialog = false" />
+        <v-card-text>
+          <p> Are you sure you want to delete the comment:</p>
+          <p style="color: red;" v-html="currentComment.comment"></p>
+
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn @click="deleteComment()">Delete</v-btn>
+          <v-btn @click="deleteDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -101,8 +158,11 @@ export default {
     return {
       comments: [],
       newComment: '',
+      currentComment: '',
+      deleteDialog: false,
       permission: false,
       isLoading: false,
+      editing: false,
       tabs: 2,
       tab: null,
       errors: []
@@ -113,36 +173,24 @@ export default {
       this.$emit('close')
     },
     getComments(component) {
+      var url = ''
       if (component.pendingChangeComponentId) {
-        this.$http.get(`/openstorefront/api/v1/resource/components/${component.pendingChangeComponentId}/comments`)
-          .then(response => {
-            console.log(response.data)
-            this.comments = response.data
-            this.isLoading = false
-          })
-          .catch(e => this.errors.push(e))
+        url = `/openstorefront/api/v1/resource/components/${component.pendingChangeComponentId}/comments`
       } else if (component.componentId) {
-        this.$http.get(`/openstorefront/api/v1/resource/components/${component.componentId}/comments`)
-          .then(response => {
-            console.log(response.data)
-            this.comments = response.data
-            this.isLoading = false
-          })
-          .catch(e => this.errors.push(e))
+        url = `/openstorefront/api/v1/resource/components/${component.componentId}/comments`
       } else {
-        this.$http.get(`/openstorefront/api/v1/resource/usersubmissions/${component.submissionId}/comments`)
-          .then(response => {
-            console.log(response.data)
-            this.comments = response.data
-            this.isLoading = false
-          })
-          .catch(e => this.errors.push(e))
+        url = `/openstorefront/api/v1/resource/usersubmissions/${component.submissionId}/comments`
       }
+      this.$http.get(url)
+        .then(response => {
+          this.comments = response.data
+          this.isLoading = false
+        })
+        .catch(e => this.errors.push(e))
       var perm = ['WORKFLOW-ADMIN-SUBMISSION-COMMENTS']
       this.permission = this.checkPermissions(perm)
     },
     submitPrivateComment() {
-      console.log(this.component)
       this.isLoading = true
       let data = {
         comment: this.newComment,
@@ -150,14 +198,9 @@ export default {
         privateComment: true,
         willSendEmail: false
       }
-      if (this.component.componentId) {
-        this.submitComponentComment(data)
-      } else {
-        this.submitSubmissionComment(data)
-      }
+      this.submitComment(data)
     },
     submitPublicComment() {
-      console.log(this.component)
       this.isLoading = true
       let data = {
         comment: this.newComment,
@@ -165,35 +208,45 @@ export default {
         privateComment: false,
         willSendEmail: false
       }
-      if (this.component.componentId) {
-        this.submitComponentComment(data)
+      this.submitComment(data)
+    },
+    submitComment(data) {
+      var submitUrl = ''
+      if (this.component.pendingChangeComponentId) {
+        submitUrl = `/openstorefront/api/v1/resource/components/${this.component.pendingChangeComponentId}/comments`
+      } else if (this.component.componentId) {
+        submitUrl = `/openstorefront/api/v1/resource/components/${this.component.componentId}/comments`
       } else {
-        this.submitSubmissionComment(data)
+        submitUrl = `/openstorefront/api/v1/resource/usersubmissions/${this.component.submissionId}/comments`
       }
-    },
-    submitComponentComment(data) {
-      this.$http.post(`/openstorefront/api/v1/resource/components/${this.component.componentId}/comments`, data)
+      this.$http.post(submitUrl, data)
         .then(response => {
           this.getComments(this.component)
           this.newComment = ''
         })
         .catch(e => this.$toasted.error('There was a problem submitting your comment.'))
     },
-    submitSubmissionComment(data) {
-      this.$http.post(`/openstorefront/api/v1/resource/usersubmissions/${this.component.submissionId}/comments`, data)
+    deleteComment() {
+      var deleteUrl = ''
+      if (this.component.pendingChangeComponentId) {
+        deleteUrl = `/openstorefront/api/v1/resource/components/${this.component.pendingChangeComponentId}/comments/${this.currentComment.commentId}`
+      } else if (this.component.componentId) {
+        deleteUrl = `/openstorefront/api/v1/resource/components/${this.component.componentId}/comments/${this.currentComment.commentId}`
+      } else {
+        deleteUrl = `/openstorefront/api/v1/resource/usersubmissions/${this.component.submissionId}/comments/${this.currentComment.commentId}`
+      }
+      this.$http.delete(deleteUrl)
         .then(response => {
+          this.isLoading = true
+          this.$toasted.show('Comment Deleted')
           this.getComments(this.component)
-          this.newComment = ''
+          this.deleteDialog = false
         })
-        .catch(e => this.$toasted.error('There was a problem submitting your comment.'))
-    },
-    submitChangeRequestComment(data) {
-      this.$http.post(`/openstorefront/api/v1/resource/components/${this.component.pendingChangeComponentId}/comments`, data)
-        .then(response => {
-          this.getComments(this.component)
-          this.newComment = ''
+        .catch(error => {
+          this.$toasted.error('Submission could not be deleted.')
+          this.errors.push(error)
+          this.isLoading = false
         })
-        .catch(e => this.$toasted.error('There was a problem submitting your comment.'))
     },
     checkPermissions(has) {
       let ret = false
@@ -217,19 +270,27 @@ export default {
   border-radius: 15px;
   padding: 0.75em;
   margin-bottom: 0;
+  cursor: default;
 }
 .contact-comments {
   background-color: #B3E5FC;
   border-radius: 15px;
-  padding: 0.75em;
+  padding: 0.5em;
+  cursor: default;
 }
 .user-text-location {
   float: right;
   margin-top: 1em;
 }
-.center-text {
+.right-text {
   margin: 0 !important;
-  text-align: center;
+  padding-right: 0.5em;
+  text-align: right !important;
+}
+.left-text {
+  margin: 0 !important;
+  padding-left: 0.5em;
+  text-align: left;
 }
 .background {
   background-color: #F5F5F5;
