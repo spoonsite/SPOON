@@ -174,14 +174,8 @@
         <v-card-text>
           <p class="mb-0">From:</p>
           <v-text-field single-line disabled v-model="userEmail"> </v-text-field>
-          <v-textarea
-            :rules="formMessageRules"
-            style="background-color: white;"
-            v-model="vendorMessage"
-            label="Detailed Message"
-            required
-            outlined
-          ></v-textarea>
+          <p class="mb-0">Message:</p>
+          <quill-editor v-model="vendorMessage"/>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
