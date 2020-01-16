@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.service.model;
 
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 
@@ -26,26 +27,32 @@ import edu.usu.sdl.openstorefront.core.entity.BaseComponent;
 public class EmailCommentModel
 		extends BaseComponent<EmailCommentModel>
 {
-	
+
 	private String comment;
-	
+
 	private String author;
-	
+
 	private String entryName;
-	
+
 	private String currentStep;
-	
+
 	private String replyInstructions;
-	
+
 	private String assignedUser;
-	
+
 	private String assignedGroup;
-	
+
 	private boolean privateComment;
-	
+
 	private boolean adminComment;
-	
+
 	private String entryOwner;
+
+	private String hostUrl;
+
+	private String applicationName;
+
+	private String supportEmail;
 
 	@Override
 	public String uniqueKey()
@@ -57,6 +64,13 @@ public class EmailCommentModel
 	protected void customKeyClear()
 	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	public void updateConfigs()
+	{
+		this.hostUrl = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL);
+		this.applicationName = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE);
+		this.supportEmail = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL);
 	}
 
 	public String getComment()
@@ -157,6 +171,30 @@ public class EmailCommentModel
 	public void setEntryOwner(String entryOwner)
 	{
 		this.entryOwner = entryOwner;
+	}
+
+	public String getHostUrl() {
+		return hostUrl;
+	}
+
+	public void setHostUrl(String hostUrl) {
+		this.hostUrl = hostUrl;
+	}
+
+	public String getApplicationName() {
+		return applicationName;
+	}
+
+	public void setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
+	}
+
+	public String getSupportEmail() {
+		return supportEmail;
+	}
+
+	public void setSupportEmail(String supportEmail) {
+		this.supportEmail = supportEmail;
 	}
 
 }

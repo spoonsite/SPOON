@@ -47,7 +47,6 @@ import edu.usu.sdl.openstorefront.service.api.SecurityServicePrivate;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.message.MessageContext;
-import edu.usu.sdl.openstorefront.service.message.ResetPasswordMessageGenerator;
 import edu.usu.sdl.openstorefront.service.message.UserApprovedMessageGenerator;
 import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
@@ -67,6 +66,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.mail.Message;
+import javax.mail.Message.RecipientType;
+
 import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -262,6 +263,9 @@ public class SecurityServiceImpl
 					data.put("verificationCode", userRegistration.getVerificationCode());
 					data.put("replyName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
 					data.put("replyAddress", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
+					data.put("applicationName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE));
+					data.put("hostUrl", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL));
+					data.put("supportEmail", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL));
 					data.put("title", subject);
 					Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_VERIFICATION.toString(), data);
 					email.setSubject(subject);
@@ -433,9 +437,21 @@ public class SecurityServiceImpl
 				if (StringUtils.isNotBlank(userProfile.getEmail())) {
 					MessageContext messageContent = new MessageContext(userProfile);
 					messageContent.setUserPasswordResetCode(rawApprovalCode);
-					ResetPasswordMessageGenerator resetPasswordMessageGenerator = new ResetPasswordMessageGenerator(messageContent);
-					Email email = resetPasswordMessageGenerator.generateMessage();
-					MailManager.send(email);
+
+					Map<String, Object> data = new HashMap<>();
+					data.put("username", userProfile.getUsername());
+					data.put("applicationName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE));
+					data.put("hostUrl", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL));
+					data.put("supportEmail", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL));
+					String link = PropertiesManager.getInstance().getValueDefinedDefault(PropertiesManager.KEY_EXTERNAL_HOST_URL) + "/approveChange.jsp?approvalCode=" + messageContent.getUserPasswordResetCode();
+					data.put("resetPasswordLink", link);
+					Email passwordResetEmail = MailManager.newTemplateEmail(MailManager.Templates.RESET_PASSWORD.toString(), data, true);
+					if(userProfile.getEmail() != null){
+						passwordResetEmail.addRecipient("", userProfile.getEmail(), RecipientType.TO);
+					}
+					passwordResetEmail.setSubject(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE) +" - Forgot Password" );
+					MailManager.send(passwordResetEmail);
+
 				}
 			} else {
 				throw new OpenStorefrontRuntimeException("Unable to find user profile to reset", "Check input: " + username);
@@ -908,10 +924,14 @@ public class SecurityServiceImpl
 
 		if (username != null){
 			Map<String, Object> data = new HashMap<>();
-			String subject = "Forgot Username";
+			String subject = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE) + " - Forgot Username";
 			data.put("username", username);
 			data.put("replyName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_NAME));
 			data.put("replyAddress", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_REPLY_ADDRESS));
+			data.put("applicationName", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_APPLICATION_TITLE));
+			data.put("hostUrl", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_EXTERNAL_HOST_URL));
+			data.put("supportEmail", PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL));
+			data.put("username", username);
 			data.put("title", subject);
 			Email email = MailManager.newTemplateEmail(MailManager.Templates.FORGOT_USERNAME.toString(), data);
 			email.setSubject(subject);

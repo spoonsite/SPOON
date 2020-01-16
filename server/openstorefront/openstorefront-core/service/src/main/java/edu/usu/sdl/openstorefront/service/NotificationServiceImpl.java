@@ -233,7 +233,7 @@ public class NotificationServiceImpl
 
 	private void sendEmailToProfile(UserProfile userProfile, EmailCommentModel emailCommentModel)
 	{
-
+		emailCommentModel.updateConfigs();
 		if (userProfile != null) {
 			if (StringUtils.isNotBlank(userProfile.getEmail())) {
 				Email email = MailManager.newTemplateEmail(MailManager.Templates.EMAIL_COMMENT.toString(), emailCommentModel, false);
@@ -252,7 +252,7 @@ public class NotificationServiceImpl
 	@Override
 	public void emailCommentMessage(EmailCommentModel emailCommentModel)
 	{
-
+		emailCommentModel.updateConfigs();
 		List<UserRole> userRoles = new ArrayList<>();
 		if (StringUtils.isNotBlank(emailCommentModel.getAssignedGroup()) && StringUtils.isNotEmpty(emailCommentModel.getAssignedGroup())) {
 			UserRole userRole = new UserRole();

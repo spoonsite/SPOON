@@ -1036,16 +1036,22 @@ export default {
       let data = {
         userToEmail: sendToEmail,
         userFromEmail: this.userEmail,
-        message: this.vendorMessage
+        userName: this.$store.state.currentUser.firstName + ' ' + this.$store.state.currentUser.lastName,
+        message: this.vendorMessage,
+        partName: this.detail.name,
+        partId: this.detail.componentId
       }
-      this.$http.post(`/openstorefront/api/v1/service/notification/contact-vendor`, data)
+      this.$http.post(`/openstorefront/api/v1/service/notification/contact-vendor-template`, data)
         .then(response => {
           this.vendorMessage = ''
           this.contactVendorDialog = false
           this.buttonLoad = false
           this.$toasted.show('Message to vendor was sent.')
         })
-        .catch(e => this.$toasted.error('There was a problem contacting this vendor.'))
+        .catch(e => {
+          this.$toasted.error('There was a problem contacting this vendor.')
+          this.buttonLoad = false
+        })
     },
     deleteTag() {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${this.deleteTagId}`)

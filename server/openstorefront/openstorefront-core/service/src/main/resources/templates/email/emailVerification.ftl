@@ -1,18 +1,13 @@
-<#ftl strip_whitespace = true>
+<#import "base/emailBase.ftl" as u>
 
-<#assign charset="UTF-8">
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>${title}</title>
-		<meta charset="${charset}">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		</head>
-	<body>
-		<p>Here is your user registration email verification code.<sup>*</sup></p>
-		<p>${verificationCode}</p>
-		<p>If you are not the intended user of this message, please delete this message. <br>
-			Contact ${replyName} at ${replyAddress} for questions.</p>
-		<p><small><sup>*</sup>NOTE: Please enter the verification code exactly as it appears it is case sensitive</small></p>
-		</body>
-	</html>
+<@u.page>
+    <h2>Email verification for ${applicationName}</h2>
+    <p>Hi there,</p>
+    <p>Here is your user registration email verification code.<sup>*</sup></p>
+    <br>
+    <p class="text-block">${verificationCode}</p>
+    <br>
+    <p>If you are not the intended user of this message, please delete this message.</p>
+    <br>
+    <p><small><sup>*</sup>NOTE: Please enter the verification code exactly as it appears it is case sensitive</small></p>
+</@u.page>
