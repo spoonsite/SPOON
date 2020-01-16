@@ -133,7 +133,7 @@ public class SecurityServiceImpl
 	{
 		SecurityPolicy securityPolicy = new SecurityPolicy();
 		securityPolicy.setAllowRegistration(Boolean.TRUE);
-		securityPolicy.setAutoApproveUsers(Boolean.FALSE);
+		securityPolicy.setAutoApproveUsers(Boolean.TRUE);
 		securityPolicy.setAllowJSONPSupport(Boolean.FALSE);
 		securityPolicy.setCsrfSupport(Boolean.TRUE);
 		securityPolicy.setLoginLockoutMaxAttempts(5);
