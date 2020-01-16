@@ -256,7 +256,7 @@ export default {
       }
       this.$http
         .put(
-          `openstorefront/api/v1/resource/components/${this.question.currentQuestion.componentId}/questions/${this.question.currentQuestion.questionId}`,
+          `/openstorefront/api/v1/resource/components/${this.question.currentQuestion.componentId}/questions/${this.question.currentQuestion.questionId}`,
           {
             question: event,
             userTypeCode: this.$store.state.currentUser.userTypeCode,
@@ -277,7 +277,7 @@ export default {
       this.question.checkDeleteModal = false
       this.question.isLoading = true
       this.$http
-        .delete(`openstorefront/api/v1/resource/components/${question.componentId}/questions/${question.questionId}`)
+        .delete(`/openstorefront/api/v1/resource/components/${question.componentId}/questions/${question.questionId}`)
         .then(response => {
           this.question.isLoading = false
           this.refreshQuestions()
@@ -290,12 +290,12 @@ export default {
     refreshQuestions() {
       this.question.isLoading = true
       this.$http
-        .get('openstorefront/api/v1/resource/componentquestions/admin?status=A')
+        .get('/openstorefront/api/v1/resource/componentquestions/admin?status=A')
         .then(response => {
           this.question.isLoading = false
           this.question.questions = response.data
           this.$http
-            .get('openstorefront/api/v1/resource/componentquestions/admin?status=P')
+            .get('/openstorefront/api/v1/resource/componentquestions/admin?status=P')
             .then(response => {
               this.question.isLoading = false
               this.question.questions.push(...response.data)
@@ -314,7 +314,7 @@ export default {
     getAnswersToQuestions() {
       this.question.questions.forEach(question => {
         this.$http
-          .get(`openstorefront/api/v1/resource/componentquestions/${question.questionId}/responses`)
+          .get(`/openstorefront/api/v1/resource/componentquestions/${question.questionId}/responses`)
           .then(response => {
             question.responses = response.data
           })
@@ -331,7 +331,7 @@ export default {
       }
       this.$http
         .put(
-          `openstorefront/api/v1/resource/components/${event.componentId}/questions/${event.questionId}/responses/${event.responseId}`,
+          `/openstorefront/api/v1/resource/components/${event.componentId}/questions/${event.questionId}/responses/${event.responseId}`,
           {
             questionId: event.questionId,
             response: event.answer,
@@ -354,7 +354,7 @@ export default {
       this.answer.isLoading = true
       this.$http
         .delete(
-          `openstorefront/api/v1/resource/components/${componentId}/questions/${questionId}/responses/${responseId}`
+          `/openstorefront/api/v1/resource/components/${componentId}/questions/${questionId}/responses/${responseId}`
         )
         .then(response => {
           this.answer.isLoading = false
@@ -368,11 +368,11 @@ export default {
     refreshAnswers() {
       this.answer.isLoading = true
       this.$http
-        .get('openstorefront/api/v1/resource/componentquestions/responses/admin?status=A')
+        .get('/openstorefront/api/v1/resource/componentquestions/responses/admin?status=A')
         .then(response => {
           this.answer.answers = response.data
           this.$http
-            .get('openstorefront/api/v1/resource/componentquestions/responses/admin?status=P')
+            .get('/openstorefront/api/v1/resource/componentquestions/responses/admin?status=P')
             .then(response => {
               this.answer.isLoading = false
               this.answer.answers.push(...response.data)
