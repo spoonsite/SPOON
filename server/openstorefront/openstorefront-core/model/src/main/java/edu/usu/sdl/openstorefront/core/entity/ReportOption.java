@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.ConsumeField;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Embeddable;
 import javax.persistence.Version;
 import javax.validation.constraints.Max;
@@ -109,6 +110,9 @@ public class ReportOption
 
 	@Version
 	private String storageVersion;
+	
+	@ConsumeField
+	private List<String> workPlanSteps;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public ReportOption()
@@ -331,5 +335,15 @@ public class ReportOption
 	public void setDisplayVitals(boolean displayVitals)
 	{
 		this.displayVitals = displayVitals;
+	}
+	
+		public List<String> getWorkPlanSteps()
+	{
+		return workPlanSteps;
+	}
+
+	public void setWorkPlanSteps(List<String> workPlanSteps)
+	{
+		this.workPlanSteps = workPlanSteps;
 	}
 }
