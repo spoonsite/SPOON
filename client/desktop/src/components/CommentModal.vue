@@ -4,12 +4,13 @@
       <v-card>
         <ModalTitle title="Workflow Comments" @close="close" />
         <v-card-text>
-          <p>{{ component.name }}</p>
+          <p style="padding: 0; margin: 0;">{{ component.name }}</p>
           <v-tabs
             v-model="tab"
+            grow
           >
             <v-tabs-slider></v-tabs-slider>
-            <v-tab href="#tab-1">Public</v-tab>
+            <v-tab href="#tab-1" >Public</v-tab>
             <v-tab href="#tab-2" v-if="permission">Private</v-tab>
           </v-tabs>
           <v-tabs-items v-model="tab">
@@ -20,7 +21,7 @@
             >
               <v-card flat>
                 <div class="background">
-                  <v-layout row justify-center align-center v-if="isLoading" style="height:90%;">
+                  <v-layout row justify-center align-center v-if="isLoading" style="height:100%;">
                     <v-flex xs1>
                       <v-progress-circular color="primary" :size="60" :width="6" indeterminate class="spinner"></v-progress-circular>
                     </v-flex>
@@ -32,7 +33,7 @@
                       style="overflow: hidden; margin-right: 1em; margin-left: 1em;"
                   >
                     <div v-if="!comment.privateComment && i === 1">
-                      <v-flex xs6
+                      <v-flex xs8
                         v-if="comment.updateUser === $store.state.currentUser.username"
                         class="user-text-location"
                       >
@@ -70,7 +71,7 @@
                     </div>
 
                     <div v-else-if="comment.privateComment && i === 2">
-                      <v-flex xs6
+                      <v-flex xs8
                         v-if="comment.updateUser === $store.state.currentUser.username"
                         class="user-text-location"
                       >
@@ -111,6 +112,7 @@
                   style="background-color: white;"
                   v-model="newComment"
                 ></quill-editor>
+                <p style="color: red; margin: 0;" v-if="i===1">This comment will be sent to the vendor.</p>
                 <v-btn v-if="i === 1 && !editing" @click="submitPublicComment()">Post Comment</v-btn>
                 <v-btn v-else-if="i ===2 && !editing" @click="submitPrivateComment()">Post Comment</v-btn>
                 <v-btn v-else-if="i===1 && editing" @click="editPublicComment()">Update Comment</v-btn>
@@ -335,7 +337,8 @@ export default {
 }
 .background {
   background-color: #F5F5F5;
-  height: 30em;
-  overflow: auto;
+  height: 40vh;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 </style>
