@@ -18,14 +18,15 @@
               :key="i"
               :value="'tab-' + i"
             >
-              <v-layout row justify-center align-center v-if="isLoading" style="height:100%;">
-                <v-flex xs1>
-                  <v-progress-circular color="primary" :size="60" :width="6" indeterminate class="spinner"></v-progress-circular>
-                </v-flex>
-              </v-layout>
-              <v-card flat v-else>
+              <v-card flat>
                 <div class="background">
+                  <v-layout row justify-center align-center v-if="isLoading" style="height:90%;">
+                    <v-flex xs1>
+                      <v-progress-circular color="primary" :size="60" :width="6" indeterminate class="spinner"></v-progress-circular>
+                    </v-flex>
+                  </v-layout>
                   <div
+                    v-else
                     v-for="comment in comments"
                       :key="comment.comment"
                       style="overflow: hidden; margin-right: 1em; margin-left: 1em;"
@@ -49,7 +50,7 @@
                             </v-btn>
                           </template>
                           <v-list>
-                            <v-list-item @click="editing = true">
+                            <v-list-item @click="editing = true; newComment = comment.comment; currentComment = comment">
                               <v-list-item-title>Edit</v-list-item-title>
                             </v-list-item>
                             <v-list-item @click="currentComment=comment; deleteDialog = true;">
@@ -87,7 +88,7 @@
                             </v-btn>
                           </template>
                           <v-list>
-                            <v-list-item @click="editing = true">
+                            <v-list-item @click="editing = true; newComment=comment.comment; currentComment = comment">
                               <v-list-item-title>Edit</v-list-item-title>
                             </v-list-item>
                             <v-list-item @click="currentComment=comment; deleteDialog = true;">
@@ -112,8 +113,8 @@
                 ></quill-editor>
                 <v-btn v-if="i === 1 && !editing" @click="submitPublicComment()">Post Comment</v-btn>
                 <v-btn v-else-if="i ===2 && !editing" @click="submitPrivateComment()">Post Comment</v-btn>
-                <v-btn v-else-if="i===1 && editing" @click="editPublicComment()">Post Comment</v-btn>
-                <v-btn v-else-if="i===2 && editing" @click="editPrivateComment()">Post Comment</v-btn>
+                <v-btn v-else-if="i===1 && editing" @click="editPublicComment()">Update Comment</v-btn>
+                <v-btn v-else-if="i===2 && editing" @click="editPrivateComment()">Update Comment</v-btn>
               </v-card>
             </v-tab-item>
           </v-tabs-items>
@@ -173,6 +174,7 @@ export default {
       this.$emit('close')
     },
     getComments(component) {
+      this.editing = false
       var url = ''
       if (component.pendingChangeComponentId) {
         url = `/openstorefront/api/v1/resource/components/${component.pendingChangeComponentId}/comments`
@@ -185,6 +187,7 @@ export default {
         .then(response => {
           this.comments = response.data
           this.isLoading = false
+          console.log(this.comments)
         })
         .catch(e => this.errors.push(e))
       var perm = ['WORKFLOW-ADMIN-SUBMISSION-COMMENTS']
@@ -247,6 +250,44 @@ export default {
           this.errors.push(error)
           this.isLoading = false
         })
+    },
+    editPublicComment() {
+      this.isLoading = true
+      let data = {
+        comment: this.newComment,
+        commentType: 'SUBMISSION',
+        privateComment: false,
+        willSendEmail: false
+      }
+      this.editComment(data)
+    },
+    editPrivateComment() {
+      this.isLoading = true
+      let data = {
+        comment: this.newComment,
+        commentType: 'SUBMISSION',
+        privateComment: true,
+        willSendEmail: false
+      }
+      this.editComment(data)
+    },
+    editComment(data) {
+      var editUrl = ''
+      if (this.component.pendingChangeComponentId) {
+        editUrl = `/openstorefront/api/v1/resource/components/${this.component.pendingChangeComponentId}/comments/${this.currentComment.commentId}`
+      } else if (this.component.componentId) {
+        editUrl = `/openstorefront/api/v1/resource/components/${this.component.componentId}/comments/${this.currentComment.commentId}`
+      } else {
+        editUrl = `/openstorefront/api/v1/resource/usersubmissions/${this.component.submissionId}/comments/${this.currentComment.commentId}`
+      }
+      this.$http.put(editUrl, data)
+        .then(response => {
+          this.getComments(this.component)
+          this.currentComment = ''
+          this.newComment = ''
+          this.editing = false
+        })
+        .catch(e => this.$toasted.error('There was a problem editing your comment.'))
     },
     checkPermissions(has) {
       let ret = false
