@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="text-center">Submission Form</h1>
-    <div class="text-center" style="color: red;">
+    <div class="text-center px-2" style="color: red;">
       <h2>Caution!</h2>
       <p>{{ $store.state.branding.userInputWarning }}</p>
     </div>
@@ -21,6 +21,7 @@
           v-model="entryType"
           :items="this.$store.state.componentTypeList"
           item-text="parentLabel"
+          item-value="componentType"
           required
           :rules="[rules.required]"
           class="mx-4 mw-18"
@@ -44,7 +45,7 @@
           required
           :rules="[rules.required]"
           class="mx-4 mw-14"
-        /> -->
+        />-->
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Primary Point of Contact*</legend>
@@ -58,8 +59,6 @@
               class="mx-4 mw-14"
             />
             <v-text-field label="Last Name*" v-model="lastName" required :rules="[rules.required]" class="mx-4 mw-14" />
-          </div>
-          <div class="flex-wrap w-100">
             <v-text-field label="Email*" v-model="email" required :rules="[rules.required]" class="mx-4 mw-14" />
             <v-text-field label="Phone*" v-model="phone" required :rules="[rules.required]" class="mx-4 mw-14" />
           </div>
@@ -67,21 +66,19 @@
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Image Upload</legend>
+        <v-btn color="grey lighten-2" class="mt-0 ma-4" @click="addImage"> <v-icon left>mdi-plus</v-icon>Add image </v-btn>
         <div class="image-row" v-for="(item, index) in images" :key="index">
-          <div>
-            <v-btn title="delete" icon @click="removeImage(index)"><v-icon>mdi-delete</v-icon></v-btn>
-          </div>
-          <div class="flex-wrap pb-4">
-            <div class="image-wrapper mb-4">
+          <div class="flex-wrap">
+            <div class="bg-light-gray mb-4">
               <v-img
-                class="mw-14 mb-2 image-container"
+                class="mw-14 ma-0"
                 :src="item.img"
                 alt="Image preview"
-                max-height="90px"
+                max-height="80px"
                 max-width="120px"
                 contain
+                style="height: 80px;"
               />
-              <div class="image-label">Image Preview</div>
             </div>
             <v-file-input
               v-model="item.file"
@@ -100,53 +97,53 @@
               class="mx-4 mw-14"
             />
           </div>
+          <div>
+            <v-btn class="grey lighten-2" title="delete" @click="removeImage(index)">
+              <v-icon>mdi-delete</v-icon>
+              Remove
+            </v-btn>
+          </div>
         </div>
-        <v-btn color="grey lighten-2" class="ma-4" @click="addImage"><v-icon left>mdi-plus</v-icon>Add image</v-btn>
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend ">Description*</legend>
+        <legend class="title legend">Description*</legend>
         <quill-editor class="ma-2" v-model="description" />
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Attributes</legend>
         <!-- TODO: Fix the issue with multiple select -->
-        <div class="mx-4 mt-4">
-          <div v-if="attributes.required.length === 0">
-            No required attributes available, please select an entry type
-          </div>
-          <div v-else>
-            <fieldset class="fieldset">
-              <legend class="title legend">Required Attributes</legend>
-              <div class="attribute-row" v-for="attribute in attributes.required" :key="attribute.attributeType">
-                <label :for="attribute.description" class="mr-3">{{ attribute.description }}</label>
+          <fieldset class="fieldset mt-0 attribute-grid">
+            <legend class="title legend">Required Attributes</legend>
+            <p v-if="attributes.required.length === 0">
+              No required attributes available, please select an entry type.
+            </p>
+            <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
                 <v-text-field
                   v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
                   v-model="attribute.selectedCodes"
-                  label="Value"
+                  :label="attribute.description"
                   class="mr-3"
-                  :id="attribute.description"
                   required
                   :rules="[rules.required]"
                 />
                 <v-text-field
                   v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
                   v-model="attribute.selectedCodes"
-                  label="Value"
+                  :label="attribute.description"
                   :rules="[rules.numberOnly, rules.required]"
                   class="mr-3"
-                  :id="attribute.description"
                   required
                 />
                 <v-select
                   v-else
-                  label="Value"
+                  :label="attribute.description"
                   clearable
                   :items="attribute.codes"
                   item-text="label"
                   item-code="code"
-                  :id="attribute.description"
                   required
                   :rules="[rules.required]"
+                  class="mr-3"
                 />
                 <v-select
                   label="Unit"
@@ -155,86 +152,75 @@
                   :items="attribute.attributeUnitList"
                   item-text="unit"
                   item-value="unit"
-                  class="mr-3"
+                  class="mr-3 unit"
                   required
                   :rules="[rules.required]"
                 />
-              </div>
-            </fieldset>
-          </div>
-          <div v-if="attributes.suggested.length === 0">
-            No required attributes available, please select an entry type
-          </div>
-          <div v-else>
-            <fieldset class="fieldset">
-              <legend class="title legend">Suggested Attributes</legend>
-              <div class="attribute-row" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
-                <label :for="attribute.description" class="mr-3">{{ attribute.description }}</label>
-                <v-text-field
-                  v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
-                  v-model="attribute.selectedCodes"
-                  label="Value"
-                  class="mr-3"
-                  :id="attribute.description"
-                />
-                <v-text-field
-                  v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
-                  v-model="attribute.selectedCodes"
-                  label="Value"
-                  :rules="[rules.numberOnly]"
-                  class="mr-3"
-                  :id="attribute.description"
-                />
-                <v-select
-                  v-else
-                  label="Value"
-                  clearable
-                  :items="attribute.codes"
-                  item-text="label"
-                  item-code="code"
-                  :id="attribute.description"
-                />
-                <v-select
-                  label="Unit"
-                  v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-                  :value="attribute.attributeUnit"
-                  :items="attribute.attributeUnitList"
-                  item-text="unit"
-                  item-value="unit"
-                  class="mr-3"
-                />
-              </div>
-            </fieldset>
-          </div>
-        </div>
+            </div>
+          </fieldset>
+          <fieldset class="fieldset attribute-grid">
+            <legend class="title legend">Suggested Attributes</legend>
+            <p v-if="attributes.suggested.length === 0">
+              No suggested attributes available, please select an entry type.
+            </p>
+            <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
+              <v-text-field
+                v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
+                v-model="attribute.selectedCodes"
+                :label="attribute.description"
+                class="mr-3"
+              />
+              <v-text-field
+                v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
+                v-model="attribute.selectedCodes"
+                :label="attribute.description"
+                :rules="[rules.numberOnly]"
+                class="mr-3"
+              />
+              <v-select
+                v-else
+                :label="attribute.description"
+                clearable
+                :items="attribute.codes"
+                item-text="label"
+                item-code="code"
+                class="mr-3"
+              />
+              <v-select
+                label="Unit"
+                v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+                :value="attribute.attributeUnit"
+                :items="attribute.attributeUnitList"
+                item-text="unit"
+                item-value="unit"
+                class="mr-3 unit"
+              />
+            </div>
+          </fieldset>
         <div class="mx-4 mt-4">
-          <strong>Request New Attribute</strong>
           <p class="mb-0">Please describe the attribute you would like to have added.</p>
           <p class="mb-3">
             Include the value for your entry, a brief description, and how your part is defined by the attribute.
           </p>
           <label class="title" for="request-new-attribute">Request New Attribute (opt.)</label>
-          <v-textarea outlined placeholder="Request new attribute" class="ma-2" v-model="attributes.missingAttribute" />
+          <v-textarea outlined placeholder="Request new attribute" class="" v-model="attributes.missingAttribute" />
         </div>
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Resources</legend>
-        <fieldset class="fieldset">
+        <fieldset class="fieldset mt-0">
           <legend class="title legend">Local Files</legend>
-          <div class="resource-row" v-for="(file, index) in resources.localFiles" :key="index">
-            <div>
-              <v-btn title="delete" icon @click="removeLocalFile(index)"><v-icon>mdi-delete</v-icon></v-btn>
-            </div>
-            <div class="flex-wrap">
+          <v-btn color="grey lighten-2" @click="addLocalFile">Add Local File</v-btn>
+          <div class="image-row" v-for="(file, index) in resources.localFiles" :key="index">
+            <div class="file-grid">
               <v-select
                 label="Resource Type"
                 v-model="file.resourceType"
                 :items="resourceType"
                 item-text="description"
                 item-value="code"
-                class="mw-14"
               />
-              <v-file-input class="mw-14" label="Add File" v-model="file.file" />
+              <v-file-input label="Add File" v-model="file.file" />
               <v-text-field label="Description" v-model="file.description" />
               <!-- <v-select
                 label="Security Marking"
@@ -242,18 +228,20 @@
                 :items="securityMarkingList"
                 item-text="description"
                 item-value="code"
-              /> -->
+              />-->
+            </div>
+            <div>
+              <v-btn title="delete" icon @click="removeLocalFile(index)">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
             </div>
           </div>
-          <v-btn color="grey lighten-2" @click="addLocalFile" class="mb-2">Add Local File</v-btn>
         </fieldset>
         <fieldset class="fieldset">
-          <legend class="title legend">Links</legend>
-          <div class="resource-row" v-for="(link, index) in resources.links" :key="index">
-            <div>
-              <v-btn title="delete" icon @click="removeLink(index)"><v-icon>mdi-delete</v-icon></v-btn>
-            </div>
-            <div>
+          <legend class="title legend">External Resource</legend>
+          <v-btn @click="addLink" color="grey lighten-2">Add URL</v-btn>
+          <div class="image-row" v-for="(link, index) in resources.links" :key="index">
+            <div class="file-grid">
               <v-select
                 label="Resource Type"
                 v-model="link.resourceType"
@@ -261,18 +249,15 @@
                 item-text="description"
                 item-value="code"
               />
-              <v-text-field label="Link" v-model="link.link" />
+              <v-text-field label="URL" v-model="link.link" />
               <v-text-field label="Description" v-model="link.description" />
-              <!-- <v-select
-                label="Security Marking"
-                v-model="link.securityMarking"
-                :items="securityMarkingList"
-                item-text="description"
-                item-value="code"
-              /> -->
+            </div>
+            <div>
+              <v-btn title="delete" icon @click="removeLink(index)">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
             </div>
           </div>
-          <v-btn @click="addLink" color="grey lighten-2">Add Link</v-btn>
         </fieldset>
       </fieldset>
       <fieldset class="fieldset">
@@ -286,40 +271,46 @@
           deletable-chips
           @keypress.enter="addTag"
           :search-input.sync="tagSearchText"
+          class="mx-4"
         />
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Contacts</legend>
-        <div class="contact-row" v-for="(contact, index) in contacts" :key="index">
-          <div class="delete">
-            <v-btn icon @click="removeContact(index)"><v-icon>mdi-delete</v-icon></v-btn>
-          </div>
-          <v-text-field class="type" v-model="contact.type" label="Contact Type" />
-          <v-text-field class="first" v-model="contact.firstName" label="First Name" />
-          <v-text-field class="last" v-model="contact.lastName" label="Last Name" />
-          <v-text-field class="email" v-model="contact.email" label="Email" />
-          <v-text-field class="phone" v-model="contact.phone" label="Phone" />
-        </div>
         <v-btn color="grey lighten-2" @click="addContact">Add Contact</v-btn>
+        <div class="image-row" v-for="(contact, index) in contacts" :key="index">
+          <div class="contact-grid">
+            <!-- get fields from backend -->
+            <v-select
+              :items="contactTypeList"
+              v-model="contact.type"
+              label="Contact Type"
+              item-text="description"
+              item-value="code"
+            />
+            <v-text-field v-model="contact.firstName" label="First Name" />
+            <v-text-field v-model="contact.lastName" label="Last Name" />
+            <v-text-field v-model="contact.email" label="Email" />
+            <v-text-field v-model="contact.phone" label="Phone" />
+          </div>
+          <div>
+            <v-btn icon @click="removeContact(index)">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </div>
+        </div>
       </fieldset>
-      <div class="mb-8">
+      <!-- <div class="mb-8">
         <h2 class="mb-2 title">Form validation errors</h2>
         <ul class="form-errors">
           <li>entry description</li>
           <li>contacts</li>
           <li>required attributes</li>
         </ul>
-      </div>
+      </div> -->
       <div class="mb-5">
-        <p>
-          If you save and close the entry you will need to come back and finish to submit the entry.
-        </p>
-        <v-btn class="mr-4" color="primary" @click="submit">
-          Save and close
-        </v-btn>
-        <v-btn :disabled="!isFormValid" color="success" class="mr-4" @click="submit">
-          Submit
-        </v-btn>
+        <p>If you save and close the entry you will need to come back and finish to submit the entry.</p>
+        <v-btn class="mr-4 mb-3" color="primary" @click="submit">Save and close</v-btn>
+        <v-btn :disabled="!isFormValid" color="success" class="mr-4 mb-3" @click="submit">Submit</v-btn>
       </div>
     </v-form>
   </div>
@@ -346,44 +337,14 @@ export default {
     this.$http.get('openstorefront/api/v1/resource/lookuptypes/SecurityMarkingType').then(response => {
       this.securityMarkingList = response.data
     })
-    // TODO: fix these hardcoded values
-    this.$http.get('openstorefront/api/v1/resource/attributes/required?componentType=CNDHE').then(response => {
-      this.attributes.required = response.data
-      this.attributes.required.forEach(e => {
-        if (e.allowMultipleFlg) {
-          e.selectedCodes = []
-        } else {
-          e.selectedCodes = ''
-        }
-        if (e.attributeUnitList) {
-          e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
-          if (e.attributeUnitList.length === 0) {
-            e.attributeUnit = ''
-          }
-        }
-      })
-    })
-    this.$http.get('openstorefront/api/v1/resource/attributes/optional?componentType=CNDHE').then(response => {
-      this.attributes.suggested = response.data.filter(e => e.attributeType !== 'MISSINGATTRIBUTE')
-      this.attributes.suggested.forEach(e => {
-        if (e.allowMultipleFlg) {
-          e.selectedCodes = []
-        } else {
-          e.selectedCodes = ''
-        }
-        if (e.attributeUnitList) {
-          e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
-          if (e.attributeUnitList.length === 0) {
-            e.attributeUnit = ''
-          }
-        }
-      })
-    })
     this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ResourceType').then(response => {
       this.resourceType = response.data
     })
     this.$http.get(`/openstorefront/api/v1/resource/components/tags`).then(response => {
       this.tagsList = response.data
+    })
+    this.$http.get('/openstorefront/api/v1/resource/lookuptypes/UserTypeCode').then(response => {
+      this.contactTypeList = response.data
     })
   },
   data: () => ({
@@ -401,7 +362,7 @@ export default {
     email: '',
     phone: '',
     // Images
-    images: [{ file: null, caption: '', img: '' }],
+    images: [],
     allowedImageTypes: ['image/png', 'image/jpeg', 'image/jpg'],
     // Description
     description: '',
@@ -422,6 +383,7 @@ export default {
     tags: [],
     tagsList: [],
     // Contacts
+    contactTypeList: [],
     contacts: [{ firstName: '', lastName: '', type: '', organization: '', email: '', phone: '' }],
 
     rules: {
@@ -465,6 +427,43 @@ export default {
     }
   },
   methods: {
+    setAttributes() {
+      if (this.entryType === '') {
+        return
+      }
+      this.$http.get(`openstorefront/api/v1/resource/attributes/required?componentType=${this.entryType}`).then(response => {
+        this.attributes.required = response.data
+        this.attributes.required.forEach(e => {
+          if (e.allowMultipleFlg) {
+            e.selectedCodes = []
+          } else {
+            e.selectedCodes = ''
+          }
+          if (e.attributeUnitList) {
+            e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
+            if (e.attributeUnitList.length === 0) {
+              e.attributeUnit = ''
+            }
+          }
+        })
+      })
+      this.$http.get(`openstorefront/api/v1/resource/attributes/optional?componentType=${this.entryType}`).then(response => {
+        this.attributes.suggested = response.data.filter(e => e.attributeType !== 'MISSINGATTRIBUTE')
+        this.attributes.suggested.forEach(e => {
+          if (e.allowMultipleFlg) {
+            e.selectedCodes = []
+          } else {
+            e.selectedCodes = ''
+          }
+          if (e.attributeUnitList) {
+            e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
+            if (e.attributeUnitList.length === 0) {
+              e.attributeUnit = ''
+            }
+          }
+        })
+      })
+    },
     setName() {
       this.firstName = this.$store.state.currentUser.firstName
       this.lastName = this.$store.state.currentUser.lastName
@@ -486,13 +485,13 @@ export default {
     },
     imageChange(index) {
       let e = this.images[index]
+      e.img = ''
       // test that the file is an image
       let validImageTypes = ['image/png', 'image/svg', 'image/jpeg', 'image/jpg']
-      if (validImageTypes.includes(e.file['type'])) {
+      if (e.file && validImageTypes.includes(e.file['type'])) {
         let reader = new FileReader()
         reader.onloadend = function() {
           e.img = reader.result
-          console.log(e.img)
         }
         if (e.file) {
           reader.readAsDataURL(e.file)
@@ -528,8 +527,9 @@ export default {
   watch: {
     entryType: function(oldVal, newVal) {
       // TODO: Deal with entryType state change
-      console.log(oldVal)
-      console.log(newVal)
+      this.setAttributes()
+      // console.log(oldVal)
+      // console.log(newVal)
     }
   }
 }
@@ -548,13 +548,16 @@ export default {
   margin-left: 1em;
   padding: 0 0.5em;
 }
-.image-wrapper {
+.bg-light-gray {
   background: rgba(190, 190, 190, 0.2);
 }
-.image-label {
-  width: 100%;
+.tc {
   text-align: center;
+}
+.bold {
   font-weight: 700;
+}
+.text-dark-gray {
   color: rgba(0, 0, 0, 0.5);
 }
 .flex-wrap {
@@ -570,57 +573,29 @@ export default {
 .attribute-row {
   display: grid;
   grid-gap: 1em;
-  grid-template-columns: 1fr 3fr 1fr;
-  align-items: center;
-  padding: 0 1em;
-}
-.resource-row {
-  display: grid;
-  grid-gap: 1em;
-  grid-template-columns: 1fr 14fr;
+  grid-template-columns: 3fr 1fr;
   align-items: center;
   padding: 0 1em;
 }
 .image-row {
   display: grid;
   grid-gap: 1em;
-  grid-template-columns: 1fr 14fr;
+  grid-template-columns: 14fr 1fr;
   align-items: center;
-  padding: 0 1em;
-  margin-bottom: 2em;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 12px;
+}
+.image-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0px;
 }
 .contact-row {
   display: grid;
   grid-gap: 1em;
-  grid-template-columns: 1fr 4fr 4fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 14fr;
   align-items: center;
   padding: 0 1em;
   margin-bottom: 2em;
-  grid-template-areas:
-    'delete type type'
-    'delete first last'
-    'delete email phone';
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-.delete {
-  grid-area: delete;
-}
-.type {
-  grid-area: type;
-}
-.first {
-  grid-area: first;
-}
-.last {
-  grid-area: last;
-}
-.email {
-  grid-area: email;
-}
-.phone {
-  grid-area: phone;
 }
 .form-errors {
   border-radius: 10px;
@@ -629,5 +604,31 @@ export default {
   display: inline-block;
   padding: 1em;
   padding-left: 2em;
+}
+.attribute-grid {
+  display: grid;
+  grid-column-gap: 3em;
+  grid-row-gap: 1em;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  align-items: center;
+}
+.contact-grid {
+  display: grid;
+  grid-gap: 1em;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  align-items: center;
+}
+.file-grid {
+  display: grid;
+  grid-gap: 1em;
+  grid-row-gap: 0px;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  align-items: center;
+}
+.attribute {
+  display: flex;
+}
+.unit {
+  max-width: 10em;
 }
 </style>
