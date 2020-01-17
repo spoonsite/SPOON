@@ -54,18 +54,18 @@ public class EntityEventType
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		codeMap.put(CREATE, newLookup(EntityEventType.class, CREATE, "Create"));
-		codeMap.put(UPDATE, newLookup(EntityEventType.class, UPDATE, "Update"));
-		codeMap.put(DELETE, newLookup(EntityEventType.class, DELETE, "Delete"));
-		codeMap.put(ENTRY_DELETE, newLookup(EntityEventType.class, ENTRY_DELETE, "Entry Delete"));
-		codeMap.put(ACTIVATED, newLookup(EntityEventType.class, ACTIVATED, "Activate"));
-		codeMap.put(DEACTIVATED, newLookup(EntityEventType.class, DEACTIVATED, "Deactivated"));
+		codeMap.put(CREATE, newLookup(EntityEventType.class, CREATE, "Create - Captures other events"));
+		codeMap.put(UPDATE, newLookup(EntityEventType.class, UPDATE, "Update - In Alpha"));
+		codeMap.put(DELETE, newLookup(EntityEventType.class, DELETE, "Delete - In Alpha"));
+		codeMap.put(ENTRY_DELETE, newLookup(EntityEventType.class, ENTRY_DELETE, "Entry Delete - In Alpha"));
+		codeMap.put(ACTIVATED, newLookup(EntityEventType.class, ACTIVATED, "Activate - In Alpha"));
+		codeMap.put(DEACTIVATED, newLookup(EntityEventType.class, DEACTIVATED, "Deactivated - In Alpha"));
 		codeMap.put(APPROVED, newLookup(EntityEventType.class, APPROVED, "Approved"));
-		codeMap.put(PENDING, newLookup(EntityEventType.class, PENDING, "Pending"));
-		codeMap.put(PENDING_CHANGE_REQUEST, newLookup(EntityEventType.class, PENDING_CHANGE_REQUEST, "Pending Change Request"));
-		codeMap.put(NEW_SUBMISSION_NOT_SUBMITTTED, newLookup(EntityEventType.class, NEW_SUBMISSION_NOT_SUBMITTTED, "New Submission (Not Submitted)"));
-		codeMap.put(PUBLISH_EVALUATION, newLookup(EntityEventType.class, PUBLISH_EVALUATION, "Published Evaluation"));
-		codeMap.put(UNPUBLISH_EVALUATION, newLookup(EntityEventType.class, UNPUBLISH_EVALUATION, "Unpublish Evaluation"));
+		codeMap.put(PENDING, newLookup(EntityEventType.class, PENDING, "Pending - In Alpha"));
+		codeMap.put(PENDING_CHANGE_REQUEST, newLookup(EntityEventType.class, PENDING_CHANGE_REQUEST, "Pending Change Request - In Alpha"));
+		codeMap.put(NEW_SUBMISSION_NOT_SUBMITTTED, newLookup(EntityEventType.class, NEW_SUBMISSION_NOT_SUBMITTTED, "New Submission (Not Submitted) - In Alpha"));
+		codeMap.put(PUBLISH_EVALUATION, newLookup(EntityEventType.class, PUBLISH_EVALUATION, "Published Evaluation - In Alpha"));
+		codeMap.put(UNPUBLISH_EVALUATION, newLookup(EntityEventType.class, UNPUBLISH_EVALUATION, "Unpublish Evaluation - In Alpha"));
 
 		return codeMap;
 	}
