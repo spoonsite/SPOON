@@ -2,7 +2,7 @@
   <div>
     <h2 class="text-center">Reviews</h2>
     <v-btn class="ma-4" @click="getUserReviews()">Refresh</v-btn>
-    <v-data-table :headers="tableHeaders" :items="reviewsDisplay" class="elevation-1">
+    <v-data-table :headers="tableHeaders" :items="reviewsDisplay" class="elevation-1" :loading="isLoading">
       <!-- <td>{{ props.item.entry }}</td>
             <td>{{ props.item.title }}</td>
 
@@ -21,14 +21,14 @@
             <td style="word-wrap: break-word" v-else>{{ props.item.comment.substring(0, 200) + '...' }}</td>
             <td>{{ props.item.updateDate }}</td> -->
       <template v-slot:item.updateDate="{ item }">
-        {{ item.updateDate | formatDate }}
+        {{ item.updateDate | formatDate('MM/dd/yyyy') }}
       </template>
       <template v-slot:item.actions="{ item }">
         <v-btn icon class="" @click.stop="setUpEditDialog(item)"><v-icon>fas fa-pencil-alt</v-icon></v-btn>
         <v-btn icon class="" @click.stop="setUpDeleteDialog(item)"><v-icon>fas fa-trash</v-icon></v-btn>
       </template>
       <template v-slot:no-data>
-        No questions have been asked...
+        No entries have been reviewed...
       </template>
     </v-data-table>
     <ReviewModal v-model="editReviewDialog" @close="editReviewDialog = false" :review="currentReview"></ReviewModal>
@@ -72,6 +72,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       tableHeaders: [
         { text: 'Entry', value: 'entry' },
         { text: 'Title', value: 'title' },
@@ -101,8 +102,10 @@ export default {
   },
   methods: {
     getUserReviews() {
+      this.isLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/reviews/${this.username}`)
         .then(response => {
+          this.isLoading = false
           this.reviewsData = []
           this.reviewsDisplay = []
           this.reviewsData = response.data
