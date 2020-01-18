@@ -98,9 +98,8 @@
             />
           </div>
           <div>
-            <v-btn class="grey lighten-2" title="delete" @click="removeImage(index)">
+            <v-btn icon title="delete" @click="removeImage(index)">
               <v-icon>mdi-delete</v-icon>
-              Remove
             </v-btn>
           </div>
         </div>
@@ -115,7 +114,7 @@
           <fieldset class="fieldset mt-0 attribute-grid">
             <legend class="title legend">Required Attributes</legend>
             <p v-if="attributes.required.length === 0">
-              No required attributes available, please select an entry type.
+              No required attributes, please select an entry type.
             </p>
             <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
                 <v-text-field
@@ -161,7 +160,7 @@
           <fieldset class="fieldset attribute-grid">
             <legend class="title legend">Suggested Attributes</legend>
             <p v-if="attributes.suggested.length === 0">
-              No suggested attributes available, please select an entry type.
+              No suggested attributes, please select an entry type.
             </p>
             <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
               <v-text-field
@@ -237,7 +236,7 @@
             </div>
           </div>
         </fieldset>
-        <fieldset class="fieldset">
+        <fieldset class="fieldset mb-1">
           <legend class="title legend">External Resource</legend>
           <v-btn @click="addLink" color="grey lighten-2">Add URL</v-btn>
           <div class="image-row" v-for="(link, index) in resources.links" :key="index">
@@ -277,7 +276,7 @@
       <fieldset class="fieldset">
         <legend class="title legend">Contacts</legend>
         <v-btn color="grey lighten-2" @click="addContact">Add Contact</v-btn>
-        <div class="image-row" v-for="(contact, index) in contacts" :key="index">
+        <div class="image-row mx-4" v-for="(contact, index) in contacts" :key="index">
           <div class="contact-grid">
             <!-- get fields from backend -->
             <v-select
@@ -374,8 +373,8 @@ export default {
     },
     // Resources
     resources: {
-      localFiles: [{ resourceType: '', file: null, description: '', securityMarking: '' }],
-      links: [{ resourceType: '', link: '', description: '', securityMarking: '' }]
+      localFiles: [],
+      links: []
     },
     resourceType: [],
     // Tags
