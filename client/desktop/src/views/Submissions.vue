@@ -1,10 +1,10 @@
 <template lang="html">
   <div>
     <v-form style="padding: 1em; padding-top: 2em;">
-      <v-flex class="d-flex" xs5>
+      <v-flex class="d-flex flex-wrap">
         <v-btn class="top-buttons" @click="getUserParts()"><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn>
         <v-btn class="top-buttons" @click="showData()"><v-icon left>fas fa-plus</v-icon>Add New</v-btn>
-        <v-btn class="top-buttons" @click="openBulkUpload()"
+        <v-btn class="top-buttons" @click="bulkUploadDialog = true"
           ><v-icon left>fas fa-upload</v-icon>Bulk Upload</v-btn
         >
         <v-text-field
@@ -13,7 +13,7 @@
           label="Search"
           single-line
           hide-details
-          style="padding-top: 0; margin-bottom: 1em;"
+          style="padding-top: 0; margin-bottom: 1em; max-width: 20em;"
         ></v-text-field>
       </v-flex>
       <div class="d-flex">
@@ -22,6 +22,10 @@
           :items="componentData"
           :items-per-page="10"
           :loading="isLoading"
+          :footer-props="{
+            'items-per-page-options': [10, 20, 30, 40, 50]
+          }"
+          :sort-by="['name']"
           class="tableLayout"
           :search="search"
         >
@@ -38,19 +42,20 @@
             <div v-else>{{ item.status }}</div>
           </template>
           <template v-slot:item.submitDate="{ item }">
-            <div v-if="item.submitDate">{{ item.submitDate | formatDate }}</div>
-            <div v-else-if="item.status === 'P'">{{ item.lastUpdate | formatDate }}</div>
+            <div v-if="item.submitDate">{{ item.submitDate | formatDate('yyyy/MMM/dd') }}</div>
+            <div v-else-if="item.status === 'P'">{{ item.lastUpdate | formatDate('yyyy/MMM/dd') }}</div>
           </template>
           <template v-slot:item.pendingChange="{ item }">
             <div v-if="item.hasChangeRequest">Pending</div>
           </template>
           <template v-slot:item.lastUpdate="{ item }">
-            {{ item.lastUpdate | formatDate }}
+            {{ item.lastUpdate | formatDate('yyyy/MMM/dd') }}
           </template>
           <template v-slot:item.approvalWorkflow="{ item }">
-            <svg width="200" height="50">
-              <g v-for="(step, i) in item.steps" :key="step.name" :id="step.name">
+            <svg width="200" height="65">
+              <g v-for="(step, i) in item.steps" :key="step.name" :id="step.name"  class="step">
                 <circle :cx="20 + i * 50" cy="25" r="15" stroke="black" :fill="'#' + step.color" />
+
                 <line
                   v-if="i !== item.steps.length - 1"
                   :x1="35 + i * 50"
@@ -59,14 +64,20 @@
                   y2="25"
                   style="stroke:black; stroke-width:2"
                 ></line>
+                <text v-if="item.currentStep" x="55" y="60">{{ step.name }}</text>
               </g>
             </svg>
           </template>
           <template v-slot:item.actions="{ item }">
-            <div >
+            <div style="display: flex;">
               <v-tooltip bottom v-if="item.componentId">
                 <template v-slot:activator="{ on }">
-                  <v-btn icon v-on="on" :to="{ name: 'Entry Detail', params: { id: item.componentId } }">
+                  <v-btn
+                    icon
+                    v-on="on"
+                    :to="{ name: 'Entry Detail', params: { id: item.componentId } }"
+                    style="order: 1"
+                  >
                     <v-icon>fas fa-eye</v-icon>
                   </v-btn>
                 </template>
@@ -74,7 +85,7 @@
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-btn icon v-on="on">
+                  <v-btn icon v-on="on" style="order: 2">
                     <v-icon>fas fa-pencil-alt</v-icon>
                   </v-btn>
                 </template>
@@ -82,7 +93,16 @@
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-btn icon v-on="on" @click="$refs.comment.getComments(item); currentComponent = item; commentsDialog = true">
+                  <v-btn
+                    icon
+                    v-on="on"
+                    @click="
+                      $refs.comment.getComments(item)
+                      currentComponent = item
+                      commentsDialog = true
+                    "
+                    style="order: 3"
+                  >
                     <v-icon>far fa-comment</v-icon>
                   </v-btn>
                 </template>
@@ -90,7 +110,7 @@
               </v-tooltip>
               <v-tooltip bottom v-if="item.status !== 'P'">
                 <template v-slot:activator="{ on }">
-                  <v-btn icon v-on="on" @click="determineDeleteForm(item)">
+                  <v-btn icon v-on="on" @click="determineDeleteForm(item)" style="order: 4">
                     <v-icon>fas fa-trash</v-icon>
                   </v-btn>
                 </template>
@@ -102,7 +122,7 @@
       </div>
     </v-form>
     <!-- Display for new Bulk Upload Dialog -->
-    <!-- <v-dialog v-model="bulkUploadDialog" width="35em">
+    <v-dialog v-model="bulkUploadDialog" width="35em">
       <v-card>
         <ModalTitle title="Bulk Uploads" @close="bulkUploadDialog = false" />
         <v-card-text>
@@ -120,10 +140,7 @@
             The information submitted to this site will be made publicly available. Please do not submit any sensitive
             information such as proprietary or ITAR restricted information.
           </p>
-          <v-file-input
-            style="width: 100%;"
-            label="Upload Resource (Limit of 2.15 GB)"
-          ></v-file-input>
+          <v-file-input style="width: 100%;" label="Upload Resource (Limit of 2.15 GB)"></v-file-input>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -131,7 +148,7 @@
           <v-btn @click="bulkUploadDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog> -->
+    </v-dialog>
 
     <v-dialog v-model="deleteDialog" width="35em">
       <v-card>
@@ -155,16 +172,10 @@
           >
             Delete Change
           </v-btn>
-          <p
-            v-if="currentComponent.hasChangeRequest && deleteChange"
-            style="padding-top: 1em;"
-          >
+          <p v-if="currentComponent.hasChangeRequest && deleteChange" style="padding-top: 1em;">
             Are you sure you want to delete the change request for: {{ currentComponent.name }}?
           </p>
-          <p
-            v-else-if="!currentComponent.hasChangeRequest && !requestRemoval"
-            style="padding-top: 1em;"
-          >
+          <p v-else-if="!currentComponent.hasChangeRequest && !requestRemoval" style="padding-top: 1em;">
             Are you sure you want to delete: {{ currentComponent.name }}?
           </p>
           <v-form v-if="requestRemoval" v-model="isFormValid">
@@ -187,24 +198,30 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            v-if="requestRemoval"
-            color="warning"
-            @click="submitRemoval()"
-            :disabled="!isFormValid"
-          >
+          <v-btn v-if="requestRemoval" color="warning" @click="submitRemoval()" :disabled="!isFormValid">
             Submit
           </v-btn>
           <p v-else-if="currentComponent.hasChangeRequest && !requestRemoval && !deleteChange"></p>
           <v-btn color="warning" v-else @click="submitDeletion()">
             Delete
           </v-btn>
-          <v-btn @click="deleteDialog = false; removalForm.message = '';">Cancel</v-btn>
+          <v-btn
+            @click="
+              deleteDialog = false
+              removalForm.message = ''
+            "
+            >Cancel</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <CommentModal v-model="commentsDialog" ref="comment" :component="currentComponent" @close="commentsDialog = false"></CommentModal>
+    <CommentModal
+      v-model="commentsDialog"
+      ref="comment"
+      :component="currentComponent"
+      @close="commentsDialog = false"
+    ></CommentModal>
   </div>
 </template>
 
@@ -291,6 +308,7 @@ export default {
         .then(response => {
           this.isLoading = false
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
+          console.log(this.componentData)
         }).catch(error => {
           this.isLoading = false
           this.errors.push(error)
@@ -324,6 +342,7 @@ export default {
     },
     generateComponent(component, workPlan) {
       let seenCurrStep = false
+      let currentStep = ''
       let steps = []
 
       workPlan.steps.forEach((step, index) => {
@@ -339,6 +358,7 @@ export default {
                 name: step.name,
                 color: workPlan.inProgressColor
               })
+              currentStep = step.name
             }
             seenCurrStep = true
           } else {
@@ -356,7 +376,9 @@ export default {
       })
 
       // TODO: deal with the chance of the component being a submission
-
+      if (currentStep === '') {
+        currentStep = 'Approved'
+      }
       let updatedComponent = {}
 
       updatedComponent = {
@@ -367,6 +389,7 @@ export default {
         status: component.approvalState,
         submitDate: component.approvedDts,
         steps: steps,
+        currentStep: currentStep,
         submissionOriginalComponentId: component.submissionOriginalComponentId,
         evaluationsAttached: component.evaluationsAttached,
         hasChangeRequest: component.statusOfPendingChange != null,
@@ -458,10 +481,17 @@ export default {
   text-transform: none;
   background-color: #e0e0e0 !important;
   margin-right: 1em;
+  margin-top: 0.5em;
 }
 .tableLayout {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+}
+svg text {
+  display: none;
+}
+svg g:hover text{
+  display: block;
 }
 </style>
