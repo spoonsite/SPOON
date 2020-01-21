@@ -308,7 +308,6 @@ export default {
         .then(response => {
           this.isLoading = false
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
-          console.log(this.componentData)
         }).catch(error => {
           this.isLoading = false
           this.errors.push(error)
