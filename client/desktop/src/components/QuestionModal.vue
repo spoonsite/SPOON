@@ -6,7 +6,7 @@
         <v-alert class="w-100" type="warning" :value="true"
           ><span v-html="$store.state.branding.userInputWarning"></span
         ></v-alert>
-        <v-alert class="w-100" type="info" :value="true"
+        <v-alert class="w-100" type="info" :value="!autoApprove"
           ><span v-html="$store.state.branding.submissionFormWarning"></span
         ></v-alert>
         <quill-editor style="background-color: white;" v-model="question"></quill-editor>
@@ -29,9 +29,15 @@ export default {
   components: {
     ModalTitle
   },
+  mounted() {
+    this.$http
+      .get(`/openstorefront/api/v1/service/application/configproperties/userreview.autoapprove`)
+      .then(response => (this.autoApprove = response.data.description))
+  },
   data() {
     return {
-      question: ''
+      question: '',
+      autoApprove: false
     }
   },
   methods: {

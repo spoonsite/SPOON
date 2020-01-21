@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h2 class="text-center">Questions & Answers</h2>
-    <v-tabs>
+    <v-tabs icons-and-text color="black" background-color="grey lighten-3" slider-size="3" centered>
       <v-tab>
         <v-icon left>fa fa-question</v-icon>
         Questions
@@ -13,6 +12,7 @@
 
       <v-tab-item>
         <div class="pa-5">
+          <h2 class="text-center">Questions</h2>
           <v-btn color="grey lighten-2" @click="refreshQuestions"><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn>
         </div>
         <v-data-table
@@ -91,6 +91,7 @@
       </v-tab-item>
       <v-tab-item>
         <div class="pa-5">
+          <h2 class="text-center">Answers</h2>
           <v-btn color="grey lighten-2" @click="refreshAnswers"><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn>
         </div>
         <v-data-table

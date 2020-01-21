@@ -264,8 +264,8 @@ export default {
         },
         {
           link: '/questions',
-          icon: 'question-circle',
-          name: 'Questions',
+          icon: 'comments',
+          name: 'Q&A',
           hasChildren: false,
           permissions: []
         },
@@ -288,7 +288,7 @@ export default {
         },
         {
           link: '/contact',
-          icon: 'comment',
+          icon: 'envelope',
           name: 'Contact',
           hasChildren: false,
           permissions: []
