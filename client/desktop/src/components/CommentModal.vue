@@ -189,7 +189,6 @@ export default {
         .then(response => {
           this.comments = response.data
           this.isLoading = false
-          console.log(this.comments)
         })
         .catch(e => this.errors.push(e))
       var perm = ['WORKFLOW-ADMIN-SUBMISSION-COMMENTS']
