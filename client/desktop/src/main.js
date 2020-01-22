@@ -69,7 +69,7 @@ Vue.filter('formatDate', function(value, formatString) {
   if (formatString) {
     return format(parseISO(date.toISOString()), formatString)
   } else {
-    return format(parseISO(date.toISOString()), 'dd/MM/yyyy')
+    return format(parseISO(date.toISOString()), 'yyyy/MMM/dd')
   }
 })
 
