@@ -66,7 +66,9 @@
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Image Upload</legend>
-        <v-btn color="grey lighten-2" class="mt-0 ma-4" @click="addImage"> <v-icon left>mdi-plus</v-icon>Add image </v-btn>
+        <v-btn color="grey lighten-2" class="mt-0 ma-4" @click="addImage">
+          <v-icon left>mdi-plus</v-icon>Add image
+        </v-btn>
         <div class="image-row" v-for="(item, index) in images" :key="index">
           <div class="flex-wrap">
             <div class="bg-light-gray mb-4">
@@ -111,91 +113,93 @@
       <fieldset class="fieldset">
         <legend class="title legend">Attributes</legend>
         <!-- TODO: Fix the issue with multiple select -->
-          <fieldset class="fieldset mt-0 attribute-grid">
-            <legend class="title legend">Required Attributes</legend>
-            <p v-if="attributes.required.length === 0">
-              No required attributes, please select an entry type.
-            </p>
-            <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
-                <v-text-field
-                  v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
-                  v-model="attribute.selectedCodes"
-                  :label="attribute.description"
-                  class="mr-3"
-                  required
-                  :rules="[rules.required]"
-                />
-                <v-text-field
-                  v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
-                  v-model="attribute.selectedCodes"
-                  :label="attribute.description"
-                  :rules="[rules.numberOnly, rules.required]"
-                  class="mr-3"
-                  required
-                />
-                <v-select
-                  v-else
-                  :label="attribute.description"
-                  clearable
-                  :items="attribute.codes"
-                  item-text="label"
-                  item-code="code"
-                  required
-                  :rules="[rules.required]"
-                  class="mr-3"
-                />
-                <v-select
-                  label="Unit"
-                  v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-                  :value="attribute.attributeUnit"
-                  :items="attribute.attributeUnitList"
-                  item-text="unit"
-                  item-value="unit"
-                  class="mr-3 unit"
-                  required
-                  :rules="[rules.required]"
-                />
-            </div>
-          </fieldset>
-          <fieldset class="fieldset attribute-grid">
-            <legend class="title legend">Suggested Attributes</legend>
-            <p v-if="attributes.suggested.length === 0">
-              No suggested attributes, please select an entry type.
-            </p>
-            <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
-              <v-text-field
-                v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
-                v-model="attribute.selectedCodes"
-                :label="attribute.description"
-                class="mr-3"
-              />
-              <v-text-field
-                v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
-                v-model="attribute.selectedCodes"
-                :label="attribute.description"
-                :rules="[rules.numberOnly]"
-                class="mr-3"
-              />
-              <v-select
-                v-else
-                :label="attribute.description"
-                clearable
-                :items="attribute.codes"
-                item-text="label"
-                item-code="code"
-                class="mr-3"
-              />
-              <v-select
-                label="Unit"
-                v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-                :value="attribute.attributeUnit"
-                :items="attribute.attributeUnitList"
-                item-text="unit"
-                item-value="unit"
-                class="mr-3 unit"
-              />
-            </div>
-          </fieldset>
+        <!-- TODO: Check into these more in regard to the flags on the attributs -->
+        <fieldset class="fieldset mt-0 attribute-grid">
+          <legend class="title legend">Required Attributes</legend>
+          <p v-if="attributes.required.length === 0">
+            No required attributes, please select an entry type.
+          </p>
+          <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
+            <v-text-field
+              v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
+              v-model="attribute.selectedCodes"
+              :label="attribute.description"
+              class="mr-3"
+              :rules="[rules.required]"
+              validate-on-blur
+              outlined
+            />
+            <v-text-field
+              v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
+              v-model="attribute.selectedCodes"
+              :label="attribute.description"
+              :rules="[rules.required, rules.numberOnly]"
+              class="mr-3"
+              required
+            />
+            <v-select
+              v-else
+              :label="attribute.description"
+              clearable
+              :items="attribute.codes"
+              item-text="label"
+              item-code="code"
+              required
+              :rules="[rules.required]"
+              class="mr-3"
+            />
+            <v-select
+              label="Unit"
+              v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+              :value="attribute.attributeUnit"
+              :items="attribute.attributeUnitList"
+              item-text="unit"
+              item-value="unit"
+              class="mr-3 unit"
+              required
+              :rules="[rules.required]"
+            />
+          </div>
+        </fieldset>
+        <fieldset class="fieldset attribute-grid">
+          <legend class="title legend">Suggested Attributes</legend>
+          <p v-if="attributes.suggested.length === 0">
+            No suggested attributes, please select an entry type.
+          </p>
+          <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
+            <v-text-field
+              v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
+              v-model="attribute.selectedCodes"
+              :label="attribute.description"
+              class="mr-3"
+            />
+            <v-text-field
+              v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
+              v-model="attribute.selectedCodes"
+              :label="attribute.description"
+              :rules="[rules.numberOnly]"
+              class="mr-3"
+            />
+            <v-select
+              v-else
+              :label="attribute.description"
+              clearable
+              :items="attribute.codes"
+              item-text="label"
+              item-code="code"
+              class="mr-3"
+            />
+            <v-select
+              label="Unit"
+              v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+              :value="attribute.attributeUnit"
+              :items="attribute.attributeUnitList"
+              item-text="unit"
+              item-value="unit"
+              class="mr-3 unit"
+            />
+          </div>
+        </fieldset>
         <div class="mx-4 mt-4">
           <p class="mb-0">Please describe the attribute you would like to have added.</p>
           <p class="mb-3">
@@ -312,12 +316,30 @@
         <v-btn :disabled="!isFormValid" color="success" class="mr-4 mb-3" @click="submit">Submit</v-btn>
       </div>
     </v-form>
+    <v-dialog :value="showEntryTypeWarning" @input="showEntryTypeWarning = false" max-width="50em">
+      <v-card>
+        <ModalTitle title="Are you sure?" @close="showEntryTypeWarning = false" />
+        <v-card-text>
+          TODO: Change this wording<br />
+          Changing the entry type changed which attributes are chosen. If you change your entry type the form may delete
+          some of the entered attrbiutes.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="warning" @click="changeEntryType">Change Entry Type</v-btn>
+          <v-btn @click="cancelChangeEntryType">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
+import ModalTitle from '@/components/ModalTitle'
+
 export default {
   name: 'SubmissionForm',
+  components: { ModalTitle },
   mounted() {
     if (this.$store.state.currentUser.username) {
       this.setName()
@@ -351,6 +373,9 @@ export default {
     // entryDetails:
     entryTitle: '',
     entryType: '',
+    lastEntryType: '',
+    showEntryTypeWarning: false,
+    isEntryTypeDirty: false,
     organization: '',
     organizationList: [],
     securityMarking: '',
@@ -430,38 +455,52 @@ export default {
       if (this.entryType === '') {
         return
       }
-      this.$http.get(`openstorefront/api/v1/resource/attributes/required?componentType=${this.entryType}`).then(response => {
-        this.attributes.required = response.data
-        this.attributes.required.forEach(e => {
-          if (e.allowMultipleFlg) {
-            e.selectedCodes = []
-          } else {
-            e.selectedCodes = ''
-          }
-          if (e.attributeUnitList) {
-            e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
-            if (e.attributeUnitList.length === 0) {
-              e.attributeUnit = ''
+      this.$http
+        .get(`openstorefront/api/v1/resource/attributes/required?componentType=${this.entryType}`)
+        .then(response => {
+          this.attributes.required = response.data
+          this.attributes.required.forEach(e => {
+            if (e.allowMultipleFlg) {
+              e.selectedCodes = []
+            } else {
+              e.selectedCodes = null
             }
-          }
-        })
-      })
-      this.$http.get(`openstorefront/api/v1/resource/attributes/optional?componentType=${this.entryType}`).then(response => {
-        this.attributes.suggested = response.data.filter(e => e.attributeType !== 'MISSINGATTRIBUTE')
-        this.attributes.suggested.forEach(e => {
-          if (e.allowMultipleFlg) {
-            e.selectedCodes = []
-          } else {
-            e.selectedCodes = ''
-          }
-          if (e.attributeUnitList) {
-            e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
-            if (e.attributeUnitList.length === 0) {
-              e.attributeUnit = ''
+            if (e.attributeUnitList) {
+              e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
+              if (e.attributeUnitList.length === 0) {
+                e.attributeUnit = ''
+              }
             }
-          }
+          })
         })
-      })
+      this.$http
+        .get(`openstorefront/api/v1/resource/attributes/optional?componentType=${this.entryType}`)
+        .then(response => {
+          this.attributes.suggested = response.data.filter(e => e.attributeType !== 'MISSINGATTRIBUTE')
+          this.attributes.suggested.forEach(e => {
+            if (e.allowMultipleFlg) {
+              e.selectedCodes = []
+            } else {
+              e.selectedCodes = ''
+            }
+            if (e.attributeUnitList) {
+              e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
+              if (e.attributeUnitList.length === 0) {
+                e.attributeUnit = ''
+              }
+            }
+          })
+        })
+    },
+    changeEntryType() {
+      this.showEntryTypeWarning = false
+      this.setAttributes()
+    },
+    cancelChangeEntryType() {
+      this.showEntryTypeWarning = false
+      this.isEntryTypeDirty = true
+      this.entryType = this.lastEntryType
+      this.lastEntryType = ''
     },
     setName() {
       this.firstName = this.$store.state.currentUser.firstName
@@ -524,11 +563,17 @@ export default {
     }
   },
   watch: {
-    entryType: function(oldVal, newVal) {
-      // TODO: Deal with entryType state change
-      this.setAttributes()
-      // console.log(oldVal)
-      // console.log(newVal)
+    entryType: function(newVal, oldVal) {
+      if (oldVal === '') {
+        this.setAttributes()
+      } else {
+        if (this.isEntryTypeDirty) {
+          this.isEntryTypeDirty = false
+          return
+        }
+        this.lastEntryType = oldVal
+        this.showEntryTypeWarning = true
+      }
     }
   }
 }
