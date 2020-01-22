@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <v-form style="padding: 1em; padding-top: 2em;">
+    <v-form class="pa-2 pt-4">
       <v-flex class="d-flex flex-wrap">
         <v-btn class="top-buttons" @click="getUserParts()"><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn>
         <v-btn class="top-buttons" @click="showData()"><v-icon left>fas fa-plus</v-icon>Add New</v-btn>
@@ -136,15 +136,15 @@
             information for Subject Matter Expert (SME) review. Once the SME has approved your information your part
             will become searchable on the site.
           </p>
-          <p style="color: red;">
+          <p class="red--text">
             The information submitted to this site will be made publicly available. Please do not submit any sensitive
             information such as proprietary or ITAR restricted information.
           </p>
-          <v-file-input style="width: 100%;" label="Upload Resource (Limit of 2.15 GB)"></v-file-input>
+          <v-file-input v-model="uploadFile" ref="bulkUploadFile"></v-file-input>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn>Upload</v-btn>
+          <v-btn @click="openBulkUpload()">Upload</v-btn>
           <v-btn @click="bulkUploadDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
@@ -172,10 +172,10 @@
           >
             Delete Change
           </v-btn>
-          <p v-if="currentComponent.hasChangeRequest && deleteChange" style="padding-top: 1em;">
+          <p v-if="currentComponent.hasChangeRequest && deleteChange" class="pt-2">
             Are you sure you want to delete the change request for: {{ currentComponent.name }}?
           </p>
-          <p v-else-if="!currentComponent.hasChangeRequest && !requestRemoval" style="padding-top: 1em;">
+          <p v-else-if="!currentComponent.hasChangeRequest && !requestRemoval" class="pt-2">
             Are you sure you want to delete: {{ currentComponent.name }}?
           </p>
           <v-form v-if="requestRemoval" v-model="isFormValid">
@@ -271,6 +271,7 @@ export default {
       isLoading: true,
       counter: 0,
       search: '',
+      uploadFile: null,
       bulkUploadDialog: false,
       commentsDialog: false,
       deleteDialog: false,

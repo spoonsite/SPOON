@@ -4,7 +4,7 @@
       <v-card>
         <ModalTitle title="Workflow Comments" @close="close" />
         <v-card-text>
-          <p style="padding: 0; margin: 0;">{{ component.name }}</p>
+          <p class="">{{ component.name }}</p>
           <v-tabs
             v-model="tab"
             grow
@@ -30,7 +30,8 @@
                     v-else
                     v-for="comment in comments"
                       :key="comment.comment"
-                      style="overflow: hidden; margin-right: 1em; margin-left: 1em;"
+                      class="mx-1"
+                      style="overflow: hidden;"
                   >
                     <div v-if="!comment.privateComment && i === 1">
                       <v-flex xs8
@@ -112,7 +113,7 @@
                   style="background-color: white;"
                   v-model="newComment"
                 ></quill-editor>
-                <p style="color: red; margin: 0;" v-if="i===1">This comment will be sent to the vendor.</p>
+                <p class="ma-0 red--text" v-if="i===1">This comment will be sent to the vendor.</p>
                 <v-btn v-if="i === 1 && !editing" @click="submitPublicComment()">Post Comment</v-btn>
                 <v-btn v-else-if="i ===2 && !editing" @click="submitPrivateComment()">Post Comment</v-btn>
                 <v-btn v-else-if="i===1 && editing" @click="editPublicComment()">Update Comment</v-btn>
@@ -129,7 +130,7 @@
         <ModalTitle title="Delete Comment?" @close="deleteDialog = false" />
         <v-card-text>
           <p> Are you sure you want to delete the comment:</p>
-          <p style="color: red;" v-html="currentComment.comment"></p>
+          <p class="red--text" v-html="currentComment.comment"></p>
 
         </v-card-text>
         <v-card-actions>
