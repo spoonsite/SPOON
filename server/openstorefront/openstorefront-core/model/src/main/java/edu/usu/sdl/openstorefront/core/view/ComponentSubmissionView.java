@@ -38,17 +38,7 @@ public class ComponentSubmissionView
 
     public ComponentSubmissionView(){}
 
-    public ComponentSubmissionView(SubmissionView submissionView, String workPlanId, String stepId){
-//		ComponentSubmissionView componentSubmission = new ComponentSubmissionView();
-//		try {
-//			BeanUtils.copyProperties(submission, componentSubmission);
-//		} catch (IllegalAccessException | InvocationTargetException ex) {
-//			throw new OpenStorefrontRuntimeException(ex);
-//		}
-//		super.updateFields(submission);
-//		Component component = (Component) submissionView;
-//		ServiceProxyFactory.getServiceProxy().getChangeLogService().findUpdateChanges(this, component);
-		
+    public ComponentSubmissionView(SubmissionView submissionView, String workPlanId, String stepId){		
 		super.setComponentTypeLabel(submissionView.getComponentTypeLabel());
 		super.setApprovalStateLabel(submissionView.getApprovalStateLabel());
 		super.setNumberOfPendingChanges(submissionView.getNumberOfPendingChanges());
