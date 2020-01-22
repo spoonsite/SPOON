@@ -76,6 +76,9 @@ Vue.filter('formatDate', function(value, formatString) {
 Vue.filter('crushNumericString', scientificToDecimal.crushNumericString)
 
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)))
+
+Vue.prototype.$filters = Vue.options.filters
+
 store.dispatch('getSecurityPolicy')
 store.dispatch('getHelpUrl')
 store.dispatch('getAttributeMap')
