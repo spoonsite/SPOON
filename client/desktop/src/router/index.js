@@ -7,6 +7,7 @@ import ContactUs from '@/views/ContactUs'
 import Profile from '@/views/Profile'
 import EntryDetail from '@/views/EntryDetail'
 import Watches from '@/views/Watches'
+import Reviews from '@/views/Reviews'
 
 Vue.use(VueRouter)
 
@@ -46,6 +47,11 @@ const routes = [
     path: '/watches',
     name: 'Watches',
     component: Watches
+  },
+  {
+    path: '/reviews',
+    name: 'Reviews',
+    component: Reviews
   }
   // {
   //   path: '/about',
