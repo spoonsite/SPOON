@@ -27,9 +27,9 @@ Before a form can be designed, any required or custom attributes should be added
 3. Click the **+ Add Form** button. Select an Entry Type. Fill in the Form Name, Description, and Entry Type. Remember that these custom submission forms are tied to a specific entry type(s). If needed, create a new entry type and then navigate back here (Data Management &rarr; Entry Types). Click **Create Form.**
 ![addTemplate](/images/AppAdmin/addTemplate.JPG)
 4. In the **Form Builder Tool's window** add sections as needed. Add fields, paragraphs, horizontal rules, images, and so forth.
-![customForm](/images/AppAdmin/customForm.jpg)
+![customForm](/images/AppAdmin/custom_Form.JPG)
 5. Note the **Mappings** tab. The Mappable Fields **MUST** be on the form as well as the Required Attributes. These sections will have a red x or a green checkmark, depending on whether they have been added to the form.
-![mappingsTab](/images/AppAdmin/mappingsTab.jpg)
+![mappingsTab](/images/AppAdmin/mappings_Tab.JPG)
 6. To add a mappable field:
     1. Click the **Add a field** button at the bottom of the form then **Mappable Field OR Attribute**.
     2. Above in the form select the **"Map To Field:" drop-down** OR the **"Attribute Type**: drop down to select the attribute.
