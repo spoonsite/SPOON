@@ -6,7 +6,6 @@ import scientificToDecimal from '@/util/scientificToDecimal'
 
 import Vuetify from 'vuetify/lib'
 import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
 import VueTruncate from 'vue-truncate-filter'
 import axios from 'axios'
 import Cookies from 'js-cookie'
@@ -67,9 +66,9 @@ Vue.use(VueQuillEditor, {
 Vue.filter('formatDate', function(value, formatString) {
   let date = new Date(value)
   if (formatString) {
-    return format(parseISO(date.toISOString()), formatString)
+    return format(date, formatString)
   } else {
-    return format(parseISO(date.toISOString()), 'yyyy/MMM/dd')
+    return format(date, 'yyyy/MMM/dd')
   }
 })
 
