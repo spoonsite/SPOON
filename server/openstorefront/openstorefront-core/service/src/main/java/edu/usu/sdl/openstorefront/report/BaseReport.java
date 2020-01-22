@@ -50,7 +50,7 @@ import java.util.logging.Logger;
 public abstract class BaseReport<T extends BaseReportModel>
 {
 
-	private static final Logger LOG = Logger.getLogger(BaseReport.class.getName());
+	static final Logger LOG = Logger.getLogger(BaseReport.class.getName());
 
 	protected Report report;
 	protected Service service;
