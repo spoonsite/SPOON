@@ -206,10 +206,10 @@
               ref="attributeBar"
               style="width: 90%;"
             />
-            <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="attributeQuery = ''">clear</v-icon>
+            <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="attributeQuery = ''">mdi-close</v-icon>
           </div>
           <div>
-            <v-chip close v-for="attr in filters.attributes" :key="attr" @input="removeAttributeFilter(attr)">{{
+            <v-chip close style="overflow-x: auto; padding: 15px; padding-bottom: 30px;" v-for="attr in filters.attributes" :key="attr" @click:close="removeAttributeFilter(attr)">{{
               printAttribute(attr)
             }}</v-chip>
           </div>
@@ -297,7 +297,7 @@
             </v-avatar>
             {{ filters.organization }}
           </v-chip>
-          <v-chip close @click:close="removeAttributeFilter(attr)" v-for="attr in filters.attributes" :key="attr">
+          <v-chip close style="overflow-x: auto;" @click:close="removeAttributeFilter(attr)" v-for="attr in filters.attributes" :key="attr">
             <v-avatar left>
               <v-icon small>fas fa-clipboard-list</v-icon>
             </v-avatar>
