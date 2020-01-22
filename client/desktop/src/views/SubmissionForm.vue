@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-center">Submission Form</h1>
+    <h1 class="text-center">Entry Submission Form</h1>
     <div class="text-center px-2" style="color: red;">
       <h2>Caution!</h2>
       <p>{{ $store.state.branding.userInputWarning }}</p>
