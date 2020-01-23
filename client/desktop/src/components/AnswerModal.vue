@@ -1,7 +1,7 @@
 <template>
   <v-dialog :value="value" @input="close" max-width="75em">
     <v-card>
-      <ModalTitle title="Post an Answer" @close="askQuestionDialog = false" />
+      <ModalTitle title="Post an Answer" @close="close" />
       <v-card-text>
         <v-alert class="w-100" type="warning" :value="true"
           ><span v-html="$store.state.branding.userInputWarning"></span
