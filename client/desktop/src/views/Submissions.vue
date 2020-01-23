@@ -140,12 +140,21 @@
             The information submitted to this site will be made publicly available. Please do not submit any sensitive
             information such as proprietary or ITAR restricted information.
           </p>
-          <v-file-input style="width: 100%;" label="Upload Resource (Limit of 2.15 GB)"></v-file-input>
+          <v-file-input
+            style="width: 100%;"
+            label="Upload Resource (Limit of 2.15 GB)"
+            ref="bulkFileSelector"
+            accept=".zip"
+            v-model="bulkUploadFile"
+            ></v-file-input>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn>Upload</v-btn>
-          <v-btn @click="bulkUploadDialog = false">Close</v-btn>
+          <v-btn @click="submitBulkFile()">Upload</v-btn>
+          <v-btn @click="
+          bulkUploadDialog = false
+          bulkUploadFile = null
+          ">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -272,6 +281,7 @@ export default {
       counter: 0,
       search: '',
       bulkUploadDialog: false,
+      bulkUploadFile: null,
       commentsDialog: false,
       deleteDialog: false,
       requestRemoval: false,
@@ -470,6 +480,31 @@ export default {
     },
     openBulkUpload() {
       window.open('openstorefront/bulkUpload.jsp', 'uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440')
+    },
+    submitBulkFile() {
+      // console.log(this.bulkUploadFile)
+
+      let formData = new FormData()
+      formData.append('file', this.bulkUploadFile)
+      this.$http.post(`/openstorefront/api/v1/resource/usersubmissions/upload/zip`, formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then(response => {
+          // this.deleteDialog = false
+          // this.removalForm.message = ''
+          this.$toasted.show('Sent Sucessfully.')
+          // this.$toasted.error('Got Response from server')
+          // console.log('Got Response from server')
+          // console.log(response)
+        })
+        .catch(e => {
+          this.$toasted.show('Caught error: ' + e)
+          // console.log('Got error')
+          // console.log(e)
+        })
     }
   }
 }
