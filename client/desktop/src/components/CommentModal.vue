@@ -41,25 +41,27 @@
                         <p class="right-text">{{ comment.createUser }}</p>
                         <p class="right-text">{{ comment.createDts | formatDate("Pp") }}</p>
                         <div class="user-comments" v-html="comment.comment"/>
-                        <v-menu offset-y nudge-left="20em">
-                          <template v-slot:activator="{ on }">
-                            <v-btn
-                              icon
-                              style="float: right;"
-                              v-on="on"
-                            >
-                              <v-icon>fas fa-ellipsis-h</v-icon>
-                            </v-btn>
-                          </template>
-                          <v-list>
-                            <v-list-item @click="editing = true; newComment = comment.comment; currentComment = comment">
-                              <v-list-item-title>Edit</v-list-item-title>
-                            </v-list-item>
-                            <v-list-item @click="currentComment=comment; deleteDialog = true;">
-                              <v-list-item-title>Delete</v-list-item-title>
-                            </v-list-item>
-                          </v-list>
-                        </v-menu>
+                        <div class="d-flex flex-row">
+                          <v-menu offset-y nudge-left="20em">
+                            <template v-slot:activator="{ on }">
+                              <v-spacer></v-spacer>
+                              <v-btn
+                                icon
+                                v-on="on"
+                              >
+                                <v-icon>fas fa-ellipsis-h</v-icon>
+                              </v-btn>
+                            </template>
+                            <v-list>
+                              <v-list-item @click="editing = true; newComment = comment.comment; currentComment = comment">
+                                <v-list-item-title>Edit</v-list-item-title>
+                              </v-list-item>
+                              <v-list-item @click="currentComment=comment; deleteDialog = true;">
+                                <v-list-item-title>Delete</v-list-item-title>
+                              </v-list-item>
+                            </v-list>
+                          </v-menu>
+                        </div>
                       </v-flex>
                       <v-flex
                         xs6
@@ -79,25 +81,28 @@
                         <p class="right-text">{{ comment.createUser }}</p>
                         <p class="right-text">{{ comment.createDts | formatDate("Pp") }}</p>
                         <div class="user-comments" v-html="comment.comment"/>
-                        <v-menu offset-y nudge-left="20em">
-                          <template v-slot:activator="{ on }">
-                            <v-btn
-                              icon
-                              style="float: right;"
-                              v-on="on"
-                            >
-                              <v-icon>fas fa-ellipsis-h</v-icon>
-                            </v-btn>
-                          </template>
-                          <v-list>
-                            <v-list-item @click="editing = true; newComment=comment.comment; currentComment = comment">
-                              <v-list-item-title>Edit</v-list-item-title>
-                            </v-list-item>
-                            <v-list-item @click="currentComment=comment; deleteDialog = true;">
-                              <v-list-item-title>Delete</v-list-item-title>
-                            </v-list-item>
-                          </v-list>
-                        </v-menu>
+                        <div class="d-flex flex-row">
+                          <v-spacer/>
+                          <v-menu offset-y auto>
+
+                            <template v-slot:activator="{ on }">
+                              <v-btn
+                                icon
+                                v-on="on"
+                              >
+                                <v-icon>fas fa-ellipsis-h</v-icon>
+                              </v-btn>
+                            </template>
+                            <v-list>
+                              <v-list-item @click="editing = true; newComment=comment.comment; currentComment = comment">
+                                <v-list-item-title>Edit</v-list-item-title>
+                              </v-list-item>
+                              <v-list-item @click="currentComment=comment; deleteDialog = true;">
+                                <v-list-item-title>Delete</v-list-item-title>
+                              </v-list-item>
+                            </v-list>
+                          </v-menu>
+                        </div>
                       </v-flex>
                       <v-flex xs6
                         v-else
