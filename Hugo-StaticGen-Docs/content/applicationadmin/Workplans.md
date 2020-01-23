@@ -33,6 +33,18 @@ It is a good idea to define the steps to be taken with each entry before creatin
 
 1. Step Actions: Step Actions are events that will occur when a step becomes active
 
+{{% notice warning %}}
+In Spoon v2.12, most of the "Active On" options are in Alpha, which means that they will not work as expected because their functionaity has not been programmed into Spoon yet. Those options are there as placeholders (if you want these features, please email your adminstator/developer team). The "Update" and "Create" options do work however. Any of the in-alpha options will behave the same as if they were the "Create" option. See below for more details.
+{{% /notice %}}
+
+##### __Step Configuration:__ "Active On" VS "Approval State to Match"
+
+It's important to know the difference between "Active On" and "Approval State to Match". Both define what events will cause a part to be sent to the Workplan Step in question. The difference is in the timing of when they take effect. "Active On" events are handled first, then the "Approval State" of a part is checked, and placed into the first step that has a "Approval State to Match".
+
+For example, say that a part sitting in a Workplan is manaully set from having an Approval state of "Pending" to "Approved"  (an admin is able to do this through Admin Tools > Data Management > Entries, click "Edit"). When the part is re-saved into the database with this new Approval status, an approved event [should] be fired. In the Workplan, the first Step that has an "Active On" option of "Approved" will receive that part. Then the Approval State will be checked on the part, and the first step in the Workplan that has an "Approval State to Match" of Approved will recieve the part. Thus if there is a workplan step A that has "Active On" attribute Approved, and a workplan step B with an "Approval State to Match" of Approved, then after a part has been approved, the part will appear in step B.
+
+Note that in v2.12 of Spoon, only "Create" and "Update" are supported, therefore some events are treated as if they are "Create": Activate, Deactivate, Pending Change Request, Published Evaluation (? untested), Unpublished Evaluation (? untested). The Approved and Pending events are treated like Update events. So setting those options will cause the step in question to catch Created and Updated parts, respectively.
+
 ## 2. Workplan Progress for Admins and SMEs
 
 Each step of a workplan will be assigned to a certain group. That group will see the entries that are assigned to them when they access the Workplan Progress page (__Data Management &rarr; Workplan Progress__). Each group will complete the task assigned to them. Once completed it will move to the next group.

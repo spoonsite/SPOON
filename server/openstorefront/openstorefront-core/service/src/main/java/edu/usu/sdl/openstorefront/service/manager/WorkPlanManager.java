@@ -112,7 +112,7 @@ public class WorkPlanManager
 	 * To add more triggers (Such as for various Active On options found in the WorkPlan management webpage) add
 	 * another function call here.
 	 *
-	 * @param entityEventModel
+	 * @param entityEventModel record of event that is happening
 	 */
 	@SuppressWarnings("unchecked")
 	protected void triggerHandler(EntityEventModel entityEventModel)

@@ -387,13 +387,13 @@ public class MongoPersistenceServiceImpl
 
 	/**
 	 * Saves a part to the Mongo database.
-	 * 
-	 * Whenever ANYTHING is saved to the database (be it an entry, a log, etc), an EntityEventModel 
-	 * is filled out to record the Event and then passed to event handlers. This emulates
-	 * event based programming. 
-	 * @param <T>
+	 *
+	 * Whenever ANYTHING is saved to the database (be it an entry, a log, etc), an EntityEventModel
+	 * is filled out to record the Event and it is then passed to event handlers. This emulates
+	 * event based programming.
+	 *
 	 * @param entity
-	 * @return 
+	 * @return a reference to the entity that was just saved to the Mongodb
 	 */
 	@Override
 	public <T extends BaseEntity> T persist(T entity)
@@ -518,20 +518,20 @@ public class MongoPersistenceServiceImpl
 
 	/**
 	 * The purpose of this function is to help identify what EntityEventType should be set on the EntityEventModel
-	 * of the entity that is being saved to the db (in the persist() function). 
-	 * 
-	 * In v1.12, the sole purpose of isManaged is to determine whether a component already exists in the db (and hence, 
+	 * of the entity that is being saved to the db (in the persist() function).
+	 *
+	 * In v1.12, the sole purpose of isManaged is to determine whether a component already exists in the db (and hence,
 	 * the EntityEventModel should have a EntityEventType of kind "UPDATE"), or not. Most other Event kind ( such as
-	 *  Activate, Deactivated, New SUbmission (Not Submitted), Pending, Pending Change Request )
-	 * gets cast as if they were CREATE. 
-	 * 
-	 * SPOON's original design imagined that each of these different events would trigger the appropriate EntityEventType's assignment. 
-	 * However the needs of SPOOn are met with just CREATE and UPDATE. This is why there isManaged returns a boolean. 
-	 * In the future, if the original designs are to be realized, this function will be replaced with logic to a certain all the 
-	 * different EntityEventTypes. 
-	 * 
+	 *  Activate, Deactivated, New Submission (Not Submitted), Pending, Pending Change Request )
+	 * gets cast as if they were CREATE.
+	 *
+	 * SPOON's original design imagined that each of these different events would trigger the appropriate EntityEventType's assignment.
+	 * However the needs of SPOOn are met with just CREATE and UPDATE. This is why there isManaged returns a boolean.
+	 * In the future, if the original designs are to be realized, this function will be replaced with logic to a certain all the
+	 * different EntityEventTypes.
+	 *
 	 * @param baseEntity BaseEntity that is being saved to the database presently
-	 * @return 
+	 * @return boolean true if this is an event that can be treated like a Create event, false if can be treated like Update
 	 */
 	@Override
 	public boolean isManaged(BaseEntity baseEntity)
