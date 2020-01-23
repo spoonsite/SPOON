@@ -374,8 +374,6 @@ export default {
           })
         }
       })
-
-      // TODO: deal with the chance of the component being a submission
       if (currentStep === '') {
         currentStep = 'Approved'
       }
