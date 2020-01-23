@@ -1,5 +1,5 @@
 <%--
-/* 
+/*
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,18 +22,18 @@
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
-	<stripes:layout-render name="../../../../layout/adminheader.jsp">		
+	<stripes:layout-render name="../../../../layout/adminheader.jsp">
 	</stripes:layout-render>
-		
+
 	<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>
-	<script src="scripts/component/attributeAssignment.js?v=${appVersion}" type="text/javascript"></script>	
+	<script src="scripts/component/attributeAssignment.js?v=${appVersion}" type="text/javascript"></script>
 
 	<form name="exportForm" action="api/v1/resource/attributes/export" method="POST">
-			<p style="display: none;" id="exportFormAttributeTypes"></p>      
+			<p style="display: none;" id="exportFormAttributeTypes"></p>
 	</form>
-	
+
 	<style type="text/css">
-		
+
 		.attribute-button-inactive,
 		.attribute-button-active {
 
@@ -45,10 +45,10 @@
 			outline: none;
 			color: #000000;
 		}
-		
+
 		.attribute-button-inactive:hover,
 		.attribute-button-active:hover {
-			
+
 			border-color: #B2B2B2;
 		}
 
@@ -111,9 +111,9 @@
 	</style>
 
 	<script type="text/javascript">
-		
+
 		var displayAttributeList = function displayAttributeList(button, listId) {
-				
+
 			var attributes = document.getElementById(listId);
 
 			if (button.className !== "attribute-button-active")  {
@@ -129,7 +129,7 @@
 				attributes.className = "attributes-hidden";
 			}
 		};
-		
+
 		/* global Ext, CoreUtil */
 		Ext.onReady(function() {
 
@@ -144,7 +144,7 @@
 						if (data.defaultAttributeCode) {
 							return data.defaultAttributeCode;
 						}
-						return '';	
+						return '';
 					}},
 					{ name: 'allowUserGeneratedCodes', mapping: function(data) {
 						if (data.allowUserGeneratedCodes) {
@@ -158,8 +158,8 @@
 						property: 'description',
 						direction: 'ASC'
 					})
-				],	
-				proxy:  CoreUtil.pagingProxy({					
+				],
+				proxy:  CoreUtil.pagingProxy({
 					url: 'api/v1/resource/attributes/attributetypes',
 					reader: {
 						type: 'json',
@@ -176,8 +176,8 @@
 					}
 				}
 			});
-			
-			
+
+
 			var store_components_remote = Ext.create('Ext.data.Store', {
 				storeId: 'store_components_remote',
 				autoLoad: false,
@@ -221,25 +221,25 @@
 									name: store.getAt(i).data.componentTypeDescription,
 									code: store.getAt(i).data.componentType
 								},
-								
+
 								// Initialize Attributes Array
 								attributes: []
 							};
-							
+
 							// Loop Through Component's Existing Attributes
 							for (var j = 0; j < store.getAt(i).data.attributes.length; j++) {
-								
+
 								// Store Attribute
 								currentComponent.attributes[j] = {
-									
+
 									// Store Attribute Name
 									name: store.getAt(i).data.attributes[j].typeLabel,
-									
+
 									// Store Attribute Value
 									value: store.getAt(i).data.attributes[j].label
 								};
 							}
-							
+
 //							console.log(store.getAt(i).data);
 
 							// Store Component
@@ -249,7 +249,7 @@
 						// Set Local Component Store Data
 						store_components_local.setData(localComponents);
 					}
-				}					
+				}
 			});
 
 			var store_components_local = Ext.create('Ext.data.Store', {
@@ -282,8 +282,8 @@
 				],
 				sorters: 'name'
 			});
-			
-			
+
+
 			///////////////
 			// Overrides //
 			///////////////
@@ -329,9 +329,9 @@
 
 
 			var gridColorRenderer = function(value, metadata, record) {
-				if (value) 
+				if (value)
 					metadata.tdCls = 'alert-success';
-				else 
+				else
 					metadata.tdCls = 'alert-danger';
 				return value;
 			};
@@ -342,7 +342,7 @@
 				title: 'Manage Attributes <i class="fa fa-lg fa-question-circle"  data-qtip="Attributes are used to categorize components and other listings. They can be searched on and filtered. They represent the metadata for a listing. Attribute Types represent a category and a code represents a specific value. The data is linked by the type and code which allows for a simple change of the description."></i>',
 				store: 'attributeStore',
 				selModel: {
-					selType: 'checkboxmodel'        
+					selType: 'checkboxmodel'
 				},
 				bbar: Ext.create('Ext.PagingToolbar', {
 					store: attributeStore,
@@ -352,30 +352,30 @@
 				}),
 				listeners: {
 					selectionchange: function (grid, record, index, opts) {
-						
+
 						// Ensure Some Record Is Selected
 						if (Ext.getCmp('attributeGrid').getSelectionModel().hasSelection()) {
-							
+
 							// Check If Only One Record Selected
 							if (Ext.getCmp('attributeGrid').getSelectionModel().getCount() === 1) {
-								
+
 								// Enable Options (Single Selection)
 								Ext.getCmp('attributeGrid-tools-edit').enable();
 								Ext.getCmp('attributeGrid-tools-manageCodes').enable();
 							}
 							else {
-								
+
 								// Disable Options (Multiple Selections)
 								Ext.getCmp('attributeGrid-tools-edit').disable();
 								Ext.getCmp('attributeGrid-tools-manageCodes').disable();
 							}
-							
+
 							// Enable Options (Any Selection)
 							Ext.getCmp('attributeGrid-tools-action').enable();
 							Ext.getCmp('attributeGrid-tools-export').enable();
 						}
 						else {
-							
+
 							// Disable Options (No Selection)
 							Ext.getCmp('attributeGrid-tools-action').disable();
 							Ext.getCmp('attributeGrid-tools-export').disable();
@@ -415,13 +415,13 @@
 					{
 						text: 'Required',
 						dataIndex: 'requiredFlg',
-						flex: 1, 
+						flex: 1,
 						tooltip: 'Attribute is required for 1 or more entry types',
 						align: 'center',
 						sortable: false,
-						renderer: function(value, meta, record) {							
+						renderer: function(value, meta, record) {
 							var restricted = false;
-							if (record.get('requiredRestrictions') && 
+							if (record.get('requiredRestrictions') &&
 								record.get('requiredRestrictions').length > 0) {
 								restricted = true;
 							}
@@ -435,16 +435,16 @@
 						}
 					},
 					{
-						text: 'Visible <i class="fa fa-question-circle"  data-qtip="Show in the list of filters?" ></i>', 
+						text: 'Visible <i class="fa fa-question-circle"  data-qtip="Show in the list of filters?" ></i>',
 						dataIndex: 'visibleFlg',
-						flex: 1, 
+						flex: 1,
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
-					},					
+					},
 					{
 						text: 'Important <i class="fa fa-question-circle"  data-qtip="Shows on main page browse categories" ></i>',
 						dataIndex: 'importantFlg',
-						flex: 1, 
+						flex: 1,
 						align: 'center',
 						renderer: CoreUtil.renderer.booleanRenderer
 					},
@@ -478,7 +478,7 @@
 						text: 'Value type',
 						dataIndex: 'attributeValueType',
 						flex: 1
-					},				
+					},
 					{
 						text: 'Status',
 						dataIndex: 'activeStatus',
@@ -524,8 +524,8 @@
 							{
 								xtype: 'textfield',
 								id: 'attributeTypeGridFilter-description',
-								fieldLabel: 'Description',						
-								name: 'description',								
+								fieldLabel: 'Description',
+								name: 'description',
 								emptyText: 'Filter By Description',
 								labelAlign: 'top',
 								labelSeparator: '',
@@ -557,7 +557,7 @@
 									attributeStore.load();
 								}
 							},
-							{ 
+							{
 								xtype: 'tbseparator'
 							},
 							{
@@ -569,7 +569,7 @@
 								handler: function() {
 									actionAddAttribute();
 								}
-							},							
+							},
 							{
 								text: 'Edit Attribute',
 								id: 'attributeGrid-tools-edit',
@@ -598,7 +598,7 @@
 							},
 							{
 								xtype: 'tbseparator'
-							}, 
+							},
 							{
 								text: 'Entry Assignment',
 								id: 'attributeGrid-tools-assign',
@@ -606,7 +606,7 @@
 								iconCls: 'fa fa-2x fa-list-alt icon-vertical-correction-edit icon-button-color-default',
 								requiredPermissions: ['ADMIN-COMPONENT-ATTRIBUTE-MANAGEMENT'],
 								handler: function() {
-									var entryWin = Ext.create('OSF.component.AttributeAssignment', {										
+									var entryWin = Ext.create('OSF.component.AttributeAssignment', {
 									});
 									entryWin.show();
 								}
@@ -614,7 +614,7 @@
 							{
 								text: 'Action',
 								id: 'attributeGrid-tools-action',
-								scale: 'medium',																	
+								scale: 'medium',
 								disabled: true,
 								iconCls: 'fa fa-2x fa-gear icon-vertical-correction icon-button-color-default',
 								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE', 'ADMIN-ATTRIBUTE-MANAGEMENT-DELETE'],
@@ -625,7 +625,7 @@
 										iconCls: 'fa fa-lg fa-flag icon-small-vertical-correction icon-button-color-default',
 										requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 										handler: function() {
-											
+
 											// Check If Only One Record Selected
 											if (attributeGrid.getSelectionModel().getCount() === 1) {
 
@@ -635,10 +635,10 @@
 
 												var title = attributeGrid.getSelectionModel().getCount() + ' Attributes';
 											}
-											
+
 											// Configure Window Title
 											setFlagsWin.setTitle('Set Flags - ' + title);
-											
+
 											// Display Window
 											setFlagsWin.show();
 										}
@@ -653,7 +653,7 @@
 										iconCls: 'fa fa-lg fa-power-off icon-small-vertical-correction icon-button-color-default',
 										requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-UPDATE'],
 										handler: function() {
-											
+
 											actionToggleAttributeStatus();
 										}
 									},
@@ -664,7 +664,7 @@
 										iconCls: 'fa fa-lg fa-trash icon-button-color-default icon-small-vertical-correction',
 										requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-DELETE'],
 										handler: function() {
-											
+
 											actionDeleteAttribute();
 										}
 									}
@@ -702,27 +702,27 @@
 
 			var actionAddAttribute = function() {
 				showAttributeWin(false, '<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add Attribute</span>');
-				
+
 				Ext.getCmp('editAttributeForm-code').setEditable(true);
 				Ext.getCmp('editAttributeForm-defaultCode').hide();
 				Ext.getCmp('editAttributeForm-hideOnSubmission').hide();
-				Ext.getCmp('editAttributeForm-entryTypeAssignment').hide();			
-				
+				Ext.getCmp('editAttributeForm-entryTypeAssignment').hide();
+
 				Ext.getCmp('editAttributeForm-typesRequiredFor').getStore().removeAll();
 				Ext.getCmp('editAttributeForm-associatedComponentTypes').getStore().removeAll();
 			};
 
 			var actionEditAttribute = function(record) {
 				showAttributeWin(true, '<i class="fa fa-edit icon-horizontal-correction-right"></i>' + ' ' + '<span class="shift-window-text-right">Edit Attribute - </span>' + record.data.attributeType, record);
-				
+
 				// Setup the showAttributeWindow for the Edit action
 				Ext.getCmp('editAttributeForm-defaultCode').setValue(null);
 
-				
+
 				Ext.getCmp('editAttributeForm').loadRecord(record);
 
 
-				Ext.getCmp('editAttributeForm-defaultCode').show();				
+				Ext.getCmp('editAttributeForm-defaultCode').show();
 				Ext.getCmp('editAttributeForm-code').setEditable(false);
 				// Retrieve codes to populate form options
 				var url = 'api/v1/resource/attributes/attributetypes/';
@@ -747,74 +747,74 @@
 						}
 					}
 				});
-				
+
 			};
-			
+
 			var setFlagsWin_DisableUpdate = function() {
-				
+
 				// Initialize Update Button Enabled Value
 				var enable = false;
-				
+
 				// Check Radio Groups
 				if (Ext.getCmp('set-flags-visible-group').getValue().visible !== null) {
-					
+
 					// Enable Update Button
 					enable = true;
 				}
 				else if (Ext.getCmp('set-flags-important-group').getValue().important !== null) {
-					
+
 					// Enable Update Button
 					enable = true;
 				}
 				else if (Ext.getCmp('set-flags-architecture-group').getValue().architecture !== null) {
-					
+
 					// Enable Update Button
 					enable = true;
 				}
 				else if (Ext.getCmp('set-flags-multiples-group').getValue().multiples !== null) {
-					
+
 					// Enable Update Button
 					enable = true;
 				}
 				else if (Ext.getCmp('set-flags-user-group').getValue().user !== null) {
-					
+
 					// Enable Update Button
 					enable = true;
 				}
 				else if (Ext.getCmp('set-flags-hide-group').getValue().hide !== null) {
-					
+
 					// Enable Update Button
 					enable = true;
 				}
-				
+
 				// Check If Update Button Should Be Enabled
 				if (enable) {
-					
+
 					// Enable Update Button
 					Ext.getCmp('set-flags-update-button').enable();
 				}
 				else {
-					
+
 					// Disable Update Button
 					Ext.getCmp('set-flags-update-button').disable();
 				}
 			};
-			
+
 			var setFlagsWin = Ext.create('Ext.window.Window', {
-				
+
 				id: 'setFlagsWin',
 				title: 'Set Flags - ',
 				iconCls: 'fa fa-lg fa-flag',
 				width: '35%',
 				y: 200,
 				modal: true,
-				layout: 'fit',					
+				layout: 'fit',
 				items: [
 					{
 						xtype: 'form',
 						itemId: 'setFlagsForm',
 						bodyStyle: 'padding: 10px',
-						items: [							
+						items: [
 							{
 								xtype: 'radiogroup',
 								id: 'set-flags-visible-group',
@@ -831,7 +831,7 @@
 									{boxLabel: 'False', name: 'visible', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
 									{boxLabel: 'No Change', name: 'visible', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
 								],
-								listeners: {									
+								listeners: {
 									change: setFlagsWin_DisableUpdate
 								}
 							},
@@ -848,7 +848,7 @@
 									{boxLabel: 'False', name: 'important', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
 									{boxLabel: 'No Change', name: 'important', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
 								],
-								listeners: {									
+								listeners: {
 									change: setFlagsWin_DisableUpdate
 								}
 							},
@@ -865,7 +865,7 @@
 									{boxLabel: 'False', name: 'architecture', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
 									{boxLabel: 'No Change', name: 'architecture', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
 								],
-								listeners: {									
+								listeners: {
 									change: setFlagsWin_DisableUpdate
 								}
 							},
@@ -882,7 +882,7 @@
 									{boxLabel: 'False', id: 'set-flags-multiples-group-false', name: 'multiples', inputValue: false, formItemCls: 'x-form-item alert-danger', style: 'display: block; padding-left: 5px;'},
 									{boxLabel: 'No Change', id: 'set-flags-multiples-group-none', name: 'multiples', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
 								],
-								listeners: {									
+								listeners: {
 									change: setFlagsWin_DisableUpdate
 								}
 							},
@@ -900,7 +900,7 @@
 									{boxLabel: 'No Change', name: 'user', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
 								],
 								listeners: {
-									
+
 									change: setFlagsWin_DisableUpdate
 								}
 							},
@@ -918,7 +918,7 @@
 									{boxLabel: 'No Change', name: 'hide', inputValue: null, checked: true, formItemCls: 'x-form-item alert-warning', style: 'display: block; padding-left: 5px;'}
 								],
 								listeners: {
-									
+
 									change: setFlagsWin_DisableUpdate
 								}
 							}
@@ -943,32 +943,32 @@
 											// Inform User Of Update Process
 											attributeGrid.mask('Updating Flag(s)...');
 											ownerWindow.close();
-											
+
 											var attributeValues = form.getForm().getValues();
 											var requestDataList = [];
-											
+
 											var attributeOptions = {};
 
 											// Check For Visible
 											if (typeof attributeValues.visible !== 'undefined') {
 												attributeOptions.visibleFlg = attributeValues.visible;
 											}
-											
+
 											// Check For Important
 											if (typeof attributeValues.important !== 'undefined') {
 												attributeOptions.importantFlg = attributeValues.important;
 											}
-											
+
 											// Check For Architecture
 											if (typeof attributeValues.architecture !== 'undefined') {
 												attributeOptions.architectureFlg = attributeValues.architecture;
 											}
-											
+
 											// Check For Allow Multiples
 											if (typeof attributeValues.multiples !== 'undefined') {
 												attributeOptions.allowMultipleFlg = attributeValues.multiples;
 											}
-											
+
 											// Check For Allow User Codes
 											if (typeof attributeValues.user !== 'undefined') {
 												attributeOptions.allowUserGeneratedCodes = attributeValues.user;
@@ -994,15 +994,15 @@
 													requestData.attributeType.componentTypeRestrictions = item.requiredRestrictions;
 												}
 												else {
-													requestData.attributeType.componentTypeRestrictions = null;	
+													requestData.attributeType.componentTypeRestrictions = null;
 												}
-												
+
 												// Check Associated Components
 												if (typeof item.associatedComponentTypes !== 'undefined' && item.associatedComponentTypes !== null) {
 													requestData.attributeType.associatedComponentTypes = item.associatedComponentTypes;
 												}
 												else {
-													requestData.attributeType.associatedComponentTypes = null;	
+													requestData.attributeType.associatedComponentTypes = null;
 												}
 
 												requestDataList.push(requestData);
@@ -1044,20 +1044,20 @@
 					}
 				],
 				listeners: {
-					
+
 					activate: function() {
-						
+
 						// Disable Update Button
 						// (For Some Reason, Setting It As Disabled Had No Effect)
 						Ext.getCmp('set-flags-update-button').disable();
-						
-						
+
+
 						// Get Selection
 						var selection = attributeGrid.getSelection();
-						
+
 						// Get Number Selected
 						var selected = attributeGrid.getSelectionModel().getCount();
-						
+
 					},
 					show: function (me) {
 						var selection = Ext.getCmp('attributeGrid').getSelection();
@@ -1082,52 +1082,52 @@
 			});
 
 			var actionToggleAttributeStatus = function() {
-				
+
 				// Store Selection
 				var selection = attributeGrid.getSelection();
-				
+
 				// Store Selected
 				var selected = attributeGrid.getSelectionModel().getCount();
-				
+
 				// Inform User Of Update Process
 				attributeGrid.mask('Toggling Status...');
-				
+
 				// Initialize Update Counter
 				var attributeToggleCount = 0;
-				
+
 				// Loop Through Selected
 				for (i = 0; i < selected; i++) {
-					
+
 					// Store Record
 					var record = selection[i];
-					
+
 					// Define URL
 					var url = 'api/v1/resource/attributes/attributetypes/' + record.data.attributeType;
-					
+
 					// Check If Record Is Active
 					if (record.data.activeStatus === 'A') {
-						
+
 						// Set HTTP Method
 						var method = 'DELETE';
 					}
 					else {
-						
+
 						// Set HTTP Method
 						var method = 'POST';
 					}
-					
+
 					// Make Request
 					Ext.Ajax.request({
-						
+
 						url: url,
 						method: method,
 						success: function(response, opts) {
 							console.log(response);
 							// Check If We Are On The Final Request
 							if (++attributeToggleCount === selected) {
-								
+
 								new Ext.util.DelayedTask(function() {
-									
+
 									// Provide Success Notification
 									Ext.toast('All Attributes Have Been Processed', 'Success');
 
@@ -1136,7 +1136,7 @@
 
 									// Unmask Grid
 									attributeGrid.unmask();
-									
+
 								}).delay(2000);
 							}
 						},
@@ -1166,7 +1166,7 @@
 			};
 
 			var actionDeleteAttribute = function() {
-				
+
 				// Get Selection
 				var selection = Ext.getCmp('attributeGrid').getSelection();
 
@@ -1182,7 +1182,7 @@
 
 					var name = selected + ' Attributes';
 				}
-				
+
 				// Confirm Delete Operation
 				Ext.Msg.show({
 					iconCls: 'fa fa-lg fa-warning icon-small-vertical-correction',
@@ -1194,7 +1194,7 @@
 					fn: function(btn) {
 
 						if (btn === 'yes') {
-							
+
 							// Inform User Of Update Process
 							attributeGrid.setLoading('Deleting...');
 
@@ -1206,13 +1206,13 @@
 
 								// Store Record
 								var record = selection[i];
-								
+
 								// Define URL
 								var url = 'api/v1/resource/attributes/attributetypes/' + record.data.attributeType + '/force';
-								
+
 								// Make Request
 								Ext.Ajax.request({
-									
+
 									url: url,
 									method: 'DELETE',
 									callback: function() {
@@ -1224,7 +1224,7 @@
 										if (++attributeDeleteCount === selected) {
 
 											new Ext.util.DelayedTask(function() {
-									
+
 												// Provide Success Notification
 												Ext.toast('All Attributes Have Been Processed', 'Success');
 
@@ -1232,7 +1232,7 @@
 												attributeStore.load();
 
 												// Unmask Grid
-												
+
 
 											}).delay(2000);
 										}
@@ -1270,18 +1270,18 @@
 			};
 
 			var actionExportAttribute = function(records) {
-				
+
 				// Initialize Export Types
 				var attributeTypes = "";
-				
+
 				// Loop Through Records
 				Ext.Array.each(records, function(record) {
-					
+
 					// Add Attribute Type To Form
 					attributeTypes += '<input type="hidden" name="type" ';
 					attributeTypes += 'value="' + record.get('attributeType') +'" />';
 				});
-				
+
 				// Get CSRF Token From Cookie
 				var token = Ext.util.Cookies.get('X-Csrf-Token');
 
@@ -1292,17 +1292,17 @@
 					attributeTypes += '<input type="hidden" name="X-Csrf-Token" ';
 					attributeTypes += 'value="' + token + '" />';
 				}
-				
+
 				// Set Form
 				document.getElementById('exportFormAttributeTypes').innerHTML = attributeTypes;
-				
+
 				// Submit Form
 				document.exportForm.submit();
 			};
 
-			var importWindow = Ext.create('OSF.component.ImportWindow', {					
+			var importWindow = Ext.create('OSF.component.ImportWindow', {
 				fileTypeReadyOnly: false,
-				fileTypeValue: 'ATTRIBUTE',	
+				fileTypeValue: 'ATTRIBUTE',
 				uploadSuccess: function(form, action) {
 					Ext.getCmp('attributeGrid').getStore().reload();
 				}
@@ -1311,13 +1311,13 @@
 			var actionManageCodes = function(record) {
 				var url = 'api/v1/resource/attributes/attributetypes';
 				url += '/' + record.data.attributeType + '/attributecodeviews';
-					
+
 				codesStore.load({
 					url: url
 				});
-				manageCodesWin.attributeType = record.data.attributeType;			
+				manageCodesWin.attributeType = record.data.attributeType;
 				manageCodesWin.attributeTypeFull = record.data;
-				
+
 				manageCodesWin.show();
 			};
 
@@ -1364,7 +1364,7 @@
 							{
 								text: 'Upload Attachment',
 								iconCls: 'fa fa-lg fa-upload icon-button-color-default',
-								formBind: true,	
+								formBind: true,
 								requiredPermissions: ['ADMIN-ATTRIBUTE-MANAGEMENT-CREATE'],
 								handler: function() {
 									var record = Ext.getCmp('codesGrid').getSelection()[0];
@@ -1417,8 +1417,8 @@
 						property: 'label',
 						direction: 'ASC'
 					})
-				],	
-				proxy:  CoreUtil.pagingProxy({					
+				],
+				proxy:  CoreUtil.pagingProxy({
 					url: 'api/v1/resource/attributes/attributetypes',
 					reader: {
 						type: 'json',
@@ -1428,17 +1428,17 @@
 				}),
 				listeners: {
 					beforeLoad: function(store, operation, eOpts){
-						
+
 						var url = 'api/v1/resource/attributes/attributetypes/';
 						url += manageCodesWin.attributeType;
 						url += '/attributecodeviews';
-						store.getProxy().url = url;						
+						store.getProxy().url = url;
 						store.getProxy().extraParams = {
 							status: Ext.getCmp('codesFilter-activeStatus').getValue(),
 							attributeCodeLabel: Ext.getCmp('codesFilter-label').getValue()
 						};
 					}
-				}				
+				}
 			});
 
 			var codesGrid = Ext.create('Ext.grid.Panel', {
@@ -1487,7 +1487,7 @@
 					displayInfo: true,
 					displayMsg: 'Displaying Codes {0} - {1} of {2}',
 					emptyMsg: "No codes to display"
-				}),					
+				}),
 				dockedItems: [
 					{
 						dock: 'top',
@@ -1526,8 +1526,8 @@
 							{
 								xtype: 'textfield',
 								id: 'codesFilter-label',
-								fieldLabel: 'Label',						
-								name: 'label',								
+								fieldLabel: 'Label',
+								name: 'label',
 								emptyText: 'Filter By Label',
 								labelAlign: 'top',
 								labelSeparator: '',
@@ -1540,7 +1540,7 @@
 										buffer: 1500
 									}
 								}
-							}							
+							}
 						]
 					},
 					{
@@ -1646,7 +1646,7 @@
 									url += type;
 									url += '/attributecodes/' + code;
 									url += '/attachment';
-									window.location.href = url;		
+									window.location.href = url;
 								}
 							},
 							{
@@ -1681,8 +1681,8 @@
 						flex: 1
 					},
 					{
-						text: 'Description', 
-						dataIndex: 'description', 
+						text: 'Description',
+						dataIndex: 'description',
 						flex: 3,
 						cellWrap: true
 					},
@@ -1717,7 +1717,7 @@
 					{'highlightStyle': 'default'}
 				]
 			});
-			
+
 
 			var editCodeWin = Ext.create('Ext.window.Window', {
 				id: 'editCodeWin',
@@ -1757,7 +1757,7 @@
 								allowDecimal: true,
 								decimalPrecision: 20,
 								hidden: true
-							},								
+							},
 							{
 								xtype: 'textfield',
 								id: 'editCodeForm-code',
@@ -1773,7 +1773,7 @@
 								allowDecimal: true,
 								decimalPrecision: 20,
 								hidden: true
-							},							
+							},
 							{
 								xtype: 'panel',
 								html: '<b>Description</b>'
@@ -1829,15 +1829,15 @@
 										text: 'Insert Media',
 										flex: 1,
 										handler: function() {
-											
+
 											var mediaWindow = Ext.create('OSF.component.MediaInsertWindow', {
 												isEditor: false,
-												mediaSelectionUrl: 'api/v1/resource/generalmedia',			
+												mediaSelectionUrl: 'api/v1/resource/generalmedia',
 												mediaHandler: function(link) {
 													Ext.getCmp('editCodeForm').getForm().setValues({ badgeUrl: link });
 												}
 											});
-											
+
 											mediaWindow.show();
 										}
 									}
@@ -1853,9 +1853,9 @@
 								typeAhead: false,
 								editable: false
 							},
-							Ext.create('OSF.component.SecurityComboBox', {	
+							Ext.create('OSF.component.SecurityComboBox', {
 								hidden: !${branding.allowSecurityMarkingsFlg}
-							})					
+							})
 						]
 					}
 				],
@@ -1870,7 +1870,7 @@
 										iconCls: 'fa fa-lg fa-save icon-button-color-save',
 										formBind: true,
 										handler: function () {
-											var form = Ext.getCmp('editCodeForm');											
+											var form = Ext.getCmp('editCodeForm');
 											var formData = form.getValues();
 											if (editCodeWin.attributeTypeFull.attributeValueType === 'NUMBER') {
 												if (formData.label !== formData.typeCode) {
@@ -1879,15 +1879,15 @@
 														message: 'Type Code must match label for numeric attribute types',
 														buttons: Ext.Msg.OK,
 														icon: Ext.Msg.ERROR,
-														fn: function(btn) {															
+														fn: function(btn) {
 														}
 													});
 													return;
 												}
 											}
-											
+
 											if (form.isValid()) {
-												
+
 												var edit = editCodeWin.edit;
 												var attributeType = editCodeWin.attributeType;
 												var url = 'api/v1/resource/attributes/attributetypes/';
@@ -1906,7 +1906,7 @@
 													data.attributeCodePk.attributeCode = data.typeCode;
 												}
 
-												
+
 												CoreUtil.submitForm({
 													url: url,
 													method: method,
@@ -1953,74 +1953,74 @@
 				editCodeWin.setTitle('<i class="fa fa-plus"></i>' + '<span class="shift-window-text-right">Add New Code</span>');
 				Ext.getCmp('editCodeForm-code').setEditable(true);
 				Ext.getCmp('editCodeForm-codeNumber').setEditable(true);
-				
-				
+
+
 				if (editCodeWin.attributeTypeFull.attributeValueType === 'NUMBER') {
 					Ext.getCmp('editCodeForm-label').setHidden(true);
 					Ext.getCmp('editCodeForm-label').setDisabled(true);
 					Ext.getCmp('editCodeForm-labelNumber').setHidden(false);
 					Ext.getCmp('editCodeForm-labelNumber').setDisabled(false);
-					
+
 					Ext.getCmp('editCodeForm-code').setHidden(true);
 					Ext.getCmp('editCodeForm-code').setDisabled(true);
 					Ext.getCmp('editCodeForm-codeNumber').setHidden(false);
 					Ext.getCmp('editCodeForm-codeNumber').setDisabled(false);
-										
+
 				} else {
 					Ext.getCmp('editCodeForm-label').setHidden(false);
 					Ext.getCmp('editCodeForm-label').setDisabled(false);
 					Ext.getCmp('editCodeForm-labelNumber').setHidden(true);
 					Ext.getCmp('editCodeForm-labelNumber').setDisabled(true);
-					
+
 					Ext.getCmp('editCodeForm-code').setHidden(false);
 					Ext.getCmp('editCodeForm-code').setDisabled(false);
 					Ext.getCmp('editCodeForm-codeNumber').setHidden(true);
-					Ext.getCmp('editCodeForm-codeNumber').setDisabled(true);					
-				}				
-				
+					Ext.getCmp('editCodeForm-codeNumber').setDisabled(true);
+				}
+
 				editCodeWin.show();
 			};
 
 			var actionEditCode = function(record) {
 				Ext.getCmp('editCodeForm').loadRecord(record);
 				Ext.getCmp('editCodeForm-code').setValue(record.data.code);
-				Ext.getCmp('editCodeForm-codeNumber').setValue(record.data.code);	
+				Ext.getCmp('editCodeForm-codeNumber').setValue(record.data.code);
 				Ext.getCmp('editCodeForm-label').setValue(record.data.label);
-				Ext.getCmp('editCodeForm-labelNumber').setValue(record.data.label);	
+				Ext.getCmp('editCodeForm-labelNumber').setValue(record.data.label);
 				editCodeWin.edit = true;
 				editCodeWin.attributeType = manageCodesWin.attributeType;
 				editCodeWin.attributeTypeFull = manageCodesWin.attributeTypeFull;
 				editCodeWin.setTitle('<i class="fa fa-edit"></i>' + '<span class="shift-window-text-right">Edit Code - </span>' + record.data.code);
 				Ext.getCmp('editCodeForm-code').setEditable(false);
 				Ext.getCmp('editCodeForm-codeNumber').setEditable(false);
-				
+
 				if (editCodeWin.attributeTypeFull.attributeValueType === 'NUMBER') {
 					Ext.getCmp('editCodeForm-label').setHidden(true);
 					Ext.getCmp('editCodeForm-label').setDisabled(true);
 					Ext.getCmp('editCodeForm-labelNumber').setHidden(false);
 					Ext.getCmp('editCodeForm-labelNumber').setDisabled(false);
-					
+
 					Ext.getCmp('editCodeForm-code').setHidden(false);
 					Ext.getCmp('editCodeForm-code').setDisabled(false);
 					Ext.getCmp('editCodeForm-codeNumber').setHidden(true);
 					Ext.getCmp('editCodeForm-codeNumber').setDisabled(true);
-					
+
 					Ext.getCmp('editCodeForm-code').setHidden(true);
 					Ext.getCmp('editCodeForm-code').setDisabled(true);
 					Ext.getCmp('editCodeForm-codeNumber').setHidden(false);
-					Ext.getCmp('editCodeForm-codeNumber').setDisabled(false);					
+					Ext.getCmp('editCodeForm-codeNumber').setDisabled(false);
 				} else {
 					Ext.getCmp('editCodeForm-label').setHidden(false);
 					Ext.getCmp('editCodeForm-label').setDisabled(false);
 					Ext.getCmp('editCodeForm-labelNumber').setHidden(true);
 					Ext.getCmp('editCodeForm-labelNumber').setDisabled(true);
-					
+
 					Ext.getCmp('editCodeForm-code').setHidden(false);
 					Ext.getCmp('editCodeForm-code').setDisabled(false);
 					Ext.getCmp('editCodeForm-codeNumber').setHidden(true);
-					Ext.getCmp('editCodeForm-codeNumber').setDisabled(true);					
-				}				
-				
+					Ext.getCmp('editCodeForm-codeNumber').setDisabled(true);
+				}
+
 				editCodeWin.show();
 			};
 
@@ -2115,7 +2115,7 @@
 								id: 'manageCodesCloseBtn',
 								iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 								handler: function () {
-									
+
 									// Hide Manage Codes Window
 									Ext.getCmp('manageCodesWin').close();
 								}
@@ -2126,12 +2126,12 @@
 			});
 
 			var showAttributeWin = function(edit, title, record) {
-				
+
 				var formChange = {
 					change: function () {
 						Ext.getCmp('editAttributeForm').getForm().checkValidity();
 					}
-				};			
+				};
 
 				var editAttributeWin = Ext.create('Ext.window.Window', {
 					id: 'editAttributeWin',
@@ -2189,24 +2189,18 @@
 									name: 'defaultAttributeCode',
 									hidden: true
 								},
+
 								{
-									xtype: 'panel',
-									html: '<b>Detailed Description</b>'
-								},
-								{
-									xtype: 'tinymce_textarea',
-									fieldStyle: 'font-family: Courier New; font-size: 12px;',
-									style: {border: '0'},
-									name: 'detailedDescription',
-									width: '100%',
-									height: 300,
-									maxLength: 255,
-									tinyMCEConfig: CoreUtil.tinymceConfigNoMedia()
+									xtype: 'textfield',
+									id: 'editAttributeForm-detailedDescrpt',
+									fieldLabel: 'Detailed Description',
+									maxLength: 256,
+									name: 'detailedDescription'
 								},
 								{
 									id: 'attributeValueType',
 									xtype: 'combobox',
-									fieldLabel: 'Code Value Type<span class="field-required" />',							
+									fieldLabel: 'Code Value Type<span class="field-required" />',
 									displayField: 'description',
 									valueField: 'code',
 									typeAhead: false,
@@ -2298,7 +2292,7 @@
 												console.error(response);
 											}
 										});
-									}, 
+									},
 									asciiToKatex: function (value) {
 										var unit = "";
 										if (Ext.isIE) {
@@ -2326,7 +2320,7 @@
 									bodyStyle: 'font-size: 16px; line-height: 1.2em; padding-bottom: 10px;',
 									html: ''
 								},
-								// check the unit list to see if dimensions match the base unit 
+								// check the unit list to see if dimensions match the base unit
 								{
 									id: 'attributeUnitListCheck',
 									xtype: 'button',
@@ -2378,7 +2372,7 @@
 									defaults: {
 										flex: 1
 									},
-									items: [										
+									items: [
 										{
 											name: 'visibleFlg',
 											boxLabel: 'Visible',
@@ -2436,7 +2430,7 @@
 											itemId: 'unassociatedGrid',
 											title: 'Unassociated',
 											selModel: {
-												selType: 'rowmodel', 
+												selType: 'rowmodel',
 												mode: 'MULTI'
 											},
 											viewConfig: {
@@ -2444,14 +2438,14 @@
 													ptype: 'gridviewdragdrop',
 													dragText: 'Drag and drop to Add to template'
 												}
-											},											
+											},
 											border: true,
 											width: '33%',
 											margin: '0 20 0 0',
 											store: {
 											},
 											columns: [
-												{ text: 'Entry Type', dataIndex: 'description', flex: 1 }													
+												{ text: 'Entry Type', dataIndex: 'description', flex: 1 }
 											]
 										},
 										{
@@ -2459,7 +2453,7 @@
 											itemId: 'optionalGrid',
 											title: 'Optional',
 											selModel: {
-												selType: 'rowmodel', 
+												selType: 'rowmodel',
 												mode: 'MULTI'
 											},
 											viewConfig: {
@@ -2467,22 +2461,22 @@
 													ptype: 'gridviewdragdrop',
 													dragText: 'Drag and drop to Add to template'
 												}
-											},											
+											},
 											border: true,
 											width: '33%',
 											margin: '0 20 0 0',
 											store: {
 											},
 											columns: [
-												{ text: 'Entry Type', dataIndex: 'description', flex: 1 }													
-											]											
+												{ text: 'Entry Type', dataIndex: 'description', flex: 1 }
+											]
 										},
 										{
 											xtype: 'grid',
 											itemId: 'requiredGrid',
 											title: 'Required',
 											selModel: {
-												selType: 'rowmodel', 
+												selType: 'rowmodel',
 												mode: 'MULTI'
 											},
 											viewConfig: {
@@ -2490,14 +2484,14 @@
 													ptype: 'gridviewdragdrop',
 													dragText: 'Drag and drop to Add to template'
 												}
-											},											
+											},
 											border: true,
 											width: '33%',
 											store: {
 											},
 											columns: [
-												{ text: 'Entry Type', dataIndex: 'description', flex: 1 }													
-											]											
+												{ text: 'Entry Type', dataIndex: 'description', flex: 1 }
+											]
 										}
 									]
 								}
@@ -2535,18 +2529,18 @@
 
 													data.requiredComponentType = [];
 													data.optionalComponentTypes = [];
-													
+
 													editAttributeWin.queryById('requiredGrid').getStore().each(function(typeRecord){
 														data.requiredComponentType.push({
 															componentType: typeRecord.get('code')
 														});
 													});
-													
+
 													editAttributeWin.queryById('optionalGrid').getStore().each(function(typeRecord){
 														data.optionalComponentTypes.push({
 															componentType: typeRecord.get('code')
 														});
-													});													
+													});
 													// split the unit list
 													data.attributeType.attributeUnitList = data.attributeType.attributeUnitList
 																								.split(",")
@@ -2590,9 +2584,9 @@
 					]
 				});
 				editAttributeWin.show();
-				
+
 				if (record) {
-										
+
 					editAttributeWin.setLoading(true);
 					Ext.Ajax.request({
 						url: 'api/v1/resource/componenttypes/lookup?all=true',
@@ -2603,35 +2597,35 @@
 							var componentTypeData = Ext.decode(responseCT.responseText);
 
 							Ext.Array.sort(componentTypeData, function(a, b) {
-								return a.description.localeCompare(b.description);								
+								return a.description.localeCompare(b.description);
 							});
-							
+
 							var unassociated = [];
 							var optional = [];
 							var required = [];
-							
+
 							if (!record.data.requiredRestrictions) {
 								record.data.requiredRestrictions = [];
 							}
-							
+
 							if (!record.data.optionalRestrictions) {
 								record.data.optionalRestrictions = [];
 							}
-							
+
 							Ext.Array.each(componentTypeData, function(type) {
-								
+
 								var foundRequired = Ext.Array.findBy(record.data.requiredRestrictions, function(item){
 									if (item.componentType === type.code) {
 										return item;
 									}
 								});
-								
+
 								var foundOptional = Ext.Array.findBy(record.data.optionalRestrictions, function(item){
 									if (item.componentType === type.code) {
 										return item;
 									}
 								});
-								
+
 								if (foundRequired) {
 									required.push(type);
 								} else if (foundOptional) {
@@ -2643,21 +2637,21 @@
 							editAttributeWin.queryById('unassociatedGrid').getStore().loadData(unassociated);
 							editAttributeWin.queryById('optionalGrid').getStore().loadData(optional);
 							editAttributeWin.queryById('requiredGrid').getStore().loadData(required);
-							
-							
+
+
 						}
 					});
-					
-				}	
-				
-				
-			};
-		
-			
-			addComponentToMainViewPort(attributeGrid);
-			
 
-		});		
+				}
+
+
+			};
+
+
+			addComponentToMainViewPort(attributeGrid);
+
+
+		});
 		</script>
 		</stripes:layout-component>
 		</stripes:layout-render>
