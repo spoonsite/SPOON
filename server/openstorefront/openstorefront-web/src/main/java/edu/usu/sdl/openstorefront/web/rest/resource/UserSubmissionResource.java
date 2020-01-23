@@ -35,13 +35,10 @@ import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,10 +46,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMultipart;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -67,6 +60,8 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codemonkey.simplejavamail.email.Email;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  *
@@ -181,82 +176,98 @@ public class UserSubmissionResource
 	@APIDescription("Accepts a zip file for use with the bulk upload process")
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
 	@Consumes({MediaType.MULTIPART_FORM_DATA})
+	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/upload/zip")
 	public Response bulkUpload(
-			MimeMultipart mimeMultipartData
+			@FormDataParam("file") InputStream file,
+			@FormDataParam("file") FormDataContentDisposition fileDisposition
 	)
 	{
-		String errors = "";
 		Logger LOG = Logger.getLogger(UserSubmissionResource.class.getName());
-		BodyPart zipPart = null;
-		String username = SecurityUtil.getCurrentUserName();
+		LOG.log(Level.SEVERE, "Entering bulk upload endpoint");
 
-		FileOutputStream tempFile;
-		String timeStamp = new SimpleDateFormat("dd-MM-YYYY").format(new Date());
-		String filePath = FileSystemManager
-				.getInstance()
-				.getDir(FileSystemManager.BULK_UPLOAD_DIR)
-				.toString()
-				+ File.separator
-				+ username
-				+ File.separator
-				+ timeStamp
-				+ "_"
-				+ StringProcessor.uniqueId()
-				+ ".zip";
+		String errors = "Entered bulk upload endpoint";
 
-		try {
-			int count = mimeMultipartData.getCount();
-			if (count > 0) {
-				for (int i = 0; i < count; i++) {
-					// Do we have a zip file? 
-					BodyPart currentPart = mimeMultipartData.getBodyPart(i);
-					if (currentPart.isMimeType("application/x-zip-compressed")
-							|| currentPart.isMimeType("application/zip")
-							|| currentPart.isMimeType("application/octet-stream")
-							|| currentPart.isMimeType("multipart/x-zip")) {
-						zipPart = currentPart;
-						break;
-					}
-				}
-				if (zipPart != null) {
-					try {
-						// save to file system under username
-						tempFile = new FileOutputStream(filePath);
-						zipPart.writeTo(tempFile);
-						tempFile.close();
-					} catch (IOException ex) {
-						// If the file is unreadable
-						LOG.log(Level.FINE, "Unable to read file: " + filePath, ex);
-						errors += "Unable to read file: " + filePath
-								+ " Make sure the file in the proper format.";
-					}
-				} else {
-					errors += "Uploaded file was not a zip file. Unable to process.";
-				}
+		return Response.ok().build();
 
-			} else {
-				errors += "No content found to process.";
-			}
-
-		} catch (MessagingException ex) {
-			LOG.log(Level.SEVERE, "Messaging exception: " + ex.toString(), ex);
-			errors += "Messaging exception: " + ex.toString();
-		}
-
-		if (errors.isEmpty()) {
-			// Send email to spoon support telling them that there is a new uploaded file.
-			Email email = MailManager.newEmail();
-			email.setSubject("SpoonSite bulk Upload");
-			email.setText("There is a new bulk upload to be reviewed at " + filePath);
-			email.addRecipient("", PropertiesManager.KEY_FEEDBACK_EMAIL, Message.RecipientType.TO);
-
-			MailManager.send(email, true);
-			
-			return Response.ok("File uploaded successfully").build();
-		}
-
-		return Response.status(Response.Status.NOT_ACCEPTABLE).header("error", errors).build();
+//		BodyPart zipPart = null;
+//		String username = SecurityUtil.getCurrentUserName();
+//
+//		FileOutputStream tempFile;
+//		String timeStamp = new SimpleDateFormat("dd-MM-YYYY").format(new Date());
+//		String filePath = FileSystemManager
+//				.getInstance()
+//				.getDir(FileSystemManager.BULK_UPLOAD_DIR)
+//				.toString()
+//				+ File.separator
+//				+ username
+//				+ File.separator
+//				+ timeStamp
+//				+ "_"
+//				+ StringProcessor.uniqueId()
+//				+ ".zip";
+//		
+//		LOG.log(Level.SEVERE, "mimeMultipartData: {0}", mimeMultipartData.toString());
+//		LOG.log(Level.SEVERE, "username: {0}", username);
+//		LOG.log(Level.SEVERE, "filePath: {0}", filePath);
+//
+//		try {
+//			int count = mimeMultipartData.getCount();
+//			if (count > 0) {
+//				for (int i = 0; i < count; i++) {
+//					// Do we have a zip file? 
+//					BodyPart currentPart = mimeMultipartData.getBodyPart(i);
+//					if (currentPart.isMimeType("application/x-zip-compressed")
+//							|| currentPart.isMimeType("application/zip")
+//							|| currentPart.isMimeType("application/octet-stream")
+//							|| currentPart.isMimeType("multipart/x-zip")) {
+//						zipPart = currentPart;
+//						break;
+//					}
+//				}
+//				if (zipPart != null) {
+//					try {
+//						// save to file system under username
+//						tempFile = new FileOutputStream(filePath);
+//						zipPart.writeTo(tempFile);
+//						tempFile.close();
+//					} catch (IOException ex) {
+//						// If the file is unreadable
+//						LOG.log(Level.FINE, "Unable to read file: " + filePath, ex);
+//						errors += "Unable to read file: " + filePath
+//								+ " Make sure the file in the proper format.";
+//					}
+//				} else {
+//					errors += "Uploaded file was not a zip file. Unable to process.";
+//				}
+//
+//			} else {
+//				errors += "No content found to process.";
+//			}
+//
+//		} catch (MessagingException ex) {
+//			LOG.log(Level.SEVERE, "Messaging exception: " + ex.toString(), ex);
+//			errors += "Messaging exception: " + ex.toString();
+//		}
+//		
+//		LOG.log(Level.SEVERE, "errors: {0}", errors);
+//
+//		if (errors.isEmpty()) {
+//			// Send email to spoon support telling them that there is a new uploaded file.
+//			Email email = MailManager.newEmail();
+//			email.setSubject("SpoonSite bulk Upload");
+//			email.setText("There is a new bulk upload to be reviewed at " + filePath);
+//			email.addRecipient("", PropertiesManager.KEY_FEEDBACK_EMAIL, Message.RecipientType.TO);
+//
+//			LOG.log(Level.SEVERE, "About to send email");
+//			
+//			MailManager.send(email, true);
+//			
+//			return Response.ok("File uploaded successfully").build();
+//		}
+//
+//		LOG.log(Level.SEVERE, "About to send return fail state");
+//		return Response.status(Response.Status.NOT_ACCEPTABLE).header("error", errors).build();
 	}
 
 	//update submission	(submission - owner/admin) FIX Admin permission
