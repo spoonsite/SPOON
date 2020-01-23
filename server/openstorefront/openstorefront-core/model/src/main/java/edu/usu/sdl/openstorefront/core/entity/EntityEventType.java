@@ -54,8 +54,8 @@ public class EntityEventType
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		codeMap.put(CREATE, newLookup(EntityEventType.class, CREATE, "Create - Captures other events"));
-		codeMap.put(UPDATE, newLookup(EntityEventType.class, UPDATE, "Update - In Alpha"));
+		codeMap.put(CREATE, newLookup(EntityEventType.class, CREATE, "Create"));
+		codeMap.put(UPDATE, newLookup(EntityEventType.class, UPDATE, "Update"));
 		codeMap.put(DELETE, newLookup(EntityEventType.class, DELETE, "Delete - In Alpha"));
 		codeMap.put(ENTRY_DELETE, newLookup(EntityEventType.class, ENTRY_DELETE, "Entry Delete - In Alpha"));
 		codeMap.put(ACTIVATED, newLookup(EntityEventType.class, ACTIVATED, "Activate - In Alpha"));

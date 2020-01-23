@@ -393,7 +393,7 @@ public class MongoPersistenceServiceImpl
 	 * event based programming.
 	 *
 	 * @param entity
-	 * @return a reference to the entity that was just saved to the Mongodb
+	 * @return the entity that was just saved to the MongoDB
 	 */
 	@Override
 	public <T extends BaseEntity> T persist(T entity)

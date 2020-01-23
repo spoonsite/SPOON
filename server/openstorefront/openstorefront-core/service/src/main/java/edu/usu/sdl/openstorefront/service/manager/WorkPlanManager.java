@@ -105,12 +105,8 @@ public class WorkPlanManager
 	}
 
 	/**
-	 * This function passes an event to all triggers that might be triggered by the event. The event is passed to
-	 * all triggers regardless of whether the trigger is relevant or not, so it is up to the trigger itself to
-	 * determine if the event in question is something that can fire the trigger.
-	 *
-	 * To add more triggers (Such as for various Active On options found in the WorkPlan management webpage) add
-	 * another function call here.
+	 * This function passes an event to the event handlers. It is up to the trigger itself to
+	 * determine if the event in question is relevant.
 	 *
 	 * @param entityEventModel record of event that is happening
 	 */
