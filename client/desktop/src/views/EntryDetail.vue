@@ -214,7 +214,7 @@
                   <tbody>
                     <tr v-for="attr in detail.attributes" :key="attr.typeDescription">
                       <td>{{ attr.typeDescription }}</td>
-                      <td>{{ attr.codeDescription }} {{ attr.unit }}</td>
+                      <td>{{ attr.codeDescription }} {{ attr.unit }} <br/><strong v-if="attr.comment">Comment:</strong> {{ attr.comment }}</td>
                     </tr>
                   </tbody>
                 </template>
