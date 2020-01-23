@@ -109,6 +109,11 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting your password change request.'))
     }
+  },
+  watch: {
+    existingPassword: function() {
+      this.existingPasswordError = []
+    }
   }
 }
 </script>
