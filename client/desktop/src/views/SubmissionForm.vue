@@ -120,14 +120,14 @@
             No required attributes, please select an entry type.
           </p>
           <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
+            <!-- TODO: Deal with multiple attribute selection (see tags) -->
             <v-text-field
               v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
               v-model="attribute.selectedCodes"
               :label="attribute.description"
               class="mr-3"
               :rules="[rules.required]"
-              validate-on-blur
-              outlined
+              required
             />
             <v-text-field
               v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
@@ -458,12 +458,13 @@ export default {
       this.$http
         .get(`openstorefront/api/v1/resource/attributes/required?componentType=${this.entryType}`)
         .then(response => {
+          // TODO: Add check for hideOnSubmission
           this.attributes.required = response.data
           this.attributes.required.forEach(e => {
             if (e.allowMultipleFlg) {
               e.selectedCodes = []
             } else {
-              e.selectedCodes = null
+              e.selectedCodes = ''
             }
             if (e.attributeUnitList) {
               e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
