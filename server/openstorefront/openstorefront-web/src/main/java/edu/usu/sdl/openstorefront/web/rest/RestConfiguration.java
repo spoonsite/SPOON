@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.ApplicationPath;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
@@ -43,6 +44,7 @@ public class RestConfiguration
 		// jersy 2 does not support @Immediate once https://github.com/jersey/jersey/issues/2563 is resolved for the version we are using
 		// replace register(new AppStart()); with ServiceLocatorUtilities.enableImmediateScope(locator);
 
+		register(new MultiPartFeature());
 		register(new AppStart());
 		register(new AbstractBinder()
 		{
