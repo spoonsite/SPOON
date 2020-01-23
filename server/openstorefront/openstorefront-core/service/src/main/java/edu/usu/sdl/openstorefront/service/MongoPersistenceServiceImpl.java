@@ -527,7 +527,7 @@ public class MongoPersistenceServiceImpl
 	 * 
 	 * SPOON's original design imagined that each of these different events would trigger the appropriate EntityEventType's assignment. 
 	 * However the needs of SPOOn are met with just CREATE and UPDATE. This is why there isManaged returns a boolean. 
-	 * In the future, if the original designs are to be realized, this function will be replaced with logic to acertain all the 
+	 * In the future, if the original designs are to be realized, this function will be replaced with logic to a certain all the 
 	 * different EntityEventTypes. 
 	 * 
 	 * @param baseEntity BaseEntity that is being saved to the database presently
