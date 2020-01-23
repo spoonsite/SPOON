@@ -56,21 +56,6 @@
               </template>
               <span>Edit</span>
             </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  icon
-                  @click="
-                    question.currentDelete = item
-                    question.checkDeleteModal = true
-                  "
-                  v-on="on"
-                >
-                  <v-icon>fas fa-trash</v-icon>
-                </v-btn>
-              </template>
-              <span>Delete</span>
-            </v-tooltip>
           </template>
           <template v-slot:expanded-item="{ headers, item }">
             <td colspan="7" class="py-4">
@@ -273,20 +258,6 @@ export default {
     },
     viewComponent(componentId) {
       this.$router.push({ name: 'Entry Detail', params: { id: componentId } })
-    },
-    deleteQuestion(question) {
-      this.question.checkDeleteModal = false
-      this.question.isLoading = true
-      this.$http
-        .delete(`/openstorefront/api/v1/resource/components/${question.componentId}/questions/${question.questionId}`)
-        .then(response => {
-          this.question.isLoading = false
-          this.refreshQuestions()
-        })
-        .catch(error => {
-          console.error(error)
-          this.question.isLoading = false
-        })
     },
     refreshQuestions() {
       this.question.isLoading = true
