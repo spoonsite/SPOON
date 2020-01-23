@@ -2189,7 +2189,6 @@
 									name: 'defaultAttributeCode',
 									hidden: true
 								},
-
 								{
 									xtype: 'textfield',
 									id: 'editAttributeForm-detailedDescrpt',
