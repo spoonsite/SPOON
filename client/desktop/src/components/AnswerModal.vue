@@ -55,7 +55,7 @@ export default {
       if (val === true) {
         this.$http
           .get(
-            `openstorefront/api/v1/resource/components/${this.answerProp.componentId}/questions/${this.answerProp.questionId}`
+            `/openstorefront/api/v1/resource/components/${this.answerProp.componentId}/questions/${this.answerProp.questionId}`
           )
           .then(response => {
             this.questionText = response.data.question
