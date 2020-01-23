@@ -206,10 +206,10 @@
               ref="attributeBar"
               style="width: 90%;"
             />
-            <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="attributeQuery = ''">clear</v-icon>
+            <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="attributeQuery = ''">mdi-close</v-icon>
           </div>
-          <div>
-            <v-chip close v-for="attr in filters.attributes" :key="attr" @input="removeAttributeFilter(attr)">{{
+          <div style="overflow-x: auto;">
+            <v-chip style="max-width: none;" close v-for="attr in filters.attributes" :key="attr" @click:close="removeAttributeFilter(attr)">{{
               printAttribute(attr)
             }}</v-chip>
           </div>
@@ -261,7 +261,7 @@
 
     <div :class="`search-block pt-4 ${showFilters || showOptions ? 'open' : 'closed'}`">
       <!-- Search Bar and menu  -->
-      <div class="centeralign px-3 mb-5" style="max-width: 46em;">
+      <div class="centeralign px-2 mb-5" style="max-width: 46em;">
         <SearchBar
           @submitSearch="submitSearch"
           v-on:clear="submitSearch()"
@@ -270,14 +270,15 @@
           :overlaySuggestions="true"
         ></SearchBar>
         <!-- SEARCH FILTERS PILLS -->
-        <div style="padding-top:20px; ">
-          <v-chip v-if="filters.entryType" close @click:close="filters.entryType = ''">
+        <div style="padding-top:20px; overflow-x:auto; min-width: 90%;">
+          <v-chip v-if="filters.entryType" close @click:close="filters.entryType = ''" style="max-width: none;">
             <v-avatar left>
               <v-icon small>fas fa-layer-group</v-icon>
             </v-avatar>
             {{ getComponentName(filters.entryType) }}
           </v-chip>
           <v-chip
+            style="max-width: none;"
             text-color="black"
             v-if="this.filters.children && this.filters.entryType"
             close
@@ -285,19 +286,19 @@
           >
             <v-avatar left> <v-icon small>fas fa-check-square</v-icon> </v-avatar>Include Sub-Catagories
           </v-chip>
-          <v-chip v-for="tag in filters.tags" :key="tag" close @click:close="removeTag(tag)">
+          <v-chip v-for="tag in filters.tags" :key="tag" close @click:close="removeTag(tag)" style="max-width: none;">
             <v-avatar left>
               <v-icon small>fas fa-tag</v-icon>
             </v-avatar>
             {{ tag }}
           </v-chip>
-          <v-chip v-if="filters.organization" close @click:close="filters.organization = ''">
+          <v-chip v-if="filters.organization" close @click:close="filters.organization = ''" style="max-width: none;">
             <v-avatar left>
               <v-icon small>fas fa-university</v-icon>
             </v-avatar>
             {{ filters.organization }}
           </v-chip>
-          <v-chip close @click:close="removeAttributeFilter(attr)" v-for="attr in filters.attributes" :key="attr">
+          <v-chip close @click:close="removeAttributeFilter(attr)" v-for="attr in filters.attributes" :key="attr" style="max-width: none;">
             <v-avatar left>
               <v-icon small>fas fa-clipboard-list</v-icon>
             </v-avatar>
@@ -1110,10 +1111,10 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/scss/variables.scss';
 
-$side-menu-width: 24em;
+$side-menu-width: 22em;
 $side-menu-width-medium: 30em;
 $side-menu-width-large: 34em;
-$closed-width: 5em;
+$closed-width: 4em;
 $footer-height: 42.4px;
 
 .item {
@@ -1136,6 +1137,8 @@ p {
   font-size: 140%;
   transition: box-shadow 0.7s;
   background-color: #fff;
+  display: flex;
+  flex-direction: row;
 }
 .dn {
   display: none;
@@ -1180,6 +1183,7 @@ hr {
   padding-right: 2em;
   margin-left: $closed-width;
   overflow-y: auto;
+  padding-bottom: 1em;
 }
 .search-block {
   position: fixed;
