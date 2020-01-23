@@ -27,6 +27,8 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLinkType;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanSubStatusType;
+import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.report.generator.BaseGenerator;
 import edu.usu.sdl.openstorefront.report.generator.CSVGenerator;
 import edu.usu.sdl.openstorefront.report.model.BaseReportModel;
@@ -39,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -60,10 +63,24 @@ public class WorkPlanStatusReport
 		WorkPlanStatusReportModel reportModel = new WorkPlanStatusReportModel();
 		reportModel.setTitle("WorkPlan Status");
 
+		List<WorkPlanLink> links = new ArrayList<>();
+		HashMap stepTotalsCount = new HashMap<String, Integer>() {};
+
+		// Query DB for worklinks in appropiate workplan steps
 		WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 		workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
-		List<WorkPlanLink> links = workPlanLinkExample.findByExample();
 
+		for(String WorkPlanStepID : report.getReportOption().getWorkPlanSteps()){
+			if(WorkPlanStepID != null && WorkPlanStepID != ""){
+				workPlanLinkExample.setCurrentStepId(WorkPlanStepID);
+				List<WorkPlanLink> workPlanLinksList = workPlanLinkExample.findByExample();
+				stepTotalsCount.put(WorkPlanStepID,workPlanLinksList.size());
+				links.addAll(workPlanLinksList);
+			}
+		}
+		reportModel.setStepEntryInstanceCount(stepTotalsCount);
+
+		// Load information from the WorkPlanLink objects into a WorkPlanStatusLineModel
 		Map<String, WorkPlan> workPlanMap = new HashMap<>();
 		for (WorkPlanLink link : links) {
 			WorkPlanStatusLineModel lineModel = new WorkPlanStatusLineModel();
@@ -89,22 +106,40 @@ public class WorkPlanStatusReport
 				Evaluation evaluation = new Evaluation();
 				evaluation.setEvaluationId(link.getEvaluationId());
 				evaluation = evaluation.find();
+				
+				// There can be cases where a faulty workPlan Link exists that doesn't represent a real component. In these cases we skip them.
+				if(evaluation == null){
+					LOG.log(Level.WARNING, "WorkPlanStatus Report rejected an item because it claimed to have an attached evaluation, but the reference to the evaluation was null.");
+					reportModel.setAreFaultyWorkPlanLinks(true);
+					reportModel.addToFaultyWorkLinksList(linkName);
+					//continue;  uncomment to omit any reference to undefined WorkPlanLinks
+				} else{
 
-				linkName = service.getComponentService().getComponentName(evaluation.getComponentId());
+					linkName = service.getComponentService().getComponentName(evaluation.getComponentId());
 
-				String componentType = service.getComponentService().getComponentTypeForComponent(link.getComponentId());
-				lineModel.setComponentType(service.getComponentService().getComponentTypeParentsString(componentType, false));
-				if (StringUtils.isBlank(linkName)) {
-					linkName = service.getComponentService().getComponentName(evaluation.getOriginComponentId());
-					//can't switch type on evals
-					//lineModel.setComponentType(service.getComponentService().getComponentTypeParentsString(evaluation.getOriginComponentId(), false));
+					String componentType = service.getComponentService().getComponentTypeForComponent(link.getComponentId());
+					lineModel.setComponentType(service.getComponentService().getComponentTypeParentsString(componentType, false));
+					if (StringUtils.isBlank(linkName)) {
+						linkName = service.getComponentService().getComponentName(evaluation.getOriginComponentId());
+						//can't switch type on evals
+						//lineModel.setComponentType(service.getComponentService().getComponentTypeParentsString(evaluation.getOriginComponentId(), false));
+					}
 				}
 			} else if (link.getUserSubmissionId() != null) {
 				UserSubmission userSubmission = new UserSubmission();
 				userSubmission.setUserSubmissionId(link.getUserSubmissionId());
 				userSubmission = userSubmission.find();
+				
+				// There can be cases where a faulty workPlan Link exists that doesn't represent a real component. In these cases we skip them.
+				if(userSubmission == null){
+					LOG.log(Level.WARNING, "WorkPlanStatus Report rejected an workPlanLink for reporting because it claimed to represent a submission, but the reference to the submission was null.");
+					reportModel.setAreFaultyWorkPlanLinks(true);
+					reportModel.addToFaultyWorkLinksList(linkName);
+					//continue;  uncomment to omit any refernece to undefined WorkPlanLinks
+				} else {
 
-				linkName = userSubmission.getSubmissionName();
+					linkName = userSubmission.getSubmissionName();
+				}
 			}
 			lineModel.setLinkName(linkName);
 
@@ -127,7 +162,8 @@ public class WorkPlanStatusReport
 			}
 			lineModel.setCurrentStepName(stepName);
 
-			lineModel.setCurrentSubStatus(link.getSubStatus());
+			lineModel.setCurrentSubStatus(TranslateUtil.translate(WorkPlanSubStatusType.class, link.getSubStatus()));
+
 			lineModel.setLastUpdateChangeDts(link.getUpdateDts());
 			long diff = TimeUtil.currentDate().getTime() - link.getUpdateDts().getTime();
 			long daysBetween = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
@@ -158,9 +194,12 @@ public class WorkPlanStatusReport
 
 			reportModel.getData().add(lineModel);
 		}
-		reportModel.getData().sort((a, b) -> {
-			return a.getLinkName().toLowerCase().compareTo(b.getLinkName().toLowerCase());
+
+		// Sort array by most recently changed date
+		reportModel.getData().sort((WorkPlanStatusLineModel a, WorkPlanStatusLineModel b) -> {
+			return (int)(a.getDaysSincesLastUpdate() - b.getDaysSincesLastUpdate());
 		});
+
 
 		return reportModel;
 	}
@@ -222,37 +261,51 @@ public class WorkPlanStatusReport
 
 		//write header
 		cvsGenerator.addLine(reportModel.getTitle(), sdf.format(reportModel.getCreateTime()));
-		cvsGenerator.addLine(
-				"Link Name",
-				"Link Type",
-				"Entry Type",
-				"Workplan Name",
-				"Current Step Name",
-				"Current Assignee",
-				"Current Assigned Group",
-				"Current SubStatus",
-				"Last Step Change Date",
-				"Number of Sumission Comments",
-				"Last Comment Update",
-				"Work Plan Link"
-		);
 
 		WorkPlanStatusReportModel workPlanStatusModel = (WorkPlanStatusReportModel) reportModel;
+
+		cvsGenerator.addLine("Workplan Step", "Total Submissions");
+
+		// Get summary stats and place in the header
+		WorkPlan workPlanExample = new WorkPlan();
+		List<WorkPlan> allWorkPlansList = workPlanExample.findByExample();
+		workPlanStatusModel.getStepEntryInstanceCount().forEach((k,v) -> {
+			for(WorkPlan workPlan : allWorkPlansList){
+				WorkPlanStep workPlanStep = workPlan.findWorkPlanStep(k);
+				if (workPlanStep != null){
+					cvsGenerator.addLine(workPlanStep.getName(), v);
+					break;
+				}
+			}
+		});
+		
+		if(workPlanStatusModel.isAreFaultyWorkPlanLinks()){
+			cvsGenerator.addLine(
+				"The numbers shown above may not be accurate, due to issues that arose while reading some parts: " 
+				+ workPlanStatusModel.getFaultyWorkLinksList().toString()
+			);
+		}
+
+		cvsGenerator.addLine(""); // Empty space for clarity
+		cvsGenerator.addLine(
+				"Entry Name",
+				"Entry Type",
+				"Current Step Name",
+				"Current SubStatus",
+				"Last Step Change Date",
+				"Number of Submission Comments",
+				"Last Comment Update"
+		);
 
 		for (WorkPlanStatusLineModel reportLineModel : workPlanStatusModel.getData()) {
 			cvsGenerator.addLine(
 					reportLineModel.getLinkName(),
-					reportLineModel.getLinkType(),
 					reportLineModel.getComponentType(),
-					reportLineModel.getWorkPlanName(),
 					reportLineModel.getCurrentStepName(),
-					reportLineModel.getCurrentAssignee(),
-					reportLineModel.getCurrentAssignedGroup(),
 					reportLineModel.getCurrentSubStatus(),
 					reportLineModel.getLastUpdateChangeDts() != null ? sdf.format(reportLineModel.getLastUpdateChangeDts()) : "",
 					reportLineModel.getNumberOfComments(),
-					reportLineModel.getLastCommentUpdate() != null ? sdf.format(reportLineModel.getLastCommentUpdate()) : "",
-					reportLineModel.getWorkPlanLinkId()
+					reportLineModel.getLastCommentUpdate() != null ? sdf.format(reportLineModel.getLastCommentUpdate()) : ""
 			);
 		}
 	}

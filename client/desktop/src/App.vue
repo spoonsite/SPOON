@@ -270,7 +270,7 @@ export default {
           permissions: []
         },
         {
-          href: '/openstorefront/UserTool.action',
+          link: '/reviews',
           icon: 'star-half-alt',
           name: 'Reviews',
           hasChildren: false,

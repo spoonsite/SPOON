@@ -440,103 +440,19 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-dialog v-model="writeReviewDialog" max-width="50em">
-          <v-card>
-            <ModalTitle title="Write a Review" @close="writeReviewDialog = false" />
-            <v-card-text>
-              <v-alert class="w-100" type="warning" :value="true"
-                ><span v-html="$store.state.branding.userInputWarning"></span
-              ></v-alert>
-              <v-alert class="w-100" type="info" :value="true"
-                ><span v-html="$store.state.branding.submissionFormWarning"></span
-              ></v-alert>
+      <ReviewModal
+        v-model="writeReviewDialog"
+        @close="writeReviewDialog = false; getDetail(); isLoading = false"
+        :review="newReview"
+      >
+      </ReviewModal>
 
-              <v-form v-model="reviewValid">
-                <v-container>
-                  <v-text-field
-                    v-model="newReview.title"
-                    :rules="reviewTitleRules"
-                    :counter="255"
-                    label="Title"
-                    required
-                  ></v-text-field>
-
-                  <p>
-                    <strong>Rating*</strong>
-                  </p>
-
-                  <star-rating
-                    v-model="newReview.rating"
-                    :rating="newReview.rating"
-                    :read-only="false"
-                    :increment="1"
-                    :star-size="30"
-                  ></star-rating>
-
-                  <v-spacer style="height: 1.5em"></v-spacer>
-
-                  <p>
-                    <strong>Last date asset was used*</strong>
-                  </p>
-
-                  <v-text-field
-                    v-model="newReview.lastUsed"
-                    :rules="lastUsedRules"
-                    label="Last Used"
-                    readonly
-                    required
-                    disabled
-                  ></v-text-field>
-
-                  <v-date-picker
-                    v-model="newReview.lastUsed"
-                    :allowed-dates="todaysDateFormatted"
-                    no-title
-                    reactive
-                    full-width
-                  >
-                    <v-spacer></v-spacer>
-                    <v-btn flat color="accent" @click="newReview.lastUsed = ''">Cancel</v-btn>
-                  </v-date-picker>
-
-                  <v-spacer style="height: 1em"></v-spacer>
-
-                  <v-select
-                    v-model="newReview.timeUsed"
-                    :items="timeSelectOptions"
-                    :rules="timeUsedRules"
-                    label="How long have you used it"
-                    required
-                  ></v-select>
-
-                  <v-select v-model="newReview.pros" :items="prosSelectOptions" label="Pros" chips multiple></v-select>
-
-                  <v-select v-model="newReview.cons" :items="consSelectOptions" label="Cons" chips multiple></v-select>
-
-                  <p>Comment: <span v-if="newReview.comment === ''" class="red--text">comment is required *</span></p>
-
-                  <quill-editor
-                    style="background-color: white;"
-                    v-model="comment"
-                    :rules="commentRules"
-                    required
-                  ></quill-editor>
-                </v-container>
-                <v-card-actions>
-                  <v-spacer />
-                  <v-btn color="success" :disabled="!reviewSubmit" @click="submitReview()">Submit</v-btn>
-                  <v-btn
-                    @click="
-                      writeReviewDialog = false
-                      newReview.comment = ''
-                    "
-                    >Cancel</v-btn
-                  >
-                </v-card-actions>
-              </v-form>
-            </v-card-text>
-          </v-card>
-        </v-dialog>
+      <DeleteReviewModal
+        v-model="deleteReviewDialog"
+        @close="deleteReviewDialog = false; getDetail();"
+        :review="newReview"
+      >
+      </DeleteReviewModal>
 
         <v-dialog v-model="deleteReviewDialog" width="25em">
           <v-card>
@@ -642,6 +558,8 @@ import isFuture from 'date-fns/isFuture'
 import Lightbox from '@/components/Lightbox'
 import Question from '@/components/Question'
 import ModalTitle from '@/components/ModalTitle'
+import ReviewModal from '@/components/ReviewModal'
+import DeleteReviewModal from '@/components/DeleteReviewModal'
 
 export default {
   name: 'entry-detail-page',
@@ -649,11 +567,14 @@ export default {
     StarRating,
     Lightbox,
     Question,
-    ModalTitle
+    ModalTitle,
+    ReviewModal,
+    DeleteReviewModal
   },
   mounted() {
     if (this.$route.params.id) {
       this.id = this.$route.params.id
+      this.newReview.componentId = this.id
     }
 
     if (this.$store.state.currentUser.username) {
@@ -668,7 +589,6 @@ export default {
       )
     }
 
-    this.lookupTypes()
     this.getDetail()
     this.getQuestions()
     this.getTags()
@@ -688,9 +608,7 @@ export default {
       contactVendorDialog: false,
       tagEmpty: false,
       selectedTag: '',
-      deleteRequestId: '',
       deleteTagId: '',
-      editReviewId: '',
       vendorMessage: '',
       reviewSubmit: false,
       newReview: {
@@ -700,23 +618,12 @@ export default {
         lastUsed: '',
         timeUsed: '',
         pros: [],
-        cons: []
+        cons: [],
+        comment: '',
+        componentId: '',
+        editReviewId: ''
       },
-      comment: '',
       tagName: '',
-      reviewTitleRules: [
-        v => !!v || 'Title is required',
-        v => (v && v.length <= 255) || 'Title must be less than 255 characters'
-      ],
-      lastUsedRules: [
-        v => !!v || 'Date is required'
-      ],
-      timeUsedRules: [
-        v => !!v || 'Time used is required'
-      ],
-      commentRules: [
-        v => !!v || 'Comment is required'
-      ],
       formCorrectionRules: [
         v => !!v || 'A correction is required'
       ],
@@ -733,15 +640,11 @@ export default {
         v => !!v || 'A message is required'
       ],
       timeOptions: [],
-      timeSelectOptions: [],
       prosOptions: [],
-      prosSelectOptions: [],
       consOptions: [],
-      consSelectOptions: [],
       allTags: [],
       relatedTags: [],
       relatedComponents: [],
-      reviewValid: false,
       todaysDate: new Date(),
       detail: {},
       addDetail: {},
@@ -845,6 +748,13 @@ export default {
     },
     editReviewSetup(review) {
       this.writeReviewDialog = true
+      this.fillReviewInformation(review)
+    },
+    deleteReviewSetup(review) {
+      this.deleteReviewDialog = true
+      this.fillReviewInformation(review)
+    },
+    fillReviewInformation(review) {
       this.newReview.title = review.title
       this.newReview.rating = review.rating
       this.newReview.recommend = review.recommend
@@ -856,8 +766,8 @@ export default {
       review.cons.forEach(element => {
         this.newReview.cons.push(element.text)
       })
-      this.comment = review.comment
-      this.editReviewId = review.reviewId
+      this.newReview.comment = review.comment
+      this.newReview.editReviewId = review.reviewId
     },
     filterLightboxList() {
       if (this.detail.componentMedia) {
@@ -1036,16 +946,22 @@ export default {
       let data = {
         userToEmail: sendToEmail,
         userFromEmail: this.userEmail,
-        message: this.vendorMessage
+        userName: this.$store.state.currentUser.firstName + ' ' + this.$store.state.currentUser.lastName,
+        message: this.vendorMessage,
+        partName: this.detail.name,
+        partId: this.detail.componentId
       }
-      this.$http.post(`/openstorefront/api/v1/service/notification/contact-vendor`, data)
+      this.$http.post(`/openstorefront/api/v1/service/notification/contact-vendor-template`, data)
         .then(response => {
           this.vendorMessage = ''
           this.contactVendorDialog = false
           this.buttonLoad = false
           this.$toasted.show('Message to vendor was sent.')
         })
-        .catch(e => this.$toasted.error('There was a problem contacting this vendor.'))
+        .catch(e => {
+          this.$toasted.error('There was a problem contacting this vendor.')
+          this.buttonLoad = false
+        })
     },
     deleteTag() {
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${this.deleteTagId}`)
@@ -1218,8 +1134,8 @@ export default {
         this.newReview.timeUsed = ''
         this.newReview.pros = []
         this.newReview.cons = []
-        this.editReviewId = ''
-        this.comment = ''
+        this.newReview.editReviewId = ''
+        this.newReview.comment = ''
       }
     }
   },

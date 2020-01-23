@@ -18,7 +18,7 @@ package edu.usu.sdl.openstorefront.report.model;
 import java.util.Date;
 
 /**
- *
+ * Note: since v2.12 of Spoon, not all of these fields get actually used in the WorkPlan Status report. 
  * @author dshurtleff
  */
 public class WorkPlanStatusLineModel

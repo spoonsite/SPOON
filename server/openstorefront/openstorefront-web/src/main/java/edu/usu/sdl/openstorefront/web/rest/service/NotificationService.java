@@ -36,10 +36,19 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -47,6 +56,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.codemonkey.simplejavamail.email.Email;
+
 import javax.mail.Message;
 
 /**
@@ -59,6 +69,7 @@ import javax.mail.Message;
 public class NotificationService
 		extends BaseResource
 {
+	private static final Logger LOG = Logger.getLogger(NotificationService.class.getName());
 
 	@POST
 	@APIDescription("Sends an admin message to all active user with emails.")
@@ -123,7 +134,7 @@ public class NotificationService
 	}
 
 	@POST
-	@APIDescription("Sends an email to a vendor")
+	@APIDescription("Sends an email to a vendor (Backwards compatibility with old Extjs entry detail page")
 	// @RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
 	@Path("/contact-vendor")
 	public Response contactVendor(
@@ -138,7 +149,7 @@ public class NotificationService
 			email.setSubject("SpoonSite User Request for Information");
 			// message
 			email.setText(contactVendorMessage.getMessage());
-			
+
 			// to and from
 			String toEmail = contactVendorMessage.getUserToEmail();
 
@@ -147,6 +158,36 @@ public class NotificationService
 			email.addRecipient("", toEmail, Message.RecipientType.TO);
 			email.setFromAddress("", fromEmail);
 			email.setReplyToAddress("", fromEmail);
+			try {
+				MailManager.send(email, true);
+			} catch (Exception e) {
+				SimpleRestError simpleRestError = new SimpleRestError();
+				simpleRestError.setError(e.toString());
+				return Response.ok(simpleRestError).build();
+			}
+			return Response.ok().build();
+		} else {
+			return Response.ok(validationResult.toRestError()).build();
+		}
+	}
+
+	@POST
+	@APIDescription("Sends an email to a vendor")
+	// @RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
+	@Path("/contact-vendor-template")
+	public Response contactVendorTemplate(
+			@RequiredParam ContactVendorMessage contactVendorMessage)
+	{
+		ValidationModel validationModel = new ValidationModel(contactVendorMessage);
+		validationModel.setConsumeFieldsOnly(true);
+		ValidationResult validationResult = ValidationUtil.validate(validationModel);
+		if (validationResult.valid()) {
+			contactVendorMessage.updateConfigs();
+			Email email = MailManager.newTemplateEmail(MailManager.Templates.CONTACT_VENDOR.toString(), contactVendorMessage, false);
+
+			email.addRecipient("", contactVendorMessage.getUserToEmail(), Message.RecipientType.TO);
+			email.setFromAddress(contactVendorMessage.getUserName(), contactVendorMessage.getUserFromEmail());
+			email.setSubject("SPOON - Request for Information");
 			try {
 				MailManager.send(email, true);
 			} catch (Exception e) {
@@ -188,4 +229,22 @@ public class NotificationService
 		return sendSingleEntityResponse(recentChangesStatus);
 	}
 
+	private String getByteArrayFromImageURL(String url) {
+		try {
+			URL imageUrl = new URL(url);
+			URLConnection ucon = imageUrl.openConnection();
+			InputStream is = ucon.getInputStream();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
+			int read = 0;
+			while ((read = is.read(buffer, 0, buffer.length)) != -1) {
+				baos.write(buffer, 0, read);
+			}
+			baos.flush();
+			return Base64.getEncoder().encodeToString(baos.toByteArray());
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE, e.toString());
+		}
+		return null;
+	}
 }
