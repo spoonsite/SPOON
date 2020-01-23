@@ -115,7 +115,7 @@
         <!-- TODO: Fix the issue with multiple select -->
         <!-- TODO: Check into these more in regard to the flags on the attributs -->
         <fieldset class="fieldset mt-0 attribute-grid">
-          <legend class="title legend">Required Attributes</legend>
+          <legend class="title legend">Required Attributes*</legend>
           <p v-if="attributes.required.length === 0">
             No required attributes, please select an entry type.
           </p>
@@ -124,7 +124,7 @@
             <v-text-field
               v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
               v-model="attribute.selectedCodes"
-              :label="attribute.description"
+              :label="`${attribute.description}*`"
               class="mr-3"
               :rules="[rules.required]"
               required
@@ -302,14 +302,15 @@
           </div>
         </div>
       </fieldset>
-      <!-- <div class="mb-8">
+      <div class="mb-8 red">
+        <p>TODO: Add form Validation</p>
         <h2 class="mb-2 title">Form validation errors</h2>
-        <ul class="form-errors">
+        <!-- <ul class="form-errors">
           <li>entry description</li>
           <li>contacts</li>
           <li>required attributes</li>
-        </ul>
-      </div> -->
+        </ul> -->
+      </div>
       <div class="mb-5">
         <p>If you save and close the entry you will need to come back and finish to submit the entry.</p>
         <v-btn class="mr-4 mb-3" color="primary" @click="submit">Save and close</v-btn>
