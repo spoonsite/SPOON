@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-center">Entry Submission Form</h1>
+    <h1 class="text-center">New Part Submission Form</h1>
     <div class="text-center px-2" style="color: red;">
       <h2>Caution!</h2>
       <p>{{ $store.state.branding.userInputWarning }}</p>
@@ -66,7 +66,7 @@
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Image Upload</legend>
-        <v-btn color="grey lighten-2" class="mt-0 ma-4" @click="addImage">
+        <v-btn color="grey lighten-2" class="mt-0 ma-4" @click="addImage" :disabled="images.length > 10">
           <v-icon left>mdi-plus</v-icon>Add image
         </v-btn>
         <div class="image-row" v-for="(item, index) in images" :key="index">
@@ -206,14 +206,14 @@
             Include the value for your entry, a brief description, and how your part is defined by the attribute.
           </p>
           <label class="title" for="request-new-attribute">Request New Attribute (opt.)</label>
-          <v-textarea outlined placeholder="Request new attribute" class="" v-model="attributes.missingAttribute" />
+          <v-textarea outlined id="request-new-attribute" placeholder="Request new attribute" class="" v-model="attributes.missingAttribute" />
         </div>
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Resources</legend>
         <fieldset class="fieldset mt-0">
           <legend class="title legend">Local Files</legend>
-          <v-btn color="grey lighten-2" @click="addLocalFile">Add Local File</v-btn>
+          <v-btn color="grey lighten-2" @click="addLocalFile" :disabled="resources.localFiles.length > 10">Add Local File</v-btn>
           <div class="image-row" v-for="(file, index) in resources.localFiles" :key="index">
             <div class="file-grid">
               <v-select
@@ -242,7 +242,7 @@
         </fieldset>
         <fieldset class="fieldset mb-1">
           <legend class="title legend">External Resource</legend>
-          <v-btn @click="addLink" color="grey lighten-2">Add URL</v-btn>
+          <v-btn @click="addLink" color="grey lighten-2" :disabled="resources.links.length > 10">Add URL</v-btn>
           <div class="image-row" v-for="(link, index) in resources.links" :key="index">
             <div class="file-grid">
               <v-select
