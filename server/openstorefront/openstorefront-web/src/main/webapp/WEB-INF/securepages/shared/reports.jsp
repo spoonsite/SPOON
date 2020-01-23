@@ -67,7 +67,10 @@
 								}
 							}
 						}
-						
+						if (record.data.reportType === 'WORKPLANSTATUS'){
+							details += "Some Workplan Steps were selected.";
+						}
+
 						var classList = '';
 
 						if (recordDataNum > 2) {
@@ -78,22 +81,22 @@
 					}
 					return '';
 				};
-				
+
 				var outputOptionRender = function(v, meta, record) {
 					var outputs = '';
-								
+
 					if (record.data.reportOutputs) {
 						var outputOpts = [];
-						Ext.Array.each(record.data.reportOutputs, function(item){	
+						Ext.Array.each(record.data.reportOutputs, function(item){
 							outputOpts.push('<b>' + item.reportTransmissionType + '</b>');
 							Ext.Object.each(item.reportTransmissionOption, function(key, value, myself) {
 								if (key !== 'storageVersion') {
-									if (key === 'emailAddresses') {										
+									if (key === 'emailAddresses') {
 										var allEmails = [];
 										Ext.Array.each(value, function(email){
 											allEmails.push(email.email);
 										});
-										
+
 										outputOpts.push('<b>' + key + '</b>: <br>' + allEmails.join('<br>'));
 									} else {
 										outputOpts.push('<b>' + key + '</b>: ' + value);
@@ -106,7 +109,7 @@
 					}
 					return outputs;
 				};
-				
+
 				var formatRender = function(value, meta, record) {
 
 					if (record.get('noViewAvaliable')) {
@@ -114,9 +117,9 @@
 					} else {
 						return record.get('reportFormatDescription');
 					}
-					
+
 				};
-				
+
 
 				var scheduleReportsGridStore = Ext.create('Ext.data.Store', {
 					id: 'scheduleReportsGridStore',
@@ -140,7 +143,7 @@
 							dateFormat: 'c'
 						},
 						{
-							name: 'schedule', mapping: function(data) {	
+							name: 'schedule', mapping: function(data) {
 								var days = data.scheduleIntervalDays;
 								if (data.scheduleIntervalDays) {
 									if (days === 1) {
@@ -152,13 +155,13 @@
 									else if (days == 28) {
 										return 'Monthly' ;
 									} else {
-										return 'Every ' + days + ' days' 
+										return 'Every ' + days + ' days'
 									}
 								} else if (data.scheduleIntervalMinutes) {
 									return 'Every ' + data.scheduleIntervalMinutes + ' minutes';
 								} else if (data.cronDescription) {
 									return data.cronDescription;
-								}								
+								}
 							}
 						}
 					],
@@ -175,11 +178,11 @@
 						beforeLoad: function(store, operation, eOpts){
 							store.getProxy().extraParams = {
 								activeStatus: Ext.getCmp('scheduleReportFilter-ActiveStatus').getValue(),
-								reportType: Ext.getCmp('scheduleReportFilter-reportType').getValue() ? Ext.getCmp('scheduleReportFilter-reportType').getValue() : null,								
-								showAllUsers: Ext.getCmp('scheduleReportFilter-showAll').getValue() 
+								reportType: Ext.getCmp('scheduleReportFilter-reportType').getValue() ? Ext.getCmp('scheduleReportFilter-reportType').getValue() : null,
+								showAllUsers: Ext.getCmp('scheduleReportFilter-showAll').getValue()
 							};
 						}
-					}					
+					}
 				});
 
 				var scheduledReportsWin = Ext.create('Ext.window.Window', {
@@ -284,7 +287,7 @@
 													}
 												]
 											}
-										}),										
+										}),
 										{
 											xtype: 'checkbox',
 											id: 'scheduleReportFilter-showAll',
@@ -296,8 +299,8 @@
 												}
 											},
 											boxLabel: 'Show All Users',
-											name: 'showAllUsers'									
-										}	
+											name: 'showAllUsers'
+										}
 									]
 								},
 								{
@@ -505,7 +508,7 @@
 
 
 				var showAddEditWin = function(scheduleData) {
-					
+
 					var scheduleWin = Ext.create('Ext.window.Window', {
 						title: 'Schedule Report',
 						iconCls: 'fa fa-lg fa-edit icon-small-vertical-correction',
@@ -521,7 +524,7 @@
 								xtype: 'form',
 								bodyStyle: 'padding: 20px;',
 								scrollable: true,
-								layout: 'anchor',								
+								layout: 'anchor',
 								items: [
 									{
 										xtype: 'combobox',
@@ -545,11 +548,11 @@
 											change: function (cb, newVal, oldVal, opts) {
 												var reportType = cb.getSelection();
 												var form = cb.up('form');
-												form.queryById('reportDescription').update(reportType.get('detailedDescription'));												
-												
+												form.queryById('reportDescription').update(reportType.get('detailedDescription'));
+
 												scheduleOptionsShow(form);
 												showReportOptions(form, newVal);
-												
+
 												if (cb.finishEditLoading) {
 													cb.finishEditLoading();
 												} else {
@@ -557,12 +560,12 @@
 													outputs = [];
 													outputs.push({
 														outputId: Ext.id(),
-														reportTransmissionType: 'VIEW',							
+														reportTransmissionType: 'VIEW',
 														reportTransmissionOption: {}
-													});												
+													});
 													showOutputs(form, newVal);
 												}
-												
+
 											}
 										}
 									},
@@ -581,8 +584,8 @@
 											{
 												xtype: 'combobox',
 												itemId: 'scheduleOptions',
-												name: 'scheduleOption',												
-												fieldLabel: 'How often to run the report?<span class="field-required" />',																							
+												name: 'scheduleOption',
+												fieldLabel: 'How often to run the report?<span class="field-required" />',
 												store: {
 													data: [
 														{ code: 'NOW', description: 'Now (One Time Only)'}
@@ -596,24 +599,24 @@
 
 												allowBlank: false,
 												listeners: {
-													
+
 													change: function (cb, newVal, oldVal, opts) {
-													
+
 														//hide fields
 														var fieldSet = cb.up('fieldset');
 														var period = fieldSet.queryById('scheduleOptionPeriod').setHidden(true);
 														var daily = fieldSet.queryById('scheduleOptionDays').setHidden(true);
 														var minutes = fieldSet.queryById('scheduleOptionMinutes').setHidden(true);
 														var cron = fieldSet.queryById('scheduleOptionCron').setHidden(true);
-													
+
 														//show options for time
 														if ('PERIOD' === newVal) {
 															period.setHidden(false);
 														} else if ('DAYS' === newVal) {
 															daily.setHidden(false);
-														} else if ('MINUTES' === newVal) {	
+														} else if ('MINUTES' === newVal) {
 															minutes.setHidden(false);
-														} else if ('CUSTOM' === newVal) {	
+														} else if ('CUSTOM' === newVal) {
 															cron.setHidden(false);
 														}
 													}
@@ -645,7 +648,7 @@
 												hidden: true,
 												value: 1,
 												minValue: 1,
-												maxValue: 30												
+												maxValue: 30
 											},
 											{
 												xtype: 'numberfield',
@@ -655,7 +658,7 @@
 												hidden: true,
 												value: 1,
 												minValue: 1,
-												maxValue: 525600												
+												maxValue: 525600
 											},
 											{
 												xtype: 'textfield',
@@ -664,7 +667,7 @@
 												fieldLabel: 'Cron Expression (See <a href="https://www.freeformatter.com/cron-expression-generator-quartz.html\" target="_blank">Help</a>)',
 												emptyText: 'Eg. 0 0 6 * * ? (Every day at 6am)',
 												hidden: true,
-												maxLength: 255												
+												maxLength: 255
 											}
 										]
 									},
@@ -675,7 +678,7 @@
 										defaults: {
 											labelAlign: 'top',
 											width: '100%'
-										},										
+										},
 										items: [
 										]
 									},
@@ -704,9 +707,8 @@
 												iconCls: 'fa fa-lg fa-bolt icon-button-color-run',
 												handler: function () {
 													var form = this.up('form');
-																
-		
-													if (validateOutputs()){										
+
+													if (validateOutputs()){
 
 														var formData = form.getValues();
 
@@ -715,12 +717,12 @@
 															report: null,
 															reportDataId: null
 														};
-													
+
 														//unpack emails
 														Ext.Array.each(outputs, function(reportOutput){
 															if (reportOutput.reportTransmissionOption.emailAddressRaw &&
 																reportOutput.reportTransmissionOption.emailAddressRaw !== '') {
-																																
+
 																var emails = CoreUtil.split(reportOutput.reportTransmissionOption.emailAddressRaw, [' ', ',', ';', '\n', '\r']);
 																var emailAddresses = [];
 																Ext.Array.each(emails, function(email){
@@ -734,8 +736,10 @@
 															reportOutput.reportTransmissionOption.reportNotify = formData.reportNotify;
 														});
 
+
+														// Prepare reportOptions data that will be consumed by backend
 														var report = {
-															reportType: formData.reportType,															  
+															reportType: formData.reportType,
 															reportOption: formData,
 															scheduleIntervalDays: null,
 															scheduleIntervalMinutes: null,
@@ -743,19 +747,21 @@
 															ids: null,
 															reportOutputs: outputs
 														};
+
+														// Append Evaluation Report-specific options to reportOptions
 														if (report.reportOption.evaluationType) {
 															if (report.reportOption.evaluationType === 'summary') {
 																report.reportOption.displayEvalSummary = true;
 															} else if (report.reportOption.evaluationType === 'detail') {
 																report.reportOption.displayEvalDetails = true;
 															}
-														}														
-														
+														}
+
 														reportData.report = report;
-													
+
 														//read in restriction ids
 														var reportOptionSet = form.queryById('reportOptionSet');
-														var entryselect = reportOptionSet.queryById('entryselect');														
+														var entryselect = reportOptionSet.queryById('entryselect');
 														var entryRestrictions = [];
 														if (entryselect) {
 															Ext.Array.each(entryselect.getSelected(), function(selected) {
@@ -764,23 +770,23 @@
 																});
 															});
 															if (entryRestrictions.length > 0) {
-																reportData.report.ids = entryRestrictions;														
+																reportData.report.ids = entryRestrictions;
 																reportData.reportDataId = entryRestrictions;
 															}
 														}
-														
+
 														if (reportData.report.reportOption.previousDays === '') {
 															reportData.report.reportOption.previousDays = null;
 														}
-															
-													
+
+
 														var scheduled = formData.scheduleOption !== 'NOW' ? true : false;
-														if (!scheduled) {														
-															reportData.report.reportOption.scheduleIntervalDays = null;															
+														if (!scheduled) {
+															reportData.report.reportOption.scheduleIntervalDays = null;
 															reportData.report.reportOption.scheduleIntervalMinutes = null;
-															reportData.report.reportOption.scheduleIntervalCron = null;													
-															
-															
+															reportData.report.reportOption.scheduleIntervalCron = null;
+
+
 															CoreUtil.submitForm({
 																url: 'api/v1/resource/reports',
 																method: 'POST',
@@ -797,9 +803,9 @@
 																failure: function (response, opts) {
 																	Ext.toast('Failed to submit report generation request.', '', 'tr');
 																}
-															});														
+															});
 
-														} else {														
+														} else {
 
 															//resolve schedule
 															switch(formData.scheduleOption){
@@ -807,13 +813,13 @@
 																	switch(formData.scheduleOptionPeriod){
 																		case 'DAILY':
 																			report.scheduleIntervalDays = 1;
-																		break;	
+																		break;
 																		case 'WEEKLY':
 																			report.scheduleIntervalDays = 7;
-																		break;																	
+																		break;
 																		case 'MONTHLY':
 																			report.scheduleIntervalDays = 28;
-																		break;																	
+																		break;
 																	}
 																	break;
 																case 'DAYS':
@@ -821,11 +827,11 @@
 																	break;
 																case 'MINUTES':
 																	report.scheduleIntervalMinutes = formData.scheduleOptionMinutes;
-																	break;																
+																	break;
 																case 'CUSTOM':
 																	report.scheduleIntervalCron = formData.scheduleOptionCron;
-																	break;																																
-															}																
+																	break;
+															}
 
 															var url = '';
 															var method = '';
@@ -843,16 +849,16 @@
 																method: method,
 																data: report,
 																removeBlankDataItems: true,
-																form: form,															
+																form: form,
 																success: function (response, opts) {
 																	Ext.toast('Saved Successfully', '', 'tr');
 																	scheduleWin.close();
-																	scheduleReportRefreshGrid();																
+																	scheduleReportRefreshGrid();
 																},
 																failure: function (response, opts) {
-																	Ext.toast('Failed to Save', '', 'tr');																
+																	Ext.toast('Failed to Save', '', 'tr');
 																}
-															});																												
+															});
 														}
 													}
 												}
@@ -865,7 +871,7 @@
 												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 												handler: function () {
 													scheduleWin.close();
-												}												
+												}
 											}
 										]
 									}
@@ -884,43 +890,43 @@
 							{ code: 'MINUTES', description: 'Every X Minutes'},
 							{ code: 'CUSTOM', description: 'Custom'}
 						];
-						
-						scheduleWin.queryById('scheduleOptions').getStore().loadData(cbData, true);     
+
+						scheduleWin.queryById('scheduleOptions').getStore().loadData(cbData, true);
 					}
 				});
-					
+
 					var outputs = [];
-				
-					
+
+
 					var validateOutputs = function() {
 						var valid = true;
-		
-						if (!outputs || outputs.length === 0) {																										
+
+						if (!outputs || outputs.length === 0) {
 							Ext.Msg.show({
 								title: 'Validation',
 								message: 'Please add at least one output.',
 								buttons: Ext.Msg.OK,
 								icon: Ext.Msg.ERROR,
-								fn: function(btn) {																
-								}																
+								fn: function(btn) {
+								}
 							});
 							valid = false;
 						} else {
 							Ext.Array.each(outputs, function(output){
 								//if (output.reportTransmissionType == 'CONFLUENCE') {
-									//TODO: May need to check parent									
-								//} 
-							
+									//TODO: May need to check parent
+								//}
+
 								if (output.reportTransmissionOption.emailAddressRaw &&
 									output.reportTransmissionOption.emailAddressRaw !== '') {
 
 									var emails = CoreUtil.split(output.reportTransmissionOption.emailAddressRaw, [' ', ',', ';', '\n', '\r']);
 									var badEmailAddresses = [];
-									Ext.Array.each(emails, function(email){											
+									Ext.Array.each(emails, function(email){
 										if (CoreUtil.emailValidateStrict(email) === false) {
 											badEmailAddresses.push(email);
 										}
-									});	
+									});
 
 									if (badEmailAddresses.length > 0) {
 										Ext.Msg.show({
@@ -928,20 +934,20 @@
 											message: 'Check the following email addresses:<br><br>' + badEmailAddresses.join('<br>'),
 											buttons: Ext.Msg.OK,
 											icon: Ext.Msg.ERROR,
-											fn: function(btn) {																
-											}																
+											fn: function(btn) {
+											}
 										});
 										valid = false;
 									}
 								}
-							
-							});			
-						} 
-		
+
+							});
+						}
+
 						return valid;
 					};
-					
-		
+
+
 					var days = [];
 					days.push({
 						code: null,
@@ -953,65 +959,65 @@
 							days: '' + i
 						});
 					}
-					var previousDaysStore = Ext.create('Ext.data.Store', {						
+					var previousDaysStore = Ext.create('Ext.data.Store', {
 						fields: ['code', 'days'],
 						data: days
-					});					
-					
-					
+					});
+
+
 					var scheduleOptionsShow = function(form) {
-						form.queryById('scheduleOptions').setHidden(false);		
+						form.queryById('scheduleOptions').setHidden(false);
 					};
-					
+
 					var	showReportOptions = function(form, reportType) {
-						
+
 						var reportOptionSet = form.queryById('reportOptionSet');
 						reportOptionSet.removeAll();
-						
+
 						var optionsToAdd = [];
-						if (reportType === 'COMPONENT' || 
-							reportType === 'CMPORG' || 
+						if (reportType === 'COMPONENT' ||
+							reportType === 'CMPORG' ||
 							reportType === 'ENTRYLIST' ||
 							reportType === 'TYPECOMP') {
 
-							//add grid for entries							
+							//add grid for entries
 							optionsToAdd.push({
 								xtype: 'entryselect',
 								itemId: 'entryselect',
 								buttonTooltip: 'Select entries to report on.  Defaults to: All entries',
 								allSelectedMessage: '<p>Report on ALL entries</p>'
 							});
-							
+
 							if (reportType === 'TYPECOMP') {
-								
+
 								//add detail selection
 								optionsToAdd.push({
 										xtype: 'fieldcontainer',
-										fieldLabel: 'Included Report Categories',										
+										fieldLabel: 'Included Report Categories',
 										items: [
 											{
 												layout: 'column',
 												items: [
 													{
 														xtype: 'fieldcontainer',
-														defaultType: 'checkboxfield',														
+														defaultType: 'checkboxfield',
 														columnWidth: 0.32,
 														baseCls: 'detailReportColumn',
 														items: [
 															{
-																boxLabel: 'Description',																															
+																boxLabel: 'Description',
 																name: 'displayDescription',
 																itemId: 'displayDescription',
 																value: true
 															},
 															{
-																boxLabel: 'Contacts',																														
+																boxLabel: 'Contacts',
 																name: 'displayContacts',
 																itemId: 'displayContacts',
 																value: true
 															},
 															{
-																boxLabel: 'Resources',																															
+																boxLabel: 'Resources',
 																name: 'displayResources',
 																itemId: 'displayResources',
 																value: true
@@ -1026,12 +1032,12 @@
 													},
 													{
 														xtype: 'fieldcontainer',
-														defaultType: 'checkboxfield',														
+														defaultType: 'checkboxfield',
 														columnWidth: 0.32,
 														baseCls: 'detailReportColumn',
 														items: [
 															{
-																boxLabel: 'Dependencies',																																
+																boxLabel: 'Dependencies',
 																name: 'displayDependencies',
 																itemId: 'displayDependencies',
 																value: true
@@ -1043,13 +1049,13 @@
 																value: true
 															},
 															{
-																boxLabel: 'Tags',																
+																boxLabel: 'Tags',
 																name: 'displayTags',
 																itemId: 'displayTags',
 																value: true
 															},
 															{
-																boxLabel: 'Organization Data',																																
+																boxLabel: 'Organization Data',
 																name: 'displayOrgData',
 																itemId: 'displayOrgData',
 																value: true,
@@ -1059,7 +1065,7 @@
 													},
 													{
 														xtype: 'fieldcontainer',
-														defaultType: 'checkboxfield',														
+														defaultType: 'checkboxfield',
 														columnWidth: 0.32,
 														baseCls: 'detailReportColumn',
 														items: [
@@ -1090,12 +1096,12 @@
 											}
 										]
 									});
-									
+
 								optionsToAdd.push({
 										xtype: 'fieldcontainer',
 										defaultType: 'radiofield',
 										itemId: 'evaluationTypeField',
-										fieldLabel: 'Include Evaluation',																				
+										fieldLabel: 'Include Evaluation',
 									    defaults: {
 									        columnWidth: 0.32
 									    },
@@ -1103,15 +1109,15 @@
 										items: [
 											{
 												boxLabel: 'Evaluation Summary',
-												name: 'evaluationType',													
+												name: 'evaluationType',
 												inputValue: 'summary',
 												inputAttrTpl: 'data-qtip=Condensed&nbsp;evaluation&nbsp;overview',
 												value: true
 											},
 											{
-												boxLabel: 'Evaluation Details',	
+												boxLabel: 'Evaluation Details',
 												inputValue: 'detail',
-												inputAttrTpl: 'data-qtip=Detailed&nbsp;evaluation&nbsp;analysis',												
+												inputAttrTpl: 'data-qtip=Detailed&nbsp;evaluation&nbsp;analysis',
 												name: 'evaluationType'
 											},
 											{
@@ -1144,28 +1150,28 @@
 								},
 								displayField: 'description',
 								valueField: 'attributeType',
-								editable: false,									
+								editable: false,
 								allowBlank: true
-							});							
+							});
 						}
-						else if (reportType === 'LINKVALID') {							
+						else if (reportType === 'LINKVALID') {
 							optionsToAdd.push(
 								{
 									xtype: 'numberfield',
 									name: 'maxWaitSeconds',
 									itemId: 'maxWaitSeconds',
-									fieldLabel: 'Enter how many seconds to wait (default: 5 sec, (1 - 300 seconds))',									
+									fieldLabel: 'Enter how many seconds to wait (default: 5 sec, (1 - 300 seconds))',
 									maxLength: 3,
 									minValue: 1,
 									maxValue: 300,
 									value: '5',
-									editable: true,									
-									allowBlank: true									
-								}									
-							);							
+									editable: true,
+									allowBlank: true
+								}
+							);
 						}
-						else if (reportType === 'SUBMISSION' || 
-								reportType === 'USAGE' || 
+						else if (reportType === 'SUBMISSION' ||
+								reportType === 'USAGE' ||
 								reportType === 'ENTRYSTATUS') {
 
 							optionsToAdd.push({
@@ -1176,16 +1182,16 @@
 								width: '100%',
 								format: 'm/d/Y',
 								value: new Date(),
-								submitFormat: 'Y-m-d\\TH:i:s.u',																
+								submitFormat: 'Y-m-d\\TH:i:s.u',
 								allowBlank: true,
 								style: {
 									marginTop: '20px'
 								}
 							});
-							
+
 							optionsToAdd.push({
 								xtype: 'datefield',
-								name: 'endDts',	
+								name: 'endDts',
 								itemId: 'endDts',
 								fieldLabel: 'End Date (Blank = Current Day)',
 								width: '100%',
@@ -1194,7 +1200,7 @@
 								submitFormat: 'Y-m-d\\TH:i:s.u',
 								allowBlank: true
 							});
-							
+
 							optionsToAdd.push({
 								xtype: 'combobox',
 								name: 'previousDays',
@@ -1219,13 +1225,13 @@
 										}
 									}
 								}
-							});							
-							
+							});
+
 						}
 						else if (reportType === 'EVALSTAT') {
-							
+
 							optionsToAdd.push({
-								xtype: 'combobox',								
+								xtype: 'combobox',
 								name: 'assignedUser',
 								itemId: 'assignedUser',
 								fieldLabel: 'Assigned User',
@@ -1234,7 +1240,7 @@
 								queryMode: 'remote',
 								emptyText: 'All',
 								typeAhead: true,
-								editable: true,							
+								editable: true,
 								forceSelection: true,
 								store: {
 									autoLoad: true,
@@ -1252,15 +1258,15 @@
 									}
 								}
 							});
-							
+
 							optionsToAdd.push({
-								xtype: 'combobox',								
+								xtype: 'combobox',
 								name: 'assignedGroup',
 								itemId: 'assignedGroup',
 								fieldLabel: 'Assign to Group',
 								displayField: 'description',
 								valueField: 'code',
-								emptyText: 'All',															
+								emptyText: 'All',
 								editable: false,
 								forceSelection: true,
 								store: {
@@ -1280,20 +1286,57 @@
 								}
 							});
 						}
-						reportOptionSet.add(optionsToAdd);						
-						
+						else if (reportType === 'WORKPLANSTATUS'){
+
+							// Get all possible Workplan, Workplan Steps combinations
+							Ext.Ajax.request({
+								url: 'api/v1/resource/workplans',
+								success: function(response, opts) {
+									var workplanData = Ext.JSON.decode(response.responseText);
+									var workplanStepsArray = [];
+
+
+									for(ii=0; ii< workplanData.length; ii++){
+										for(jj=0; jj < workplanData[ii].steps.length; jj++){
+											workplanStepsArray.push({
+												"id": workplanData[ii].steps[jj].workPlanStepId,
+												"show" : "Workplan: " + workplanData[ii].name + "   Step: " + workplanData[ii].steps[jj].name
+											})
+										}
+									}// Completed: getting Workplan/Steps combinations
+
+									optionsToAdd = {
+										xtype: 'tagfield',
+										name: "workPlanSteps",
+										fieldLabel: 'Select which Workplan Steps you want to be included in this report:',
+										store: {data: workplanStepsArray},
+										displayField: 'show',
+										valueField: 'id',
+										queryMode: 'local',
+										filterPickList: true
+									}
+
+									// Because this is an async call, this function is responsible for loading the data into the page itself.
+									reportOptionSet.add(optionsToAdd);
+
+								}
+							});
+						}
+
+						// Load options into page
+						reportOptionSet.add(optionsToAdd);
 					};
-					
-					
+
+
 					var	showOutputs = function(form, reportType) {
-						
+
 						var reportOutputPanel = form.queryById('reportOutputs-inner');
 						reportOutputPanel.removeAll();
-						
+
 						Ext.Array.each(reportOutputPanel.getDockedItems('button'), function(item){
 							reportOutputPanel.removeDocked(item);
 						});
-						
+
 						reportOutputPanel.setLoading(true);
 						Ext.Ajax.request({
 							url: 'api/v1/resource/reports/' + reportType + '/transmissiontypes',
@@ -1302,8 +1345,8 @@
 							},
 							success: function(response, opts) {
 								var transmissionTypes = Ext.decode(response.responseText);
-																
-								
+
+
 								var constructViewOutput = function(reportOutput) {
 
 									var panel = {
@@ -1327,16 +1370,16 @@
 													autoLoad: true,
 													proxy: {
 														type: 'ajax',
-														url: 'api/v1/resource/reports/' + reportType + '/' + reportOutput.reportTransmissionType + '/formats',											
+														url: 'api/v1/resource/reports/' + reportType + '/' + reportOutput.reportTransmissionType + '/formats',
 													}
 												},
 												displayField: 'description',
 												valueField: 'code',
-												editable: false,								
+												editable: false,
 												allowBlank: false,
 												listeners: {
 													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.reportFormat = newValue;														
+														reportOutput.reportTransmissionOption.reportFormat = newValue;
 													}
 												}
 											},
@@ -1361,7 +1404,7 @@
 
 									return panel;
 								};
-								
+
 								var constructEmailOutput = function(reportOutput) {
 									var panel = {
 										xtype: 'panel',
@@ -1384,16 +1427,16 @@
 													autoLoad: true,
 													proxy: {
 														type: 'ajax',
-														url: 'api/v1/resource/reports/' + reportType + '/' + reportOutput.reportTransmissionType + '/formats',											
+														url: 'api/v1/resource/reports/' + reportType + '/' + reportOutput.reportTransmissionType + '/formats',
 													}
 												},
 												displayField: 'description',
 												valueField: 'code',
-												editable: false,								
+												editable: false,
 												allowBlank: false,
 												listeners: {
 													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.reportFormat = newValue;														
+														reportOutput.reportTransmissionOption.reportFormat = newValue;
 													}
 												}
 											},
@@ -1404,14 +1447,14 @@
 												fieldLabel: 'Enter email addresses <i class="fa fa-question-circle" data-qtip="You can separate multiple email addresses by a <b>comma</b>, <b>semicolon</b>, or <b>new line</b><br/><br/><b>Example:</b><br/>example1@domain.com,example2@domain.com;example3@domain.com"></i> <span class="field-required" />',
 												emptyText: 'Enter one or more email addresses separated by a comma (,), semicolon (;), or a new line.',
 												width: '100%',
-												maxLength: 300,																	
+												maxLength: 300,
 												allowBlank: false,
 												value: reportOutput.reportTransmissionOption.emailAddressRaw,
 												listeners: {
 													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.emailAddressRaw = newValue;														
+														reportOutput.reportTransmissionOption.emailAddressRaw = newValue;
 													}
-												}																		
+												}
 											},
 											{
 												xtype: 'checkbox',
@@ -1422,10 +1465,10 @@
 												value: reportOutput.reportTransmissionOption.attachReport,
 												listeners: {
 													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.attachReport = newValue;														
+														reportOutput.reportTransmissionOption.attachReport = newValue;
 													}
-												}										
-											},								
+												}
+											},
 											{
 												xtype: 'checkbox',
 												itemId: 'postEmailBody',
@@ -1435,11 +1478,11 @@
 												value: reportOutput.reportTransmissionOption.postToEmailBody,
 												listeners: {
 													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.postToEmailBody = newValue;														
+														reportOutput.reportTransmissionOption.postToEmailBody = newValue;
 													}
-												}									
+												}
 											}
-										],										
+										],
 										listeners: {
 											close: function(p, opts) {
 												removeOutputAction(reportOutput);
@@ -1453,20 +1496,20 @@
 											var allAttached = reportOutputPanel.query('#attachReport');
 											Ext.Array.each(allAttached, function(attached){
 												attached.setHidden(false);
-											});											
+											});
 										}
 										if (CoreService.userservice.userHasPermission(user, "REPORT-OUTPUT-EMAIL-BODY")) {
 											var allAttached = reportOutputPanel.query('#postEmailBody');
 											Ext.Array.each(allAttached, function(attached){
 												attached.setHidden(false);
-											});												
+											});
 										}
-									});						
+									});
 
 
 									return panel;
 								};
-								
+
 								var constructConfluenceOutput = function(reportOutput) {
 									var panel = {
 										xtype: 'panel',
@@ -1489,16 +1532,16 @@
 													autoLoad: true,
 													proxy: {
 														type: 'ajax',
-														url: 'api/v1/resource/reports/' + reportType + '/' + reportOutput.reportTransmissionType + '/formats',											
+														url: 'api/v1/resource/reports/' + reportType + '/' + reportOutput.reportTransmissionType + '/formats',
 													}
 												},
 												displayField: 'description',
 												valueField: 'code',
-												editable: false,								
+												editable: false,
 												allowBlank: false,
 												listeners: {
 													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.reportFormat = newValue;														
+														reportOutput.reportTransmissionOption.reportFormat = newValue;
 													}
 												}
 											},
@@ -1513,7 +1556,7 @@
 												value: reportOutput.reportTransmissionOption.confluenceSpace,
 												listeners: {
 													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.confluenceSpace = newValue;														
+														reportOutput.reportTransmissionOption.confluenceSpace = newValue;
 													}
 												}
 											},
@@ -1528,7 +1571,7 @@
 												value: reportOutput.reportTransmissionOption.confluencePage,
 												listeners: {
 													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.confluencePage = newValue;														
+														reportOutput.reportTransmissionOption.confluencePage = newValue;
 													}
 												}
 											},
@@ -1543,26 +1586,26 @@
 												value: reportOutput.reportTransmissionOption.confluenceParentPageId,
 												listeners: {
 													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.confluenceParentPageId = newValue;														
+														reportOutput.reportTransmissionOption.confluenceParentPageId = newValue;
 													}
 												}
 											}
-										],										
+										],
 										listeners: {
 											close: function(p, opts) {
 												removeOutputAction(reportOutput);
 											}
 										}
 									}
-									return panel;						
-								};							
-																
-								var addBtn;								
+									return panel;
+								};
+
+								var addBtn;
 								var updateDisplay = function() {
 									reportOutputPanel.removeAll();
 
 									var hasEmailTransmissionType = false;
-									var outputComponents = [];						
+									var outputComponents = [];
 									Ext.Array.each(outputs, function(output){
 										switch (output.reportTransmissionType) {
 											case 'VIEW':
@@ -1575,9 +1618,9 @@
 											case 'CONFLUENCE':
 												outputComponents.push(constructConfluenceOutput(output));
 												break;
-										}										
+										}
 									});
-									
+
 									reportOutputPanel.add(outputComponents);
 
 									// 	if the an email transmission type has been specified, don't allow the user
@@ -1587,30 +1630,30 @@
 										reportNotifyField.setDisabled(true);
 										reportNotifyField.setValue(false);
 									}
-									
+
 									//timing issue on format field reload
 									Ext.defer(function(){
 										form.getForm().checkValidity();
 									}, 1000);
-									
-									outputToAdd = [];								
+
+									outputToAdd = [];
 									Ext.Array.each(transmissionTypes, function(avaliable) {
 										//check if already added and multiple is not allowed.
 										var add = true;
 										if (!avaliable.supportsMultiple) {
-											//see if already added										
+											//see if already added
 											Ext.Array.each(outputs, function(output){
 												if (avaliable.code === output.reportTransmissionType) {
 													add = false;
 												}
 											});
-										} 
+										}
 
 										if (add) {
 											outputToAdd.push({
-												text: avaliable.description,											
+												text: avaliable.description,
 												transmissionType: avaliable.code,
-												handler: function() {	
+												handler: function() {
 													outputs.push({
 														outputId: Ext.id(),
 														reportTransmissionType: avaliable.code,
@@ -1650,13 +1693,13 @@
 												iconCls: 'fa fa-lg fa-plus  icon-button-color-save',
 												menu: outputToAdd,
 											});
-											
+
 											reportOutputPanel.addDocked(addBtn);
 										}
 									});
 								};
 								updateDisplay();
-																
+
 								var removeOutputAction = function(reportOutput) {
 									var index = 0;
 									var emailOutputTypes = 0;
@@ -1681,37 +1724,36 @@
 
 									Ext.Array.removeAt(outputs, index);
 									updateDisplay();
-								};														
-								
+								};
+
 							}
-						});						
-						
+						});
+
 					};
-					
-					
+
+
 					if (scheduleData) {
 						//edit
 						var genform = scheduleWin.down('form');
-						
-						console.log(scheduleData);
+
 						var data = scheduleData.data;
-						
+
 						scheduleWin.scheduleReportId = data.scheduleReportId
-						
+
 						//set report Type
 						var reportTypeField = scheduleWin.queryById('reportType');
 						reportTypeField.setValue(data.reportType);
 						reportTypeField.finishEditLoading = function() {
-						
+
 							//update schedule options
 							if (data.scheduleIntervalDays) {
 								if (data.scheduleIntervalDays === 1) {
 									genform.queryById('scheduleOptions').setValue('PERIOD');
 									genform.queryById('scheduleOptionPeriod').setValue('DAILY');
-								} else if (data.scheduleIntervalDays === 7) {								
+								} else if (data.scheduleIntervalDays === 7) {
 									genform.queryById('scheduleOptions').setValue('PERIOD');
 									genform.queryById('scheduleOptionPeriod').setValue('WEEKLY');
-								} else if (data.scheduleIntervalDays === 28) {								
+								} else if (data.scheduleIntervalDays === 28) {
 									genform.queryById('scheduleOptions').setValue('PERIOD');
 									genform.queryById('scheduleOptionPeriod').setValue('MONTHLY');
 								} else {
@@ -1720,15 +1762,15 @@
 								}
 							} else if (data.scheduleIntervalMinutes) {
 								genform.queryById('scheduleOptions').setValue('MINUTES');
-								genform.queryById('scheduleOptionMinutes').setValue(data.scheduleIntervalMinutes);								
+								genform.queryById('scheduleOptionMinutes').setValue(data.scheduleIntervalMinutes);
 							} else if (data.scheduleIntervalCron) {
 								genform.queryById('scheduleOptions').setValue('CUSTOM');
-								genform.queryById('scheduleOptionCron').setValue(data.scheduleIntervalCron);								
+								genform.queryById('scheduleOptionCron').setValue(data.scheduleIntervalCron);
 							}
 
-							//unpack options and load	
+							//unpack options and load
 							Ext.Object.each(data.reportOption, function(key, value){
-								
+
 								if (key === 'evaluationType') {
 									var field = genform.queryById('evaluationTypeField');
 									if (field) {
@@ -1740,17 +1782,17 @@
 										field.setValue(value);
 									}
 								}
-								
-							});							
-							
-							
+
+							});
+
+
 							//load entry select (if available)
 							var entrySelect = genform.queryById('entryselect');
 							if (entrySelect) {
 								entrySelect.loadCurrentSelection(data.ids);
 							}
 
-							//restore outputs						
+							//restore outputs
 							outputs = data.reportOutputs;
 							showOutputs(genform, data.reportType);
 
@@ -1760,7 +1802,7 @@
 									item.validate();
 								} catch (e) { }
 							});
-							
+
 							reportTypeField.finishLoading = null;
 						};
 					}
@@ -1798,7 +1840,7 @@
 							store.getProxy().extraParams = {
 								reportType: Ext.getCmp('historyFilter-reportType').getValue() ? Ext.getCmp('historyFilter-reportType').getValue() : null,
 								showScheduledOnly: Ext.getCmp('historyFilter-showScheduledOnly').getValue(),
-								showAllUsers: Ext.getCmp('historyFilter-showAll').getValue() 
+								showAllUsers: Ext.getCmp('historyFilter-showAll').getValue()
 							};
 						}
 					}
@@ -1840,8 +1882,8 @@
 						{text: 'Create Date', dataIndex: 'createDts', width: 150, xtype: 'datecolumn', format: 'm/d/y H:i:s'},
 						{text: 'Create User', dataIndex: 'createUser', width: 150, align: 'center'},
 						{
-							text: '<span data-qtip="Days until report is removed from the system">Days Until Cleanup</span>', 
-							dataIndex: 'remainingReportLifetime', 
+							text: '<span data-qtip="Days until report is removed from the system">Days Until Cleanup</span>',
+							dataIndex: 'remainingReportLifetime',
 							width: 165,
 							align: 'center',
 							sortable: false, renderer: function (value, meta, record) {
@@ -1860,7 +1902,7 @@
 								// Set the value of the cell
 								record.data.remainingReportLifetime = '<span data-qtip="' + statusInfo + '"> <i style="color: hsla(' + statusColor + ', 70%, 50%, 1.0);" class="' + statusSymbol + '" aria-hidden="true"></i> ' + record.data.remainingReportLifetime + '</span>';
 								return record.data.remainingReportLifetime;
-							} 
+							}
 						},
 						{text: 'Scheduled', dataIndex: 'scheduled', width: 100, align: 'center',
 							renderer: CoreUtil.renderer.booleanRenderer
@@ -1869,11 +1911,11 @@
 						{ text: 'Outputs', dataIdndex: 'reportOutput', sortable: false, width: 150, flex: 1, sortable: false,
 							renderer: function(value, meta, record) {
 								var outputs = 'VIEW';
-								
+
 								if (record.data.reportOutputs) {
 									var outputTypes = [];
-									Ext.Array.each(record.data.reportOutputs, function(item){									
-										outputTypes.push(item.reportTransmissionType); 
+									Ext.Array.each(record.data.reportOutputs, function(item){
+										outputTypes.push(item.reportTransmissionType);
 									});
 									outputs = outputTypes.join(', ');
 								}
@@ -1882,8 +1924,8 @@
 						},
 						{text: 'Output Options', dataIndex: 'reportOutputs', minWidth: 200, flex: 2, hidden: true, sortable: false,
 							renderer: outputOptionRender
-						}						
-						
+						}
+
 					],
 					dockedItems: [
 						{
@@ -1918,7 +1960,7 @@
 								{
 									xtype: 'checkbox',
 									id: 'historyFilter-showScheduledOnly',
-									boxLabel: 'Show Scheduled Only',									
+									boxLabel: 'Show Scheduled Only',
 									margin: '0 20 0 0',
 									enableToggle: true,
 									requiredPermissions: ['REPORTS-SCHEDULE-READ'],
@@ -1940,10 +1982,10 @@
 										}
 									},
 									boxLabel: 'Show All Users',
-									name: 'showAllUsers'									
-								}								
+									name: 'showAllUsers'
+								}
 							]
-						}, 
+						},
 						{
 							dock: 'top',
 							xtype: 'toolbar',
@@ -1968,7 +2010,7 @@
 									iconCls: 'fa fa-2x fa-plus icon-button-color-save icon',
 									scale: 'medium',
 									requiredPermissions: ['REPORTS-CREATE'],
-									handler: function () {										
+									handler: function () {
 										showAddEditWin();
 									}
 								},
@@ -1983,7 +2025,7 @@
 										scheduleReportRefreshGrid();
 									},
 									tooltip: 'Schedule Reports'
-								},								
+								},
 								{
 									xtype: 'tbseparator'
 								},
@@ -2071,8 +2113,8 @@
 									},
 								listeners:{
 									click:function(){
-										Ext.Msg.alert('SPOON Disclaimer', 
-										'<i class="fa fa-bolt fa-5x" style="width:100%; display:inline-block; text-align:center; vertical-align:bottom; font-size: 5em";"></i>' + 
+										Ext.Msg.alert('SPOON Disclaimer',
+										'<i class="fa fa-bolt fa-5x" style="width:100%; display:inline-block; text-align:center; vertical-align:bottom; font-size: 5em";"></i>' +
 										CoreService.brandingservice.branding.disclaimerMessage +
 										'<br><br>',
 										 Ext.emptyFn);
@@ -2085,11 +2127,11 @@
 											}
 											});
 									}
-									}								
+									}
 								}
 							]
 						},
-						
+
 					],
 					viewConfig: {
 						getRowClass: function (record) {
@@ -2175,12 +2217,12 @@
 							Ext.getCmp('historyDetailButton').setDisabled(false);
 						} else {
 							if (record.get('noViewAvailable')){
-								Ext.getCmp('historyViewButton').setDisabled(true);							
+								Ext.getCmp('historyViewButton').setDisabled(true);
 								Ext.getCmp('historyExportButton').setDisabled(true);
 							} else {
-								Ext.getCmp('historyViewButton').setDisabled(false);							
+								Ext.getCmp('historyViewButton').setDisabled(false);
 								Ext.getCmp('historyExportButton').setDisabled(false);
-							}							
+							}
 							Ext.getCmp('historyDetailButton').setDisabled(false);
 						}
 
@@ -2191,7 +2233,7 @@
 						}
 
 					} else if (cnt > 1) {
-						Ext.getCmp('historyDeleteButton').setDisabled(false);						
+						Ext.getCmp('historyDeleteButton').setDisabled(false);
 						Ext.getCmp('historyViewButton').setDisabled(true);
 						Ext.getCmp('historyExportButton').setDisabled(true);
 						Ext.getCmp('historyDetailButton').setDisabled(true);
@@ -2204,7 +2246,7 @@
 				};
 
 				var reportDetails = function(recordId, scheduled) {
-					
+
 					var detailwin = Ext.create('Ext.window.Window', {
 						title: 'Report Details',
 						modal: true,
@@ -2216,10 +2258,10 @@
 						scrollable: true,
 						bodyStyle: 'padding: 10px',
 						listeners:	{
-							show: function() {        
-								this.removeCls("x-unselectable");    
+							show: function() {
+								this.removeCls("x-unselectable");
 							}
-						},							
+						},
 						dockedItems: [
 							{
 								xtype: 'toolbar',
@@ -2249,7 +2291,7 @@
 							'<div style="padding: 10px;">',
 								'{[this.displayOptions(values.options)]}',
 							'</div>',
-							
+
 							'<h3 style="background: lightgrey; padding: 5px;">Entries Reported On:</h3>',
 							'<div style="padding: 10px;">',
 								'<tpl if="this.hasEntries(idsInReport)">',
@@ -2258,9 +2300,9 @@
 									'</tpl>',
 								'</tpl>',
 								'<tpl if="!this.hasEntries(idsInReport)"> All Entries (If Appplicable) </tpl>',
-							'</div>',							
-							
-							'<h3 style="background: lightgrey; padding: 5px;">Outputs:</h3>',							
+							'</div>',
+
+							'<h3 style="background: lightgrey; padding: 5px;">Outputs:</h3>',
 							'<div style="padding: 10px;">',
 								'{[this.displayOutputs(values.outputs)]}',
 							'</div>',
@@ -2277,7 +2319,7 @@
 										data: {
 											reportOutputs: outputs
 										}
-									};									
+									};
 									return outputOptionRender(null, null, record);
 								},
 								displayOptions: function(options) {
@@ -2290,16 +2332,16 @@
 									return results;
 								}
 							}
-							
+
 						)
 					});
 					detailwin.show();
-					
+
 					var url = 'api/v1/resource/reports/' + recordId + '/detail';
 					if (scheduled) {
 						url = 'api/v1/resource/scheduledreports/' + recordId + '/detail';
 					}
-					
+
 					detailwin.setLoading(true);
 					Ext.Ajax.request({
 						url: url,
@@ -2307,11 +2349,11 @@
 							detailwin.setLoading(false);
 						},
 						success: function(response, opt) {
-							var data = Ext.decode(response.responseText);							
+							var data = Ext.decode(response.responseText);
 							detailwin.update(data);
 						}
 					});
-					
+
 				};
 
 

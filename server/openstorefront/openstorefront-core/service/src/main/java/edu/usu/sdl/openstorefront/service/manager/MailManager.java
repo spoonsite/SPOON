@@ -58,7 +58,9 @@ public class MailManager
 	public enum Templates
 	{
 		EMAIL_VERIFICATION("emailVerification.ftl"),
+		CONTACT_VENDOR("contactVendor.ftl"),
 		FORGOT_USERNAME("forgotUsername.ftl"),
+		RESET_PASSWORD("resetPassword.ftl"),
 		EMAIL_COMMENT("emailComment.ftl");
 
 		private String filename;
