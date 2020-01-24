@@ -42,7 +42,7 @@
                         <p class="right-text">{{ comment.createDts | formatDate("Pp") }}</p>
                         <div class="user-comments" v-html="comment.comment"/>
                         <div class="d-flex flex-row">
-                          <v-menu offset-y nudge-left="20em">
+                          <v-menu offset-y auto>
                             <template v-slot:activator="{ on }">
                               <v-spacer></v-spacer>
                               <v-btn
