@@ -56,6 +56,11 @@
                 <th>Entry Name</th>
                 <th>Status</th>
                 <th>Actions</th>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
               </table>
               <table v-if="item.title ==='Watches'">
                 <th>Entry Name</th>
@@ -219,6 +224,9 @@ export default {
     },
     isSpoon() {
       return this.$store.state.branding.applicationName === 'SPOON'
+    },
+    getSubmissionData() {
+
     }
   },
   computed: {
