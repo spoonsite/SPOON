@@ -120,44 +120,66 @@
             No required attributes, please select an entry type.
           </p>
           <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
-            <!-- TODO: Deal with multiple attribute selection (see tags) -->
-            <v-text-field
-              v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
+            <v-autocomplete
+              v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
               v-model="attribute.selectedCodes"
               :label="`${attribute.description}*`"
-              class="mr-3"
-              :rules="[rules.required]"
-              required
-            />
-            <v-text-field
-              v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
-              v-model="attribute.selectedCodes"
-              :label="attribute.description"
-              :rules="[rules.required, rules.numberOnly]"
-              class="mr-3"
-              required
-            />
-            <v-select
-              v-else
-              :label="attribute.description"
-              clearable
+              multiple
+              chips
+              deletable-chips
               :items="attribute.codes"
               item-text="label"
               item-code="code"
-              required
-              :rules="[rules.required]"
+              :search-input.sync="attribute.searchText"
+              @keypress.enter="
+                attribute.codes.push(attribute.searchText)
+                attribute.selectedCodes.push(attribute.searchText)
+                attribute.searchText = ''
+              "
               class="mr-3"
-            />
-            <v-select
-              label="Unit"
-              v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-              :value="attribute.attributeUnit"
-              :items="attribute.attributeUnitList"
-              item-text="unit"
-              item-value="unit"
-              class="mr-3 unit"
+              :rules="
+                attribute.attributeValueType === 'NUMBER'
+                  ? [rules.requiredArray, rules.numberOnly]
+                  : [rules.requiredArray]
+              "
               required
-              :rules="[rules.required]"
+            />
+            <v-autocomplete
+              v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+              v-model="attribute.selectedCodes"
+              :label="`${attribute.description}*`"
+              multiple
+              chips
+              deletable-chips
+              :items="attribute.codes"
+              item-text="label"
+              item-code="code"
+              class="mr-3"
+              :rules="
+                attribute.attributeValueType === 'NUMBER'
+                  ? [rules.requiredArray, rules.numberOnly]
+                  : [rules.requiredArray]
+              "
+              required
+            />
+            <v-text-field
+              v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+              v-model="attribute.selectedCodes"
+              :label="`${attribute.description}*`"
+              class="mr-3"
+              :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
+              required
+            />
+            <v-autocomplete
+              v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+              v-model="attribute.selectedCodes"
+              :label="`${attribute.description}*`"
+              :items="attribute.codes"
+              item-text="label"
+              item-code="code"
+              class="mr-3"
+              :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
+              required
             />
           </div>
         </fieldset>
@@ -167,36 +189,50 @@
             No suggested attributes, please select an entry type.
           </p>
           <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
-            <v-text-field
-              v-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'TEXT'"
+            <v-autocomplete
+              v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
               v-model="attribute.selectedCodes"
-              :label="attribute.description"
+              :label="`${attribute.description}*`"
+              multiple
+              chips
+              deletable-chips
+              :items="attribute.codes"
+              item-text="label"
+              item-code="code"
+              :search-input.sync="attribute.searchText"
+              @keypress.enter="
+                attribute.codes.push(attribute.searchText)
+                attribute.selectedCodes.push(attribute.searchText)
+                attribute.searchText = ''
+              "
               class="mr-3"
             />
-            <v-text-field
-              v-else-if="attribute.allowUserGeneratedCodes && attribute.attributeValueType === 'NUMBER'"
+            <v-autocomplete
+              v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
               v-model="attribute.selectedCodes"
-              :label="attribute.description"
-              :rules="[rules.numberOnly]"
-              class="mr-3"
-            />
-            <v-select
-              v-else
-              :label="attribute.description"
-              clearable
+              :label="`${attribute.description}*`"
+              multiple
+              chips
+              deletable-chips
               :items="attribute.codes"
               item-text="label"
               item-code="code"
               class="mr-3"
             />
-            <v-select
-              label="Unit"
-              v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-              :value="attribute.attributeUnit"
-              :items="attribute.attributeUnitList"
-              item-text="unit"
-              item-value="unit"
-              class="mr-3 unit"
+            <v-text-field
+              v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+              v-model="attribute.selectedCodes"
+              :label="`${attribute.description}*`"
+              class="mr-3"
+            />
+            <v-autocomplete
+              v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+              v-model="attribute.selectedCodes"
+              :label="`${attribute.description}*`"
+              :items="attribute.codes"
+              item-text="label"
+              item-code="code"
+              class="mr-3"
             />
           </div>
         </fieldset>
@@ -206,14 +242,22 @@
             Include the value for your entry, a brief description, and how your part is defined by the attribute.
           </p>
           <label class="title" for="request-new-attribute">Request New Attribute (opt.)</label>
-          <v-textarea outlined id="request-new-attribute" placeholder="Request new attribute" class="" v-model="attributes.missingAttribute" />
+          <v-textarea
+            outlined
+            id="request-new-attribute"
+            placeholder="Request new attribute"
+            class=""
+            v-model="attributes.missingAttribute"
+          />
         </div>
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Resources</legend>
         <fieldset class="fieldset mt-0">
           <legend class="title legend">Local Files</legend>
-          <v-btn color="grey lighten-2" @click="addLocalFile" :disabled="resources.localFiles.length > 10">Add Local File</v-btn>
+          <v-btn color="grey lighten-2" @click="addLocalFile" :disabled="resources.localFiles.length > 10"
+            >Add Local File</v-btn
+          >
           <div class="image-row" v-for="(file, index) in resources.localFiles" :key="index">
             <div class="file-grid">
               <v-select
@@ -413,6 +457,7 @@ export default {
 
     rules: {
       required: value => !!value || 'Required',
+      requiredArray: value => value.length !== 0 || 'Required',
       // TODO: Fix issue with null values
       numberOnly: value => {
         // If the value is null, we don't care about validation, in this case
@@ -461,12 +506,21 @@ export default {
         .then(response => {
           // TODO: Add check for hideOnSubmission
           this.attributes.required = response.data
+          console.log(this.attributes.required)
           this.attributes.required.forEach(e => {
-            if (e.allowMultipleFlg) {
+            // Set up values for required codes
+            if (e.allowMultipleFlg && e.allowUserGeneratedCodes) {
               e.selectedCodes = []
-            } else {
+              e.searchText = ''
+            } else if (e.allowMultipleFlg && !e.allowUserGeneratedCodes) {
+              e.selectedCodes = []
+            } else if (!e.allowMultipleFlg && e.allowUserGeneratedCodes) {
+              e.selectedCodes = ''
+            } else if (!e.allowMultipleFlg && !e.allowUserGeneratedCodes) {
               e.selectedCodes = ''
             }
+
+            // Set up unit stuff
             if (e.attributeUnitList) {
               e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
               if (e.attributeUnitList.length === 0) {
