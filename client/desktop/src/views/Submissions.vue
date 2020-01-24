@@ -495,13 +495,13 @@ export default {
         .then(response => {
           // this.deleteDialog = false
           // this.removalForm.message = ''
-          this.$toasted.show('Sent Sucessfully.')
+          this.$toasted.show(`Got Response from server\n${response.statusText}`)
           // this.$toasted.error('Got Response from server')
           // console.log('Got Response from server')
           // console.log(response)
         })
         .catch(e => {
-          this.$toasted.show('Caught error: ' + e)
+          this.$toasted.show('Caught error: ' + e.message)
           // console.log('Got error')
           // console.log(e)
         })
