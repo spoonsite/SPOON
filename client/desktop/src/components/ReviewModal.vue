@@ -191,7 +191,6 @@ export default {
         .catch(e => this.errors.push(e))
     },
     submitReview() {
-      // console.log('submit')
       let data = {
         comment: this.review.comment,
         cons: [],
