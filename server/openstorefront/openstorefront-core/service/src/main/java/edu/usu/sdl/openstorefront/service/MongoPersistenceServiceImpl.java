@@ -520,13 +520,13 @@ public class MongoPersistenceServiceImpl
 	 * The purpose of this function is to help identify what EntityEventType should be set on the EntityEventModel
 	 * of the entity that is being saved to the db (in the persist() function).
 	 *
-	 * In v1.12, the sole purpose of isManaged is to determine whether a component already exists in the db (and hence,
+	 * In v2.12, the sole purpose of isManaged is to determine whether a component already exists in the db (and hence,
 	 * the EntityEventModel should have a EntityEventType of kind "UPDATE"), or not. Most other Event kind ( such as
 	 *  Activate, Deactivated, New Submission (Not Submitted), Pending, Pending Change Request )
 	 * gets cast as if they were CREATE.
 	 *
 	 * SPOON's original design imagined that each of these different events would trigger the appropriate EntityEventType's assignment.
-	 * However the needs of SPOOn are met with just CREATE and UPDATE. This is why there isManaged returns a boolean.
+	 * However the needs of SPOON are met with just CREATE and UPDATE. This is why there isManaged returns a boolean.
 	 * In the future, if the original designs are to be realized, this function will be replaced with logic to a certain all the
 	 * different EntityEventTypes.
 	 *
