@@ -37,7 +37,7 @@
       <v-container v-if="showRecentActivity">
         <v-layout row wrap justify-center>
           <v-flex v-for="(item, i) in recentActivityData" class="mb-3" :key="i" xs12 sm6 md4 xl3>
-            <v-card style="height: 100%;" class="mx-2 category-card">
+            <v-card style="height: 100%;" class="mx-2 category-card d-flex flex-column">
               <div
                 style="background-color: #3C3C3C;color: white; display: flex; align-items: center; min-height: 6em;"
                 class="pa-2"
@@ -51,28 +51,70 @@
                 <span class="headline" style="vertical-align: top;">{{item.title}}</span>
               </div>
               <v-divider class="d-xs-none"></v-divider>
-              <table v-if="item.title ==='Submissions'">
-                <th class="title">Entry Name</th>
-                <th class="title">Status</th>
-                <th class="title">Actions</th>
-                <tr v-for="component in componentData.slice(0,5)" :key="component.componentName">
-                  <td class="title font-weight-regular">{{component.componentName}}</td>
-                  <td class="title font-weight-regular"></td>
-                  <td class="title font-weight-regular"></td>
-                </tr>
-              </table>
-              <table v-if="item.title ==='Watches'">
-                <th class="title font-weight-bold">Entry Name</th>
-                <th class="title font-weight-bold">Updated</th>
-                <tr v-for="watch in watchesData.slice(0,5)" :key="watch.componentName">
-                  <td class="title font-weight-regular">{{watch.componentName}}</td>
-                  <td v-if="watch.lastUpdateDts > watch.lastViewDts"><v-icon>fas fa-check</v-icon></td>
-                  <td v-else></td>
-                </tr>
-              </table>
+              <v-layout row justify-center align-center v-if="isLoading" style="height:100%;" class="d-flex flex-column">
+                <v-flex xs1>
+                  <v-progress-circular color="primary" :size="60" :width="6" indeterminate class="spinner"></v-progress-circular>
+                </v-flex>
+              </v-layout>
+              <div v-else>
+                <table v-if="item.title ==='Submissions'">
+                  <th class="title">Entry Name</th>
+                  <th class="title">Status</th>
+                  <th class="title">Actions</th>
+                  <tr v-for="component in submissionData.slice(0,5)" :key="component.componentName">
+                    <td class="title font-weight-regular">{{component.name}}</td>
+                    <td v-if="component.approvalState === 'A'" class="title font-weight-regular">Active</td>
+                    <td v-else-if="component.approvalState === 'P'" class="title font-weight-regular">Pending</td>
+                    <td v-else class="title font-weight-regular">Not Submitted</td>
+                    <td v-if="component.approvalState === 'N'" style="text-align: center;">
+                      <v-btn icon style="order: 2">
+                        <v-icon>fas fa-pencil-alt</v-icon>
+                      </v-btn>
+                    </td>
+                    <td v-else class="title font-weight-regular" style="text-align: center;">
+                      <v-btn
+                      icon
+                      :to="{ name: 'Entry Detail', params: { id: component.componentId } }"
+                      style="order: 1"
+                    >
+                      <v-icon>fas fa-eye</v-icon>
+                    </v-btn>
+                    </td>
+                  </tr>
+                </table>
+                <table v-if="item.title ==='Watches'">
+                  <th class="title font-weight-bold">Entry Name</th>
+                  <th class="title font-weight-bold">Updated</th>
+                  <tr v-for="watch in watchesData.slice(0,6)" :key="watch.componentName">
+                    <td class="title font-weight-regular pa-1">{{watch.componentName}}</td>
+                    <td
+                      v-if="watch.lastUpdateDts > watch.lastViewDts"
+                      style="text-align: center;"
+                      class="pa-1"
+                    >
+                      <v-icon>fas fa-check</v-icon>
+                    </td>
+                    <td v-else></td>
+                  </tr>
+                </table>
+              </div>
+              <v-spacer />
               <div class="d-flex flex-row">
                 <v-spacer />
-                <v-btn class="justify-end ma-4">Manage</v-btn>
+                <v-btn
+                  class="ma-4"
+                  v-if="item.title ==='Submissions'"
+                  :to="{ name: 'Submissions' }"
+                >
+                  Manage
+                </v-btn>
+                <v-btn
+                  class="ma-4"
+                  v-else
+                  :to="{ name: 'Watches' }"
+                >
+                  Manage
+                </v-btn>
               </div>
             </v-card>
           </v-flex>
@@ -167,6 +209,7 @@ export default {
       watchesData: [],
       showDisclaimer: false,
       showRecentActivity: false,
+      isLoading: false,
       quickLaunchLinks: [
         {
           img: '/openstorefront/images/dash.png',
@@ -237,14 +280,18 @@ export default {
     },
     getRecentActivityData() {
       this.showRecentActivity ? this.showRecentActivity = false : this.showRecentActivity = true
-      this.getSubmissionData()
-      this.getWatchesData()
+      if (this.showRecentActivity === true) {
+        this.getSubmissionData()
+        this.getWatchesData()
+      }
     },
     getSubmissionData() {
+      this.isLoading = true
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions')
         .then(response => {
           this.submissionData = response.data
-          this.submissionData.sort((a, b) => (a.lastActivityDts < b.lastActivityDts ? 1 : -1))
+          this.submissionData.sort((a, b) => (a.updateDts < b.updateDts ? 1 : -1))
+          this.isLoading = false
         }).catch(error => {
           this.errors.push(error)
         })
@@ -259,7 +306,6 @@ export default {
               this.watchesData.unshift(this.watchesData.splice(i, 1)[0])
             }
           }
-          console.log(this.watchesData)
         })
     }
   },
@@ -310,6 +356,15 @@ h3 {
     padding-top: 0.5em;
     padding-bottom: 0.5em;
     padding-left: 2em;
+  }
+  td {
+    padding-left: 0.5em;
+  }
+  td:hover {
+    cursor: default;
+  }
+  th {
+    padding: 0.5em;
   }
 }
 .footer-wrapper {
