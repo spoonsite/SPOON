@@ -27,7 +27,7 @@
           color="black"
           dark
           x-large
-          @click="showRecentActivity ? showRecentActivity = false : showRecentActivity = true"
+          @click="getRecentActivityData()"
           style="font-weight: bold; text-transform: none; font-size: 2rem; letter-spacing: 0;">
           {{ showRecentActivity ?'Hide Recent Activity':'Show Recent Activity'}}
         <v-icon v-if="!showRecentActivity" right>fas fa-chevron-up</v-icon>
@@ -46,26 +46,34 @@
                   class="mr-3 ml-1 pa-2"
                   style="height: 70; width: 70; display: flex; background-color: white; border-radius: 50%;"
                 >
-                  <!-- <img :src="'/openstorefront/' + item.img" height="50" width="50" class="pa-1" /> -->
                   <v-icon x-large color="black" class="pa-1">fas fa-{{item.img}}</v-icon>
                 </div>
                 <span class="headline" style="vertical-align: top;">{{item.title}}</span>
               </div>
               <v-divider class="d-xs-none"></v-divider>
               <table v-if="item.title ==='Submissions'">
-                <th>Entry Name</th>
-                <th>Status</th>
-                <th>Actions</th>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                <th class="title">Entry Name</th>
+                <th class="title">Status</th>
+                <th class="title">Actions</th>
+                <tr v-for="component in componentData.slice(0,5)" :key="component.componentName">
+                  <td class="title font-weight-regular">{{component.componentName}}</td>
+                  <td class="title font-weight-regular"></td>
+                  <td class="title font-weight-regular"></td>
                 </tr>
               </table>
               <table v-if="item.title ==='Watches'">
-                <th>Entry Name</th>
-                <th>Updated</th>
+                <th class="title font-weight-bold">Entry Name</th>
+                <th class="title font-weight-bold">Updated</th>
+                <tr v-for="watch in watchesData.slice(0,5)" :key="watch.componentName">
+                  <td class="title font-weight-regular">{{watch.componentName}}</td>
+                  <td v-if="watch.lastUpdateDts > watch.lastViewDts"><v-icon>fas fa-check</v-icon></td>
+                  <td v-else></td>
+                </tr>
               </table>
+              <div class="d-flex flex-row">
+                <v-spacer />
+                <v-btn class="justify-end ma-4">Manage</v-btn>
+              </div>
             </v-card>
           </v-flex>
         </v-layout>
@@ -155,6 +163,8 @@ export default {
       errors: [],
       highlights: [],
       attributes: [],
+      submissionData: [],
+      watchesData: [],
       showDisclaimer: false,
       showRecentActivity: false,
       quickLaunchLinks: [
@@ -225,8 +235,32 @@ export default {
     isSpoon() {
       return this.$store.state.branding.applicationName === 'SPOON'
     },
+    getRecentActivityData() {
+      this.showRecentActivity ? this.showRecentActivity = false : this.showRecentActivity = true
+      this.getSubmissionData()
+      this.getWatchesData()
+    },
     getSubmissionData() {
-
+      this.$http.get('/openstorefront/api/v1/resource/componentsubmissions')
+        .then(response => {
+          this.submissionData = response.data
+          this.submissionData.sort((a, b) => (a.lastActivityDts < b.lastActivityDts ? 1 : -1))
+        }).catch(error => {
+          this.errors.push(error)
+        })
+    },
+    getWatchesData() {
+      this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
+        .then(response => {
+          this.watchesData = response.data
+          this.watchesData.sort((a, b) => (a.lastUpdateDts < b.lastUpdateDts ? 1 : -1))
+          for (var i = this.watchesData.length - 1; i > 0; i--) {
+            if (this.watchesData[i].lastUpdateDts > this.watchesData[i].lastViewDts) {
+              this.watchesData.unshift(this.watchesData.splice(i, 1)[0])
+            }
+          }
+          console.log(this.watchesData)
+        })
     }
   },
   computed: {
