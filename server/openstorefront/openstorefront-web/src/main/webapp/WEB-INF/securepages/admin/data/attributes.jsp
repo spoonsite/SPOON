@@ -2190,13 +2190,6 @@
 									hidden: true
 								},
 								{
-<<<<<<< Updated upstream
-									xtype: 'textfield',
-									id: 'editAttributeForm-detailedDescrpt',
-									fieldLabel: 'Detailed Description',
-									maxLength: 256,
-									name: 'detailedDescription'
-=======
 									xtype: 'panel',
 									html: '<b>Detailed Description</b>'
 								},
@@ -2209,7 +2202,6 @@
 									height: 120,
 									maxLength: 255,
 									tinyMCEConfig: CoreUtil.tinymceConfigNoMedia()
->>>>>>> Stashed changes
 								},
 								{
 									id: 'attributeValueType',
