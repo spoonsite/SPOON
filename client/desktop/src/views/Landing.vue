@@ -27,7 +27,7 @@
           color="black"
           dark
           x-large
-          @click="getRecentActivityData()"
+          @click="showRecentActivity ? showRecentActivity = false : showRecentActivity = true"
           style="font-weight: bold; text-transform: none; font-size: 2rem; letter-spacing: 0;">
           {{ showRecentActivity ?'Hide Recent Activity':'Show Recent Activity'}}
         <v-icon v-if="!showRecentActivity" right>fas fa-chevron-up</v-icon>
@@ -197,6 +197,18 @@ export default {
     this.getNestedComponentTypes()
     this.getHighlights()
     this.getAttributes()
+    this.getSubmissionData()
+    if (this.$store.state.currentUser.username) {
+      this.getWatchesData()
+    } else {
+      this.$store.watch(
+        (state, getters) => state.currentUser,
+        (newValue, oldValue) => {
+          this.userEmail = this.$store.state.currentUser.email
+          this.getWatchesData()
+        }
+      )
+    }
   },
   data() {
     return {
@@ -277,13 +289,6 @@ export default {
     },
     isSpoon() {
       return this.$store.state.branding.applicationName === 'SPOON'
-    },
-    getRecentActivityData() {
-      this.showRecentActivity ? this.showRecentActivity = false : this.showRecentActivity = true
-      if (this.showRecentActivity === true) {
-        this.getSubmissionData()
-        this.getWatchesData()
-      }
     },
     getSubmissionData() {
       this.isLoading = true
