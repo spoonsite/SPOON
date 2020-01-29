@@ -140,6 +140,7 @@
             The information submitted to this site will be made publicly available. Please do not submit any sensitive
             information such as proprietary or ITAR restricted information.
           </p>
+          <p v-html="uploadErrorDisplay"></p>
           <v-file-input
             style="width: 100%;"
             label="Upload Resource (Limit of 2.15 GB)"
@@ -282,6 +283,7 @@ export default {
       search: '',
       bulkUploadDialog: false,
       bulkUploadFile: null,
+      uploadErrorDisplay: null,
       commentsDialog: false,
       deleteDialog: false,
       requestRemoval: false,
@@ -482,8 +484,6 @@ export default {
       window.open('openstorefront/bulkUpload.jsp', 'uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440')
     },
     submitBulkFile() {
-      // console.log(this.bulkUploadFile)
-
       let formData = new FormData()
       formData.append('file', this.bulkUploadFile)
       this.$http.post(`/openstorefront/api/v1/resource/usersubmissions/upload/zip`, formData,
@@ -493,17 +493,18 @@ export default {
           }
         })
         .then(response => {
-          // this.deleteDialog = false
-          // this.removalForm.message = ''
-          this.$toasted.show(`Got Response from server\n${response.statusText}`)
-          // this.$toasted.error('Got Response from server')
-          // console.log('Got Response from server')
-          // console.log(response)
-        })
-        .catch(e => {
-          this.$toasted.show('Caught error: ' + e.message)
-          // console.log('Got error')
-          // console.log(e)
+          this.bulkUploadFile = null
+          if (response.data.success) {
+            this.bulkUploadDialog = false
+            response.data.errors.entry.forEach((item) => {
+              this.$toasted.show(item.value)
+            })
+          } else {
+            this.uploadErrorDisplay = 'Upload Failed! '
+            response.data.errors.entry.forEach(item => {
+              this.uploadErrorDisplay += item.value + ' '
+            })
+          }
         })
     }
   }
