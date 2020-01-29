@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <v-form style="padding: 1em; padding-top: 2em;">
+    <v-form class="pa-2 pt-4">
       <v-flex class="d-flex flex-wrap">
         <v-btn class="top-buttons" @click="getUserParts()"><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn>
         <v-btn class="top-buttons" @click="showData()"><v-icon left>fas fa-plus</v-icon>Add New</v-btn>
@@ -42,14 +42,14 @@
             <div v-else>{{ item.status }}</div>
           </template>
           <template v-slot:item.submitDate="{ item }">
-            <div v-if="item.submitDate">{{ item.submitDate | formatDate('yyyy/MMM/dd') }}</div>
-            <div v-else-if="item.status === 'P'">{{ item.lastUpdate | formatDate('yyyy/MMM/dd') }}</div>
+            <div v-if="item.submitDate">{{ item.submitDate | formatDate }}</div>
+            <div v-else-if="item.status === 'P'">{{ item.lastUpdate | formatDate }}</div>
           </template>
           <template v-slot:item.pendingChange="{ item }">
             <div v-if="item.hasChangeRequest">Pending</div>
           </template>
           <template v-slot:item.lastUpdate="{ item }">
-            {{ item.lastUpdate | formatDate('yyyy/MMM/dd') }}
+            {{ item.lastUpdate | formatDate }}
           </template>
           <template v-slot:item.approvalWorkflow="{ item }">
             <svg width="200" height="65">
@@ -136,7 +136,7 @@
             information for Subject Matter Expert (SME) review. Once the SME has approved your information your part
             will become searchable on the site.
           </p>
-          <p style="color: red;">
+          <p class="red--text">
             The information submitted to this site will be made publicly available. Please do not submit any sensitive
             information such as proprietary or ITAR restricted information.
           </p>
@@ -182,10 +182,10 @@
           >
             Delete Change
           </v-btn>
-          <p v-if="currentComponent.hasChangeRequest && deleteChange" style="padding-top: 1em;">
+          <p v-if="currentComponent.hasChangeRequest && deleteChange" class="pt-2">
             Are you sure you want to delete the change request for: {{ currentComponent.name }}?
           </p>
-          <p v-else-if="!currentComponent.hasChangeRequest && !requestRemoval" style="padding-top: 1em;">
+          <p v-else-if="!currentComponent.hasChangeRequest && !requestRemoval" class="pt-2">
             Are you sure you want to delete: {{ currentComponent.name }}?
           </p>
           <v-form v-if="requestRemoval" v-model="isFormValid">
@@ -281,6 +281,7 @@ export default {
       isLoading: true,
       counter: 0,
       search: '',
+      uploadFile: null,
       bulkUploadDialog: false,
       bulkUploadFile: null,
       uploadErrorDisplay: null,
@@ -385,8 +386,6 @@ export default {
           })
         }
       })
-
-      // TODO: deal with the chance of the component being a submission
       if (currentStep === '') {
         currentStep = 'Approved'
       }

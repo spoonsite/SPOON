@@ -8,6 +8,7 @@ import Profile from '@/views/Profile'
 import EntryDetail from '@/views/EntryDetail'
 import Watches from '@/views/Watches'
 import Submissions from '@/views/Submissions'
+import Reviews from '@/views/Reviews'
 
 Vue.use(VueRouter)
 
@@ -52,6 +53,11 @@ const routes = [
     path: '/submissions',
     name: 'Submissions',
     component: Submissions
+  },
+  {
+    path: '/reviews',
+    name: 'Reviews',
+    component: Reviews
   }
   // {
   //   path: '/about',
