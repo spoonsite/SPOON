@@ -166,6 +166,7 @@ export default {
           response.data.includes('<!-- ***USER-NOT-LOGIN*** -->') &&
           !this.loggingOut
         ) {
+          sessionStorage.setItem('gotoUrl', window.location.href)
           window.location.href = 'openstorefront'
         }
         return response
