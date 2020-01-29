@@ -31,6 +31,7 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.Submission;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
@@ -217,6 +218,16 @@ public class ComponentSubmissionResource
 			attribute.getComponentAttributePk().setComponentId(id);
 		}
 		return handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, false);
+	}
+
+	@POST
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
+	@APIDescription("Creates a new Component Submission.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/vue")
+	public Response createNewSubmissionVue(Submission submission){
+		return Response.ok(submission).build();
 	}
 
 	@PUT

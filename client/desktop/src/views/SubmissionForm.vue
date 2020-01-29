@@ -5,12 +5,22 @@
       <h2>Caution!</h2>
       <p>{{ $store.state.branding.userInputWarning }}</p>
     </div>
-    <v-form v-model="isFormValid" id="submissionForm" style="width: 80%;" class="mx-auto">
+    <v-form
+      v-model="isFormValid"
+      id="submissionForm"
+      ref="submissionForm"
+      style="width: 80%;"
+      class="mx-auto"
+      action="testing.php"
+      method="post"
+    >
       <fieldset class="fieldset flex-wrap">
         <legend class="legend title">Entry Details*</legend>
         <v-text-field
           label="Entry Title*"
           v-model="entryTitle"
+          id="name"
+          name="name"
           required
           :rules="[rules.required]"
           class="mx-4 mw-18"
@@ -19,6 +29,7 @@
         <v-autocomplete
           label="Entry Type*"
           v-model="entryType"
+          id="componentType"
           :items="this.$store.state.componentTypeList"
           item-text="parentLabel"
           item-value="componentType"
@@ -29,6 +40,7 @@
         <v-autocomplete
           label="Organization*"
           v-model="organization"
+          id="organization"
           :items="organizationList"
           item-text="name"
           item-value="name"
@@ -53,14 +65,42 @@
           <div class="flex-wrap w-100">
             <v-text-field
               label="First Name*"
-              v-model="firstName"
+              v-model="primaryPOC.firstName"
               required
               :rules="[rules.required]"
               class="mx-4 mw-14"
             />
-            <v-text-field label="Last Name*" v-model="lastName" required :rules="[rules.required]" class="mx-4 mw-14" />
-            <v-text-field label="Email*" v-model="email" required :rules="[rules.required]" class="mx-4 mw-14" />
-            <v-text-field label="Phone*" v-model="phone" required :rules="[rules.required]" class="mx-4 mw-14" />
+            <v-text-field
+              label="Last Name*"
+              v-model="primaryPOC.lastName"
+              required
+              :rules="[rules.required]"
+              class="mx-4 mw-14"
+            />
+            <v-text-field
+              label="Email*"
+              v-model="primaryPOC.email"
+              required
+              :rules="[rules.required]"
+              class="mx-4 mw-14"
+            />
+            <v-text-field
+              label="Phone*"
+              v-model="primaryPOC.phone"
+              required
+              :rules="[rules.required]"
+              class="mx-4 mw-14"
+            />
+            <v-autocomplete
+              label="Organization*"
+              v-model="primaryPOC.organization"
+              id="organization"
+              :items="organizationList"
+              item-text="name"
+              item-value="name"
+              :rules="[rules.required]"
+              class="mx-4 mw-18"
+            />
           </div>
         </div>
       </fieldset>
@@ -184,7 +224,7 @@
           </div>
         </fieldset>
         <fieldset class="fieldset attribute-grid">
-          <legend class="title legend">Suggested Attributes</legend>
+          <legend class="title legend">Suggested Attributes (opt.)</legend>
           <p v-if="attributes.suggested.length === 0">
             No suggested attributes, please select an entry type.
           </p>
@@ -192,7 +232,7 @@
             <v-autocomplete
               v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
               v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
+              :label="`${attribute.description}`"
               multiple
               chips
               deletable-chips
@@ -210,7 +250,7 @@
             <v-autocomplete
               v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
               v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
+              :label="`${attribute.description}`"
               multiple
               chips
               deletable-chips
@@ -222,13 +262,13 @@
             <v-text-field
               v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
               v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
+              :label="`${attribute.description}`"
               class="mr-3"
             />
             <v-autocomplete
               v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
               v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
+              :label="`${attribute.description}`"
               :items="attribute.codes"
               item-text="label"
               item-code="code"
@@ -338,6 +378,13 @@
             <v-text-field v-model="contact.lastName" label="Last Name" />
             <v-text-field v-model="contact.email" label="Email" />
             <v-text-field v-model="contact.phone" label="Phone" />
+            <v-autocomplete
+              label="Organization"
+              v-model="contact.organization"
+              :items="organizationList"
+              item-text="name"
+              item-value="name"
+            />
           </div>
           <div>
             <v-btn icon @click="removeContact(index)">
@@ -426,10 +473,13 @@ export default {
     securityMarking: '',
     securityMarkingList: [],
     // primaryPOC:
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
+    primaryPOC: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      organization: ''
+    },
     // Images
     images: [],
     allowedImageTypes: ['image/png', 'image/jpeg', 'image/jpg'],
@@ -453,12 +503,12 @@ export default {
     tagsList: [],
     // Contacts
     contactTypeList: [],
-    contacts: [{ firstName: '', lastName: '', type: '', organization: '', email: '', phone: '' }],
+    contacts: [],
 
     rules: {
       required: value => !!value || 'Required',
       requiredArray: value => value.length !== 0 || 'Required',
-      // TODO: Fix issue with null values
+      len64k: value => value.length > 65536 || 'Must have less than 64k characters',
       numberOnly: value => {
         // If the value is null, we don't care about validation, in this case
         if (value === null) {
@@ -494,6 +544,23 @@ export default {
   computed: {
     allowedImageTypesString() {
       return this.allowedImageTypes.join(',')
+    },
+    formData() {
+      console.log(this.images)
+      return {
+        name: this.entryTitle,
+        componentType: this.componentType,
+        organization: this.organization,
+        images: this.images,
+        description: this.description,
+        // TODO: Fix attributes
+        requiredAttributes: this.attributes.required,
+        suggestedAttributes: this.attributes.suggested,
+        localFiles: this.resources.localFiles,
+        urls: this.resources.urls,
+        tags: this.tags,
+        contacts: [this.primaryPOC].concat(this.contacts)
+      }
     }
   },
   methods: {
@@ -559,17 +626,23 @@ export default {
       this.lastEntryType = ''
     },
     setName() {
-      this.firstName = this.$store.state.currentUser.firstName
-      this.lastName = this.$store.state.currentUser.lastName
-      this.phone = this.$store.state.currentUser.phone
-      this.email = this.$store.state.currentUser.email
+      this.primaryPOC.firstName = this.$store.state.currentUser.firstName
+      this.primaryPOC.lastName = this.$store.state.currentUser.lastName
+      this.primaryPOC.phone = this.$store.state.currentUser.phone
+      this.primaryPOC.email = this.$store.state.currentUser.email
+      this.primaryPOC.organization = this.$store.state.currentUser.organization
     },
     submit(data) {
+      console.log(this.formData)
+      console.log(this.$refs.submissionForm)
       if (this.$refs.submissionForm.validate()) {
-        console.log('Form is valid')
+        // console.log('Form is valid')
       } else {
-        console.log('Form is invalid')
+        // console.log('Form is invalid')
       }
+      this.$http.post('/openstorefront/api/v1/resource/componentsubmissions/vue', this.formData).then(response => {
+        console.log(response)
+      })
     },
     addImage() {
       this.images.push({ file: null, caption: '', img: '' })
@@ -715,7 +788,7 @@ export default {
 .contact-grid {
   display: grid;
   grid-gap: 1em;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, 430px);
   align-items: center;
 }
 .file-grid {
