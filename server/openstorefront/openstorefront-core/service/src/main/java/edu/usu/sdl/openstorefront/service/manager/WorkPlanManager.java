@@ -104,6 +104,12 @@ public class WorkPlanManager
 		started.set(true);
 	}
 
+	/**
+	 * This function passes an event to the event handlers. It is up to the trigger itself to
+	 * determine if the event in question is relevant.
+	 *
+	 * @param entityEventModel record of event that is happening
+	 */
 	@SuppressWarnings("unchecked")
 	protected void triggerHandler(EntityEventModel entityEventModel)
 	{
