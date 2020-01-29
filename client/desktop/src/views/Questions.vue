@@ -222,7 +222,6 @@ export default {
           { text: 'Entry', value: 'componentName' },
           { text: 'Status', value: 'activeStatus' },
           { text: 'Answer', value: 'response', sortable: false },
-          // { text: 'Update Date', value: 'updateDts' },
           { text: 'Answer Date', value: 'answeredDate' },
           { text: 'Actions', value: 'actions', sortable: false }
         ],
