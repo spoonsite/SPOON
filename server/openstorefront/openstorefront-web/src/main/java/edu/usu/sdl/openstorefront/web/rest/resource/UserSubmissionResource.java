@@ -29,6 +29,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionComment;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.UserSubmissionMediaView;
 import edu.usu.sdl.openstorefront.core.view.UserSubmissionView;
 import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
@@ -190,7 +191,7 @@ public class UserSubmissionResource
 	)
 	{
 		Logger LOG = Logger.getLogger(UserSubmissionResource.class.getName());
-		String errors = "";
+		RestErrorModel restErrorModel = new RestErrorModel();
 		String username = SecurityUtil.getCurrentUserName();
 
 		String timeStamp = new SimpleDateFormat("dd-MM-YYYY").format(new Date());
@@ -206,9 +207,6 @@ public class UserSubmissionResource
 				+ StringProcessor.uniqueId()
 				+ ".zip";
 
-		LOG.log(Level.SEVERE, "filename: {0}", fileDisposition.getFileName());
-		LOG.log(Level.SEVERE, "filePath: {0}", filePath);
-
 		String extension = FilenameUtils.getExtension(fileDisposition.getFileName());
 
 		if (extension.equals("zip")) {
@@ -217,29 +215,40 @@ public class UserSubmissionResource
 				FileUtils.copyInputStreamToFile(uploadStream, destFile);
 			} catch (IOException ex) {
 				LOG.log(Level.FINE, "Unable to read file: " + fileDisposition.getFileName(), ex);
-				errors += "Unable to read file: " + fileDisposition.getFileName()
-						+ " Make sure the file in the proper format.";
+				restErrorModel.getErrors().put("message", "Unable to read file.");
+				restErrorModel.getErrors().put("potentialResolution", "Make sure the file is in the proper format.");
+				restErrorModel.setSuccess(false);
+				return Response.ok(restErrorModel).build();
 			}
 		} else {
-			errors += "Uploaded file was not a zip file";
+			restErrorModel.getErrors().put("message", "Uploaded file was not a zip file.");
+			restErrorModel.getErrors().put("potentialResolution", "Ensure filename ends with .zip");
+			restErrorModel.setSuccess(false);
+			return Response.ok(restErrorModel).build();
 		}
 
-		LOG.log(Level.SEVERE, "errors: {0}", errors);
-
-		if (errors.isEmpty()) {
-			// Send email to spoon support telling them that there is a new uploaded file.
+		// Send email to spoon support telling them that there is a new uploaded file.
+		String recipientAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL);
+		String senderAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_FROM_ADDRESS);
+		String senderName = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_FROM_NAME);
+		if (!recipientAddress.isEmpty() && !senderAddress.isEmpty() && !senderName.isEmpty()) {
 			Email email = MailManager.newEmail();
 			email.setSubject("SpoonSite bulk Upload");
 			email.setText("There is a new bulk upload to be reviewed at " + filePath);
-			email.addRecipient("", PropertiesManager.KEY_FEEDBACK_EMAIL, Message.RecipientType.TO);
-
-			LOG.log(Level.SEVERE, "About to send email");
-
+			email.addRecipient("Admin", recipientAddress, Message.RecipientType.TO);
+			email.setFromAddress(senderName, senderAddress);
 			MailManager.send(email, true);
+		} else {
+			LOG.log(Level.WARNING, "Email doesn't have an email correctly defined.");
+			restErrorModel.getErrors().put("message", "Could not send notification email.");
+			restErrorModel.getErrors().put("potentialResolution", "Set feedback email, mail from addresss, and mail from name");
+			restErrorModel.setSuccess(false);
+			return Response.ok(restErrorModel).build();
 		}
 
-		LOG.log(Level.SEVERE, "About to return from bulk upload");
-		return Response.ok(errors).build();
+		restErrorModel.getErrors().put("message", "File uploaded sucessfully.");
+		restErrorModel.setSuccess(true);
+		return Response.ok(restErrorModel).build();
 	}
 
 	//update submission	(submission - owner/admin) FIX Admin permission
