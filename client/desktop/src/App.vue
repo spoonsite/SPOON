@@ -221,7 +221,6 @@ export default {
       firstTimeDialog: false,
       loggingOut: false,
       drawer: false,
-      closeMenu: true,
       watchNumber: 0,
       beginningLinks: [
         // Leave a permission array empty if no permissions are needed.
