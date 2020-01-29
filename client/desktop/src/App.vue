@@ -264,9 +264,9 @@ export default {
           permissions: []
         },
         {
-          href: '/openstorefront/UserTool.action',
-          icon: 'question-circle',
-          name: 'Questions',
+          link: '/questions',
+          icon: 'comments',
+          name: 'Q&A',
           hasChildren: false,
           permissions: []
         },
@@ -289,7 +289,7 @@ export default {
         },
         {
           link: '/contact',
-          icon: 'comment',
+          icon: 'envelope',
           name: 'Contact',
           hasChildren: false,
           permissions: []
