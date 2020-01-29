@@ -27,7 +27,7 @@
           color="black"
           dark
           x-large
-          @click="showRecentActivity ? showRecentActivity = false : showRecentActivity = true"
+          @click="getRecentActivity()"
           style="font-weight: bold; text-transform: none; font-size: 2rem; letter-spacing: 0;">
           {{ showRecentActivity ?'Hide Recent Activity':'Show Recent Activity'}}
         <v-icon v-if="!showRecentActivity" right>fas fa-chevron-up</v-icon>
@@ -37,7 +37,7 @@
       <v-container v-if="showRecentActivity">
         <v-layout row wrap justify-center>
           <v-flex v-for="(item, i) in recentActivityData" class="mb-3" :key="i" xs12 sm6 md4 xl3>
-            <v-card style="height: 100%;" class="mx-2 category-card d-flex flex-column">
+            <v-card style="height: 100%;" class="mx-2 recent-activity-card d-flex flex-column">
               <div
                 style="background-color: #3C3C3C;color: white; display: flex; align-items: center; min-height: 6em;"
                 class="pa-2"
@@ -58,16 +58,16 @@
               </v-layout>
               <div v-else>
                 <table v-if="item.title ==='Submissions'">
-                  <th class="title">Entry Name</th>
-                  <th class="title">Status</th>
-                  <th class="title">Actions</th>
+                  <th class="title font-weight-bold">Entry Name</th>
+                  <th class="title font-weight-bold">Status</th>
+                  <th class="title font-weight-bold">Actions</th>
                   <tr v-for="component in submissionData.slice(0,5)" :key="component.componentName">
                     <td class="title font-weight-regular">{{component.name}}</td>
                     <td v-if="component.approvalState === 'A'" class="title font-weight-regular">Active</td>
                     <td v-else-if="component.approvalState === 'P'" class="title font-weight-regular">Pending</td>
                     <td v-else class="title font-weight-regular">Not Submitted</td>
                     <td v-if="component.approvalState === 'N'" style="text-align: center;">
-                      <v-btn icon style="order: 2">
+                      <v-btn icon>
                         <v-icon>fas fa-pencil-alt</v-icon>
                       </v-btn>
                     </td>
@@ -75,7 +75,6 @@
                       <v-btn
                       icon
                       :to="{ name: 'Entry Detail', params: { id: component.componentId } }"
-                      style="order: 1"
                     >
                       <v-icon>fas fa-eye</v-icon>
                     </v-btn>
@@ -86,15 +85,20 @@
                   <th class="title font-weight-bold">Entry Name</th>
                   <th class="title font-weight-bold">Updated</th>
                   <tr v-for="watch in watchesData.slice(0,6)" :key="watch.componentName">
-                    <td class="title font-weight-regular pa-1">{{watch.componentName}}</td>
-                    <td
-                      v-if="watch.lastUpdateDts > watch.lastViewDts"
-                      style="text-align: center;"
-                      class="pa-1"
-                    >
-                      <v-icon>fas fa-check</v-icon>
-                    </td>
-                    <td v-else></td>
+                      <td class="pa-1">
+                        <router-link :to="{ name: 'Entry Detail', params: { id: watch.componentId } }" class="title font-weight-regular">
+                          {{watch.componentName}}
+                        </router-link>
+                      </td>
+                      <td
+                        v-if="watch.lastUpdateDts > watch.lastViewDts"
+                        style="text-align: center;"
+                        class="pa-1"
+                      >
+                        <v-icon color="success">fas fa-check</v-icon>
+                      </td>
+                      <td v-else></td>
+
                   </tr>
                 </table>
               </div>
@@ -209,6 +213,8 @@ export default {
         }
       )
     }
+    this.showRecentActivity = JSON.parse(window.localStorage.getItem('showRecentActivity'))
+    console.log(this.showRecentActivity)
   },
   data() {
     return {
@@ -290,6 +296,10 @@ export default {
     isSpoon() {
       return this.$store.state.branding.applicationName === 'SPOON'
     },
+    getRecentActivity() {
+      this.showRecentActivity ? this.showRecentActivity = false : this.showRecentActivity = true
+      window.localStorage.setItem('showRecentActivity', JSON.stringify(this.showRecentActivity))
+    },
     getSubmissionData() {
       this.isLoading = true
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions')
@@ -362,15 +372,6 @@ h3 {
     padding-bottom: 0.5em;
     padding-left: 2em;
   }
-  td {
-    padding-left: 0.5em;
-  }
-  td:hover {
-    cursor: default;
-  }
-  th {
-    padding: 0.5em;
-  }
 }
 .footer-wrapper {
   width: 100%;
@@ -393,15 +394,6 @@ h3 {
 }
 .text-right {
   text-align: right;
-}
-.h2 {
-  display: block;
-  font-size: 1.5em;
-  margin-top: 0.83em;
-  margin-bottom: 0.83em;
-  margin-left: 0;
-  margin-right: 0;
-  font-weight: bold;
 }
 @media only screen and (max-width: 598px) {
   .d-xs-none {
