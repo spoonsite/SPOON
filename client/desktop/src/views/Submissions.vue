@@ -85,7 +85,16 @@
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-btn icon v-on="on" style="order: 2">
+                  <v-btn
+                    v-if="item.status === 'A'"
+                    :href="'mailto:support@spoonsite.com?subject=Change%20Request%20for%20' + item.name"
+                    icon
+                    v-on="on"
+                    style="order: 2"
+                  >
+                    <v-icon>fas fa-pencil-alt</v-icon>
+                  </v-btn>
+                  <v-btn v-else icon v-on="on" style="order: 2">
                     <v-icon>fas fa-pencil-alt</v-icon>
                   </v-btn>
                 </template>
