@@ -84,21 +84,22 @@
                 <table v-if="item.title ==='Watches'">
                   <th class="title font-weight-bold">Entry Name</th>
                   <th class="title font-weight-bold">Updated</th>
-                  <tr v-for="watch in watchesData.slice(0,6)" :key="watch.componentName">
-                      <td class="pa-1">
-                        <router-link :to="{ name: 'Entry Detail', params: { id: watch.componentId } }" class="title font-weight-regular">
-                          {{watch.componentName}}
-                        </router-link>
-                      </td>
-                      <td
-                        v-if="watch.lastUpdateDts > watch.lastViewDts"
-                        style="text-align: center;"
-                        class="pa-1"
-                      >
-                        <v-icon color="success">fas fa-check</v-icon>
-                      </td>
-                      <td v-else></td>
-
+                  <tr
+                    v-for="watch in watchesData.slice(0,6)"
+                    :key="watch.componentName"
+                    @click="goToWatchedPage(watch)"
+                    style="cursor: pointer;"
+                    class="title font-weight-regular"
+                  >
+                    <td class="pa-1">{{watch.componentName}}</td>
+                    <td
+                      v-if="watch.lastUpdateDts > watch.lastViewDts"
+                      style="text-align: center;"
+                      class="pa-1"
+                    >
+                      <v-icon color="success">fas fa-check</v-icon>
+                    </td>
+                    <td v-else></td>
                   </tr>
                 </table>
               </div>
@@ -214,7 +215,6 @@ export default {
       )
     }
     this.showRecentActivity = JSON.parse(window.localStorage.getItem('showRecentActivity'))
-    console.log(this.showRecentActivity)
   },
   data() {
     return {
@@ -309,6 +309,7 @@ export default {
           this.isLoading = false
         }).catch(error => {
           this.errors.push(error)
+          this.isLoading = false
         })
     },
     getWatchesData() {
@@ -322,6 +323,9 @@ export default {
             }
           }
         })
+    },
+    goToWatchedPage(watch) {
+      this.$router.push({ name: 'Entry Detail', params: { id: watch.componentId } })
     }
   },
   computed: {
@@ -371,6 +375,27 @@ h3 {
     padding-top: 0.5em;
     padding-bottom: 0.5em;
     padding-left: 2em;
+  }
+}
+.recent-activity-card {
+  a {
+    text-decoration: none;
+  }
+  table {
+    border-collapse: collapse;
+  }
+  td {
+    padding-left: 0.5em;
+  }
+  tr:hover {
+    cursor: default;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  th {
+    padding: 0.5em;
+  }
+  table {
+    width: 100%;
   }
 }
 .footer-wrapper {
