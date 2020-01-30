@@ -137,23 +137,20 @@
           </v-flex>
 
           <!-- Save Button -->
-          <v-flex xs12 sm10>
+          <v-flex xs12>
             <v-btn
               :disabled="!valid || disableForm || !formChanged"
               :loading="saving"
               block
               @click="updateProfile"
-              color="accent"
-              >Save</v-btn
-            >
-          </v-flex>
-          <!-- Reset Button -->
-          <v-flex xs12 sm2>
-            <v-btn :disabled="!valid || disableForm || !formChanged" block @click="reset" color="accent"
-              >Reset Form</v-btn
+              color="success"
+              >Update Profile</v-btn
             >
           </v-flex>
         </v-layout>
+        <v-flex xs12 pt-0 pb-0>
+          <ChangePassword></ChangePassword>
+        </v-flex>
       </v-container>
     </v-form>
   </section>
@@ -161,10 +158,12 @@
 
 <script lang="js">
 import validators from '@/util/validators'
+import ChangePassword from '@/components/ChangePassword'
 
 export default {
   name: 'profile',
   mixins: [validators],
+  components: { ChangePassword },
   mounted() {
     if (this.$store.state.currentUser.username) {
       this.populateInfo()
