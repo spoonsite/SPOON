@@ -6,7 +6,11 @@
         <v-alert class="w-100" type="warning" :value="true" v-if="$store.state.branding.userInputWarning !== null"
           ><span v-html="$store.state.branding.userInputWarning"></span
         ></v-alert>
-        <v-alert class="w-100" type="info" :value="true" v-if="$store.state.branding.submissionFormWarning !== null"
+        <v-alert
+          class="w-100"
+          type="info"
+          :value="!autoApprove"
+          v-if="$store.state.branding.submissionFormWarning !== null"
           ><span v-html="$store.state.branding.submissionFormWarning"></span
         ></v-alert>
         <v-form v-model="reviewValid">
@@ -109,9 +113,13 @@ export default {
     this.prosSelectOptions = []
     this.consSelectOptions = []
     this.lookupTypes()
+    this.$http
+      .get(`/openstorefront/api/v1/service/application/configproperties/userreview.autoapprove`)
+      .then(response => (this.autoApprove = response.data.description))
   },
   data() {
     return {
+      autoApprove: false,
       timeSelectOptions: [],
       prosSelectOptions: [],
       consSelectOptions: [],
