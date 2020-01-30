@@ -1,18 +1,15 @@
 <template>
   <div>
-    <h1 class="text-center">New Part Submission Form</h1>
+    <h1 class="text-center">New Entry Submission Form</h1>
     <div class="text-center px-2" style="color: red;">
       <h2>Caution!</h2>
       <p>{{ $store.state.branding.userInputWarning }}</p>
     </div>
     <v-form
       v-model="isFormValid"
-      id="submissionForm"
       ref="submissionForm"
       style="width: 80%;"
       class="mx-auto"
-      action="testing.php"
-      method="post"
     >
       <fieldset class="fieldset flex-wrap">
         <legend class="legend title">Entry Details*</legend>
@@ -221,6 +218,15 @@
               :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
               required
             />
+            <v-select
+                label="Unit"
+                v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+                :value="attribute.attributeUnit"
+                :items="attribute.attributeUnitList"
+                item-text="unit"
+                item-value="unit"
+                class="mr-3 unit"
+              />
           </div>
         </fieldset>
         <fieldset class="fieldset attribute-grid">
@@ -265,7 +271,7 @@
               :label="`${attribute.description}`"
               class="mr-3"
             />
-            <v-autocomplete
+            <v-text-field
               v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
               v-model="attribute.selectedCodes"
               :label="`${attribute.description}`"
@@ -274,6 +280,15 @@
               item-code="code"
               class="mr-3"
             />
+            <v-select
+                label="Unit"
+                v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+                :value="attribute.attributeUnit"
+                :items="attribute.attributeUnitList"
+                item-text="unit"
+                item-value="unit"
+                class="mr-3 unit"
+              />
           </div>
         </fieldset>
         <div class="mx-4 mt-4">
@@ -456,7 +471,7 @@ export default {
     this.$http.get(`/openstorefront/api/v1/resource/components/tags`).then(response => {
       this.tagsList = response.data
     })
-    this.$http.get('/openstorefront/api/v1/resource/lookuptypes/UserTypeCode').then(response => {
+    this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ContactType').then(response => {
       this.contactTypeList = response.data
     })
   },
@@ -546,7 +561,7 @@ export default {
       return this.allowedImageTypes.join(',')
     },
     formData() {
-      console.log(this.images)
+      // console.log(this.images)
       return {
         name: this.entryTitle,
         componentType: this.componentType,
@@ -573,7 +588,7 @@ export default {
         .then(response => {
           // TODO: Add check for hideOnSubmission
           this.attributes.required = response.data
-          console.log(this.attributes.required)
+          // console.log(this.attributes.required)
           this.attributes.required.forEach(e => {
             // Set up values for required codes
             if (e.allowMultipleFlg && e.allowUserGeneratedCodes) {
@@ -633,15 +648,15 @@ export default {
       this.primaryPOC.organization = this.$store.state.currentUser.organization
     },
     submit(data) {
-      console.log(this.formData)
-      console.log(this.$refs.submissionForm)
+      // console.log(this.formData)
+      // console.log(this.$refs.submissionForm)
       if (this.$refs.submissionForm.validate()) {
         // console.log('Form is valid')
       } else {
         // console.log('Form is invalid')
       }
       this.$http.post('/openstorefront/api/v1/resource/componentsubmissions/vue', this.formData).then(response => {
-        console.log(response)
+        // console.log(response)
       })
     },
     addImage() {
