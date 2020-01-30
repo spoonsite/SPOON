@@ -816,6 +816,9 @@ export default {
 .attribute {
   display: flex;
 }
+.attribute * {
+  align-items: end;
+}
 .unit {
   max-width: 10em;
 }
