@@ -1,7 +1,7 @@
 <template>
   <v-dialog :value="value" @input="close" max-width="75em">
     <v-card>
-      <ModalTitle title="Ask a Question" @close="close" />
+      <ModalTitle :title="title" @close="close" />
       <v-card-text>
         <v-alert class="w-100" type="warning" :value="true"
           ><span v-html="$store.state.branding.userInputWarning"></span
@@ -9,11 +9,11 @@
         <v-alert class="w-100" type="info" :value="!autoApprove"
           ><span v-html="$store.state.branding.submissionFormWarning"></span
         ></v-alert>
-        <quill-editor style="background-color: white;" v-model="question"></quill-editor>
+        <quill-editor class="pt-3" v-model="question"></quill-editor>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn color="success" :disabled="question === ''" @click="submit">Submit</v-btn>
+        <v-btn color="success" :disabled="!question || question === ''" @click="submit">Submit</v-btn>
         <v-btn @click="close">Cancel</v-btn>
       </v-card-actions>
     </v-card>
@@ -25,7 +25,7 @@ import ModalTitle from '@/components/ModalTitle'
 
 export default {
   name: 'Question-Modal',
-  props: ['value', 'questionProp'],
+  props: ['value', 'title', 'editQuestion'],
   components: {
     ModalTitle
   },
@@ -38,21 +38,33 @@ export default {
   },
   data() {
     return {
-      question: '',
+      question: this.editQuestion,
       autoApprove: false
     }
   },
   methods: {
     close() {
       this.$emit('close')
+      if (this.editQuestion) {
+        this.question = this.editQuestion
+      } else {
+        this.question = ''
+      }
     },
     submit() {
       this.$emit('close', this.question)
+      if (this.editQuestion) {
+        this.question = this.editQuestion
+      } else {
+        this.question = ''
+      }
     }
   },
   watch: {
     value(val) {
-      this.question = this.questionProp
+      if (this.editQuestion) {
+        this.question = this.editQuestion
+      }
     }
   }
 }

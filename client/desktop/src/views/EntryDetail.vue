@@ -511,7 +511,7 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <QuestionModal v-model="askQuestionDialog" @close="submitQuestion($event)" />
+        <QuestionModal v-model="askQuestionDialog" title="Ask a Question" @close="submitQuestion($event)" />
 
         <v-expansion-panel>
           <v-expansion-panel-header><h2>Contacts</h2></v-expansion-panel-header>
@@ -598,9 +598,9 @@ export default {
     return {
       baseURL: '/openstorefront/',
       isLoading: true,
+      // Questions
       questionLoading: false,
       askQuestionDialog: false,
-      newQuestion: '',
       writeReviewDialog: false,
       deleteReviewDialog: false,
       submitCorrectionDialog: false,
@@ -999,9 +999,8 @@ export default {
         }
         this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/questions`, data)
           .then(response => {
-            console.log(response)
             this.getQuestions()
-            this.$toasted.show('Question submitted.')
+            this.$toasted.success('Question submitted.')
           })
           .catch(e => this.$toasted.error('There was a problem submitting the question.'))
       }

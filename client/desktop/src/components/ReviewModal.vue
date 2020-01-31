@@ -19,7 +19,7 @@
               v-model="review.title"
               :rules="reviewTitleRules"
               :counter="255"
-              label="Title"
+              label="Title*"
               required
             ></v-text-field>
 
@@ -50,9 +50,16 @@
               disabled
             ></v-text-field>
 
-            <v-date-picker v-model="review.lastUsed" :allowed-dates="todaysDateFormatted" no-title reactive full-width>
+            <v-date-picker
+              v-model="review.lastUsed"
+              :allowed-dates="todaysDateFormatted"
+              color="primary"
+              no-title
+              reactive
+              full-width
+            >
               <v-spacer></v-spacer>
-              <v-btn text color="accent" @click="review.lastUsed = ''">Cancel</v-btn>
+              <v-btn text color="primary" @click="review.lastUsed = ''">Cancel</v-btn>
             </v-date-picker>
 
             <v-spacer style="height: 1em"></v-spacer>
@@ -69,7 +76,7 @@
 
             <v-select v-model="review.cons" :items="consSelectOptions" label="Cons" chips multiple></v-select>
 
-            <p>Comment: <span v-if="review.comment === ''" class="red--text">comment is required *</span></p>
+            <p>Comment*</p>
 
             <quill-editor
               style="background-color: white;"
@@ -77,6 +84,7 @@
               :rules="commentRules"
               required
             ></quill-editor>
+            <div v-if="review.comment === ''" class="red--text ml-1">A comment is required</div>
           </v-container>
           <v-card-actions>
             <v-spacer />
