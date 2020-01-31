@@ -15,7 +15,7 @@
               v-model="review.title"
               :rules="reviewTitleRules"
               :counter="255"
-              label="Title"
+              label="Title*"
               required
             ></v-text-field>
 
@@ -57,7 +57,7 @@
               v-model="review.timeUsed"
               :items="timeSelectOptions"
               :rules="timeUsedRules"
-              label="How long have you used it"
+              label="How long have you used it*"
               required
             ></v-select>
 
@@ -151,7 +151,7 @@ export default {
   },
   methods: {
     todaysDateFormatted(val) {
-      return !isFuture(val)
+      return !isFuture(new Date(val))
     },
     lookupTypes() {
       this.$http
@@ -236,15 +236,15 @@ export default {
           .then(response => {
             this.review.editReviewId = ''
             this.$toasted.show('Review Submitted')
-            this.close()
+            this.$emit('close')
           })
           .catch(e => this.$toasted.error('There was a problem submitting the review.'))
       } else {
         this.$http
           .post(`/openstorefront/api/v1/resource/components/${this.review.componentId}/reviews/detail`, data)
           .then(response => {
-            this.close()
             this.$toasted.show('Review Submitted')
+            this.$emit('close')
           })
           .catch(e => this.$toasted.error('There was a problem submitting the review.'))
       }
