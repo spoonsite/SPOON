@@ -104,6 +104,9 @@
       <v-card>
         <ModalTitle title="Submit Correction" @close="submitCorrectionDialog = false" />
         <v-card-text>
+          <v-alert class="w-100" type="warning" :value="true"
+            ><span v-html="$store.state.branding.userInputWarning"></span
+          ></v-alert>
           <v-form>
             <v-container>
               <p>Please include the section needing the correction (e.g. Contacts)</p>
@@ -186,6 +189,9 @@
       <v-card>
         <ModalTitle title="Contact Vendor" @close="contactVendorDialog = false" />
         <v-card-text>
+          <v-alert class="w-100" type="warning" :value="true"
+            ><span v-html="$store.state.branding.userInputWarning"></span
+          ></v-alert>
           <p class="mb-0">From:</p>
           <v-text-field single-line disabled v-model="userEmail"> </v-text-field>
           <p class="mb-0">Message:</p>
@@ -590,6 +596,10 @@ export default {
       )
     }
 
+    this.$http
+      .get(`/openstorefront/api/v1/service/application/configproperties/userreview.autoapprove`)
+      .then(response => (this.autoApprove = response.data.description === 'true'))
+
     this.getDetail()
     this.getQuestions()
     this.getTags()
@@ -598,6 +608,7 @@ export default {
     return {
       baseURL: '/openstorefront/',
       isLoading: true,
+      autoApprove: false,
       // Questions
       questionLoading: false,
       askQuestionDialog: false,
