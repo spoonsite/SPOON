@@ -26,26 +26,6 @@
       :answerText="answer.response"
     />
 
-    <!-- <v-dialog v-model="edit" max-width="75em">
-      <v-card>
-        <ModalTitle title="Edit answer" @close="edit = false" />
-        <v-card-text>
-          <v-alert class="w-100" type="warning" :value="true"
-            ><span v-html="$store.state.branding.userInputWarning"></span
-          ></v-alert>
-          <v-alert class="w-100" type="info" :value="true"
-            >All answers need admin approval before being made public.</v-alert
-          >
-          <quill-editor style="background-color: white;" v-model="answer.response" />
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="success" @click="editAnswer()">Save</v-btn>
-          <v-btn @click="edit = false">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
-
     <v-dialog v-model="deleteDialog" max-width="25em">
       <v-card>
         <ModalTitle title="Delete?" @close="deleteDialog = false" />
