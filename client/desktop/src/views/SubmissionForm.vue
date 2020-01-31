@@ -1,9 +1,9 @@
 <template>
   <div>
     <h1 class="text-center">New Entry Submission Form</h1>
-    <div class="text-center px-2" style="color: red;">
+    <div class="text-center px-2 error--text">
       <h2>Caution!</h2>
-      <p>{{ $store.state.branding.userInputWarning }}</p>
+      <p v-html="$store.state.branding.userInputWarning"></p>
     </div>
     <v-form
       v-model="isFormValid"
@@ -408,15 +408,15 @@
           </div>
         </div>
       </fieldset>
-      <div class="mb-8 red">
-        <p>TODO: Add form Validation</p>
-        <h2 class="mb-2 title">Form validation errors</h2>
-        <!-- <ul class="form-errors">
-          <li>entry description</li>
-          <li>contacts</li>
-          <li>required attributes</li>
-        </ul> -->
-      </div>
+      <v-alert
+        type="error"
+        v-if="!isFormValid"
+        prominent
+        outlined
+        style="display: inline-block;"
+      >
+        Form validation errors. Please check the form.
+      </v-alert>
       <div class="mb-5">
         <p>If you save and close the entry you will need to come back and finish to submit the entry.</p>
         <v-btn class="mr-4 mb-3" color="primary" @click="submit">Save and close</v-btn>
@@ -648,13 +648,6 @@ export default {
       this.primaryPOC.organization = this.$store.state.currentUser.organization
     },
     submit(data) {
-      // console.log(this.formData)
-      // console.log(this.$refs.submissionForm)
-      if (this.$refs.submissionForm.validate()) {
-        // console.log('Form is valid')
-      } else {
-        // console.log('Form is invalid')
-      }
       this.$http.post('/openstorefront/api/v1/resource/componentsubmissions/vue', this.formData).then(response => {
         // console.log(response)
       })
@@ -727,7 +720,7 @@ export default {
 .fieldset {
   border: 1px solid rgba(0, 0, 0, 0.2);
   background-color: white;
-  border-radius: 10px;
+  border-radius: 4px;
   margin: 2em 0;
   padding: 1em;
   padding-bottom: 12px;
