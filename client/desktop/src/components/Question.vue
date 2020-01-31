@@ -60,6 +60,7 @@
               v-for="answer in answers"
               :answer="answer"
               @answerDeleted="deleteAnswer"
+              @getAnswers="getAnswers($event.answer)"
               :key="answer.responseId"
             ></Answer>
           </div>
@@ -99,7 +100,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import Answer from '@/components/Answer'
 import ModalTitle from '@/components/ModalTitle'
 import QuestionModal from '@/components/QuestionModal'
@@ -146,17 +146,15 @@ export default {
       }
     },
     getAnswers(qid) {
-      if (_.isEmpty(this.answers)) {
-        this.loading = true
-        this.$http
-          .get(`/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}/responses`)
-          .then(response => {
-            this.answers = response.data
-            this.checkAnswers()
-            this.loading = false
-          })
-          .catch(e => this.errors.push(e))
-      }
+      this.loading = true
+      this.$http
+        .get(`/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}/responses`)
+        .then(response => {
+          this.answers = response.data
+          this.checkAnswers()
+          this.loading = false
+        })
+        .catch(e => this.errors.push(e))
     },
     submitAnswer(question) {
       if (question) {
@@ -175,7 +173,7 @@ export default {
           )
           .then(response => {
             this.$toasted.success('Answer submitted')
-            this.getAnswers(response.data.questionId)
+            this.getAnswers(question.questionId)
             this.showAnswers = true
             this.answerQuestionDialog = false
           })

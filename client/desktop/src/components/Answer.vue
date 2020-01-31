@@ -11,14 +11,22 @@
       </p>
       <div class="ma-0" v-html="answer.response"></div>
       <div v-if="$store.state.currentUser.username === answer.createUser" class="d-flex justify-end pb-4">
-        <v-btn @click="edit = true" class="mx-3"><v-icon small class="icon">mdi-pencil</v-icon>Edit</v-btn>
-        <v-btn @click="deleteDialog = true" class="mx-3" color="warning"
+        <v-btn @click="edit = true" class="mx-3" small><v-icon small class="icon">mdi-pencil</v-icon>Edit</v-btn>
+        <v-btn @click="deleteDialog = true" class="mx-3" color="warning" small
           ><v-icon small class="icon">mdi-delete</v-icon>Delete</v-btn
         >
       </div>
     </div>
 
-    <v-dialog v-model="edit" max-width="75em">
+    <AnswerModal
+      v-model="edit"
+      title="Edit Answer"
+      @close="editAnswer($event)"
+      :answerProp="answer"
+      :answerText="answer.response"
+    />
+
+    <!-- <v-dialog v-model="edit" max-width="75em">
       <v-card>
         <ModalTitle title="Edit answer" @close="edit = false" />
         <v-card-text>
@@ -36,7 +44,7 @@
           <v-btn @click="edit = false">Cancel</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
 
     <v-dialog v-model="deleteDialog" max-width="25em">
       <v-card>
@@ -58,11 +66,13 @@
 
 <script>
 import ModalTitle from '@/components/ModalTitle'
+import AnswerModal from '@/components/AnswerModal'
 
 export default {
   name: 'Answer',
   components: {
-    ModalTitle
+    ModalTitle,
+    AnswerModal
   },
   props: ['answer'],
   data() {
@@ -72,28 +82,27 @@ export default {
     }
   },
   methods: {
-    editAnswer() {
-      let data = {
-        dataSensitivity: '',
-        organization: this.$store.state.currentUser.organization,
-        questionId: this.answer.questionId,
-        response: this.answer.response,
-        securityMarkingType: '',
-        userTypeCode: this.$store.state.currentUser.userTypeCode
+    editAnswer(answer) {
+      if (answer) {
+        let data = {
+          dataSensitivity: '',
+          organization: this.$store.state.currentUser.organization,
+          questionId: answer.questionId,
+          response: answer.answer,
+          userTypeCode: this.$store.state.currentUser.userTypeCode
+        }
+        this.$http
+          .put(
+            `/openstorefront/api/v1/resource/components/${answer.componentId}/questions/${answer.questionId}/responses/${answer.responseId}`,
+            data
+          )
+          .then(response => {
+            this.$toasted.show('Edit submitted.')
+            this.$emit('getAnswers', { answer: answer.questionId })
+            this.edit = false
+          })
+          .catch(e => this.$toasted.error('There was a problem submitting the edit.'))
       }
-      this.$http
-        .put(
-          `/openstorefront/api/v1/resource/components/${this.answer.componentId}/questions/${this.answer.questionId}/responses/${this.answer.responseId}`,
-          data
-        )
-        .then(response => {
-          this.$toasted.show('Edit submitted.')
-          this.answer.response = response.data.response
-          this.answer.activeStatus = response.data.activeStatus
-          this.answer.updateDts = new Date() // the date is not sent back in the response
-          this.edit = false
-        })
-        .catch(e => this.$toasted.error('There was a problem submitting the edit.'))
     },
     deleteAnswer() {
       this.$http
