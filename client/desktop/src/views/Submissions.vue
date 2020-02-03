@@ -39,10 +39,6 @@
             <div v-if="item.submitDate">{{ item.submitDate | formatDate }}</div>
             <div v-else-if="item.status === 'Pending'">{{ item.lastUpdate | formatDate }}</div>
           </template>
-          <!-- <template v-slot:item.pendingChange="{ item }">
-            <div v-if="item.hasChangeRequest">Pending</div>
-            <div v-else></div>
-          </template> -->
           <template v-slot:item.lastUpdate="{ item }">
             {{ item.lastUpdate | formatDate }}
           </template>
@@ -312,6 +308,7 @@ export default {
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions/user')
         .then(response => {
           this.isLoading = false
+          console.log(response.data)
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
         }).catch(error => {
           this.isLoading = false
@@ -335,6 +332,8 @@ export default {
         })
         if (myWorkPlan !== null) {
           updatedComponents.push(this.generateComponent(component, myWorkPlan))
+        } else {
+          updatedComponents.push(this.generateComponent(component, null))
         }
       })
 
@@ -349,38 +348,41 @@ export default {
       let currentStep = ''
       let steps = []
 
-      workPlan.steps.forEach((step, index) => {
-        if (!seenCurrStep) {
-          if (component.stepId === step.workPlanStepId) {
-            if (index === workPlan.steps.length - 1) {
+      if (workPlan !== null) {
+        workPlan.steps.forEach((step, index) => {
+          if (!seenCurrStep) {
+            if (component.stepId === step.workPlanStepId) {
+              if (index === workPlan.steps.length - 1) {
+                steps.push({
+                  name: step.name,
+                  color: workPlan.completeColor
+                })
+              } else {
+                steps.push({
+                  name: step.name,
+                  color: workPlan.inProgressColor
+                })
+                currentStep = step.name
+              }
+              seenCurrStep = true
+            } else {
               steps.push({
                 name: step.name,
                 color: workPlan.completeColor
               })
-            } else {
-              steps.push({
-                name: step.name,
-                color: workPlan.inProgressColor
-              })
-              currentStep = step.name
             }
-            seenCurrStep = true
           } else {
             steps.push({
               name: step.name,
-              color: workPlan.completeColor
+              color: workPlan.pendingColor
             })
           }
-        } else {
-          steps.push({
-            name: step.name,
-            color: workPlan.pendingColor
-          })
+        })
+        if (currentStep === '') {
+          currentStep = 'Approved'
         }
-      })
-      if (currentStep === '') {
-        currentStep = 'Approved'
       }
+
       let updatedComponent = {}
 
       updatedComponent = {

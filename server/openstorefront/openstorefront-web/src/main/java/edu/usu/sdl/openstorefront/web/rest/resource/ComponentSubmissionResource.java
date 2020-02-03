@@ -142,7 +142,12 @@ public class ComponentSubmissionResource
 				workPlanLinkExample.setComponentId(view.getComponentId());
 				WorkPlanLink workPlanLink = service.getPersistenceService().queryOneByExample(workPlanLinkExample);
 
-				componentSubmissionViews.add(new ComponentSubmissionView(view, workPlanLink.getWorkPlanId(), workPlanLink.getCurrentStepId()));
+				if(workPlanLink != null){
+					componentSubmissionViews.add(new ComponentSubmissionView(view, workPlanLink.getWorkPlanId(), workPlanLink.getCurrentStepId()));
+				}
+				else{
+					componentSubmissionViews.add(new ComponentSubmissionView(view, null, null));
+				}
 			}
 
 			UserSubmissionPageView userSubmissionPageView = new UserSubmissionPageView(componentSubmissionViews, workPlans);
