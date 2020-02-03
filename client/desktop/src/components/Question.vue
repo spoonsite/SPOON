@@ -13,14 +13,6 @@
               </template>
               <span>Edit the question</span>
             </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn small v-on="on" icon @click="deleteQuestionDialog = true"
-                  ><v-icon class="icon">mdi-delete</v-icon></v-btn
-                >
-              </template>
-              <span>Delete the question</span>
-            </v-tooltip>
           </span>
         </h3>
       </div>
@@ -90,20 +82,6 @@
             "
             >Cancel</v-btn
           >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="deleteQuestionDialog" max-width="25em">
-      <v-card>
-        <ModalTitle title="Delete?" @close="deleteQuestionDialog = false" />
-        <v-card-text>
-          <p>Are you sure you want to delete this question?</p>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="warning" @click="deleteQuestion(question.questionId)"><v-icon>mdi-delete</v-icon> Delete</v-btn>
-          <v-btn @click="deleteQuestionDialog = false">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
