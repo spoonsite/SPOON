@@ -35,19 +35,14 @@
             <div v-else-if="item.submissionId" style="color: red;">Incomplete Submission</div>
             <div v-else-if="item.evaluationsAttached" style="color: red;">Evaluations Are In Progress</div>
           </template>
-          <template v-slot:item.status="{ item }">
-            <div v-if="item.status === 'A'">Active</div>
-            <div v-else-if="item.status === 'P'">Pending</div>
-            <div v-else-if="item.status === 'N'">Not Submitted</div>
-            <div v-else>{{ item.status }}</div>
-          </template>
           <template v-slot:item.submitDate="{ item }">
             <div v-if="item.submitDate">{{ item.submitDate | formatDate }}</div>
-            <div v-else-if="item.status === 'P'">{{ item.lastUpdate | formatDate }}</div>
+            <div v-else-if="item.status === 'Pending'">{{ item.lastUpdate | formatDate }}</div>
           </template>
-          <template v-slot:item.pendingChange="{ item }">
+          <!-- <template v-slot:item.pendingChange="{ item }">
             <div v-if="item.hasChangeRequest">Pending</div>
-          </template>
+            <div v-else></div>
+          </template> -->
           <template v-slot:item.lastUpdate="{ item }">
             {{ item.lastUpdate | formatDate }}
           </template>
@@ -86,7 +81,7 @@
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
-                    v-if="item.status === 'A'"
+                    v-if="item.status === 'Active'"
                     :href="'mailto:support@spoonsite.com?subject=Change%20Request%20for%20' + item.name"
                     icon
                     v-on="on"
@@ -393,8 +388,9 @@ export default {
         lastUpdate: component.lastActivityDts,
         type: component.componentTypeLabel,
         componentId: component.componentId,
-        status: component.approvalState,
+        status: this.determineApprovalStatus(component),
         submitDate: component.approvedDts,
+        pendingChange: this.determineChangeRequest(component),
         steps: steps,
         currentStep: currentStep,
         submissionOriginalComponentId: component.submissionOriginalComponentId,
@@ -410,11 +406,27 @@ export default {
         name: submission.name,
         submissionId: submission.userSubmissionId,
         type: submission.componentTypeLabel,
-        status: submission.approvalState,
+        status: this.determineApprovalStatus(submission),
         lastUpdate: submission.updateDts,
         steps: null,
         submissionOriginalComponentId: submission.submissionOriginalComponentId,
         evaluationsAttached: submission.evaluationsAttached
+      }
+    },
+    determineApprovalStatus(component) {
+      if (component.approvalState === 'A') {
+        return 'Active'
+      } else if (component.approvalState === 'P') {
+        return 'Pending'
+      } else {
+        return 'Not Submitted'
+      }
+    },
+    determineChangeRequest(component) {
+      if (component.statusOfPendingChange != null) {
+        return 'Pending'
+      } else {
+        return ''
       }
     },
     determineDeleteForm(item) {
