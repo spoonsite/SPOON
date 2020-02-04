@@ -43,10 +43,9 @@
             {{ item.lastUpdate | formatDate }}
           </template>
           <template v-slot:item.approvalWorkflow="{ item }">
-            <svg width="200" height="65">
+            <svg v-if="item && item.steps && item.steps.length > 0" :width="item.steps.length * 50" height="65">
               <g v-for="(step, i) in item.steps" :key="step.name" :id="step.name"  class="step">
-                <circle :cx="20 + i * 50" cy="25" r="15" stroke="black" :fill="'#' + step.color" />
-
+                <circle class="circle" :cx="20 + i * 50" cy="25" r="15" stroke="black" :fill="'#' + step.color" />
                 <line
                   v-if="i !== item.steps.length - 1"
                   :x1="35 + i * 50"
@@ -55,7 +54,7 @@
                   y2="25"
                   style="stroke:black; stroke-width:2"
                 ></line>
-                <text v-if="item.currentStep" x="55" y="60">{{ step.name }}</text>
+                <text v-if="item.currentStep" :x="i*50" y="60">{{ step.name }}</text>
               </g>
             </svg>
           </template>
@@ -269,7 +268,6 @@ export default {
       componentData: [],
       errors: [],
       isLoading: true,
-      counter: 0,
       search: '',
       uploadFile: null,
       bulkUploadDialog: false,
@@ -303,12 +301,10 @@ export default {
   methods: {
     getUserParts() {
       this.componentData = []
-      this.counter = 0
       this.isLoading = true
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions/user')
         .then(response => {
           this.isLoading = false
-          console.log(response.data)
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
         }).catch(error => {
           this.isLoading = false
