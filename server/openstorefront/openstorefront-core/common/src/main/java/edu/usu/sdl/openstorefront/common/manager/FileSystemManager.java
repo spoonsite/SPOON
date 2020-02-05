@@ -144,21 +144,7 @@ public class FileSystemManager
 	public File getConfig(String configFilename)
 	{
             Objects.requireNonNull(configFilename);
-            File configFile = new File(getDir(CONFIG_DIR) + "/" + configFilename);
-            if (!configFile.exists()) {
-                LOG.log(Level.WARNING, "Config file doesn''t exist. Creating new config file.");
-                PropertiesManager.getInstance().setPropertiesFile(configFile.getAbsolutePath());
-                PropertiesManager.getInstance().initialize();
-                File newConfigFile = new File(configFile.getAbsolutePath());
-                if (!newConfigFile.exists())
-                {
-                    throw new OpenStorefrontRuntimeException("Cannot create new properties file.");
-                }
-                return newConfigFile;
-
-            } else {
-                return configFile;
-            }
+            return getFileDir(configFilename, CONFIG_DIR, "/");
 	}
 
 	public File getImportLookup(String configFilename)

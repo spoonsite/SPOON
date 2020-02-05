@@ -353,7 +353,14 @@ public class PropertiesManager
 			defaults.put(KEY_MAX_POST_SIZE, "1024"); // 1GB
 			defaults.put(KEY_MONGO_CONNECTION_URL, "mongodb://localhost:27017");
 
-			String propertiesFilename = fileSystemManager.getConfig(getPropertiesFile()).getPath();
+			String propertiesFilename;
+                        try {
+                            propertiesFilename = fileSystemManager.getConfig(getPropertiesFile()).getPath();
+                        } catch (OpenStorefrontRuntimeException ex) {
+                            LOG.log(Level.SEVERE, ex.getMessage());
+                            LOG.log(Level.SEVERE, "Could not get or copy existing config file path. Using {0} instead", getPropertiesFile());
+                            propertiesFilename = getPropertiesFile();
+                        }
 
 			if (Paths.get(propertiesFilename).toFile().createNewFile()) {
 				LOG.log(Level.WARNING, "Open Storefront properties file was missing from location a new file was created.  Location: {0}", propertiesFilename);
