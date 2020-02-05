@@ -87,11 +87,13 @@
                   <tr
                     v-for="watch in watchesData.slice(0,6)"
                     :key="watch.componentName"
-                    @click="goToWatchedPage(watch)"
-                    style="cursor: pointer;"
                     class="title font-weight-regular"
                   >
-                    <td class="pa-1">{{watch.componentName}}</td>
+                    <td class="pa-1">
+                      <router-link :to="{ name: 'Entry Detail', params: { id: watch.componentId } }">
+                        {{watch.componentName}}
+                      </router-link>
+                    </td>
                     <td
                       v-if="watch.lastUpdateDts > watch.lastViewDts"
                       style="text-align: center;"
@@ -323,9 +325,6 @@ export default {
             }
           }
         })
-    },
-    goToWatchedPage(watch) {
-      this.$router.push({ name: 'Entry Detail', params: { id: watch.componentId } })
     }
   },
   computed: {
