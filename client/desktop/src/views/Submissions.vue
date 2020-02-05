@@ -479,9 +479,6 @@ export default {
           })
       }
     },
-    openBulkUpload() {
-      window.open('openstorefront/bulkUpload.jsp', 'uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440')
-    },
     submitBulkFile() {
       let formData = new FormData()
       formData.append('file', this.bulkUploadFile)
