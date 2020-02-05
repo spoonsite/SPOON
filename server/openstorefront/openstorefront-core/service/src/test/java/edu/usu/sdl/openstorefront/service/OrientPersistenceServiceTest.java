@@ -54,29 +54,19 @@ public class OrientPersistenceServiceTest
 		//Arrange
 		System.out.println("persist - NestedObjects");
 		OObjectDatabaseTx mockDatabase = Mockito.mock(OObjectDatabaseTx.class);
-		System.out.println("mock database created");
 		Mockito.when(mockDatabase.save(Mockito.any(BaseEntity.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArguments()[0]);
-		System.out.println("mock database saved");
 
 		OrientDBManager mockManager = Mockito.mock(OrientDBManager.class);
-		System.out.println("OrientDBManager created");
 		Mockito.when(mockManager.getConnection()).thenReturn(mockDatabase);
-		System.out.println("OrientDBManager connected");
 		TestParent p1 = new TestParent();
-		System.out.println("TestParent created");
 		p1.setChild(new TestChild());
-		System.out.println("TestParent child added");
 		p1.getChild().setValue("This is a Test");
-		System.out.println("TestParent child value added");
 		//Act
 		Assert.assertNull(p1.getParentId());
 		Assert.assertNull(p1.getChild().getChildId());
-		System.out.println("Act asserts finished");
 
 		OrientPersistenceService service = new OrientPersistenceService(mockManager);
-		System.out.println("OrientPersistenceService created");
 		TestParent actual = service.persist(p1);
-		System.out.println("OrientPersistenceService persisted");
 
 		//Assert
 		Assert.assertNotNull(actual.getParentId());
@@ -85,9 +75,7 @@ public class OrientPersistenceServiceTest
 		Mockito.verify(mockDatabase, Mockito.times(1)).save(Mockito.any(BaseEntity.class));
 		Mockito.verify(mockDatabase, Mockito.times(2)).close();
 
-		System.out.println("Asserts and verify finsihed");
 		OSFCacheManager.cleanUp();
-		System.out.println("OSFCacheManager.cleanUp() finished");
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="generateQuery() Tests">
