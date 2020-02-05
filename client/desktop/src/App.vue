@@ -16,7 +16,7 @@
           <v-card>
             <v-list>
               <v-list-item
-                v-for="link in beginningLinks"
+                v-for="link in filteredBeginningLinks"
                 :key="link.name"
                 link
                 @click="menu = false"
@@ -52,7 +52,7 @@
                 </v-list-item>
               </v-list-group>
               <v-list-item
-                v-for="link in endLinks"
+                v-for="link in filteredEndLinks"
                 :key="link.name"
                 link
                 @click="menu = false"
@@ -166,6 +166,7 @@ export default {
           response.data.includes('<!-- ***USER-NOT-LOGIN*** -->') &&
           !this.loggingOut
         ) {
+          sessionStorage.setItem('gotoUrl', window.location.href)
           window.location.href = 'openstorefront'
         }
         return response
@@ -263,9 +264,9 @@ export default {
           permissions: []
         },
         {
-          href: '/openstorefront/UserTool.action',
-          icon: 'question-circle',
-          name: 'Questions',
+          link: '/questions',
+          icon: 'comments',
+          name: 'Q&A',
           hasChildren: false,
           permissions: []
         },
@@ -288,7 +289,7 @@ export default {
         },
         {
           link: '/contact',
-          icon: 'comment',
+          icon: 'envelope',
           name: 'Contact',
           hasChildren: false,
           permissions: []
