@@ -117,14 +117,8 @@ public class OrientDBManager
 		System.setProperty("ORIENTDB_HOME", home);
 		System.setProperty("ORIENTDB_ROOT_PASSWORD", propertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 		server.setServerRootDirectory(home);
-		try {
-			server.startup(fileSystemManager.getConfig(configFile));
-		} catch (OpenStorefrontRuntimeException ex) {
-			LOG.log(Level.WARNING, "Config file doesn''t exist. Creating new config file.\nError: {0}", ex.getMessage());
-			PropertiesManager.getInstance().setPropertiesFile(configFile);
-			PropertiesManager.getInstance().initialize();
-		}
-		
+		server.startup(fileSystemManager.getConfig(configFile));
+
 		server.activate();
 		return home;
 	}
