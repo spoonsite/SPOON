@@ -15,6 +15,32 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import java.io.InputStream;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.StringUtils;
+import org.glassfish.jersey.media.multipart.BodyPart;
+import org.glassfish.jersey.media.multipart.ContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
@@ -30,8 +56,8 @@ import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
-import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.Submission;
+import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
@@ -41,23 +67,6 @@ import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Component Submission
@@ -224,10 +233,24 @@ public class ComponentSubmissionResource
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
 	@APIDescription("Creates a new Component Submission.")
 	@Produces({MediaType.APPLICATION_JSON})
+	// @Consumes({MediaType.MULTIPART_FORM_DATA})
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/vue")
-	public Response createNewSubmissionVue(Submission submission){
-		return Response.ok(submission).build();
+	public Response createNewSubmissionVue(
+		// FormDataMultiPart body
+		ComponentAll componentAll
+	){
+		// DEBUG this. Not getting all the data from the front end
+		Logger LOG = Logger.getLogger(UserSubmissionResource.class.getName());
+		// should probably use submission instead
+		// Submission submission = null;
+		// for(BodyPart part : body.getBodyParts()) {
+		// 	InputStream is = part.getEntityAs(InputStream.class);
+		// 	ContentDisposition meta = part.getContentDisposition();
+		// 	MediaType mediaType = part.getMediaType();
+		// 	LOG.log(Level.FINE, "got " + meta.getParameters().get("name") + " : " + mediaType.getType());
+		// }
+		return Response.ok("uploaded successfully !!").build();
 	}
 
 	@PUT

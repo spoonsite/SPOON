@@ -5,18 +5,12 @@
       <h2>Caution!</h2>
       <p v-html="$store.state.branding.userInputWarning"></p>
     </div>
-    <v-form
-      v-model="isFormValid"
-      ref="submissionForm"
-      style="width: 80%;"
-      class="mx-auto"
-    >
+    <v-form v-model="isFormValid" ref="submissionForm" style="width: 80%;" class="mx-auto">
       <fieldset class="fieldset flex-wrap">
         <legend class="legend title">Entry Details*</legend>
         <v-text-field
           label="Entry Title*"
           v-model="entryTitle"
-          id="name"
           name="name"
           required
           :rules="[rules.required]"
@@ -26,7 +20,6 @@
         <v-autocomplete
           label="Entry Type*"
           v-model="entryType"
-          id="componentType"
           :items="this.$store.state.componentTypeList"
           item-text="parentLabel"
           item-value="componentType"
@@ -37,7 +30,6 @@
         <v-autocomplete
           label="Organization*"
           v-model="organization"
-          id="organization"
           :items="organizationList"
           item-text="name"
           item-value="name"
@@ -150,7 +142,7 @@
       <fieldset class="fieldset">
         <legend class="title legend">Attributes</legend>
         <!-- TODO: Fix the issue with multiple select -->
-        <!-- TODO: Check into these more in regard to the flags on the attributs -->
+        <!-- TODO: Check into these more in regard to the flags on the attributes -->
         <fieldset class="fieldset mt-0 attribute-grid">
           <legend class="title legend">Required Attributes*</legend>
           <p v-if="attributes.required.length === 0">
@@ -219,14 +211,14 @@
               required
             />
             <v-select
-                label="Unit"
-                v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-                :value="attribute.attributeUnit"
-                :items="attribute.attributeUnitList"
-                item-text="unit"
-                item-value="unit"
-                class="mr-3 unit"
-              />
+              label="Unit"
+              v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+              :value="attribute.attributeUnit"
+              :items="attribute.attributeUnitList"
+              item-text="unit"
+              item-value="unit"
+              class="mr-3 unit"
+            />
           </div>
         </fieldset>
         <fieldset class="fieldset attribute-grid">
@@ -281,14 +273,14 @@
               class="mr-3"
             />
             <v-select
-                label="Unit"
-                v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-                :value="attribute.attributeUnit"
-                :items="attribute.attributeUnitList"
-                item-text="unit"
-                item-value="unit"
-                class="mr-3 unit"
-              />
+              label="Unit"
+              v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+              :value="attribute.attributeUnit"
+              :items="attribute.attributeUnitList"
+              item-text="unit"
+              item-value="unit"
+              class="mr-3 unit"
+            />
           </div>
         </fieldset>
         <div class="mx-4 mt-4">
@@ -368,13 +360,14 @@
           label="Add tags"
           v-model="tags"
           multiple
+          return-object
           :items="tagsList"
           chips
           deletable-chips
           @keypress.enter="addTag"
-          :search-input.sync="tagSearchText"
           class="mx-4"
         />
+          <!-- :search-input.sync="tagSearchText" -->
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Contacts</legend>
@@ -384,7 +377,7 @@
             <!-- get fields from backend -->
             <v-select
               :items="contactTypeList"
-              v-model="contact.type"
+              v-model="contact.contactType"
               label="Contact Type"
               item-text="description"
               item-value="code"
@@ -408,19 +401,16 @@
           </div>
         </div>
       </fieldset>
-      <v-alert
-        type="error"
-        v-if="!isFormValid"
-        prominent
-        outlined
-        style="display: inline-block;"
-      >
+      <v-alert type="error" v-if="!isFormValid" prominent outlined style="display: inline-block;">
         Form validation errors. Please check the form.
       </v-alert>
       <div class="mb-5">
         <p>If you save and close the entry you will need to come back and finish to submit the entry.</p>
         <v-btn class="mr-4 mb-3" color="primary" @click="submit">Save and close</v-btn>
-        <v-btn :disabled="!isFormValid" color="success" class="mr-4 mb-3" @click="submit">Submit</v-btn>
+        <!-- :disabled="!isFormValid" -->
+        <v-btn color="success" class="mr-4 mb-3" @click="submit">
+          Submit
+        </v-btn>
       </div>
     </v-form>
     <v-dialog :value="showEntryTypeWarning" @input="showEntryTypeWarning = false" max-width="50em">
@@ -493,8 +483,10 @@ export default {
       lastName: '',
       email: '',
       phone: '',
-      organization: ''
+      organization: '',
+      contactType: 'SUB'
     },
+    // 'SUB' -> the submitter
     // Images
     images: [],
     allowedImageTypes: ['image/png', 'image/jpeg', 'image/jpg'],
@@ -559,26 +551,70 @@ export default {
   computed: {
     allowedImageTypesString() {
       return this.allowedImageTypes.join(',')
-    },
-    formData() {
+    }
+  },
+  methods: {
+    getFormData() {
       // console.log(this.images)
+      // TODO: make a Browser form object
+      // let formData = new FormData()
+
+      // formData.append('name', this.entryTitle)
+      // formData.append('componentType', this.entryType)
+      // formData.append('organization', this.organization)
+      // formData.append('images', this.images)
+      // formData.append('description', this.description)
+      // // TODO: Fix attributes
+      // formData.append('requiredAttributes', this.attributes.required)
+      // formData.append('suggestedAttributes', this.attributes.suggested)
+      // formData.append('localFiles', this.resources.localFiles)
+      // formData.append('urls', this.resources.links)
+      // formData.append('tags', this.tags)
+      // formData.append('contacts', [this.primaryPOC].concat(this.contacts))
+      // for (var i = 0; i < this.images.length; i++) {
+      //   this.images[0].file.description = this.images[0].description
+      //   formData.append('file', this.images[0].file)
+      // }
+
+      // return formData
+
+      let allAttributes = this.attributes.required.concat(this.attributes.suggested)
+      let newAttributes = []
+      allAttributes.forEach(el => {
+        if (Array.isArray(el.selectedCodes) && el.selectedCodes.length > 0) {
+          el.selectedCodes.forEach(code => {
+            newAttributes.push({
+              componentAttributePk: {
+                attributeType: el.attributeType,
+                attributeCode: code
+              }
+            })
+          })
+        } else if (typeof el.selectedCodes === 'string' && el.selectedCodes !== '') {
+          newAttributes.push({
+            componentAttributePk: {
+              attributeType: el.attributeType,
+              attributeCode: el.selectedCodes
+            }
+          })
+        }
+      })
+
       return {
-        name: this.entryTitle,
-        componentType: this.componentType,
-        organization: this.organization,
-        images: this.images,
-        description: this.description,
-        // TODO: Fix attributes
-        requiredAttributes: this.attributes.required,
-        suggestedAttributes: this.attributes.suggested,
+        component: {
+          name: this.entryTitle,
+          description: this.description,
+          componentType: this.entryType,
+          organization: this.organization
+        },
+        media: this.images,
+        attributes: newAttributes,
         localFiles: this.resources.localFiles,
         urls: this.resources.urls,
         tags: this.tags,
         contacts: [this.primaryPOC].concat(this.contacts)
       }
-    }
-  },
-  methods: {
+    },
     setAttributes() {
       if (this.entryType === '') {
         return
@@ -586,6 +622,7 @@ export default {
       this.$http
         .get(`openstorefront/api/v1/resource/attributes/required?componentType=${this.entryType}`)
         .then(response => {
+          console.log('required attributes response', response)
           // TODO: Add check for hideOnSubmission
           this.attributes.required = response.data
           // console.log(this.attributes.required)
@@ -648,9 +685,16 @@ export default {
       this.primaryPOC.organization = this.$store.state.currentUser.organization
     },
     submit(data) {
-      this.$http.post('/openstorefront/api/v1/resource/componentsubmissions/vue', this.formData).then(response => {
-        // console.log(response)
-      })
+      let formData = this.getFormData()
+      this.$http
+        .post('/openstorefront/api/v1/resource/componentsubmissions/vue', formData, {
+          // headers: {
+          //   'Content-Type': 'multipart/form-data'
+          // }
+        })
+        .then(response => {
+          // console.log(response)
+        })
     },
     addImage() {
       this.images.push({ file: null, caption: '', img: '' })
@@ -693,7 +737,7 @@ export default {
       this.tagSearchText = ''
     },
     addContact() {
-      this.contacts.push({ firstName: '', lastName: '', type: '', organization: '', email: '', phone: '' })
+      this.contacts.push({ firstName: '', lastName: '', contactType: '', organization: '', email: '', phone: '' })
     },
     removeContact(index) {
       this.contacts.splice(index, 1)
