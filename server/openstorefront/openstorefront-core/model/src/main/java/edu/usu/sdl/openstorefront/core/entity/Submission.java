@@ -55,11 +55,10 @@ public class Submission
 	public static final String FIELD_DATA_SOURCE = "dataSource";
 	public static final String FIELD_COMPONENT_ID = "componentId";
 
-
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@ConsumeField
 	@APIDescription("External system guid")
-  private String guid;
+	private String guid;
 
 	@PK(generated = true)
 	@NotNull
@@ -69,9 +68,9 @@ public class Submission
 	private Date lastActivityDts;
 
 	@APIDescription("Indicates a user submission and when it was submitted")
-  private Date submittedDts;
+	private Date submittedDts;
 
-  @APIDescription("Current owner/managing user")
+	@APIDescription("Current owner/managing user")
 	private String ownerUser;
 
 	@NotNull
@@ -85,212 +84,253 @@ public class Submission
 	@DefaultFieldValue(ComponentType.COMPONENT)
 	@APIDescription("Type of listing")
 	@FK(value = ComponentType.class, enforce = true)
-  private String componentType;
+	private String componentType;
 
-  @Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
+	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_ORGANIZATION)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
 	@APIDescription("Component organization")
 	@FK(value = Organization.class, referencedField = "name", softReference = true)
-  private String organization;
+	private String organization;
 
-  @ConsumeField
-  @APIDescription("List of submitted images")
-  private List<GeneralMedia> images;
+	@ConsumeField
+	@APIDescription("List of submitted images")
+	private List<GeneralMedia> images;
 
 	@Size(min = 1, max = OpenStorefrontConstant.FIELD_SIZE_64K)
 	@Sanitize(HTMLSanitizer.class)
 	@ConsumeField
-  private String description;
+	private String description;
 
-  @Sanitize(HTMLSanitizer.class)
-  @ConsumeField
-  private List<AttributeCodePk> requiredAttributes;
+	@Sanitize(HTMLSanitizer.class)
+	@ConsumeField
+	private List<AttributeCodePk> requiredAttributes;
 
-  @Sanitize(HTMLSanitizer.class)
-  @ConsumeField
-  private List<AttributeCodePk> suggestedAttributes;
+	@Sanitize(HTMLSanitizer.class)
+	@ConsumeField
+	private List<AttributeCodePk> suggestedAttributes;
 
-  @ConsumeField
-  @APIDescription("List of submitted images")
-  private List<GeneralMedia> localFiles;
+	@ConsumeField
+	@APIDescription("List of submitted images")
+	private List<GeneralMedia> localFiles;
 
-  @ConsumeField
-  @APIDescription("List of submitted images")
-  private List<GeneralMedia> url;
+	@ConsumeField
+	@APIDescription("List of submitted images")
+	private List<GeneralMedia> url;
 
-  @ConsumeField
-  private List<String> tags;
+	@ConsumeField
+	private List<String> tags;
 
-  @ConsumeField
-  private List<Contact> contacts;
+	@ConsumeField
+	private List<Contact> contacts;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public Submission()
 	{
 	}
 
-  public static long getSerialversionuid() {
-    return serialVersionUID;
-  }
+	public static long getSerialversionuid()
+	{
+		return serialVersionUID;
+	}
 
-  public static String getFieldName() {
-    return FIELD_NAME;
-  }
+	public static String getFieldName()
+	{
+		return FIELD_NAME;
+	}
 
-  public static String getFieldApprovalState() {
-    return FIELD_APPROVAL_STATE;
-  }
+	public static String getFieldApprovalState()
+	{
+		return FIELD_APPROVAL_STATE;
+	}
 
-  public static String getFieldApprovedDts() {
-    return FIELD_APPROVED_DTS;
-  }
+	public static String getFieldApprovedDts()
+	{
+		return FIELD_APPROVED_DTS;
+	}
 
-  public static String getFieldDescription() {
-    return FIELD_DESCRIPTION;
-  }
+	public static String getFieldDescription()
+	{
+		return FIELD_DESCRIPTION;
+	}
 
-  public static String getFieldLastActivityDts() {
-    return FIELD_LAST_ACTIVITY_DTS;
-  }
+	public static String getFieldLastActivityDts()
+	{
+		return FIELD_LAST_ACTIVITY_DTS;
+	}
 
-  public static String getFieldReleaseDate() {
-    return FIELD_RELEASE_DATE;
-  }
+	public static String getFieldReleaseDate()
+	{
+		return FIELD_RELEASE_DATE;
+	}
 
-  public static String getFieldDataSource() {
-    return FIELD_DATA_SOURCE;
-  }
+	public static String getFieldDataSource()
+	{
+		return FIELD_DATA_SOURCE;
+	}
 
-  public static String getFieldComponentId() {
-    return FIELD_COMPONENT_ID;
-  }
+	public static String getFieldComponentId()
+	{
+		return FIELD_COMPONENT_ID;
+	}
 
-  public String getGuid() {
-    return guid;
-  }
+	public String getGuid()
+	{
+		return guid;
+	}
 
-  public void setGuid(String guid) {
-    this.guid = guid;
-  }
+	public void setGuid(String guid)
+	{
+		this.guid = guid;
+	}
 
-  public String getComponentId() {
-    return componentId;
-  }
+	public String getComponentId()
+	{
+		return componentId;
+	}
 
-  public void setComponentId(String componentId) {
-    this.componentId = componentId;
-  }
+	public void setComponentId(String componentId)
+	{
+		this.componentId = componentId;
+	}
 
-  public Date getLastActivityDts() {
-    return lastActivityDts;
-  }
+	public Date getLastActivityDts()
+	{
+		return lastActivityDts;
+	}
 
-  public void setLastActivityDts(Date lastActivityDts) {
-    this.lastActivityDts = lastActivityDts;
-  }
+	public void setLastActivityDts(Date lastActivityDts)
+	{
+		this.lastActivityDts = lastActivityDts;
+	}
 
-  public Date getSubmittedDts() {
-    return submittedDts;
-  }
+	public Date getSubmittedDts()
+	{
+		return submittedDts;
+	}
 
-  public void setSubmittedDts(Date submittedDts) {
-    this.submittedDts = submittedDts;
-  }
+	public void setSubmittedDts(Date submittedDts)
+	{
+		this.submittedDts = submittedDts;
+	}
 
-  public String getOwnerUser() {
-    return ownerUser;
-  }
+	public String getOwnerUser()
+	{
+		return ownerUser;
+	}
 
-  public void setOwnerUser(String ownerUser) {
-    this.ownerUser = ownerUser;
-  }
+	public void setOwnerUser(String ownerUser)
+	{
+		this.ownerUser = ownerUser;
+	}
 
-  public String getName() {
-    return name;
-  }
+	public String getName()
+	{
+		return name;
+	}
 
-  public void setName(String name) {
-    this.name = name;
-  }
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 
-  public String getComponentType() {
-    return componentType;
-  }
+	public String getComponentType()
+	{
+		return componentType;
+	}
 
-  public void setComponentType(String componentType) {
-    this.componentType = componentType;
-  }
+	public void setComponentType(String componentType)
+	{
+		this.componentType = componentType;
+	}
 
-  public String getOrganization() {
-    return organization;
-  }
+	public String getOrganization()
+	{
+		return organization;
+	}
 
-  public void setOrganization(String organization) {
-    this.organization = organization;
-  }
+	public void setOrganization(String organization)
+	{
+		this.organization = organization;
+	}
 
-  public List<GeneralMedia> getImages() {
-    return images;
-  }
+	public List<GeneralMedia> getImages()
+	{
+		return images;
+	}
 
-  public void setImages(List<GeneralMedia> images) {
-    this.images = images;
-  }
+	public void setImages(List<GeneralMedia> images)
+	{
+		this.images = images;
+	}
 
-  public String getDescription() {
-    return description;
-  }
+	public String getDescription()
+	{
+		return description;
+	}
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
 
-  public List<AttributeCodePk> getRequiredAttributes() {
-    return requiredAttributes;
-  }
+	public List<AttributeCodePk> getRequiredAttributes()
+	{
+		return requiredAttributes;
+	}
 
-  public void setRequiredAttributes(List<AttributeCodePk> requiredAttributes) {
-    this.requiredAttributes = requiredAttributes;
-  }
+	public void setRequiredAttributes(List<AttributeCodePk> requiredAttributes)
+	{
+		this.requiredAttributes = requiredAttributes;
+	}
 
-  public List<AttributeCodePk> getSuggestedAttributes() {
-    return suggestedAttributes;
-  }
+	public List<AttributeCodePk> getSuggestedAttributes()
+	{
+		return suggestedAttributes;
+	}
 
-  public void setSuggestedAttributes(List<AttributeCodePk> suggestedAttributes) {
-    this.suggestedAttributes = suggestedAttributes;
-  }
+	public void setSuggestedAttributes(List<AttributeCodePk> suggestedAttributes)
+	{
+		this.suggestedAttributes = suggestedAttributes;
+	}
 
-  public List<GeneralMedia> getLocalFiles() {
-    return localFiles;
-  }
+	public List<GeneralMedia> getLocalFiles()
+	{
+		return localFiles;
+	}
 
-  public void setLocalFiles(List<GeneralMedia> localFiles) {
-    this.localFiles = localFiles;
-  }
+	public void setLocalFiles(List<GeneralMedia> localFiles)
+	{
+		this.localFiles = localFiles;
+	}
 
-  public List<GeneralMedia> getUrl() {
-    return url;
-  }
+	public List<GeneralMedia> getUrl()
+	{
+		return url;
+	}
 
-  public void setUrl(List<GeneralMedia> url) {
-    this.url = url;
-  }
+	public void setUrl(List<GeneralMedia> url)
+	{
+		this.url = url;
+	}
 
-  public List<String> getTags() {
-    return tags;
-  }
+	public List<String> getTags()
+	{
+		return tags;
+	}
 
-  public void setTags(List<String> tags) {
-    this.tags = tags;
-  }
+	public void setTags(List<String> tags)
+	{
+		this.tags = tags;
+	}
 
-  public List<Contact> getContacts() {
-    return contacts;
-  }
+	public List<Contact> getContacts()
+	{
+		return contacts;
+	}
 
-  public void setContacts(List<Contact> contacts) {
-    this.contacts = contacts;
-  }
+	public void setContacts(List<Contact> contacts)
+	{
+		this.contacts = contacts;
+	}
 }
