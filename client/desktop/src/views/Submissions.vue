@@ -482,7 +482,7 @@ export default {
     submitBulkFile() {
       let formData = new FormData()
       formData.append('file', this.bulkUploadFile)
-      this.$http.post(`/openstorefront/api/v1/resource/usersubmissions/upload/zip`, formData,
+      this.$http.post(`/openstorefront/api/v1/resource/usersubmissions/upload/multiZip`, formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data'

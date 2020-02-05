@@ -46,6 +46,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,6 +69,13 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.apache.commons.io.FilenameUtils;
 import javax.mail.Message;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -79,6 +87,8 @@ import org.apache.commons.io.FileUtils;
 public class UserSubmissionResource
 		extends BaseResource
 {
+
+	Logger LOG = Logger.getLogger(UserSubmissionResource.class.getName());
 
 	@GET
 	@APIDescription("Gets all user submissions for all users; Note: these are incomplete submissions")
@@ -190,7 +200,73 @@ public class UserSubmissionResource
 			@FormDataParam("file") FormDataContentDisposition fileDisposition
 	)
 	{
-		Logger LOG = Logger.getLogger(UserSubmissionResource.class.getName());
+		RestErrorModel result = handleFileUpload(uploadStream, fileDisposition.getFileName());
+		return Response.ok(result).build();
+	}
+
+	@POST
+	@APIDescription("Accepts multiple zip files for use with the bulk upload process")
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
+	@Consumes({MediaType.MULTIPART_FORM_DATA})
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/upload/multiZip")
+	public Response multiBulkUpload(
+			@Context HttpServletRequest request
+	)
+	{
+		RestErrorModel restErrorModel = new RestErrorModel();
+
+		/* Check whether request is multipart or not. */
+		if (ServletFileUpload.isMultipartContent(request)) {
+			FileItemFactory factory = new DiskFileItemFactory();
+			ServletFileUpload fileUpload = new ServletFileUpload(factory);
+
+			try {
+				List<FileItem> items = fileUpload.parseRequest(request);
+				if (items != null) {
+					Iterator<FileItem> iter = items.iterator();
+					while (iter.hasNext()) {
+						final FileItem item = iter.next();
+						final String itemName = item.getName();
+						final Long itemSize = item.getSize();
+						if (itemSize == 0) {
+							LOG.log(Level.INFO, "Zero size file detected!");
+							restErrorModel.getErrors().put("message", "No data in file " + itemName);
+							return Response.ok(restErrorModel).build();
+						} else if (itemSize > (2.5 * Math.pow(10, 6))) {
+							LOG.log(Level.INFO, "File too large!");
+							restErrorModel.getErrors().put("message", itemName + " is too large!");
+							return Response.ok(restErrorModel).build();
+						}
+
+						if (!item.isFormField()) {
+							try {
+								restErrorModel = handleFileUpload(item.getInputStream(), itemName);
+								if (!restErrorModel.getSuccess())
+								{
+									return Response.ok(restErrorModel).build();
+								}
+							} catch (IOException ex) {
+								LOG.log(Level.WARNING, ex.getMessage());
+								restErrorModel.setSuccess(false);
+								return Response.ok(restErrorModel).build();
+							}
+						}
+					}
+				}
+			} catch (FileUploadException ex) {
+				LOG.log(Level.WARNING, ex.getMessage());
+				restErrorModel.setSuccess(false);
+				return Response.ok(restErrorModel).build();
+			}
+		}
+
+		return Response.ok(restErrorModel).build();
+	}
+
+	private RestErrorModel handleFileUpload(InputStream inStream,
+			String fileName)
+	{
 		RestErrorModel restErrorModel = new RestErrorModel();
 		String username = SecurityUtil.getCurrentUserName();
 
@@ -207,30 +283,40 @@ public class UserSubmissionResource
 				+ StringProcessor.uniqueId()
 				+ ".zip";
 
-		String extension = FilenameUtils.getExtension(fileDisposition.getFileName());
+		String extension = FilenameUtils.getExtension(fileName);
 
 		if (extension.equals("zip")) {
 			File destFile = new File(filePath);
 			try {
-				FileUtils.copyInputStreamToFile(uploadStream, destFile);
+				FileUtils.copyInputStreamToFile(inStream, destFile);
 			} catch (IOException ex) {
-				LOG.log(Level.FINE, "Unable to read file: " + fileDisposition.getFileName(), ex);
+				LOG.log(Level.FINE, "Unable to read file: " + fileName, ex);
 				restErrorModel.getErrors().put("message", "Unable to read file.");
 				restErrorModel.getErrors().put("potentialResolution", "Make sure the file is in the proper format.");
 				restErrorModel.setSuccess(false);
-				return Response.ok(restErrorModel).build();
+				return restErrorModel;
 			}
 		} else {
 			restErrorModel.getErrors().put("message", "Uploaded file was not a zip file.");
 			restErrorModel.getErrors().put("potentialResolution", "Ensure filename ends with .zip");
 			restErrorModel.setSuccess(false);
-			return Response.ok(restErrorModel).build();
+			return restErrorModel;
 		}
 
 		// Send email to spoon support telling them that there is a new uploaded file.
 		String recipientAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL);
 		String senderAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_FROM_ADDRESS);
 		String senderName = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_FROM_NAME);
+		if (recipientAddress == null) {
+			recipientAddress = "";
+		}
+		if (senderAddress == null) {
+			senderAddress = "";
+		}
+		if (senderName == null) {
+			senderName = "";
+		}
+
 		if (!recipientAddress.isEmpty() && !senderAddress.isEmpty() && !senderName.isEmpty()) {
 			Email email = MailManager.newEmail();
 			email.setSubject("SpoonSite bulk Upload");
@@ -243,12 +329,12 @@ public class UserSubmissionResource
 			restErrorModel.getErrors().put("message", "Could not send notification email.");
 			restErrorModel.getErrors().put("potentialResolution", "Set feedback email, mail from addresss, and mail from name");
 			restErrorModel.setSuccess(false);
-			return Response.ok(restErrorModel).build();
+			return restErrorModel;
 		}
 
 		restErrorModel.getErrors().put("message", "File uploaded sucessfully.");
 		restErrorModel.setSuccess(true);
-		return Response.ok(restErrorModel).build();
+		return restErrorModel;
 	}
 
 	//update submission	(submission - owner/admin) FIX Admin permission
