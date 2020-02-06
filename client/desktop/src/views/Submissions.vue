@@ -3,7 +3,7 @@
     <v-form class="pa-2 pt-4">
       <v-flex class="d-flex flex-wrap">
         <v-btn class="top-buttons" @click="getUserParts()"><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn>
-        <v-btn class="top-buttons" @click="showData()"><v-icon left>fas fa-plus</v-icon>Add New</v-btn>
+        <v-btn class="top-buttons" to="submissionform"><v-icon left>fas fa-plus</v-icon>Add New</v-btn>
         <v-btn class="top-buttons" @click="bulkUploadDialog = true"
           ><v-icon left>fas fa-upload</v-icon>Bulk Upload</v-btn
         >
@@ -200,7 +200,6 @@
           <v-btn v-if="requestRemoval" color="warning" @click="submitRemoval()" :disabled="!isFormValid">
             Submit
           </v-btn>
-          <p v-else-if="currentComponent.hasChangeRequest && !requestRemoval && !deleteChange"></p>
           <v-btn color="warning" v-else @click="submitDeletion()">
             Delete
           </v-btn>
@@ -460,8 +459,8 @@ export default {
     },
     submitDeletion() {
       this.isLoading = true
-      if (this.currentComponent.submissionId) {
-        this.$http.delete(`/openstorefront/api/v1/resource/usersubmissions/${this.currentComponent.submissionId}`)
+      if (this.currentComponent.componentId) {
+        this.$http.delete(`/openstorefront/api/v1/resource/components/${this.currentComponent.componentId}/cascade`)
           .then(response => {
             this.$toasted.show('Submission Deleted')
             this.getUserParts()
@@ -473,17 +472,7 @@ export default {
             this.isLoading = false
           })
       } else {
-        this.$http.delete(`/openstorefront/api/v1/resource/components/${this.currentComponent.pendingChangeComponentId}/cascade`)
-          .then(response => {
-            this.$toasted.show('Submission Deleted')
-            this.getUserParts()
-            this.deleteDialog = false
-          })
-          .catch(error => {
-            this.$toasted.error('Submission could not be deleted.')
-            this.errors.push(error)
-            this.isLoading = false
-          })
+        this.$toasted.error('Submission could not be deleted.')
       }
     },
     openBulkUpload() {
