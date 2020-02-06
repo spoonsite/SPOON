@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-center">New Entry Submission Form</h1>
+    <h1 class="text-center mt-4">New Entry Submission Form</h1>
     <div class="text-center px-2 error--text">
       <h2>Caution!</h2>
       <p v-html="$store.state.branding.userInputWarning"></p>
@@ -404,6 +404,11 @@
       <v-alert type="error" v-if="!isFormValid" prominent outlined style="display: inline-block;">
         Form validation errors. Please check the form.
       </v-alert>
+      <v-alert type="error" v-if="errors.length > 0" colored-border border="left" elevation="2" style="display: inline-block;">
+        <ul>
+          <li v-for="error in errors" :key="error.key"><span class="bold">{{ error.key }}:</span>  {{ error.value }}</li>
+        </ul>
+      </v-alert>
       <div class="mb-5">
         <p>If you save and close the entry you will need to come back and finish to submit the entry.</p>
         <v-btn class="mr-4 mb-3" color="primary" @click="submit">Save and close</v-btn>
@@ -417,9 +422,8 @@
       <v-card>
         <ModalTitle title="Are you sure?" @close="showEntryTypeWarning = false" />
         <v-card-text>
-          TODO: Change this wording<br />
-          Changing the entry type changed which attributes are chosen. If you change your entry type the form may delete
-          some of the entered attrbiutes.
+          Changing the entry type will change the associated attributes. If you change your entry type the form may delete
+          some of the entered attributes.
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -466,6 +470,8 @@ export default {
     })
   },
   data: () => ({
+    // server validation errors
+    errors: [],
     isFormValid: false,
     // entryDetails:
     entryTitle: '',
@@ -687,13 +693,20 @@ export default {
     submit(data) {
       let formData = this.getFormData()
       this.$http
-        .post('/openstorefront/api/v1/resource/componentsubmissions/vue', formData, {
+        .post('/openstorefront/api/v1/resource/componentsubmissions', formData, {
           // headers: {
           //   'Content-Type': 'multipart/form-data'
           // }
         })
         .then(response => {
-          // console.log(response)
+          console.log('submit response', response)
+          if (response.data && response.data.success === false) {
+            this.errors = response.data.errors.entry
+          }
+          if (response.data && response.data.component) {
+            this.errors = []
+            this.$toasted.success('Submission Saved')
+          }
         })
     },
     addImage() {

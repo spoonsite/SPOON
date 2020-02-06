@@ -226,7 +226,17 @@ public class ComponentSubmissionResource
 		for (ComponentAttribute attribute : componentAll.getAttributes()) {
 			attribute.getComponentAttributePk().setComponentId(id);
 		}
-		return handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, false);
+		Response response = null;
+		try {
+			response = handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, false);
+		} catch (Exception e) {
+			// validation for required attributes throws an exception
+			RestErrorModel restErrorModel = new RestErrorModel();
+			restErrorModel.setSuccess(false);
+			restErrorModel.getErrors().put("error", e.getMessage());
+			response = sendSingleEntityResponse(restErrorModel);
+		}
+		return response;
 	}
 
 	@POST
