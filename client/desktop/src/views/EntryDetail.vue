@@ -148,7 +148,7 @@
         <v-card-text>
           <p>
             Your current entries can be found at
-            <a href="/openstorefront/UserTool.action?load=Submissions">User Tools > Submissions</a>:*
+            <router-link :to="{name:'Submissions'}">User Tools > Submissions</router-link>:*
           </p>
           <v-form>
             <v-container>
