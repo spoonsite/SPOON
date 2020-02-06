@@ -68,13 +68,16 @@ Vue.filter('formatDate', function(value, formatString) {
   if (formatString) {
     return format(date, formatString)
   } else {
-    return format(date, 'dd/MM/yyyy')
+    return format(date, 'yyyy/MMM/dd')
   }
 })
 
 Vue.filter('crushNumericString', scientificToDecimal.crushNumericString)
 
 Vue.filter('prettyJSON', value => JSON.stringify(JSON.parse(value)))
+
+Vue.prototype.$filters = Vue.options.filters
+
 store.dispatch('getSecurityPolicy')
 store.dispatch('getHelpUrl')
 store.dispatch('getAttributeMap')
