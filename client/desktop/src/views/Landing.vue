@@ -6,7 +6,7 @@
           <span class="title white--text" style="vertical-align: middle;">
             Are you a vendor?
           </span>
-          <v-btn color="success" large href="/openstorefront/UserTool.action?load=Submissions">
+          <v-btn color="success" large :to="{path: 'submissions'}">
             Submit a part
           </v-btn>
         </div>
@@ -232,26 +232,6 @@ export default {
       showDisclaimer: false,
       showRecentActivity: false,
       isLoading: false,
-      quickLaunchLinks: [
-        {
-          img: '/openstorefront/images/dash.png',
-          href: '/openstorefront/UserTool.action?load=Dashboard',
-          title: 'Dashboard',
-          icon: 'chart-line'
-        },
-        {
-          img: '/openstorefront/images/submission.png',
-          href: '/openstorefront/UserTool.action?load=Submissions',
-          title: 'Submit a SmallSat part',
-          icon: 'file-upload'
-        },
-        {
-          img: '/openstorefront/images/dash.png',
-          href: '#/contact', // we have a feedback page in client/mobile
-          title: 'Feedback',
-          icon: 'comments'
-        }
-      ],
       recentActivityData: [
         {
           title: 'Submissions',
