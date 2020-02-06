@@ -31,16 +31,21 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.core.view.ComponentSubmissionView;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.SubmissionView;
+import edu.usu.sdl.openstorefront.core.view.UserSubmissionPageView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +90,6 @@ public class ComponentSubmissionResource
 			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
-
 			pullOldOwnedComponents(componentExample, components);
 
 			List<ComponentView> views = ComponentView.toViewList(components);
@@ -95,6 +99,60 @@ public class ComponentSubmissionResource
 			findUserSubmissionForView(submissionViews);
 
 			GenericEntity<List<SubmissionView>> entity = new GenericEntity<List<SubmissionView>>(submissionViews)
+			{
+			};
+			return sendSingleEntityResponse(entity);
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_READ)
+	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this is only the top level component object)")
+	@DataType(SubmissionView.class)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/user")
+	public Response getUserComponentsAndSubmissions()
+	{
+		if (SecurityUtil.isLoggedIn()) {
+			Component componentExample = new Component();
+			componentExample.setOwnerUser(SecurityUtil.getCurrentUserName());
+			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+
+			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+			pullOldOwnedComponents(componentExample, components);
+
+			List<ComponentView> views = ComponentView.toViewList(components);
+
+			List<SubmissionView> submissionViews = flagSubmissionsWithEvaluations(views);
+			processPendingChanges(submissionViews);
+			findUserSubmissionForView(submissionViews);
+
+			WorkPlan workPlanExample = new WorkPlan();
+			workPlanExample.setActiveStatus(WorkPlan.ACTIVE_STATUS);
+
+			List<WorkPlan> workPlans = service.getPersistenceService().queryByExample(workPlanExample);
+
+			List<ComponentSubmissionView> componentSubmissionViews = new ArrayList<ComponentSubmissionView>();
+
+			for(SubmissionView view : submissionViews){
+				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
+				workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
+				workPlanLinkExample.setComponentId(view.getComponentId());
+				WorkPlanLink workPlanLink = service.getPersistenceService().queryOneByExample(workPlanLinkExample);
+
+				if(workPlanLink != null){
+					componentSubmissionViews.add(new ComponentSubmissionView(view, workPlanLink.getWorkPlanId(), workPlanLink.getCurrentStepId()));
+				}
+				else{
+					componentSubmissionViews.add(new ComponentSubmissionView(view, null, null));
+				}
+			}
+
+			UserSubmissionPageView userSubmissionPageView = new UserSubmissionPageView(componentSubmissionViews, workPlans);
+			
+			GenericEntity<UserSubmissionPageView> entity = new GenericEntity<UserSubmissionPageView>(userSubmissionPageView)
 			{
 			};
 			return sendSingleEntityResponse(entity);
