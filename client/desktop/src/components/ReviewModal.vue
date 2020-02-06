@@ -6,7 +6,11 @@
         <v-alert class="w-100" type="warning" :value="true" v-if="$store.state.branding.userInputWarning !== null"
           ><span v-html="$store.state.branding.userInputWarning"></span
         ></v-alert>
-        <v-alert class="w-100" type="info" :value="true" v-if="$store.state.branding.submissionFormWarning !== null"
+        <v-alert
+          class="w-100"
+          type="info"
+          :value="!autoApprove"
+          v-if="$store.state.branding.submissionFormWarning !== null"
           ><span v-html="$store.state.branding.submissionFormWarning"></span
         ></v-alert>
         <v-form>
@@ -38,13 +42,6 @@
             <p>
               <strong>Last used*</strong>
             </p>
-
-            <!-- <v-text-field v-model="review.lastUsed" label="Last Used" readonly required disabled></v-text-field> -->
-
-            <!-- <v-date-picker v-model="review.lastUsed" :allowed-dates="todaysDateFormatted" no-title reactive full-width>
-              <v-spacer></v-spacer>
-              <v-btn text color="accent" @click="review.lastUsed = ''">Cancel</v-btn>
-            </v-date-picker> -->
 
             <v-date-picker
               v-model="rawDate"
@@ -98,6 +95,7 @@
               :rules="commentRules"
               required
             ></quill-editor>
+            <div v-if="review.comment === ''" class="red--text ml-1">A comment is required</div>
           </v-container>
           <v-card-actions>
             <v-spacer />
@@ -134,9 +132,13 @@ export default {
   },
   mounted() {
     this.lookupTypes()
+    this.$http
+      .get(`/openstorefront/api/v1/service/application/configproperties/userreview.autoapprove`)
+      .then(response => (this.autoApprove = response.data.description))
   },
   data() {
     return {
+      autoApprove: false,
       review: {},
       rawDate: this.today,
       timeOptions: [],
