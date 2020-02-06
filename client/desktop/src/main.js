@@ -64,6 +64,11 @@ Vue.use(VueQuillEditor, {
 })
 
 Vue.filter('formatDate', function(value, formatString) {
+  if (value === undefined) {
+    /* eslint no-console: ["error", { allow: ["error"] }] */
+    console.error('undefined date passed to format')
+    return
+  }
   let date = new Date(value)
   if (formatString) {
     return format(date, formatString)
