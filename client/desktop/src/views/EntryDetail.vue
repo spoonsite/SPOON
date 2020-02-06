@@ -436,8 +436,18 @@
 
       <ReviewModal
         v-model="writeReviewDialog"
-        @close="writeReviewDialog = false; getDetail(); isLoading = false"
-        :review="newReview"
+        @close="writeReviewDialog = false; getDetail();"
+        :componentId="id"
+        title="Write A Review"
+      >
+      </ReviewModal>
+
+      <ReviewModal
+        v-model="editReviewDialog"
+        @close="editReviewDialog = false; getDetail();"
+        :componentId="id"
+        title="Edit A Review"
+        :editReview="newReview"
       >
       </ReviewModal>
 
@@ -594,6 +604,7 @@ export default {
       askQuestionDialog: false,
       newQuestion: '',
       writeReviewDialog: false,
+      editReviewDialog: false,
       deleteReviewDialog: false,
       submitCorrectionDialog: false,
       requestOwnershipDialog: false,
@@ -741,8 +752,9 @@ export default {
         })
     },
     editReviewSetup(review) {
-      this.writeReviewDialog = true
-      this.fillReviewInformation(review)
+      this.newReview = review
+      // this.newReview
+      this.editReviewDialog = true
     },
     deleteReviewSetup(review) {
       this.deleteReviewDialog = true
@@ -752,7 +764,7 @@ export default {
       this.newReview.title = review.title
       this.newReview.rating = review.rating
       this.newReview.recommend = review.recommend
-      this.newReview.lastUsed = format(review.lastUsed, 'yyyy-mm-dd')
+      this.newReview.lastUsed = format(new Date(review.lastUsed), 'yyyy-MM-dd')
       this.newReview.timeUsed = review.userTimeDescription
       review.pros.forEach(element => {
         this.newReview.pros.push(element.text)
