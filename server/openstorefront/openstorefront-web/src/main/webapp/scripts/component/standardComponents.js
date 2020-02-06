@@ -614,11 +614,10 @@ Ext.define('OSF.component.UserMenu', {
 
 			if (userMenu.showUserTools) {
 				menuItems.push({
-					text: 'User Tools',
+					text: 'Submissions',
 					iconCls: 'fa fa-2x fa-user icon-button-color-default',
-					href: 'UserTool.action',
 					handler: function () {
-						window.location.href = 'UserTool.action';
+						window.location.href = '/openstorefront/#/submissions';
 					}
 				});
 			}

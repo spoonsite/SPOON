@@ -143,10 +143,18 @@
     <!-- Modals -->
     <QuestionModal
       v-model="question.questionModal"
-      :questionProp="question.currentQuestion.question"
+      title="Edit a Question"
+      :editQuestion="question.currentQuestion.question"
       @close="submitQuestionEdit($event)"
     />
-    <AnswerModal v-model="answer.answerModal" :answerProp="answer.currentAnswer" @close="submitAnswerEdit($event)" />
+
+    <AnswerModal
+      v-model="answer.answerModal"
+      title="Edit an Answer"
+      :answerProp="answer.currentAnswer"
+      @close="submitAnswerEdit($event)"
+    />
+
     <v-dialog v-model="question.checkDeleteModal" max-width="30em">
       <v-card>
         <ModalTitle title="Are you sure?" @close="question.checkDeleteModal = false" />

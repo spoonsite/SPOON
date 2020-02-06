@@ -16,7 +16,7 @@
           <v-card>
             <v-list>
               <v-list-item
-                v-for="link in beginningLinks"
+                v-for="link in filteredBeginningLinks"
                 :key="link.name"
                 link
                 @click="menu = false"
@@ -52,7 +52,7 @@
                 </v-list-item>
               </v-list-group>
               <v-list-item
-                v-for="link in endLinks"
+                v-for="link in filteredEndLinks"
                 :key="link.name"
                 link
                 @click="menu = false"
@@ -257,7 +257,7 @@ export default {
           permissions: []
         },
         {
-          href: '/openstorefront/UserTool.action',
+          link: '/submissions',
           icon: 'list',
           name: 'Submissions',
           hasChildren: false,
