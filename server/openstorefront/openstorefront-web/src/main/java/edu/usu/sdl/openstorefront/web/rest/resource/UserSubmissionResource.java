@@ -215,6 +215,23 @@ public class UserSubmissionResource
 	)
 	{
 		RestErrorModel restErrorModel = new RestErrorModel();
+		String maxSizeString = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_POST_SIZE);
+		int maxSize;
+		if (maxSizeString != null) {
+			try {
+				maxSize = Integer.parseInt(maxSizeString);
+			} catch (NumberFormatException ex) {
+				LOG.log(Level.SEVERE, "Could not parse key KEY_MAX_POST_SIZE. Ensure that max.post.size is set to an integer.\n{0}", ex.toString());
+				restErrorModel.getErrors().put("message", "Unable to determine max upload size.");
+				restErrorModel.getErrors().put("potentialResolution", "Ensure that max.post.size is set to an integer.");
+				return Response.ok(restErrorModel).build();
+			}
+		} else {
+			LOG.log(Level.SEVERE, "Could not find key KEY_MAX_POST_SIZE. Ensure that max.post.size is set to an integer.");
+			restErrorModel.getErrors().put("message", "Unable to determine max upload size.");
+			restErrorModel.getErrors().put("potentialResolution", "Ensure that max.post.size is set to an integer.");
+			return Response.ok(restErrorModel).build();
+		}
 
 		/* Check whether request is multipart or not. */
 		if (ServletFileUpload.isMultipartContent(request)) {
@@ -233,7 +250,7 @@ public class UserSubmissionResource
 							LOG.log(Level.INFO, "Zero size file detected!");
 							restErrorModel.getErrors().put("message", "No data in file " + itemName);
 							return Response.ok(restErrorModel).build();
-						} else if (itemSize > (2.5 * Math.pow(10, 6))) {
+						} else if (itemSize > maxSize) {
 							LOG.log(Level.INFO, "File too large!");
 							restErrorModel.getErrors().put("message", itemName + " is too large!");
 							return Response.ok(restErrorModel).build();
@@ -242,8 +259,7 @@ public class UserSubmissionResource
 						if (!item.isFormField()) {
 							try {
 								restErrorModel = handleFileUpload(item.getInputStream(), itemName);
-								if (!restErrorModel.getSuccess())
-								{
+								if (!restErrorModel.getSuccess()) {
 									return Response.ok(restErrorModel).build();
 								}
 							} catch (IOException ex) {
