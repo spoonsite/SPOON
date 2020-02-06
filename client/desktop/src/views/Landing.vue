@@ -27,7 +27,7 @@
           color="black"
           dark
           x-large
-          @click="getRecentActivity()"
+          @click="openRecentActivity()"
           style="font-weight: bold; text-transform: none; font-size: 2rem; letter-spacing: 0;">
           {{ showRecentActivity ?'Hide Recent Activity':'Show Recent Activity'}}
         <v-icon v-if="!showRecentActivity" right>fas fa-chevron-up</v-icon>
@@ -300,8 +300,8 @@ export default {
     isSpoon() {
       return this.$store.state.branding.applicationName === 'SPOON'
     },
-    getRecentActivity() {
-      this.showRecentActivity ? this.showRecentActivity = false : this.showRecentActivity = true
+    openRecentActivity() {
+      this.showRecentActivity = !this.showRecentActivity
       window.localStorage.setItem('showRecentActivity', JSON.stringify(this.showRecentActivity))
     },
     getSubmissionData() {
@@ -309,7 +309,9 @@ export default {
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions')
         .then(response => {
           this.submissionData = response.data
-          this.submissionData.sort((a, b) => (a.updateDts < b.updateDts ? 1 : -1))
+          console.log(response.data)
+          this.submissionData.sort((a, b) => (new Date(a.updateDts) < new Date(b.updateDts) ? 1 : -1))
+          console.log(this.submissionData)
           this.isLoading = false
         }).catch(error => {
           this.errors.push(error)
