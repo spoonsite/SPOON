@@ -392,6 +392,8 @@ h3 {
   }
   td {
     padding-left: 0.5em;
+    max-width: 8.5em;
+    word-wrap: break-word;
   }
   tr:hover {
     cursor: default;
