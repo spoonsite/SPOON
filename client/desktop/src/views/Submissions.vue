@@ -115,6 +115,18 @@
                 </template>
                 <span>Delete</span>
               </v-tooltip>
+              <v-tooltip bottom v-if="item.status !== 'P'">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    v-on="on"
+                    @click="cloneEntry(item)"
+                    style="order: 5">
+                    <v-icon>fas fa-clone</v-icon>
+                  </v-btn>
+                </template>
+                <span>Clone</span>
+              </v-tooltip>
             </div>
           </template>
         </v-data-table>
@@ -457,9 +469,26 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
     },
+    cloneEntry(item) {
+      if (item.componentId) {
+        this.isLoading = true
+        this.$http.post(`/openstorefront/api/v1/resource/componentsubmissions/${item.componentId}/copy`)
+          .then(response => {
+            this.$toasted.show('Submission cloned')
+            this.getUserParts()
+          })
+          .catch(error => {
+            this.$toasted.error('Submission could not be cloned.')
+            this.errors.push(error)
+            this.isLoading = false
+          })
+      } else {
+        this.$toasted.error('Submission could not be cloned.')
+      }
+    },
     submitDeletion() {
-      this.isLoading = true
       if (this.currentComponent.componentId) {
+        this.isLoading = true
         this.$http.delete(`/openstorefront/api/v1/resource/components/${this.currentComponent.componentId}/cascade`)
           .then(response => {
             this.$toasted.show('Submission Deleted')
