@@ -232,7 +232,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="attr in detail.attributes" :key="attr.typeDescription">
+                    <tr v-for="attr in detail.attributes" :key="attr.code">
                       <td>{{ attr.typeDescription }}</td>
                       <td>
                         {{ attr.codeDescription }} {{ attr.unit }} <br /><strong v-if="attr.comment">Comment:</strong>
