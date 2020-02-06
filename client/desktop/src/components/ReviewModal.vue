@@ -95,7 +95,6 @@
               :rules="commentRules"
               required
             ></quill-editor>
-            <div v-if="review.comment === ''" class="red--text ml-1">A comment is required</div>
           </v-container>
           <v-card-actions>
             <v-spacer />
@@ -157,7 +156,6 @@ export default {
     value: function() {
       if (this.value) {
         if (this.editReview) {
-          console.log(this.editReview)
           this.review = _.cloneDeep(this.editReview)
           this.review.rawLastUsed = format(new Date(this.editReview.lastUsed), 'yyyy-MM-dd')
           this.rawDate = format(new Date(this.editReview.lastUsed), 'yyyy-MM-dd')
