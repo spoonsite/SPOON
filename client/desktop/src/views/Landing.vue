@@ -88,6 +88,8 @@
                     v-for="watch in watchesData.slice(0,6)"
                     :key="watch.componentName"
                     class="title font-weight-regular"
+                    @click="goToWatchedPage(watch)"
+                    style="cursor: pointer;"
                   >
                     <td class="pa-1">
                       <router-link :to="{ name: 'Entry Detail', params: { id: watch.componentId } }">
@@ -325,6 +327,9 @@ export default {
             }
           }
         })
+    },
+    goToWatchedPage(watch) {
+      this.$router.push({ name: 'Entry Detail', params: { id: watch.componentId } })
     }
   },
   computed: {
