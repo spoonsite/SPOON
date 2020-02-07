@@ -143,7 +143,7 @@
           <p v-html="uploadErrorDisplay"></p>
           <v-file-input
             style="width: 100%;"
-            label="Upload Resource (Limit of 2.15 GB)"
+            :label="`Upload Resource (Limit of ${makeHumanReadable(maxUploadSize)})`"
             ref="bulkFileSelector"
             accept=".zip"
             v-model="bulkUploadFile"
@@ -238,6 +238,7 @@
 <script lang="js">
 import ModalTitle from '@/components/ModalTitle'
 import CommentModal from '@/components/CommentModal'
+import { humanReadableBytes } from '@/util/scientificToDecimal'
 
 export default {
   name: 'submissions-page',
@@ -247,6 +248,7 @@ export default {
   },
   mounted() {
     this.getUserParts()
+    this.getMaxUploadSize()
   },
   data() {
     return {
@@ -280,6 +282,7 @@ export default {
       errors: [],
       isLoading: true,
       counter: 0,
+      maxUploadSize: 0,
       search: '',
       uploadFile: null,
       bulkUploadDialog: false,
@@ -325,6 +328,16 @@ export default {
           this.isLoading = false
           this.errors.push(error)
         })
+    },
+    getMaxUploadSize() {
+      const sizeMB = 1048576
+      this.$http.get('/openstorefront/api/v1/service/application/configproperties/max.post.size').then(
+        response => {
+          if (response.data.description) {
+            this.maxUploadSize = parseInt(response.data.description) * sizeMB
+          }
+        }
+      )
     },
     viewComponent(componentId) {
       this.$router.push({ name: 'Entry Detail', params: { id: componentId } })
@@ -478,6 +491,9 @@ export default {
             this.isLoading = false
           })
       }
+    },
+    makeHumanReadable(inputBytes) {
+      return humanReadableBytes(inputBytes)
     },
     submitBulkFile() {
       let formData = new FormData()
