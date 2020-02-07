@@ -96,7 +96,7 @@ export default {
           .then(response => {
             this.searchSuggestions = response.data
           })
-          .catch(e => this.errors.push(e))
+          .catch(e => console.error(e))
       }
     },
     saveSearchOptions() {

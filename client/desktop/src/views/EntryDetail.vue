@@ -648,7 +648,6 @@ export default {
       watchBeingChecked: true,
       hasImage: false,
       lightboxList: [],
-      errors: [],
       mediaDetailsDialog: false,
       currentMediaDetailItem: {},
       panels: [0, 1],
@@ -786,7 +785,7 @@ export default {
           this.answers[qid] = response.data
           this.isLoading = false
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
     },
     getDetail() {
       this.isLoading = true
@@ -794,7 +793,7 @@ export default {
         .then(response => {
           this.detail = response.data
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
         .finally(() => {
           this.computeHasImage()
           this.filterLightboxList()
@@ -807,7 +806,7 @@ export default {
         .then(response => {
           this.questions = response.data
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
     },
     getTags() {
       this.isLoading = true
@@ -818,7 +817,7 @@ export default {
             this.allTags.push(tags[i].text)
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
     },
     getRelatedTags() {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/relatedtags`)
@@ -829,7 +828,7 @@ export default {
             this.relatedTags.push(tags[i].text)
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
     },
     lookupTypes() {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
@@ -841,7 +840,7 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
         .then(response => {
@@ -852,7 +851,7 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
         .then(response => {
@@ -863,7 +862,7 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
     },
     showMediaDetails(item) {
       this.currentMediaDetailItem = item

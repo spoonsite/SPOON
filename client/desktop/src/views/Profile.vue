@@ -173,7 +173,6 @@ export default {
   },
   data() {
     return {
-      errors: [],
       user: {
         firstName: '',
         lastName: '',

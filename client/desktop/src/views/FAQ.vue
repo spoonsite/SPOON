@@ -21,8 +21,7 @@
 export default {
   name: 'FAQ',
   data: () => ({
-    questions: [],
-    errors: []
+    questions: []
   }),
   methods: {
     getQuestions: function() {
@@ -34,7 +33,7 @@ export default {
           var filtered = response.data.filter(item => item.activeStatus === 'A')
           that.questions = filtered
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
     }
   },
   mounted() {

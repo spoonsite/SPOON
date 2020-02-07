@@ -104,7 +104,6 @@ export default {
     return {
       searchQuery: '',
       nestedComponentTypesList: [],
-      errors: [],
       highlights: [],
       attributes: [],
       showDisclaimer: false,

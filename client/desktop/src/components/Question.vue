@@ -153,7 +153,6 @@ export default {
       newAnswer: '',
       noAnswers: false,
       newQuestion: '',
-      errors: [],
       loading: false
     }
   },
@@ -184,7 +183,7 @@ export default {
             this.checkAnswers()
             this.loading = false
           })
-          .catch(e => this.errors.push(e))
+          .catch(e => console.error(e))
       }
     },
     submitAnswer(qid) {

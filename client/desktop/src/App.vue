@@ -172,7 +172,7 @@ export default {
         return response
       },
       error => {
-        this.errors.push(error.response)
+        console.error(error.response)
         this.currentError = error.response
         this.errorDialog = true
         return Promise.reject(error)
@@ -213,7 +213,6 @@ export default {
     return {
       appBarHeight: '48px',
       menu: false,
-      errors: [],
       currentError: {},
       errorDialog: false,
       showErrorDetails: false,
@@ -317,7 +316,7 @@ export default {
         .then(response => {
           window.location.href = 'openstorefront'
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
     },
     parseJSON(obj) {
       safeParse(obj, function(err, json) {
@@ -372,7 +371,7 @@ export default {
             }
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
         .finally(() => {
           if (this.watchNumber > 0) {
             this.$toasted.show(

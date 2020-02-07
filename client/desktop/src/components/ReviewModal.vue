@@ -164,7 +164,7 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
 
       this.$http
         .get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
@@ -176,7 +176,7 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
 
       this.$http
         .get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
@@ -188,7 +188,7 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => console.error(e))
     },
     submitReview() {
       let data = {
