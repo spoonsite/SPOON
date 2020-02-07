@@ -152,11 +152,17 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn @click="submitBulkFile()">Upload</v-btn>
-          <v-btn @click="
-          bulkUploadDialog = false
-          bulkUploadFile = null
-          ">Close</v-btn>
+          <v-btn
+            v-model="isSendingFile"
+            @click="submitBulkFile()"
+            :disabled="isSendingFile"
+          >Upload</v-btn>
+          <v-btn
+            @click="
+              bulkUploadDialog = false
+              bulkUploadFile = null
+              "
+          >Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -284,6 +290,7 @@ export default {
       isLoading: true,
       counter: 0,
       maxUploadSize: 0,
+      isSendingFile: false,
       search: '',
       uploadFile: null,
       bulkUploadDialog: false,
@@ -497,6 +504,25 @@ export default {
       return humanReadableBytes(inputBytes)
     },
     submitBulkFile() {
+      this.uploadErrorDisplay = ''
+      if (!(this.bulkUploadFile instanceof File)) {
+        this.uploadErrorDisplay = 'Item selected for upload is not a file!'
+        return
+      }
+      if (this.bulkUploadFile.name.slice(-4) !== '.zip') {
+        this.uploadErrorDisplay = 'Item selected is not a zip file! File must end in ".zip"'
+        return
+      }
+      if (this.bulkUploadFile.size >= this.maxUploadSize) {
+        this.uploadErrorDisplay = 'Item selected is too large to upload!'
+        return
+      }
+      if (this.bulkUploadFile.size === 0) {
+        this.uploadErrorDisplay = 'Item selected is empty!'
+        return
+      }
+
+      this.isSendingFile = true
       let formData = new FormData()
       formData.append('file', this.bulkUploadFile)
       this.$http.post(`/openstorefront/api/v1/resource/usersubmissions/upload/multiZip`, formData,
@@ -507,6 +533,7 @@ export default {
         })
         .then(response => {
           this.bulkUploadFile = null
+          this.isSendingFile = false
           if (response.data.success) {
             this.bulkUploadDialog = false
             response.data.errors.entry.forEach((item) => {
