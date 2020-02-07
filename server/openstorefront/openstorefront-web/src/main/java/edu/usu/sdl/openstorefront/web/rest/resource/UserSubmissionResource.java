@@ -41,8 +41,10 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -226,9 +228,11 @@ public class UserSubmissionResource
 		String extension = FilenameUtils.getExtension(fileName);
 
 		if (extension.equals("zip")) {
-			File destFile = new File(filePath);
 			try {
-				FileUtils.copyInputStreamToFile(inStream, destFile);
+				restErrorModel = writeStreamToFile(inStream, filePath);
+				if (!restErrorModel.getSuccess()) {
+					return restErrorModel;
+				}
 			} catch (IOException ex) {
 				LOG.log(Level.FINE, "Unable to read file: " + fileName, ex);
 				restErrorModel.getErrors().put("message", "Unable to read file.");
