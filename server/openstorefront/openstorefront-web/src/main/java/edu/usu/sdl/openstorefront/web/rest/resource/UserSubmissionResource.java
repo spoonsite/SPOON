@@ -277,6 +277,61 @@ public class UserSubmissionResource
 		return restErrorModel;
 	}
 
+	private RestErrorModel writeStreamToFile(InputStream stream, String fileLocation) throws IOException
+	{
+		RestErrorModel restErrorModel = new RestErrorModel();
+		String maxSizeString = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_POST_SIZE);
+		int maxSize;
+		if (maxSizeString != null) {
+			try {
+				maxSize = Integer.parseInt(maxSizeString);
+			} catch (NumberFormatException ex) {
+				LOG.log(Level.SEVERE, "Could not parse key KEY_MAX_POST_SIZE. Ensure that max.post.size is set to an integer.\n{0}", ex.toString());
+				restErrorModel.getErrors().put("message", "Unable to determine max upload size.");
+				restErrorModel.getErrors().put("potentialResolution", "Ensure that max.post.size is set to an integer.");
+				restErrorModel.setSuccess(false);
+				return restErrorModel;
+			}
+		} else {
+			LOG.log(Level.SEVERE, "Could not find key KEY_MAX_POST_SIZE. Ensure that max.post.size is set to an integer.");
+			restErrorModel.getErrors().put("message", "Unable to determine max upload size.");
+			restErrorModel.getErrors().put("potentialResolution", "Ensure that max.post.size is set to an integer.");
+			restErrorModel.setSuccess(false);
+			return restErrorModel;
+		}
+		final int mBtoBytesConversionFactor = 1000000;
+		maxSize *= mBtoBytesConversionFactor;
+
+		int bytesReadIntoBuffer;
+		int totalReads = 0;
+		// Note buffer size is arbirtary
+		byte[] buffer = new byte[1024];
+		File uploadedFile = new File(fileLocation);
+
+		try (OutputStream out = new FileOutputStream(uploadedFile)) {
+			while ((bytesReadIntoBuffer = stream.read(buffer)) != -1) {
+				out.write(buffer, 0, bytesReadIntoBuffer);
+				totalReads += bytesReadIntoBuffer;
+				if (totalReads >= maxSize) {
+					break;
+				}
+			}
+			out.flush();
+		}
+
+		if (totalReads >= maxSize) {
+			if (!uploadedFile.delete()) {
+				LOG.log(Level.SEVERE, "Could not delete file {0}", fileLocation);
+			}
+			restErrorModel.getErrors().put("message", "File was too large to upload.");
+			restErrorModel.setSuccess(false);
+		} else {
+			restErrorModel.setSuccess(true);
+		}
+
+		return restErrorModel;
+	}
+
 	//update submission	(submission - owner/admin) FIX Admin permission
 	@PUT
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
