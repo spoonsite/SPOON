@@ -140,13 +140,14 @@
             The information submitted to this site will be made publicly available. Please do not submit any sensitive
             information such as proprietary or ITAR restricted information.
           </p>
-          <p v-html="uploadErrorDisplay"></p>
           <v-file-input
             style="width: 100%;"
             :label="`Upload Resource (Limit of ${makeHumanReadable(maxUploadSize)})`"
             ref="bulkFileSelector"
             accept=".zip"
             v-model="bulkUploadFile"
+            @change="uploadErrorDisplay = ''"
+            :error-messages="uploadErrorDisplay"
             ></v-file-input>
         </v-card-text>
         <v-card-actions>
