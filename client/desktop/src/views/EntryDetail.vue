@@ -148,7 +148,7 @@
         <v-card-text>
           <p>
             Your current entries can be found at
-            <router-link :to="{name:'Submissions'}">User Tools > Submissions</router-link>:*
+            <router-link :to="{ name: 'Submissions' }">User Tools > Submissions</router-link>:*
           </p>
           <v-form>
             <v-container>
@@ -457,22 +457,28 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-      <ReviewModal
-        v-model="writeReviewDialog"
-        @close="writeReviewDialog = false; getDetail();"
-        :componentId="id"
-        title="Write A Review"
-      >
-      </ReviewModal>
+        <ReviewModal
+          v-model="writeReviewDialog"
+          @close="
+            writeReviewDialog = false
+            getDetail()
+          "
+          :componentId="id"
+          title="Write A Review"
+        >
+        </ReviewModal>
 
-      <ReviewModal
-        v-model="editReviewDialog"
-        @close="editReviewDialog = false; getDetail();"
-        :componentId="id"
-        title="Edit A Review"
-        :editReview="newReview"
-      >
-      </ReviewModal>
+        <ReviewModal
+          v-model="editReviewDialog"
+          @close="
+            editReviewDialog = false
+            getDetail()
+          "
+          :componentId="id"
+          title="Edit A Review"
+          :editReview="newReview"
+        >
+        </ReviewModal>
 
         <DeleteReviewModal
           v-model="deleteReviewDialog"
@@ -768,27 +774,7 @@ export default {
     },
     editReviewSetup(review) {
       this.newReview = review
-      // this.newReview
       this.editReviewDialog = true
-    },
-    deleteReviewSetup(review) {
-      this.deleteReviewDialog = true
-      this.fillReviewInformation(review)
-    },
-    fillReviewInformation(review) {
-      this.newReview.title = review.title
-      this.newReview.rating = review.rating
-      this.newReview.recommend = review.recommend
-      this.newReview.lastUsed = format(new Date(review.lastUsed), 'yyyy-MM-dd')
-      this.newReview.timeUsed = review.userTimeDescription
-      review.pros.forEach(element => {
-        this.newReview.pros.push(element.text)
-      })
-      review.cons.forEach(element => {
-        this.newReview.cons.push(element.text)
-      })
-      this.newReview.comment = review.comment
-      this.newReview.editReviewId = review.reviewId
     },
     filterLightboxList() {
       if (this.detail.componentMedia) {
