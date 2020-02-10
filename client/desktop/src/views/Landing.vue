@@ -295,9 +295,7 @@ export default {
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions')
         .then(response => {
           this.submissionData = response.data
-          console.log(response.data)
           this.submissionData.sort((a, b) => (new Date(a.updateDts) < new Date(b.updateDts) ? 1 : -1))
-          console.log(this.submissionData)
           this.isLoading = false
         }).catch(error => {
           this.errors.push(error)
