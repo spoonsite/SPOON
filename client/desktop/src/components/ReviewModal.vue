@@ -6,7 +6,11 @@
         <v-alert class="w-100" type="warning" :value="true" v-if="$store.state.branding.userInputWarning !== null"
           ><span v-html="$store.state.branding.userInputWarning"></span
         ></v-alert>
-        <v-alert class="w-100" type="info" :value="true" v-if="$store.state.branding.submissionFormWarning !== null"
+        <v-alert
+          class="w-100"
+          type="info"
+          :value="!autoApprove"
+          v-if="$store.state.branding.submissionFormWarning !== null"
           ><span v-html="$store.state.branding.submissionFormWarning"></span
         ></v-alert>
         <v-form v-model="reviewValid">
@@ -46,9 +50,16 @@
               disabled
             ></v-text-field>
 
-            <v-date-picker v-model="review.lastUsed" :allowed-dates="todaysDateFormatted" no-title reactive full-width>
+            <v-date-picker
+              v-model="review.lastUsed"
+              :allowed-dates="todaysDateFormatted"
+              color="primary"
+              no-title
+              reactive
+              full-width
+            >
               <v-spacer></v-spacer>
-              <v-btn text color="accent" @click="review.lastUsed = ''">Cancel</v-btn>
+              <v-btn text color="primary" @click="review.lastUsed = ''">Cancel</v-btn>
             </v-date-picker>
 
             <v-spacer style="height: 1em"></v-spacer>
@@ -65,7 +76,7 @@
 
             <v-select v-model="review.cons" :items="consSelectOptions" label="Cons" chips multiple></v-select>
 
-            <p>Comment: <span v-if="review.comment === ''" class="red--text">comment is required *</span></p>
+            <p>Comment*</p>
 
             <quill-editor
               style="background-color: white;"
@@ -73,6 +84,7 @@
               :rules="commentRules"
               required
             ></quill-editor>
+            <div v-if="review.comment === ''" class="red--text ml-1">A comment is required</div>
           </v-container>
           <v-card-actions>
             <v-spacer />
@@ -109,9 +121,13 @@ export default {
     this.prosSelectOptions = []
     this.consSelectOptions = []
     this.lookupTypes()
+    this.$http
+      .get(`/openstorefront/api/v1/service/application/configproperties/userreview.autoapprove`)
+      .then(response => (this.autoApprove = response.data.description))
   },
   data() {
     return {
+      autoApprove: false,
       timeSelectOptions: [],
       prosSelectOptions: [],
       consSelectOptions: [],

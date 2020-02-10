@@ -13,9 +13,17 @@
       <div v-else class="no-media"></div>
       <div class="detail-header">
         <div class="component-name">
-          <img v-if="detail.componentTypeIconUrl" :src="baseURL + detail.componentTypeIconUrl" width="40px">
-          <p class="headline">{{detail.name}}</p>
-          <star-rating class="pl-2" style="margin-top: -12px;" :rating="computeAverageRating(detail)" :read-only="true" :show-rating="false" :increment="0.01" :star-size="20"></star-rating>
+          <img v-if="detail.componentTypeIconUrl" :src="baseURL + detail.componentTypeIconUrl" width="40px" />
+          <p class="headline">{{ detail.name }}</p>
+          <star-rating
+            class="pl-2"
+            style="margin-top: -12px;"
+            :rating="computeAverageRating(detail)"
+            :read-only="true"
+            :show-rating="false"
+            :increment="0.01"
+            :star-size="20"
+          ></star-rating>
         </div>
         <div class="detail-header-body">
           <div class="detail-header-left">
@@ -52,7 +60,13 @@
             <div>
               <strong>Add a Rating:</strong>
               <p @click="writeReviewDialog = true">
-                <star-rating v-model="newReview.rating" :rating="newReview.rating" :read-only="false" :increment="1" :star-size="25"></star-rating>
+                <star-rating
+                  v-model="newReview.rating"
+                  :rating="newReview.rating"
+                  :read-only="false"
+                  :increment="1"
+                  :star-size="25"
+                ></star-rating>
               </p>
             </div>
             <div style="display: flex; flex-direction: column;">
@@ -90,6 +104,9 @@
       <v-card>
         <ModalTitle title="Submit Correction" @close="submitCorrectionDialog = false" />
         <v-card-text>
+          <v-alert class="w-100" type="warning" :value="true"
+            ><span v-html="$store.state.branding.userInputWarning"></span
+          ></v-alert>
           <v-form>
             <v-container>
               <p>Please include the section needing the correction (e.g. Contacts)</p>
@@ -131,7 +148,7 @@
         <v-card-text>
           <p>
             Your current entries can be found at
-            <a href="/openstorefront/UserTool.action?load=Submissions">User Tools > Submissions</a>:*
+            <router-link :to="{name:'Submissions'}">User Tools > Submissions</router-link>:*
           </p>
           <v-form>
             <v-container>
@@ -172,10 +189,13 @@
       <v-card>
         <ModalTitle title="Contact Vendor" @close="contactVendorDialog = false" />
         <v-card-text>
+          <v-alert class="w-100" type="warning" :value="true"
+            ><span v-html="$store.state.branding.userInputWarning"></span
+          ></v-alert>
           <p class="mb-0">From:</p>
           <v-text-field single-line disabled v-model="userEmail"> </v-text-field>
           <p class="mb-0">Message:</p>
-          <quill-editor v-model="vendorMessage"/>
+          <quill-editor v-model="vendorMessage" />
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -214,7 +234,10 @@
                   <tbody>
                     <tr v-for="attr in detail.attributes" :key="attr.typeDescription">
                       <td>{{ attr.typeDescription }}</td>
-                      <td>{{ attr.codeDescription }} {{ attr.unit }} <br/><strong v-if="attr.comment">Comment:</strong> {{ attr.comment }}</td>
+                      <td>
+                        {{ attr.codeDescription }} {{ attr.unit }} <br /><strong v-if="attr.comment">Comment:</strong>
+                        {{ attr.comment }}
+                      </td>
                     </tr>
                   </tbody>
                 </template>
@@ -434,19 +457,26 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-      <ReviewModal
-        v-model="writeReviewDialog"
-        @close="writeReviewDialog = false; getDetail(); isLoading = false"
-        :review="newReview"
-      >
-      </ReviewModal>
+        <ReviewModal
+          v-model="writeReviewDialog"
+          @close="
+            writeReviewDialog = false
+            getDetail()
+            isLoading = false
+          "
+          :review="newReview"
+        >
+        </ReviewModal>
 
-      <DeleteReviewModal
-        v-model="deleteReviewDialog"
-        @close="deleteReviewDialog = false; getDetail();"
-        :review="newReview"
-      >
-      </DeleteReviewModal>
+        <DeleteReviewModal
+          v-model="deleteReviewDialog"
+          @close="
+            deleteReviewDialog = false
+            getDetail()
+          "
+          :review="newReview"
+        >
+        </DeleteReviewModal>
 
         <v-dialog v-model="deleteReviewDialog" width="25em">
           <v-card>
@@ -471,42 +501,23 @@
         <v-expansion-panel>
           <v-expansion-panel-header><h2>Questions and Answers</h2></v-expansion-panel-header>
           <v-expansion-panel-content class="expansion-content">
-            <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
-            <Question
-              v-for="question in questions"
-              :key="question.question"
-              @questionDeleted="deleteQuestion(question)"
-              :question="question"
-            ></Question>
-            <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
+            <div class="text-center ma-12" v-if="questionLoading">
+              <v-progress-circular color="primary" :size="60" :width="6" indeterminate></v-progress-circular>
+            </div>
+            <div v-else>
+              <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
+              <Question
+                v-for="question in questions"
+                :key="question.question"
+                @questionDeleted="deleteQuestion(question)"
+                :question="question"
+              ></Question>
+              <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
+            </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-dialog v-model="askQuestionDialog" max-width="75em">
-          <v-card>
-            <ModalTitle title="Ask a Question" @close="askQuestionDialog = false" />
-            <v-card-text>
-              <v-alert class="w-100" type="warning" :value="true"
-                ><span v-html="$store.state.branding.userInputWarning"></span
-              ></v-alert>
-              <v-alert class="w-100" type="info" :value="true"
-                ><span v-html="$store.state.branding.submissionFormWarning"></span
-              ></v-alert>
-              <quill-editor style="background-color: white;" v-model="newQuestion"></quill-editor>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer />
-              <v-btn color="success" :disabled="newQuestion === ''" @click="submitQuestion()">Submit</v-btn>
-              <v-btn
-                @click="
-                  askQuestionDialog = false
-                  newQuestion = ''
-                "
-                >Cancel</v-btn
-              >
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        <QuestionModal v-model="askQuestionDialog" title="Ask a Question" @close="submitQuestion($event)" />
 
         <v-expansion-panel>
           <v-expansion-panel-header><h2>Contacts</h2></v-expansion-panel-header>
@@ -554,6 +565,7 @@ import Question from '@/components/Question'
 import ModalTitle from '@/components/ModalTitle'
 import ReviewModal from '@/components/ReviewModal'
 import DeleteReviewModal from '@/components/DeleteReviewModal'
+import QuestionModal from '@/components/QuestionModal'
 
 export default {
   name: 'entry-detail-page',
@@ -563,7 +575,8 @@ export default {
     Question,
     ModalTitle,
     ReviewModal,
-    DeleteReviewModal
+    DeleteReviewModal,
+    QuestionModal
   },
   mounted() {
     if (this.$route.params.id) {
@@ -583,6 +596,10 @@ export default {
       )
     }
 
+    this.$http
+      .get(`/openstorefront/api/v1/service/application/configproperties/userreview.autoapprove`)
+      .then(response => (this.autoApprove = response.data.description === 'true'))
+
     this.getDetail()
     this.getQuestions()
     this.getTags()
@@ -591,8 +608,10 @@ export default {
     return {
       baseURL: '/openstorefront/',
       isLoading: true,
+      autoApprove: false,
+      // Questions
+      questionLoading: false,
       askQuestionDialog: false,
-      newQuestion: '',
       writeReviewDialog: false,
       deleteReviewDialog: false,
       submitCorrectionDialog: false,
@@ -801,10 +820,11 @@ export default {
         })
     },
     getQuestions() {
-      this.isLoading = true
+      this.questionLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions`)
         .then(response => {
           this.questions = response.data
+          this.questionLoading = false
         })
         .catch(e => this.$toasted.error('An error occurred retrieving component questions'))
     },
@@ -978,22 +998,23 @@ export default {
         })
         .catch(e => this.$toasted.error('There was a problem submitting this tag.'))
     },
-    submitQuestion() {
-      let data = {
-        dataSensitivity: '',
-        organization: this.$store.state.currentUser.organization,
-        question: this.newQuestion,
-        securityMarkingType: '',
-        userTypeCode: this.$store.state.currentUser.userTypeCode
+    submitQuestion(question) {
+      if (question) {
+        let data = {
+          dataSensitivity: '',
+          organization: this.$store.state.currentUser.organization,
+          question: question,
+          securityMarkingType: '',
+          userTypeCode: this.$store.state.currentUser.userTypeCode
+        }
+        this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/questions`, data)
+          .then(response => {
+            this.getQuestions()
+            this.$toasted.success('Question submitted.')
+          })
+          .catch(e => this.$toasted.error('There was a problem submitting the question.'))
       }
-      this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/questions`, data)
-        .then(response => {
-          this.questions.push(response.data)
-          this.newQuestion = ''
-          this.askQuestionDialog = false
-          this.$toasted.show('Question submitted.')
-        })
-        .catch(e => this.$toasted.error('There was a problem submitting the question.'))
+      this.askQuestionDialog = false
     },
     submitReview() {
       this.isLoading = true

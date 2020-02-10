@@ -256,7 +256,7 @@ export default {
           permissions: []
         },
         {
-          href: '/openstorefront/UserTool.action',
+          link: '/submissions',
           icon: 'list',
           name: 'Submissions',
           hasChildren: false,
