@@ -453,10 +453,10 @@ export default {
         }
       )
     }
-    this.$http.get('openstorefront/api/v1/resource/organizations').then(response => {
+    this.$http.get('/openstorefront/api/v1/resource/organizations').then(response => {
       this.organizationList = response.data.data
     })
-    this.$http.get('openstorefront/api/v1/resource/lookuptypes/SecurityMarkingType').then(response => {
+    this.$http.get('/openstorefront/api/v1/resource/lookuptypes/SecurityMarkingType').then(response => {
       this.securityMarkingList = response.data
     })
     this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ResourceType').then(response => {
@@ -625,7 +625,7 @@ export default {
         return
       }
       this.$http
-        .get(`openstorefront/api/v1/resource/attributes/required?componentType=${this.entryType}`)
+        .get(`/openstorefront/api/v1/resource/attributes/required?componentType=${this.entryType}`)
         .then(response => {
           // TODO: Add check for hideOnSubmission
           this.attributes.required = response.data
@@ -652,7 +652,7 @@ export default {
           })
         })
       this.$http
-        .get(`openstorefront/api/v1/resource/attributes/optional?componentType=${this.entryType}`)
+        .get(`/openstorefront/api/v1/resource/attributes/optional?componentType=${this.entryType}`)
         .then(response => {
           this.attributes.suggested = response.data.filter(e => e.attributeType !== 'MISSINGATTRIBUTE')
           this.attributes.suggested.forEach(e => {
