@@ -312,6 +312,15 @@ public class UserSubmissionResource
 		// Note buffer size is arbirtary
 		byte[] buffer = new byte[1024];
 		File uploadedFile = new File(fileLocation);
+		try {
+			uploadedFile.createNewFile();
+		} catch (IOException ex) {
+			String errorMessage = "Error while trying to create new file " + fileLocation + "\n" + ex.getMessage();
+			LOG.log(Level.SEVERE, errorMessage);
+			restErrorModel.getErrors().put("message", errorMessage);
+			restErrorModel.setSuccess(false);
+			return restErrorModel;
+		}
 
 		OutputStream out;
 		try {
@@ -359,10 +368,13 @@ public class UserSubmissionResource
 			LOG.log(Level.SEVERE, errorMessage);
 			restErrorModel.getErrors().put("message", errorMessage);
 			restErrorModel.setSuccess(false);
-
 		}
 
-		if (totalReads >= maxSize) {
+		if (restErrorModel.getSuccess()) {
+			if (!uploadedFile.delete()) {
+				LOG.log(Level.SEVERE, "Could not delete file {0}", fileLocation);
+			}
+		} else if (totalReads >= maxSize) {
 			if (!uploadedFile.delete()) {
 				LOG.log(Level.SEVERE, "Could not delete file {0}", fileLocation);
 			}
