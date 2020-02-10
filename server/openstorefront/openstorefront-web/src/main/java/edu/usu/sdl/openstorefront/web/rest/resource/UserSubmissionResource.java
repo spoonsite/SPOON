@@ -274,9 +274,11 @@ public class UserSubmissionResource
 		return restErrorModel;
 	}
 
-	private RestErrorModel writeStreamToFile(InputStream stream, String fileLocation)
+	private RestErrorModel writeStreamToFile(InputStream in, String fileLocation)
 	{
 		RestErrorModel restErrorModel = new RestErrorModel();
+		
+		// Get the maximum allowed file size. Note: value stored in max.post.size is in MegaBytes. 
 		String maxSizeString = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_POST_SIZE);
 		int maxSize;
 		if (maxSizeString != null) {
@@ -299,65 +301,31 @@ public class UserSubmissionResource
 		final int mBtoBytesConversionFactor = 1000000;
 		maxSize *= mBtoBytesConversionFactor;
 
-		int bytesReadIntoBuffer = -1;
+		// Prepare the read buffer and associated counters
+		int bytesReadIntoBuffer;
 		int totalReads = 0;
 		// Note buffer size is arbirtary
 		byte[] buffer = new byte[1024];
+		
+		// Prepare destination file
 		File uploadedFile = new File(fileLocation);
-		if (uploadedFile.getParentFile() != null)
-		{
+		if (uploadedFile.getParentFile() != null) {
 			uploadedFile.getParentFile().mkdirs();
 		}
-		
+
 		try {
 			uploadedFile.createNewFile();
-		} catch (IOException ex) {
-			String errorMessage = "Error while trying to create new file " + fileLocation + "\n" + ex.getMessage();
-			LOG.log(Level.SEVERE, errorMessage);
-			restErrorModel.getErrors().put("message", errorMessage);
-			restErrorModel.setSuccess(false);
-			return restErrorModel;
-		}
-
-		OutputStream out;
-		try {
-			out = new FileOutputStream(fileLocation);
-			try {
-				bytesReadIntoBuffer = stream.read(buffer);
-			} catch (IOException ex) {
-				String errorMessage = "Error on initial read of stream\n" + ex.getMessage();
-				LOG.log(Level.SEVERE, errorMessage);
-				restErrorModel.getErrors().put("message", errorMessage);
-				restErrorModel.setSuccess(false);
-			}
-			while (bytesReadIntoBuffer != -1) {
-				try {
+			// Store output of stream read and check to see if read returned an error code
+			try (FileOutputStream out = new FileOutputStream(fileLocation)) {
+				// Store output of stream read and check to see if read returned an error code
+				while ((bytesReadIntoBuffer = in.read(buffer)) != -1) {
+					// No error code, so bytesReadIntoBuffer contains valid data
 					out.write(buffer, 0, bytesReadIntoBuffer);
-				} catch (IOException ex) {
-					String errorMessage = "Error when writing data from buffer into file. Total Read Bytes: " + totalReads + "\nBuffer:" + Arrays.toString(buffer) + "\n" + ex.getMessage();
-					LOG.log(Level.SEVERE, errorMessage);
-					restErrorModel.getErrors().put("message", errorMessage);
-					restErrorModel.setSuccess(false);
-				}
-				totalReads += bytesReadIntoBuffer;
-				if (totalReads >= maxSize) {
-					break;
-				}
-				try {
-					bytesReadIntoBuffer = stream.read(buffer);
-				} catch (IOException ex) {
-					String errorMessage = "Error reading stream. Total Read Bytes: " + totalReads + "\n" + ex.getMessage();
-					LOG.log(Level.SEVERE, errorMessage);
-					restErrorModel.getErrors().put("message", errorMessage);
-					restErrorModel.setSuccess(false);
-				}
-				try {
+					totalReads += bytesReadIntoBuffer;
+					if (totalReads >= maxSize) {
+						break;
+					}
 					out.flush();
-				} catch (IOException ex) {
-					String errorMessage = "Error flushing FileOutputStream.\n" + ex.getMessage();
-					LOG.log(Level.SEVERE, errorMessage);
-					restErrorModel.getErrors().put("message", errorMessage);
-					restErrorModel.setSuccess(false);
 				}
 			}
 		} catch (FileNotFoundException ex) {
@@ -365,8 +333,14 @@ public class UserSubmissionResource
 			LOG.log(Level.SEVERE, errorMessage);
 			restErrorModel.getErrors().put("message", errorMessage);
 			restErrorModel.setSuccess(false);
+		} catch (IOException ex) {
+			String errorMessage = "I/O error on file stream.\n" + ex.getMessage();
+			LOG.log(Level.SEVERE, errorMessage);
+			restErrorModel.getErrors().put("message", errorMessage);
+			restErrorModel.setSuccess(false);
 		}
 
+		// Error checking and cleanup
 		if (restErrorModel.getSuccess()) {
 			if (!uploadedFile.delete()) {
 				LOG.log(Level.SEVERE, "Could not delete file {0}", fileLocation);
