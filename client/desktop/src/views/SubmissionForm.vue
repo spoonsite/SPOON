@@ -613,10 +613,9 @@ export default {
           componentType: this.entryType,
           organization: this.organization
         },
-        media: this.images,
         attributes: newAttributes,
-        localFiles: this.resources.localFiles,
-        urls: this.resources.urls,
+        media: this.images,
+        resources: this.resources.localFiles.concat(this.resources.links),
         tags: this.tags,
         contacts: [this.primaryPOC].concat(this.contacts)
       }
@@ -628,10 +627,8 @@ export default {
       this.$http
         .get(`openstorefront/api/v1/resource/attributes/required?componentType=${this.entryType}`)
         .then(response => {
-          console.log('required attributes response', response)
           // TODO: Add check for hideOnSubmission
           this.attributes.required = response.data
-          // console.log(this.attributes.required)
           this.attributes.required.forEach(e => {
             // Set up values for required codes
             if (e.allowMultipleFlg && e.allowUserGeneratedCodes) {
@@ -699,7 +696,6 @@ export default {
           // }
         })
         .then(response => {
-          console.log('submit response', response)
           if (response.data && response.data.success === false) {
             this.errors = response.data.errors.entry
           }
