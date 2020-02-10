@@ -41,12 +41,14 @@ import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -228,18 +230,18 @@ public class UserSubmissionResource
 		String extension = FilenameUtils.getExtension(fileName);
 
 		if (extension.equals("zip")) {
-			try {
-				restErrorModel = writeStreamToFile(inStream, filePath);
-				if (!restErrorModel.getSuccess()) {
-					return restErrorModel;
-				}
-			} catch (IOException ex) {
-				LOG.log(Level.FINE, "Unable to read file: " + fileName, ex);
-				restErrorModel.getErrors().put("message", "Unable to read file.");
-				restErrorModel.getErrors().put("potentialResolution", "Make sure the file is in the proper format.");
-				restErrorModel.setSuccess(false);
+//			try {
+			restErrorModel = writeStreamToFile(inStream, filePath);
+			if (!restErrorModel.getSuccess()) {
 				return restErrorModel;
 			}
+//			} catch (IOException ex) {
+//				LOG.log(Level.FINE, "Unable to read file: " + fileName, ex);
+//				restErrorModel.getErrors().put("message", "Unable to read file.");
+//				restErrorModel.getErrors().put("potentialResolution", "Make sure the file is in the proper format.");
+//				restErrorModel.setSuccess(false);
+//				return restErrorModel;
+//			}
 		} else {
 			restErrorModel.getErrors().put("message", "Uploaded file was not a zip file.");
 			restErrorModel.getErrors().put("potentialResolution", "Ensure filename ends with .zip");
@@ -261,27 +263,26 @@ public class UserSubmissionResource
 			senderName = "";
 		}
 
-		if (!recipientAddress.isEmpty() && !senderAddress.isEmpty() && !senderName.isEmpty()) {
-			Email email = MailManager.newEmail();
-			email.setSubject("SpoonSite bulk Upload");
-			email.setText("There is a new bulk upload to be reviewed at " + filePath);
-			email.addRecipient("Admin", recipientAddress, Message.RecipientType.TO);
-			email.setFromAddress(senderName, senderAddress);
-			MailManager.send(email, true);
-		} else {
-			LOG.log(Level.WARNING, "Email doesn't have an email correctly defined.");
-			restErrorModel.getErrors().put("message", "Could not send notification email.");
-			restErrorModel.getErrors().put("potentialResolution", "Set feedback email, mail from addresss, and mail from name");
-			restErrorModel.setSuccess(false);
-			return restErrorModel;
-		}
-
+//		if (!recipientAddress.isEmpty() && !senderAddress.isEmpty() && !senderName.isEmpty()) {
+//			Email email = MailManager.newEmail();
+//			email.setSubject("SpoonSite bulk Upload");
+//			email.setText("There is a new bulk upload to be reviewed at " + filePath);
+//			email.addRecipient("Admin", recipientAddress, Message.RecipientType.TO);
+//			email.setFromAddress(senderName, senderAddress);
+//			MailManager.send(email, true);
+//		} else {
+//			LOG.log(Level.WARNING, "Email doesn't have an email correctly defined.");
+//			restErrorModel.getErrors().put("message", "Could not send notification email.");
+//			restErrorModel.getErrors().put("potentialResolution", "Set feedback email, mail from addresss, and mail from name");
+//			restErrorModel.setSuccess(false);
+//			return restErrorModel;
+//		}
 		restErrorModel.getErrors().put("message", "File uploaded sucessfully.");
 		restErrorModel.setSuccess(true);
 		return restErrorModel;
 	}
 
-	private RestErrorModel writeStreamToFile(InputStream stream, String fileLocation) throws IOException
+	private RestErrorModel writeStreamToFile(InputStream stream, String fileLocation)
 	{
 		RestErrorModel restErrorModel = new RestErrorModel();
 		String maxSizeString = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_POST_SIZE);
@@ -306,21 +307,59 @@ public class UserSubmissionResource
 		final int mBtoBytesConversionFactor = 1000000;
 		maxSize *= mBtoBytesConversionFactor;
 
-		int bytesReadIntoBuffer;
+		int bytesReadIntoBuffer = -1;
 		int totalReads = 0;
 		// Note buffer size is arbirtary
 		byte[] buffer = new byte[1024];
 		File uploadedFile = new File(fileLocation);
 
-		try (OutputStream out = new FileOutputStream(uploadedFile)) {
-			while ((bytesReadIntoBuffer = stream.read(buffer)) != -1) {
-				out.write(buffer, 0, bytesReadIntoBuffer);
+		OutputStream out;
+		try {
+			out = new FileOutputStream(uploadedFile);
+			try {
+				bytesReadIntoBuffer = stream.read(buffer);
+			} catch (IOException ex) {
+				String errorMessage = "Error on initial read of stream\n" + ex.getMessage();
+				LOG.log(Level.SEVERE, errorMessage);
+				restErrorModel.getErrors().put("message", errorMessage);
+				restErrorModel.setSuccess(false);
+			}
+			while (bytesReadIntoBuffer != -1) {
+				try {
+					out.write(buffer, 0, bytesReadIntoBuffer);
+				} catch (IOException ex) {
+					String errorMessage = "Error when writing data from buffer into file. Total Read Bytes: " + totalReads + "\nBuffer:" + Arrays.toString(buffer) + "\n" + ex.getMessage();
+					LOG.log(Level.SEVERE, errorMessage);
+					restErrorModel.getErrors().put("message", errorMessage);
+					restErrorModel.setSuccess(false);
+				}
 				totalReads += bytesReadIntoBuffer;
 				if (totalReads >= maxSize) {
 					break;
 				}
+				try {
+					bytesReadIntoBuffer = stream.read(buffer);
+				} catch (IOException ex) {
+					String errorMessage = "Error reading stream. Total Read Bytes: " + totalReads + "\n" + ex.getMessage();
+					LOG.log(Level.SEVERE, errorMessage);
+					restErrorModel.getErrors().put("message", errorMessage);
+					restErrorModel.setSuccess(false);
+				}
+				try {
+					out.flush();
+				} catch (IOException ex) {
+					String errorMessage = "Error flushing FileOutputStream.\n" + ex.getMessage();
+					LOG.log(Level.SEVERE, errorMessage);
+					restErrorModel.getErrors().put("message", errorMessage);
+					restErrorModel.setSuccess(false);
+				}
 			}
-			out.flush();
+		} catch (FileNotFoundException ex) {
+			String errorMessage = "Could not create FileOutputStream. File not Found.\n" + ex.getMessage();
+			LOG.log(Level.SEVERE, errorMessage);
+			restErrorModel.getErrors().put("message", errorMessage);
+			restErrorModel.setSuccess(false);
+
 		}
 
 		if (totalReads >= maxSize) {
@@ -328,6 +367,12 @@ public class UserSubmissionResource
 				LOG.log(Level.SEVERE, "Could not delete file {0}", fileLocation);
 			}
 			restErrorModel.getErrors().put("message", "File was too large to upload.");
+			restErrorModel.setSuccess(false);
+		} else if (totalReads == 0) {
+			if (!uploadedFile.delete()) {
+				LOG.log(Level.SEVERE, "Could not delete file {0}", fileLocation);
+			}
+			restErrorModel.getErrors().put("message", "File was empty!");
 			restErrorModel.setSuccess(false);
 		} else {
 			restErrorModel.setSuccess(true);
