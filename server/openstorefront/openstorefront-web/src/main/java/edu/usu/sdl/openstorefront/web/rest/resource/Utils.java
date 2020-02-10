@@ -24,4 +24,19 @@ package edu.usu.sdl.openstorefront.web.rest.resource;
 public class Utils
 {
 	
+	/**
+	 * If the input stream and associated source file name represent a ZIP file, then save the file to disk with a unique filename.
+	 * @param inStream InputStream of the file to be saved
+	 * @param sourceFileName String of the original file name. Note: must end in ".zip"
+	 * @return A RestErrorModel, suitable for use in a Response, containing a message and success state. 
+	 */
+	/**
+	 * Writes an InputStream to disk in the specified location. 
+	 * Ensures that the generated file is not larger that the value stored in max.post.size 
+	 * 
+	 * Example: writeStreamToFile(inStream, filePath).getSuccess() // True if file saved successfully
+	 * @param in InputStream of the file to be saved
+	 * @param fileLocation String of the path and file name for the new file
+	 * @return A RestErrorModel, suitable for use in a Response, containing a message and success state. 
+	 */
 }
