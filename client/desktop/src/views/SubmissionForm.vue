@@ -401,10 +401,10 @@
           </div>
         </div>
       </fieldset>
-      <v-alert type="error" v-if="!isFormValid" prominent outlined style="display: inline-block;">
+      <v-alert type="error" v-if="!isFormValid" prominent outlined>
         Form validation errors. Please check the form.
       </v-alert>
-      <v-alert type="error" v-if="errors.length > 0" colored-border border="left" elevation="2" style="display: inline-block;">
+      <v-alert type="error" v-if="errors.length > 0" colored-border border="left" elevation="2">
         <ul>
           <li v-for="error in errors" :key="error.key"><span class="bold">{{ error.key }}:</span>  {{ error.value }}</li>
         </ul>
