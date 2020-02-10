@@ -800,9 +800,8 @@ export default {
 
           that.searchQueryIsDirty = false
         })
-        .catch(err => {
-          /* eslint no-console: ["error", { allow: ["error"] }] */
-          console.error(err)
+        .catch(e => {
+          this.$toasted.error('An error occurred retrieving search results')
           that.searchQueryIsDirty = false
         })
         .finally(() => {

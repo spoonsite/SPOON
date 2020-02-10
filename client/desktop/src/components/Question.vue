@@ -183,7 +183,7 @@ export default {
             this.checkAnswers()
             this.loading = false
           })
-          .catch(e => console.error(e))
+          .catch(e => this.$toasted.error('An error occurred retrieving answers'))
       }
     },
     submitAnswer(qid) {

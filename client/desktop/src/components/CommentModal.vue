@@ -195,7 +195,7 @@ export default {
           this.comments = response.data
           this.isLoading = false
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving comments'))
       var perm = ['WORKFLOW-ADMIN-SUBMISSION-COMMENTS']
       this.permission = this.checkPermissions(perm)
     },

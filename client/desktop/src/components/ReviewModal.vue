@@ -164,7 +164,7 @@ export default {
             })
           }
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving component use times'))
 
       this.$http
         .get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
@@ -176,7 +176,7 @@ export default {
             })
           }
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving component pros'))
 
       this.$http
         .get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
@@ -188,7 +188,7 @@ export default {
             })
           }
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving component cons'))
     },
     submitReview() {
       let data = {

@@ -305,9 +305,9 @@ export default {
         .then(response => {
           this.isLoading = false
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
-        }).catch(error => {
+        }).catch(e => {
           this.isLoading = false
-          console.error(error)
+          this.$toasted.error('An error occurred retrieving submissions')
         })
     },
     viewComponent(componentId) {

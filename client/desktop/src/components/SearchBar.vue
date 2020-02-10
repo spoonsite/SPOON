@@ -96,7 +96,7 @@ export default {
           .then(response => {
             this.searchSuggestions = response.data
           })
-          .catch(e => console.error(e))
+          .catch(e => this.$toasted.error('An error occurred retrieving search suggestions'))
       }
     },
     saveSearchOptions() {

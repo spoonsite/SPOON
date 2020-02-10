@@ -785,7 +785,7 @@ export default {
           this.answers[qid] = response.data
           this.isLoading = false
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving answers to questions'))
     },
     getDetail() {
       this.isLoading = true
@@ -793,7 +793,7 @@ export default {
         .then(response => {
           this.detail = response.data
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving the component'))
         .finally(() => {
           this.computeHasImage()
           this.filterLightboxList()
@@ -806,7 +806,7 @@ export default {
         .then(response => {
           this.questions = response.data
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving component questions'))
     },
     getTags() {
       this.isLoading = true
@@ -817,7 +817,7 @@ export default {
             this.allTags.push(tags[i].text)
           }
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving the tag list'))
     },
     getRelatedTags() {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/relatedtags`)
@@ -828,7 +828,7 @@ export default {
             this.relatedTags.push(tags[i].text)
           }
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving component tags'))
     },
     lookupTypes() {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
@@ -840,7 +840,7 @@ export default {
             })
           }
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving component use lengths'))
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
         .then(response => {
@@ -851,7 +851,7 @@ export default {
             })
           }
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving review pros'))
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
         .then(response => {
@@ -862,7 +862,7 @@ export default {
             })
           }
         })
-        .catch(e => console.error(e))
+        .catch(e => this.$toasted.error('An error occurred retrieving review cons'))
     },
     showMediaDetails(item) {
       this.currentMediaDetailItem = item
