@@ -230,18 +230,10 @@ public class UserSubmissionResource
 		String extension = FilenameUtils.getExtension(fileName);
 
 		if (extension.equals("zip")) {
-//			try {
 			restErrorModel = writeStreamToFile(inStream, filePath);
 			if (!restErrorModel.getSuccess()) {
 				return restErrorModel;
 			}
-//			} catch (IOException ex) {
-//				LOG.log(Level.FINE, "Unable to read file: " + fileName, ex);
-//				restErrorModel.getErrors().put("message", "Unable to read file.");
-//				restErrorModel.getErrors().put("potentialResolution", "Make sure the file is in the proper format.");
-//				restErrorModel.setSuccess(false);
-//				return restErrorModel;
-//			}
 		} else {
 			restErrorModel.getErrors().put("message", "Uploaded file was not a zip file.");
 			restErrorModel.getErrors().put("potentialResolution", "Ensure filename ends with .zip");
@@ -263,20 +255,20 @@ public class UserSubmissionResource
 			senderName = "";
 		}
 
-//		if (!recipientAddress.isEmpty() && !senderAddress.isEmpty() && !senderName.isEmpty()) {
-//			Email email = MailManager.newEmail();
-//			email.setSubject("SpoonSite bulk Upload");
-//			email.setText("There is a new bulk upload to be reviewed at " + filePath);
-//			email.addRecipient("Admin", recipientAddress, Message.RecipientType.TO);
-//			email.setFromAddress(senderName, senderAddress);
-//			MailManager.send(email, true);
-//		} else {
-//			LOG.log(Level.WARNING, "Email doesn't have an email correctly defined.");
-//			restErrorModel.getErrors().put("message", "Could not send notification email.");
-//			restErrorModel.getErrors().put("potentialResolution", "Set feedback email, mail from addresss, and mail from name");
-//			restErrorModel.setSuccess(false);
-//			return restErrorModel;
-//		}
+		if (!recipientAddress.isEmpty() && !senderAddress.isEmpty() && !senderName.isEmpty()) {
+			Email email = MailManager.newEmail();
+			email.setSubject("SpoonSite bulk Upload");
+			email.setText("There is a new bulk upload to be reviewed at " + filePath);
+			email.addRecipient("Admin", recipientAddress, Message.RecipientType.TO);
+			email.setFromAddress(senderName, senderAddress);
+			MailManager.send(email, true);
+		} else {
+			LOG.log(Level.WARNING, "Email doesn't have an email correctly defined.");
+			restErrorModel.getErrors().put("message", "Could not send notification email.");
+			restErrorModel.getErrors().put("potentialResolution", "Set feedback email, mail from addresss, and mail from name");
+			restErrorModel.setSuccess(false);
+			return restErrorModel;
+		}
 		restErrorModel.getErrors().put("message", "File uploaded sucessfully.");
 		restErrorModel.setSuccess(true);
 		return restErrorModel;
@@ -312,6 +304,11 @@ public class UserSubmissionResource
 		// Note buffer size is arbirtary
 		byte[] buffer = new byte[1024];
 		File uploadedFile = new File(fileLocation);
+		if (uploadedFile.getParentFile() != null)
+		{
+			uploadedFile.getParentFile().mkdirs();
+		}
+		
 		try {
 			uploadedFile.createNewFile();
 		} catch (IOException ex) {
@@ -324,7 +321,7 @@ public class UserSubmissionResource
 
 		OutputStream out;
 		try {
-			out = new FileOutputStream(uploadedFile);
+			out = new FileOutputStream(fileLocation);
 			try {
 				bytesReadIntoBuffer = stream.read(buffer);
 			} catch (IOException ex) {
