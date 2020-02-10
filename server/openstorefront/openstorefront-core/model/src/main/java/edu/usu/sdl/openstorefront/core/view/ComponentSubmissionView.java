@@ -55,8 +55,10 @@ public class ComponentSubmissionView
 		super.setUpdateDts(submissionView.getUpdateDts());
 		super.setSubmissionOriginalComponentId(submissionView.getSubmissionOriginalComponentId());
 		super.setEvaluationsAttached(submissionView.getEvaluationsAttached());
-        this.workPlanID = workPlanId;
-        this.stepId = stepId;
+		if(workPlanId != null && stepId != null){
+			this.workPlanID = workPlanId;
+			this.stepId = stepId;
+		}
     }
 
 

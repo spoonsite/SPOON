@@ -7,7 +7,7 @@
           <span style="float: right" v-if="$store.state.currentUser.username === question.createUser">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
-                <v-btn v-on="on" small icon @click="openEditQuestionDialog()">
+                <v-btn v-on="on" small icon @click="editQuestionDialog = true">
                   <v-icon class="icon">mdi-pencil</v-icon></v-btn
                 >
               </template>
@@ -60,6 +60,7 @@
               v-for="answer in answers"
               :answer="answer"
               @answerDeleted="deleteAnswer"
+              @getAnswers="getAnswers($event.answer)"
               :key="answer.responseId"
             ></Answer>
           </div>
@@ -67,32 +68,20 @@
       </div>
     </div>
 
-    <v-dialog v-model="answerQuestionDialog" max-width="75em">
-      <v-card>
-        <ModalTitle title="Answer a Question" @close="answerQuestionDialog = false" />
-        <v-card-text>
-          <v-alert class="w-100" type="warning" :value="true"
-            ><span v-html="$store.state.branding.userInputWarning"></span
-          ></v-alert>
-          <v-alert class="w-100" type="info" :value="true"
-            >All answers need admin approval before being made public.</v-alert
-          >
-          <div class="pt-2" v-html="question.question"></div>
-          <quill-editor style="background-color: white;" v-model="newAnswer" />
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="success" @click="submitAnswer(question.questionId)">Submit</v-btn>
-          <v-btn
-            @click="
-              answerQuestionDialog = false
-              newAnswer = ''
-            "
-            >Cancel</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <QuestionModal
+      v-model="editQuestionDialog"
+      title="Edit a Question"
+      :editQuestion="question.question"
+      @close="editQuestion($event)"
+    />
+
+    <AnswerModal
+      v-model="answerQuestionDialog"
+      @close="submitAnswer($event)"
+      title="Answer a Question"
+      :question="question.question"
+      :answerProp="question"
+    />
 
     <v-dialog v-model="deleteQuestionDialog" max-width="25em">
       <v-card>
@@ -107,40 +96,23 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <v-dialog v-model="editQuestionDialog" max-width="75em">
-      <v-card>
-        <ModalTitle title="Edit a Question" @close="editQuestionDialog = false" />
-        <v-card-text>
-          <v-alert class="w-100" type="warning" :value="true"
-            ><span v-html="$store.state.branding.userInputWarning"></span
-          ></v-alert>
-          <v-alert class="w-100" type="info" :value="true"
-            >All questions need admin approval before being made public.</v-alert
-          >
-          <quill-editor style="background-color: white;" v-model="newQuestion"></quill-editor>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="success" @click="editQuestion(question.questionId)">Submit</v-btn>
-          <v-btn @click="editQuestionDialog = false">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
 <script>
-import _ from 'lodash'
 import Answer from '@/components/Answer'
 import ModalTitle from '@/components/ModalTitle'
+import QuestionModal from '@/components/QuestionModal'
+import AnswerModal from '@/components/AnswerModal'
 
 export default {
   name: 'Question',
   props: ['question'],
   components: {
     Answer,
-    ModalTitle
+    ModalTitle,
+    QuestionModal,
+    AnswerModal
   },
   data() {
     return {
@@ -152,7 +124,6 @@ export default {
       editQuestionDialog: false,
       newAnswer: '',
       noAnswers: false,
-      newQuestion: '',
       errors: [],
       loading: false
     }
@@ -175,42 +146,41 @@ export default {
       }
     },
     getAnswers(qid) {
-      if (_.isEmpty(this.answers)) {
-        this.loading = true
-        this.$http
-          .get(`/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}/responses`)
-          .then(response => {
-            this.answers = response.data
-            this.checkAnswers()
-            this.loading = false
-          })
-          .catch(e => this.errors.push(e))
-      }
-    },
-    submitAnswer(qid) {
-      let data = {
-        dataSensitivity: '',
-        organization: this.$store.state.currentUser.organization,
-        questionId: qid,
-        response: this.newAnswer,
-        securityMarkingType: '',
-        userTypeCode: this.$store.state.currentUser.userTypeCode
-      }
+      this.loading = true
       this.$http
-        .post(
-          `/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}/responses`,
-          data
-        )
+        .get(`/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}/responses`)
         .then(response => {
-          // answer created
-          this.$toasted.show('Answer submitted.')
-          this.answers.push(response.data)
-          this.newAnswer = ''
-          this.noAnswers = false
-          this.showAnswers = true
-          this.answerQuestionDialog = false
+          this.answers = response.data
+          this.checkAnswers()
+          this.loading = false
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the answer.'))
+        .catch(e => this.errors.push(e))
+    },
+    submitAnswer(question) {
+      if (question) {
+        let data = {
+          dataSensitivity: '',
+          organization: this.$store.state.currentUser.organization,
+          questionId: question.questionId,
+          response: question.answer,
+          securityMarkingType: '',
+          userTypeCode: this.$store.state.currentUser.userTypeCode
+        }
+        this.$http
+          .post(
+            `/openstorefront/api/v1/resource/components/${question.componentId}/questions/${question.questionId}/responses`,
+            data
+          )
+          .then(response => {
+            this.$toasted.success('Answer submitted')
+            this.getAnswers(question.questionId)
+            this.showAnswers = true
+            this.answerQuestionDialog = false
+          })
+          .catch(e => this.$toasted.error('There was a problem submitting the answer.'))
+      } else {
+        this.answerQuestionDialog = false
+      }
     },
     deleteQuestion(qid) {
       this.$http
@@ -219,31 +189,36 @@ export default {
         )
         .then(response => {
           this.deleteQuestionDialog = false
-          this.$toasted.show('Question deleted.')
-          // this.$emit('questionDeleted', this.question)
+          this.$toasted.success('Question deleted.')
           this.$emit('questionDeleted')
         })
         .catch(e => this.$toasted.error('There was a problem deleting the question.'))
     },
-    editQuestion(qid) {
-      let data = {
-        dataSensitivity: '',
-        organization: this.$store.state.currentUser.organization,
-        question: this.newQuestion,
-        securityMarkingType: '',
-        userTypeCode: this.$store.state.currentUser.userTypeCode
+    editQuestion(question) {
+      if (question) {
+        let data = {
+          dataSensitivity: '',
+          organization: this.$store.state.currentUser.organization,
+          question: question,
+          securityMarkingType: '',
+          userTypeCode: this.$store.state.currentUser.userTypeCode
+        }
+        this.$http
+          .put(
+            `/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${this.question.questionId}`,
+            data
+          )
+          .then(response => {
+            this.question.question = response.data.question
+            this.question.updateDts = new Date() // the date is not sent back in the response
+            this.question.activeStatus = response.data.activeStatus
+            this.$toasted.success('Edited question submitted.')
+            this.editQuestionDialog = false
+          })
+          .catch(e => this.$toasted.error('There was a problem submitting the edit.'))
+      } else {
+        this.editQuestionDialog = false
       }
-      this.$http
-        .put(`/openstorefront/api/v1/resource/components/${this.question.componentId}/questions/${qid}`, data)
-        .then(response => {
-          this.question.question = response.data.question
-          this.question.updateDts = new Date() // the date is not sent back in the response
-          this.question.activeStatus = response.data.activeStatus
-          this.newQuestion = ''
-          this.$toasted.show('Edited question submitted.')
-          this.editQuestionDialog = false
-        })
-        .catch(e => this.$toasted.error('There was a problem submitting the edit.'))
     },
     deleteAnswer(answer) {
       this.answers = this.answers.filter(function(el) {
@@ -251,10 +226,6 @@ export default {
       })
       // check if no answers
       this.checkAnswers()
-    },
-    openEditQuestionDialog() {
-      this.newQuestion = this.question.question
-      this.editQuestionDialog = true
     }
   }
 }
