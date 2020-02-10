@@ -308,7 +308,7 @@ export default {
       this.$http.get('/openstorefront/api/v1/resource/userprofiles/' + this.$store.state.currentUser.username + '/watches')
         .then(response => {
           this.watchesData = response.data
-          this.watchesData.sort((a, b) => (a.lastUpdateDts < b.lastUpdateDts ? 1 : -1))
+          this.watchesData.sort((a, b) => (new Date(a.lastUpdateDts) < new Date(b.lastUpdateDts) ? 1 : -1))
           for (var i = this.watchesData.length - 1; i > 0; i--) {
             if (this.watchesData[i].lastUpdateDts > this.watchesData[i].lastViewDts) {
               this.watchesData.unshift(this.watchesData.splice(i, 1)[0])
