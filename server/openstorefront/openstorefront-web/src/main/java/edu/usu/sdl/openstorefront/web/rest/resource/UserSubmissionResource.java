@@ -36,7 +36,7 @@ import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import static edu.usu.sdl.openstorefront.web.rest.resource.Utils.handleFileUpload;
+import static edu.usu.sdl.openstorefront.web.rest.resource.Utils.handleZipFileUpload;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
