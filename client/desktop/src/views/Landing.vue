@@ -103,7 +103,13 @@
                     >
                       <v-icon color="success">fas fa-check</v-icon>
                     </td>
-                    <td v-else></td>
+                    <td
+                      v-else
+                      style="text-align: center;"
+                      class="pa-1"
+                    >
+                      <v-icon>fas fa-minus</v-icon>
+                    </td>
                   </tr>
                 </table>
               </div>
