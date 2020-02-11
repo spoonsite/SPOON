@@ -52,7 +52,8 @@ const routes = [
     component: Watches
   },
   {
-    path: '/submissionForm',
+    path: '/submission-form/:id',
+    alias: '/submissionform/:id',
     name: 'SubmissionForm',
     component: SubmissionForm
   },

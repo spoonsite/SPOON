@@ -437,21 +437,32 @@
 
 <script>
 import ModalTitle from '@/components/ModalTitle'
+import _ from 'lodash'
 
 export default {
   name: 'SubmissionForm',
   components: { ModalTitle },
   mounted() {
-    if (this.$store.state.currentUser.username) {
-      this.setName()
-    } else {
-      // trigger an update once the user has been fetched
-      this.$store.watch(
-        (state, getters) => state.currentUser,
-        (newValue, oldValue) => {
+    // load the data from an existing submission
+    if (this.$route.params.id) {
+      if (this.$route.params.id !== 'new') {
+        // load in the data
+        this.id = this.$route.params.id
+        this.loadData(this.$route.params.id)
+      } else {
+        // auto fill out the user info
+        if (this.$store.state.currentUser.username) {
           this.setName()
+        } else {
+          // trigger an update once the user has been fetched
+          this.$store.watch(
+            (state, getters) => state.currentUser,
+            (newValue, oldValue) => {
+              this.setName()
+            }
+          )
         }
-      )
+      }
     }
     this.$http.get('/openstorefront/api/v1/resource/organizations').then(response => {
       this.organizationList = response.data.data
@@ -474,6 +485,7 @@ export default {
     errors: [],
     isFormValid: false,
     // entryDetails:
+    id: null,
     entryTitle: '',
     entryType: '',
     lastEntryType: '',
@@ -560,6 +572,29 @@ export default {
     }
   },
   methods: {
+    loadData(id) {
+      console.log('load data: ', id)
+      this.$http
+        .get(`/openstorefront/api/v1/resource/componentsubmissions/${id}`)
+        .then(response => {
+          console.log(response.data)
+          let component = response.data.component
+          let contacts = response.data.contacts
+
+          this.entryTitle = component.name
+          this.entryType = component.componentType
+          this.description = component.description
+          this.organization = component.organization
+          // load tags
+          // load attributes (required/optional)
+
+          this.primaryPOC = contacts[0] // unsafe
+          this.contacts = _.tail(contacts)
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
     getFormData() {
       // console.log(this.images)
       // TODO: make a Browser form object
@@ -614,8 +649,9 @@ export default {
           organization: this.organization
         },
         attributes: newAttributes,
-        media: this.images,
-        resources: this.resources.localFiles.concat(this.resources.links),
+        // TODO: fix media and resources
+        // media: this.images,
+        // resources: this.resources.localFiles.concat(this.resources.links),
         tags: this.tags,
         contacts: [this.primaryPOC].concat(this.contacts)
       }
@@ -689,21 +725,39 @@ export default {
     },
     submit(data) {
       let formData = this.getFormData()
-      this.$http
-        .post('/openstorefront/api/v1/resource/componentsubmissions', formData, {
-          // headers: {
-          //   'Content-Type': 'multipart/form-data'
-          // }
-        })
-        .then(response => {
-          if (response.data && response.data.success === false) {
-            this.errors = response.data.errors.entry
-          }
-          if (response.data && response.data.component) {
-            this.errors = []
-            this.$toasted.success('Submission Saved')
-          }
-        })
+      if (this.id && this.id !== 'new') {
+        this.$http
+          .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}`, formData)
+          .then(response => {
+            if (response.data && response.data.success === false) {
+              this.errors = response.data.errors.entry
+            }
+            if (response.data && response.data.component) {
+              this.errors = []
+              this.$toasted.success('Submission Saved')
+            }
+          })
+          .catch(e => {
+            console.error(e)
+          })
+      } else {
+        this.$http
+          .post('/openstorefront/api/v1/resource/componentsubmissions', formData)
+          .then(response => {
+            if (response.data && response.data.success === false) {
+              this.errors = response.data.errors.entry
+            }
+            if (response.data && response.data.component) {
+              this.errors = []
+              this.componentId = response.data.component.componentId
+              this.$router.replace(`${this.componentId}`)
+              this.$toasted.success('Submission Saved')
+            }
+          })
+          .catch(e => {
+            console.error(e)
+          })
+      }
     },
     addImage() {
       this.images.push({ file: null, caption: '', img: '' })

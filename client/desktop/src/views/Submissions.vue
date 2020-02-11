@@ -3,7 +3,7 @@
     <v-form class="pa-2 pt-4">
       <v-flex class="d-flex flex-wrap">
         <v-btn class="top-buttons" @click="getUserParts()"><v-icon left>fas fa-sync-alt</v-icon>Refresh</v-btn>
-        <v-btn class="top-buttons" to="submissionform"><v-icon left>fas fa-plus</v-icon>Add New</v-btn>
+        <v-btn class="top-buttons" to="submission-form/new"><v-icon left>fas fa-plus</v-icon>Add New</v-btn>
         <v-btn class="top-buttons" @click="bulkUploadDialog = true"
           ><v-icon left>fas fa-upload</v-icon>Bulk Upload</v-btn
         >
@@ -75,6 +75,7 @@
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
+                  <!-- TODO: fix change request to use the endpoint -->
                   <v-btn
                     v-if="item.status === 'Active'"
                     :href="'mailto:support@spoonsite.com?subject=Change%20Request%20for%20' + item.name"
@@ -84,7 +85,13 @@
                   >
                     <v-icon>fas fa-pencil-alt</v-icon>
                   </v-btn>
-                  <v-btn v-else icon v-on="on" style="order: 2">
+                  <v-btn
+                    v-else
+                    :to="`submission-form/${item.componentId}`"
+                    icon
+                    v-on="on"
+                    style="order: 2"
+                  >
                     <v-icon>fas fa-pencil-alt</v-icon>
                   </v-btn>
                 </template>
