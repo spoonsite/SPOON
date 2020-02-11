@@ -2,7 +2,13 @@
   <div>
     <h2 class="text-center">Reviews</h2>
     <v-btn class="ma-4" @click="getUserReviews()">Refresh</v-btn>
-    <v-data-table :headers="tableHeaders" :items="reviewsDisplay" class="elevation-1" :loading="isLoading">
+    <v-data-table
+      :headers="tableHeaders"
+      :items="reviewsDisplay"
+      class="elevation-1"
+      :loading="isLoading"
+      :hide-default-footer="isLoading || reviewsDisplay.length === 0"
+    >
       <!-- <td>{{ props.item.entry }}</td>
             <td>{{ props.item.title }}</td>
 

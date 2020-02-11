@@ -269,12 +269,14 @@ export default {
     refreshQuestions() {
       this.question.isLoading = true
       this.$http
-        .get('/openstorefront/api/v1/resource/componentquestions/admin?status=A')
+        .get(`/openstorefront/api/v1/resource/componentquestions/${this.$store.state.currentUser.username}?status=A`)
         .then(response => {
           this.question.isLoading = false
           this.question.questions = response.data
           this.$http
-            .get('/openstorefront/api/v1/resource/componentquestions/admin?status=P')
+            .get(
+              `/openstorefront/api/v1/resource/componentquestions/${this.$store.state.currentUser.username}?status=P`
+            )
             .then(response => {
               this.question.isLoading = false
               this.question.questions.push(...response.data)
@@ -347,11 +349,15 @@ export default {
     refreshAnswers() {
       this.answer.isLoading = true
       this.$http
-        .get('/openstorefront/api/v1/resource/componentquestions/responses/admin?status=A')
+        .get(
+          `/openstorefront/api/v1/resource/componentquestions/responses/${this.$store.state.currentUser.username}?status=A`
+        )
         .then(response => {
           this.answer.answers = response.data
           this.$http
-            .get('/openstorefront/api/v1/resource/componentquestions/responses/admin?status=P')
+            .get(
+              `/openstorefront/api/v1/resource/componentquestions/responses/${this.$store.state.currentUser.username}?status=P`
+            )
             .then(response => {
               this.answer.isLoading = false
               this.answer.answers.push(...response.data)

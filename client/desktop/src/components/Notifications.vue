@@ -19,7 +19,7 @@
           <v-list-item v-for="(item, index) in notifications" :key="index">
             <v-list-item-content :class="`${item.readMessage ? '' : 'font-weight-bold'}`">
               <v-list-item-title>{{ item.message }}</v-list-item-title>
-              <v-list-item-subtitle>{{ item.updateDts | formatDate('yyyy/mm/dd - HH:mm:ss') }}</v-list-item-subtitle>
+              <v-list-item-subtitle>{{ item.updateDts | formatDate('yyyy/MMM/dd - HH:mm:ss') }}</v-list-item-subtitle>
               <v-list-item-subtitle>Event Type: {{ item.eventTypeDescription }}</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
