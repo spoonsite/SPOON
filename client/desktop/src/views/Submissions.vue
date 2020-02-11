@@ -26,6 +26,7 @@
             'items-per-page-options': [10, 20, 30, 40, 50]
           }"
           :sort-by="['name']"
+          :hide-default-footer="isLoading || componentData.length === 0"
           class="tableLayout"
           :search="search"
         >
