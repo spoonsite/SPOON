@@ -267,7 +267,6 @@ export default {
       },
       componentDisplay: [],
       componentData: [],
-      errors: [],
       isLoading: true,
       search: '',
       uploadFile: null,
@@ -309,7 +308,8 @@ export default {
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
         }).catch(error => {
           this.isLoading = false
-          this.errors.push(error)
+          this.$toasted.error('An error occurred retrieving submissions')
+          console.error(error)
         })
     },
     viewComponent(componentId) {
@@ -457,7 +457,10 @@ export default {
           this.removalForm.message = ''
           this.$toasted.show('Sent Sucessfully.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
+        .catch(error => {
+          this.$toasted.error('There was a problem submitting the correction')
+          console.error(error)
+        })
     },
     submitDeletion() {
       this.isLoading = true
@@ -470,7 +473,7 @@ export default {
           })
           .catch(error => {
             this.$toasted.error('Submission could not be deleted.')
-            this.errors.push(error)
+            console.error(error)
             this.isLoading = false
           })
       } else {
@@ -482,7 +485,7 @@ export default {
           })
           .catch(error => {
             this.$toasted.error('Submission could not be deleted.')
-            this.errors.push(error)
+            console.error(error)
             this.isLoading = false
           })
       }

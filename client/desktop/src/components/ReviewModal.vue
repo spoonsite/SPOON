@@ -217,7 +217,10 @@ export default {
             this.timeOptions = response.data
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving component use times')
+          console.error(error)
+        })
 
       this.$http
         .get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
@@ -226,7 +229,10 @@ export default {
             this.prosOptions = response.data
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving component pros')
+          console.error(error)
+        })
 
       this.$http
         .get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
@@ -235,7 +241,10 @@ export default {
             this.consOptions = response.data
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving component cons')
+          console.error(error)
+        })
     },
     submitReview() {
       this.review.lastUsed = new Date(this.rawDate).toISOString()
@@ -260,7 +269,10 @@ export default {
             this.$toasted.show('Review Submitted')
             this.close()
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
+          .catch(error => {
+            this.$toasted.error('There was a problem submitting the review')
+            console.error(error)
+          })
       } else {
         this.review.reviewId = this.editReview.reviewId
         this.review.userTypeCode = this.$store.state.currentUser.userTypeCode
@@ -274,7 +286,10 @@ export default {
             this.$toasted.show('Review Submitted')
             this.close()
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
+          .catch(error => {
+            this.$toasted.error('There was a problem submitting the review')
+            console.error(error)
+          })
       }
     }
   }

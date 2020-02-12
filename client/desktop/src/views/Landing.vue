@@ -230,7 +230,6 @@ export default {
     return {
       searchQuery: '',
       nestedComponentTypesList: [],
-      errors: [],
       highlights: [],
       attributes: [],
       submissionData: [],
@@ -265,6 +264,10 @@ export default {
         .then(response => {
           this.nestedComponentTypesList = response.data
         })
+        .catch(error => {
+          this.toasted.error('There was an error retrieving component types')
+          console.error(error)
+        })
     },
     action(type) {
       alert(type)// switch on the type of action
@@ -275,12 +278,20 @@ export default {
         .then(response => {
           this.highlights = response.data
         })
+        .catch(error => {
+          this.toasted.error('There was an error getting the highlights')
+          console.error(error)
+        })
     },
     getAttributes() {
       this.$http
         .get('/openstorefront/api/v1/resource/attributes?important=true&page=1&start=0&limit=25')
         .then(response => {
           this.attributes = response.data
+        })
+        .catch(error => {
+          this.toasted.error('There was an error retrieving attributes')
+          console.error(error)
         })
     },
     isSpoon() {

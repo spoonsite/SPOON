@@ -260,6 +260,7 @@ export default {
           this.refreshQuestions()
         })
         .catch(error => {
+          this.$toasted.error('An error occurred while editing the question')
           console.error(error)
         })
     },
@@ -283,11 +284,13 @@ export default {
               this.getAnswersToQuestions()
             })
             .catch(error => {
+              this.$toasted.error('An error occurred while refreshing the questions')
               console.error(error)
               this.question.isLoading = false
             })
         })
         .catch(error => {
+          this.$toasted.error('An error occurred while refreshing the questions')
           console.error(error)
           this.question.isLoading = false
         })
@@ -298,6 +301,10 @@ export default {
           .get(`/openstorefront/api/v1/resource/componentquestions/${question.questionId}/responses`)
           .then(response => {
             question.responses = response.data
+          })
+          .catch(error => {
+            this.$toasted.error('An error occurredd what getting question responses')
+            console.error(error)
           })
       })
     },
@@ -324,6 +331,7 @@ export default {
           this.refreshAnswers()
         })
         .catch(error => {
+          this.$toasted.error('An error occurred submitting the answer edit')
           console.error(error)
         })
     },
@@ -342,6 +350,7 @@ export default {
           this.refreshAnswers()
         })
         .catch(error => {
+          this.$toasted.error('An error occurred deleting this answer')
           console.error(error)
           this.answer.isLoading = false
         })
@@ -363,11 +372,13 @@ export default {
               this.answer.answers.push(...response.data)
             })
             .catch(error => {
+              this.$toasted.error('An error occurred refreshing answers')
               console.error(error)
               this.answer.isLoading = false
             })
         })
         .catch(error => {
+          this.$toasted.error('An error occurred refreshing answers')
           console.error(error)
           this.answer.isLoading = false
         })
