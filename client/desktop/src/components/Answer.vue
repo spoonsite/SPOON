@@ -81,7 +81,10 @@ export default {
             this.$emit('getAnswers', { answer: answer.questionId })
             this.edit = false
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the edit.'))
+          .catch(e => {
+            this.$toasted.error('There was a problem submitting the edit')
+            console.error(e)
+          })
       }
     },
     deleteAnswer() {
@@ -94,7 +97,10 @@ export default {
           this.$emit('answerDeleted', this.answer)
           this.deleteDialog = false
         })
-        .catch(e => this.$toasted.error('There was a problem deleting the answer.'))
+        .catch(e => {
+          this.$toasted.error('There was a problem deleting the answer')
+          console.error(e)
+        })
     }
   }
 }

@@ -180,7 +180,10 @@ export default {
             })
           }
         })
-        .catch(e => this.$toasted.error('An error occurred retrieving component use times'))
+        .catch(e => {
+          this.$toasted.error('An error occurred retrieving component use times')
+          console.error(e)
+        })
 
       this.$http
         .get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
@@ -192,7 +195,10 @@ export default {
             })
           }
         })
-        .catch(e => this.$toasted.error('An error occurred retrieving component pros'))
+        .catch(e => {
+          this.$toasted.error('An error occurred retrieving component pros')
+          console.error(e)
+        })
 
       this.$http
         .get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
@@ -204,7 +210,10 @@ export default {
             })
           }
         })
-        .catch(e => this.$toasted.error('An error occurred retrieving component cons'))
+        .catch(e => {
+          this.$toasted.error('An error occurred retrieving component cons')
+          console.error(e)
+        })
     },
     submitReview() {
       let data = {
@@ -254,7 +263,10 @@ export default {
             this.$toasted.show('Review Submitted')
             this.$emit('close')
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
+          .catch(e => {
+            this.$toasted.error('There was a problem submitting the review')
+            console.error(e)
+          })
       } else {
         this.$http
           .post(`/openstorefront/api/v1/resource/components/${this.review.componentId}/reviews/detail`, data)
@@ -262,7 +274,10 @@ export default {
             this.$toasted.show('Review Submitted')
             this.$emit('close')
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
+          .catch(e => {
+            this.$toasted.error('There was a problem submitting the review')
+            console.error(e)
+          })
       }
     }
   }

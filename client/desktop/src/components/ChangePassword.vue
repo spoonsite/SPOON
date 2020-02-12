@@ -91,7 +91,10 @@ export default {
             this.newPassword = ''
           }
         })
-        .catch(e => this.$toasted.error('There was a problem submitting your password change request.'))
+        .catch(e => {
+          this.$toasted.error('There was a problem submitting your password change request')
+          console.error(e)
+        })
     },
     resetUserPassword() {
       let data = {
@@ -107,7 +110,10 @@ export default {
             this.$toasted.show('Password changed successfully.')
           }
         })
-        .catch(e => this.$toasted.error('There was a problem submitting your password change request.'))
+        .catch(e => {
+          this.$toasted.error('There was a problem submitting your password change request')
+          console.error(e)
+        })
     }
   },
   watch: {

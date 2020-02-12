@@ -278,6 +278,7 @@ export default {
           })
           .catch(e => {
             this.$toasted.error('Error updating profile')
+            console.error(e)
             this.saving = false
           })
       }

@@ -261,6 +261,7 @@ export default {
         })
         .catch(e => {
           this.$toasted.error('An error occurred while editing the question')
+          console.error(e)
         })
     },
     viewComponent(componentId) {
@@ -282,11 +283,13 @@ export default {
             })
             .catch(e => {
               this.$toasted.error('An error occurred while refreshing the questions')
+              console.error(e)
               this.question.isLoading = false
             })
         })
         .catch(e => {
           this.$toasted.error('An error occurred while refreshing the questions')
+          console.error(e)
           this.question.isLoading = false
         })
     },
@@ -296,6 +299,10 @@ export default {
           .get(`/openstorefront/api/v1/resource/componentquestions/${question.questionId}/responses`)
           .then(response => {
             question.responses = response.data
+          })
+          .catch(e => {
+            this.$toasted.error('An error occurredd what getting question responses')
+            console.error(e)
           })
       })
     },
@@ -323,6 +330,7 @@ export default {
         })
         .catch(e => {
           this.$toasted.error('An error occurred submitting the answer edit')
+          console.error(e)
         })
     },
     deleteAnswer(response) {
@@ -341,6 +349,7 @@ export default {
         })
         .catch(e => {
           this.$toasted.error('An error occurred deleting this answer')
+          console.error(e)
           this.answer.isLoading = false
         })
     },
@@ -358,11 +367,13 @@ export default {
             })
             .catch(e => {
               this.$toasted.error('An error occurred refreshing answers')
+              console.error(e)
               this.answer.isLoading = false
             })
         })
         .catch(e => {
           this.$toasted.error('An error occurred refreshing answers')
+          console.error(e)
           this.answer.isLoading = false
         })
     }

@@ -308,6 +308,7 @@ export default {
         }).catch(e => {
           this.isLoading = false
           this.$toasted.error('An error occurred retrieving submissions')
+          console.error(e)
         })
     },
     viewComponent(componentId) {
@@ -455,7 +456,10 @@ export default {
           this.removalForm.message = ''
           this.$toasted.show('Sent Sucessfully.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
+        .catch(e => {
+          this.$toasted.error('There was a problem submitting the correction')
+          console.error(e)
+        })
     },
     submitDeletion() {
       this.isLoading = true

@@ -154,7 +154,10 @@ export default {
           this.checkAnswers()
           this.loading = false
         })
-        .catch(e => this.errors.push(e))
+        .catch(e => {
+          this.$toasted.error('There was a problem getting answers')
+          this.errors.push(e)
+        })
     },
     submitAnswer(question) {
       if (question) {
@@ -177,7 +180,10 @@ export default {
             this.showAnswers = true
             this.answerQuestionDialog = false
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the answer.'))
+          .catch(e => {
+            this.$toasted.error('There was a problem submitting the answer')
+            console.error(e)
+          })
       } else {
         this.answerQuestionDialog = false
       }
@@ -192,7 +198,10 @@ export default {
           this.$toasted.success('Question deleted.')
           this.$emit('questionDeleted')
         })
-        .catch(e => this.$toasted.error('There was a problem deleting the question.'))
+        .catch(e => {
+          this.$toasted.error('There was a problem deleting the question')
+          console.error(e)
+        })
     },
     editQuestion(question) {
       if (question) {
@@ -215,7 +224,10 @@ export default {
             this.$toasted.success('Edited question submitted.')
             this.editQuestionDialog = false
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the edit.'))
+          .catch(e => {
+            this.$toasted.error('There was a problem submitting the edit')
+            console.error(e)
+          })
       } else {
         this.editQuestionDialog = false
       }

@@ -802,6 +802,7 @@ export default {
         })
         .catch(e => {
           this.$toasted.error('An error occurred retrieving search results')
+          console.error(e)
           that.searchQueryIsDirty = false
         })
         .finally(() => {

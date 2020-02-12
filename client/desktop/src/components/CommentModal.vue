@@ -195,7 +195,10 @@ export default {
           this.comments = response.data
           this.isLoading = false
         })
-        .catch(e => this.$toasted.error('An error occurred retrieving comments'))
+        .catch(e => {
+          this.$toasted.error('An error occurred retrieving comments')
+          console.error(e)
+        })
       var perm = ['WORKFLOW-ADMIN-SUBMISSION-COMMENTS']
       this.permission = this.checkPermissions(perm)
     },
@@ -233,7 +236,9 @@ export default {
           this.getComments(this.component)
           this.newComment = ''
         })
-        .catch(e => this.$toasted.error('There was a problem submitting your comment.'))
+        .catch(e => {
+          this.$toasted.error('There was a problem submitting your comment')
+        })
     },
     deleteComment() {
       var deleteUrl = ''
@@ -293,7 +298,10 @@ export default {
           this.newComment = ''
           this.editing = false
         })
-        .catch(e => this.$toasted.error('There was a problem editing your comment.'))
+        .catch(e => {
+          this.$toasted.error('There was a problem editing your comment')
+          console.error(e)
+        })
     },
     checkPermissions(has) {
       let ret = false
