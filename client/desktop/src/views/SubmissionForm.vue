@@ -13,8 +13,9 @@
           v-model="entryTitle"
           name="name"
           required
-          :rules="[rules.required]"
+          :rules="[rules.required, rules.len255]"
           class="mx-4 mw-18"
+          counter="255"
           autofocus
         />
         <v-autocomplete
@@ -29,6 +30,7 @@
         />
         <v-autocomplete
           label="Organization*"
+          placeholder="Search Organizations"
           v-model="organization"
           :items="organizationList"
           item-text="name"
@@ -137,7 +139,18 @@
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Description*</legend>
-        <quill-editor class="ma-2" v-model="description" />
+        <quill-editor class="ma-2" v-model="description" maxLength="20" />
+        <v-alert color="red" :value="false" transition="fade-transition">
+          test
+        </v-alert>
+        <v-slide-y-transition>
+          <div v-if="description.length === 0" class="mx-2 error--text caption">
+            Description is required
+          </div>
+          <div v-if="description.length > 65536" class="mx-2 error--text caption">
+            Description has a character limit of 64k
+          </div>
+        </v-slide-y-transition>
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Attributes</legend>
@@ -367,7 +380,6 @@
           @keypress.enter="addTag"
           class="mx-4"
         />
-          <!-- :search-input.sync="tagSearchText" -->
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Contacts</legend>
@@ -406,7 +418,9 @@
       </v-alert>
       <v-alert type="error" v-if="errors.length > 0" colored-border border="left" elevation="2">
         <ul>
-          <li v-for="error in errors" :key="error.key"><span class="bold">{{ error.key }}:</span>  {{ error.value }}</li>
+          <li v-for="error in errors" :key="error.key">
+            <span class="bold">{{ error.key }}:</span> {{ error.value }}
+          </li>
         </ul>
       </v-alert>
       <div class="mb-5">
@@ -422,8 +436,8 @@
       <v-card>
         <ModalTitle title="Are you sure?" @close="showEntryTypeWarning = false" />
         <v-card-text>
-          Changing the entry type will change the associated attributes. If you change your entry type the form may delete
-          some of the entered attributes.
+          Changing the entry type will change the associated attributes. If you change your entry type the form may
+          delete some of the entered attributes.
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -442,6 +456,14 @@ import _ from 'lodash'
 export default {
   name: 'SubmissionForm',
   components: { ModalTitle },
+  beforeRouteLeave(to, from, next) {
+    const answer = window.confirm('Do you really want to leave?')
+    if (answer) {
+      next()
+    } else {
+      next(false)
+    }
+  },
   mounted() {
     // load the data from an existing submission
     if (this.$route.params.id) {
@@ -534,7 +556,8 @@ export default {
     rules: {
       required: value => !!value || 'Required',
       requiredArray: value => value.length !== 0 || 'Required',
-      len64k: value => value.length > 65536 || 'Must have less than 64k characters',
+      len255: value => value.length < 255 || 'Must have less than 255 characters',
+      len64k: value => value.length < 65536 || 'Must have less than 64k characters',
       numberOnly: value => {
         // If the value is null, we don't care about validation, in this case
         if (value === null) {
