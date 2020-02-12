@@ -7,14 +7,6 @@
         <v-btn class="top-buttons" @click="bulkUploadDialog = true"
           ><v-icon left>fas fa-upload</v-icon>Bulk Upload</v-btn
         >
-        <v-text-field
-          v-model="search"
-          append-icon="fas fa-search"
-          label="Search"
-          single-line
-          hide-details
-          style="padding-top: 0; margin-bottom: 1em; max-width: 20em;"
-        ></v-text-field>
       </v-flex>
       <div class="d-flex">
         <v-data-table
@@ -28,7 +20,6 @@
           :sort-by="['name']"
           :hide-default-footer="isLoading || componentData.length === 0"
           class="tableLayout"
-          :search="search"
         >
           <template v-slot:item.name="{ item }">
             {{ item.name }}
@@ -187,10 +178,11 @@
                 v-model="removalForm.message"
                 :rules="formMessageRules"
                 outlined
+                required
               ></v-textarea>
               <p>Contact Information:</p>
-              <v-text-field :rules="formNameRules" single-line label="Name*" v-model="removalForm.name"> </v-text-field>
-              <v-text-field :rules="formEmailRules" single-line label="Email*" v-model="removalForm.email">
+              <v-text-field :rules="formNameRules" single-line label="Name*" v-model="removalForm.name" required> </v-text-field>
+              <v-text-field :rules="formEmailRules" single-line label="Email*" v-model="removalForm.email" required>
               </v-text-field>
               <v-text-field single-line label="Phone" v-model="removalForm.phone"> </v-text-field>
               <v-text-field single-line label="Organization" v-model="removalForm.organization"> </v-text-field>
@@ -199,7 +191,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn v-if="requestRemoval" color="warning" @click="submitRemoval()" :disabled="!isFormValid">
+          <v-btn v-if="requestRemoval" color="warning" @click="submitRemoval()" :disabled="isFormValid">
             Submit
           </v-btn>
           <p v-else-if="currentComponent.hasChangeRequest && !requestRemoval && !deleteChange"></p>
@@ -257,7 +249,7 @@ export default {
         type: '',
         submitDate: '',
         pendingChange: false,
-        isFormValid: false,
+        isFormValid: true,
         lastUpdate: '',
         steps: [
           {
@@ -270,7 +262,6 @@ export default {
       componentData: [],
       errors: [],
       isLoading: true,
-      search: '',
       uploadFile: null,
       bulkUploadDialog: false,
       commentsDialog: false,
@@ -497,8 +488,7 @@ export default {
 .top-buttons {
   text-transform: none;
   background-color: #e0e0e0 !important;
-  margin-right: 1em;
-  margin-top: 0.5em;
+  margin: 0.5em 1em 1em 0;
 }
 .tableLayout {
   display: flex;
