@@ -270,9 +270,8 @@ export default {
           .put('/openstorefront/api/v1/resource/userprofiles/' + this.username, newProfile)
           .then(response => {
             // resyncing the user data
-            this.$store.dispatch('setCurrentUser', () => {
-              this.setUserInfo()
-            })
+            this.$store.dispatch('getCurrentUser')
+
             this.$toasted.show('Profile updated')
             this.saving = false
             this.formChanged = false
