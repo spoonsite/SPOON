@@ -146,22 +146,21 @@ public class ComponentSubmissionResource
 
 			List<ComponentSubmissionView> componentSubmissionViews = new ArrayList<ComponentSubmissionView>();
 
-			for(SubmissionView view : submissionViews){
+			for (SubmissionView view : submissionViews) {
 				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 				workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
 				workPlanLinkExample.setComponentId(view.getComponentId());
 				WorkPlanLink workPlanLink = service.getPersistenceService().queryOneByExample(workPlanLinkExample);
 
-				if(workPlanLink != null){
+				if (workPlanLink != null) {
 					componentSubmissionViews.add(new ComponentSubmissionView(view, workPlanLink.getWorkPlanId(), workPlanLink.getCurrentStepId()));
-				}
-				else{
+				} else {
 					componentSubmissionViews.add(new ComponentSubmissionView(view, null, null));
 				}
 			}
 
 			UserSubmissionPageView userSubmissionPageView = new UserSubmissionPageView(componentSubmissionViews, workPlans);
-			
+
 			GenericEntity<UserSubmissionPageView> entity = new GenericEntity<UserSubmissionPageView>(userSubmissionPageView)
 			{
 			};
@@ -240,7 +239,7 @@ public class ComponentSubmissionResource
 			submissionView.setSubmissionTemplateId(userSubmission.getTemplateId());
 
 			submissionView.setCurrentDataOwner(userSubmission.getOwnerUsername());
-			if(userSubmission.getIsQueued() == false){
+			if (userSubmission.getIsQueued() == false) {
 				submissionView.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 			} else {
 				submissionView.setApprovalState(ApprovalStatus.QUEUED);
@@ -284,7 +283,7 @@ public class ComponentSubmissionResource
 		for (ComponentAttribute attribute : componentAll.getAttributes()) {
 			attribute.getComponentAttributePk().setComponentId(id);
 		}
-		Response response = null;
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
 		try {
 			response = handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, false);
 		} catch (Exception e) {
@@ -305,9 +304,10 @@ public class ComponentSubmissionResource
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/vue")
 	public Response createNewSubmissionVue(
-		// FormDataMultiPart body
-		ComponentAll componentAll
-	){
+			// FormDataMultiPart body
+			ComponentAll componentAll
+	)
+	{
 		// DEBUG this. Not getting all the data from the front end
 		Logger LOG = Logger.getLogger(UserSubmissionResource.class.getName());
 		// should probably use submission instead
@@ -338,7 +338,17 @@ public class ComponentSubmissionResource
 			for (ComponentAttribute attribute : componentAll.getAttributes()) {
 				attribute.getComponentAttributePk().setComponentId(componentAll.getComponent().getComponentId());
 			}
-			return handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, true);
+			Response response = Response.status(Response.Status.NOT_FOUND).build();
+			try {
+				response = handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, true);
+			} catch (Exception e) {
+				// validation for required attributes throws an exception
+				RestErrorModel restErrorModel = new RestErrorModel();
+				restErrorModel.setSuccess(false);
+				restErrorModel.getErrors().put("error", e.getMessage());
+				response = sendSingleEntityResponse(restErrorModel);
+			}
+			return response;
 		}
 		RestErrorModel restErrorModel = new RestErrorModel();
 		restErrorModel.setSuccess(false);
@@ -611,6 +621,7 @@ public class ComponentSubmissionResource
 				response = Response.ok(componentAll).build();
 			}
 		}
+		// TODO: not returning the tags
 		return response;
 	}
 
