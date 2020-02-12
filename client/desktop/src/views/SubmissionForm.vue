@@ -456,6 +456,15 @@ import _ from 'lodash'
 export default {
   name: 'SubmissionForm',
   components: { ModalTitle },
+  beforeRouteLeave(to, from, next) {
+    console.log('testing')
+    const answer = window.confirm('Do you really want to leave?')
+    if (answer) {
+      next()
+    } else {
+      next(false)
+    }
+  },
   mounted() {
     // load the data from an existing submission
     if (this.$route.params.id) {
