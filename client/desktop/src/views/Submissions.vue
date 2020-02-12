@@ -108,7 +108,7 @@
                 </template>
                 <span>Comment</span>
               </v-tooltip>
-              <v-tooltip bottom v-if="item.status !== 'P'">
+              <v-tooltip bottom v-if="item.status !== 'Pending'">
                 <template v-slot:activator="{ on }">
                   <v-btn icon v-on="on" @click="determineDeleteForm(item)" style="order: 4">
                     <v-icon>fas fa-trash</v-icon>
@@ -154,6 +154,7 @@
       <v-card>
         <ModalTitle title="Delete?" @close="deleteDialog = false" />
         <v-card-text>
+          <p>{{isFormValid}}</p>
           <v-btn
             v-if="currentComponent.hasChangeRequest"
             @click="
@@ -178,7 +179,7 @@
           <p v-else-if="!currentComponent.hasChangeRequest && !requestRemoval" class="pt-2">
             Are you sure you want to delete: {{ currentComponent.name }}?
           </p>
-          <v-form v-if="requestRemoval" v-model="isFormValid">
+          <v-form v-if="requestRemoval" v-model="isFormValid" ref="form">
             <v-container>
               <p>Reason:*</p>
               <v-textarea
@@ -432,12 +433,13 @@ export default {
       this.currentComponent = item
       this.requestRemoval = false
       this.deleteChange = false
-      if (this.currentComponent.status === 'A' && this.currentComponent.hasChangeRequest) {
+      if (this.currentComponent.status === 'Active' && this.currentComponent.hasChangeRequest) {
         this.requestRemoval = false
-      } else if (this.currentComponent.status === 'A') {
+      } else if (this.currentComponent.status === 'Active') {
         this.requestRemoval = true
       }
       this.deleteDialog = true
+      console.log(this.requestRemoval)
     },
     submitRemoval() {
       let data = {
@@ -486,9 +488,6 @@ export default {
             this.isLoading = false
           })
       }
-    },
-    openBulkUpload() {
-      window.open('openstorefront/bulkUpload.jsp', 'uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440')
     }
   }
 }
