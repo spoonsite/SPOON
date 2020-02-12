@@ -59,7 +59,7 @@ public class CSRFFilter
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
 	{
-
+		response.setCharacterEncoding("UTF-8");
 		//look at the method (GET, HEAD, OPTIONS...no CSRF check is needed)
 		Set<String> safeMethods = new HashSet<>();
 		safeMethods.addAll(Arrays.asList(

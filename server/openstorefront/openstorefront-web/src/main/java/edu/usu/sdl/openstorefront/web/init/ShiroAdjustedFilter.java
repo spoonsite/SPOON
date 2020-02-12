@@ -48,12 +48,14 @@ public class ShiroAdjustedFilter
 					&& url.contains(";")) {
 				HttpServletResponse response = (HttpServletResponse) servletResponse;
 				response.sendRedirect(httpServletRequest.getContextPath());
+				response.setCharacterEncoding("UTF-8");
 				return;
 			}
 			//Fix bad url?
 			if (url.contains("login.action")) {
 				HttpServletResponse response = (HttpServletResponse) servletResponse;
 				response.sendRedirect("Login.action");
+				response.setCharacterEncoding("UTF-8");
 				return;
 			}
 

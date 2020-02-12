@@ -17,7 +17,7 @@
  * See NOTICE.txt for more information.
  */
  --%>
-
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <script type="text/javascript">
 	Ext.require('OSF.landing.DefaultHeader');
 	Ext.require('OSF.landing.DefaultFooter');

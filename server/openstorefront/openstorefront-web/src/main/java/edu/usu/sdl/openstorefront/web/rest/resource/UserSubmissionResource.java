@@ -17,10 +17,7 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
-import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.Convert;
-import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.entity.ComponentCommentType;
@@ -36,20 +33,13 @@ import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
-import edu.usu.sdl.openstorefront.service.manager.MailManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
-import java.io.File;
-import java.io.IOException;
+import static edu.usu.sdl.openstorefront.web.rest.resource.Utils.handleZipFileUpload;
 import java.io.InputStream;
 import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -64,19 +54,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.codemonkey.simplejavamail.email.Email;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.apache.commons.io.FilenameUtils;
-import javax.mail.Message;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -87,9 +66,6 @@ import org.apache.commons.io.FileUtils;
 public class UserSubmissionResource
 		extends BaseResource
 {
-
-	Logger LOG = Logger.getLogger(UserSubmissionResource.class.getName());
-
 	@GET
 	@APIDescription("Gets all user submissions for all users; Note: these are incomplete submissions")
 	@RequireSecurity(SecurityPermission.ADMIN_USER_SUBMISSIONS_READ)
@@ -200,158 +176,10 @@ public class UserSubmissionResource
 			@FormDataParam("file") FormDataContentDisposition fileDisposition
 	)
 	{
-		RestErrorModel result = handleFileUpload(uploadStream, fileDisposition.getFileName());
+		RestErrorModel result = handleZipFileUpload(uploadStream, fileDisposition.getFileName());
 		return Response.ok(result).build();
 	}
 
-	@POST
-	@APIDescription("Accepts multiple zip files for use with the bulk upload process")
-	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
-	@Consumes({MediaType.MULTIPART_FORM_DATA})
-	@Produces({MediaType.APPLICATION_JSON})
-	@Path("/upload/multiZip")
-	public Response multiBulkUpload(
-			@Context HttpServletRequest request
-	)
-	{
-		RestErrorModel restErrorModel = new RestErrorModel();
-		String maxSizeString = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAX_POST_SIZE);
-		int maxSize;
-		if (maxSizeString != null) {
-			try {
-				maxSize = Integer.parseInt(maxSizeString);
-			} catch (NumberFormatException ex) {
-				LOG.log(Level.SEVERE, "Could not parse key KEY_MAX_POST_SIZE. Ensure that max.post.size is set to an integer.\n{0}", ex.toString());
-				restErrorModel.getErrors().put("message", "Unable to determine max upload size.");
-				restErrorModel.getErrors().put("potentialResolution", "Ensure that max.post.size is set to an integer.");
-				return Response.ok(restErrorModel).build();
-			}
-		} else {
-			LOG.log(Level.SEVERE, "Could not find key KEY_MAX_POST_SIZE. Ensure that max.post.size is set to an integer.");
-			restErrorModel.getErrors().put("message", "Unable to determine max upload size.");
-			restErrorModel.getErrors().put("potentialResolution", "Ensure that max.post.size is set to an integer.");
-			return Response.ok(restErrorModel).build();
-		}
-
-		/* Check whether request is multipart or not. */
-		if (ServletFileUpload.isMultipartContent(request)) {
-			FileItemFactory factory = new DiskFileItemFactory();
-			ServletFileUpload fileUpload = new ServletFileUpload(factory);
-
-			try {
-				List<FileItem> items = fileUpload.parseRequest(request);
-				if (items != null) {
-					Iterator<FileItem> iter = items.iterator();
-					while (iter.hasNext()) {
-						final FileItem item = iter.next();
-						final String itemName = item.getName();
-						final Long itemSize = item.getSize();
-						if (itemSize == 0) {
-							LOG.log(Level.INFO, "Zero size file detected!");
-							restErrorModel.getErrors().put("message", "No data in file " + itemName);
-							return Response.ok(restErrorModel).build();
-						} else if (itemSize > maxSize) {
-							LOG.log(Level.INFO, "File too large!");
-							restErrorModel.getErrors().put("message", itemName + " is too large!");
-							return Response.ok(restErrorModel).build();
-						}
-
-						if (!item.isFormField()) {
-							try {
-								restErrorModel = handleFileUpload(item.getInputStream(), itemName);
-								if (!restErrorModel.getSuccess()) {
-									return Response.ok(restErrorModel).build();
-								}
-							} catch (IOException ex) {
-								LOG.log(Level.WARNING, ex.getMessage());
-								restErrorModel.setSuccess(false);
-								return Response.ok(restErrorModel).build();
-							}
-						}
-					}
-				}
-			} catch (FileUploadException ex) {
-				LOG.log(Level.WARNING, ex.getMessage());
-				restErrorModel.setSuccess(false);
-				return Response.ok(restErrorModel).build();
-			}
-		}
-
-		return Response.ok(restErrorModel).build();
-	}
-
-	private RestErrorModel handleFileUpload(InputStream inStream,
-			String fileName)
-	{
-		RestErrorModel restErrorModel = new RestErrorModel();
-		String username = SecurityUtil.getCurrentUserName();
-
-		String timeStamp = new SimpleDateFormat("dd-MM-YYYY").format(new Date());
-		String filePath = FileSystemManager
-				.getInstance()
-				.getDir(FileSystemManager.BULK_UPLOAD_DIR)
-				.toString()
-				+ File.separator
-				+ username
-				+ File.separator
-				+ timeStamp
-				+ "_"
-				+ StringProcessor.uniqueId()
-				+ ".zip";
-
-		String extension = FilenameUtils.getExtension(fileName);
-
-		if (extension.equals("zip")) {
-			File destFile = new File(filePath);
-			try {
-				FileUtils.copyInputStreamToFile(inStream, destFile);
-			} catch (IOException ex) {
-				LOG.log(Level.FINE, "Unable to read file: " + fileName, ex);
-				restErrorModel.getErrors().put("message", "Unable to read file.");
-				restErrorModel.getErrors().put("potentialResolution", "Make sure the file is in the proper format.");
-				restErrorModel.setSuccess(false);
-				return restErrorModel;
-			}
-		} else {
-			restErrorModel.getErrors().put("message", "Uploaded file was not a zip file.");
-			restErrorModel.getErrors().put("potentialResolution", "Ensure filename ends with .zip");
-			restErrorModel.setSuccess(false);
-			return restErrorModel;
-		}
-
-		// Send email to spoon support telling them that there is a new uploaded file.
-		String recipientAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL);
-		String senderAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_FROM_ADDRESS);
-		String senderName = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_MAIL_FROM_NAME);
-		if (recipientAddress == null) {
-			recipientAddress = "";
-		}
-		if (senderAddress == null) {
-			senderAddress = "";
-		}
-		if (senderName == null) {
-			senderName = "";
-		}
-
-		if (!recipientAddress.isEmpty() && !senderAddress.isEmpty() && !senderName.isEmpty()) {
-			Email email = MailManager.newEmail();
-			email.setSubject("SpoonSite bulk Upload");
-			email.setText("There is a new bulk upload to be reviewed at " + filePath);
-			email.addRecipient("Admin", recipientAddress, Message.RecipientType.TO);
-			email.setFromAddress(senderName, senderAddress);
-			MailManager.send(email, true);
-		} else {
-			LOG.log(Level.WARNING, "Email doesn't have an email correctly defined.");
-			restErrorModel.getErrors().put("message", "Could not send notification email.");
-			restErrorModel.getErrors().put("potentialResolution", "Set feedback email, mail from addresss, and mail from name");
-			restErrorModel.setSuccess(false);
-			return restErrorModel;
-		}
-
-		restErrorModel.getErrors().put("message", "File uploaded sucessfully.");
-		restErrorModel.setSuccess(true);
-		return restErrorModel;
-	}
 
 	//update submission	(submission - owner/admin) FIX Admin permission
 	@PUT
