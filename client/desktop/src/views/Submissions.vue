@@ -145,7 +145,6 @@
       <v-card>
         <ModalTitle title="Delete?" @close="deleteDialog = false" />
         <v-card-text>
-          <p>{{isFormValid}}</p>
           <v-btn
             v-if="currentComponent.hasChangeRequest"
             @click="
@@ -178,11 +177,10 @@
                 v-model="removalForm.message"
                 :rules="formMessageRules"
                 outlined
-                required
               ></v-textarea>
               <p>Contact Information:</p>
-              <v-text-field :rules="formNameRules" single-line label="Name*" v-model="removalForm.name" required> </v-text-field>
-              <v-text-field :rules="formEmailRules" single-line label="Email*" v-model="removalForm.email" required>
+              <v-text-field :rules="formNameRules" single-line label="Name*" v-model="removalForm.name"> </v-text-field>
+              <v-text-field :rules="formEmailRules" single-line label="Email*" v-model="removalForm.email">
               </v-text-field>
               <v-text-field single-line label="Phone" v-model="removalForm.phone"> </v-text-field>
               <v-text-field single-line label="Organization" v-model="removalForm.organization"> </v-text-field>
@@ -191,7 +189,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn v-if="requestRemoval" color="warning" @click="submitRemoval()" :disabled="isFormValid">
+          <v-btn v-if="requestRemoval" color="warning" @click="submitRemoval()" :disabled="!isFormValid">
             Submit
           </v-btn>
           <p v-else-if="currentComponent.hasChangeRequest && !requestRemoval && !deleteChange"></p>
@@ -249,7 +247,6 @@ export default {
         type: '',
         submitDate: '',
         pendingChange: false,
-        isFormValid: true,
         lastUpdate: '',
         steps: [
           {
@@ -258,6 +255,7 @@ export default {
           }
         ]
       },
+      isFormValid: true,
       componentDisplay: [],
       componentData: [],
       errors: [],
@@ -430,7 +428,6 @@ export default {
         this.requestRemoval = true
       }
       this.deleteDialog = true
-      console.log(this.requestRemoval)
     },
     submitRemoval() {
       let data = {
