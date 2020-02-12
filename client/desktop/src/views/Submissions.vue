@@ -46,7 +46,8 @@
                   y2="25"
                   style="stroke:black; stroke-width:2"
                 ></line>
-                <text v-if="item.currentStep" :x="i*50" y="60">{{ step.name }}</text>
+                <text v-if="item.currentStep && i !== 0" :x="20+i*50" y="60" text-anchor="middle">{{ step.name }}</text>
+                <text v-else :x="i*50" y="60" text-anchor="start">{{ step.name }}</text>
               </g>
             </svg>
           </template>
