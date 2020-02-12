@@ -148,7 +148,7 @@
         <v-card-text>
           <p>
             Your current entries can be found at
-            <router-link :to="{name:'Submissions'}">User Tools > Submissions</router-link>:*
+            <router-link :to="{ name: 'Submissions' }">User Tools > Submissions</router-link>:*
           </p>
           <v-form>
             <v-container>
@@ -462,9 +462,21 @@
           @close="
             writeReviewDialog = false
             getDetail()
-            isLoading = false
           "
-          :review="newReview"
+          :componentId="id"
+          title="Write A Review"
+        >
+        </ReviewModal>
+
+        <ReviewModal
+          v-model="editReviewDialog"
+          @close="
+            editReviewDialog = false
+            getDetail()
+          "
+          :componentId="id"
+          title="Edit A Review"
+          :editReview="newReview"
         >
         </ReviewModal>
 
@@ -558,7 +570,6 @@
 <script lang="js">
 import StarRating from 'vue-star-rating'
 import _ from 'lodash'
-import format from 'date-fns/format'
 import isFuture from 'date-fns/isFuture'
 import Lightbox from '@/components/Lightbox'
 import Question from '@/components/Question'
@@ -613,6 +624,7 @@ export default {
       questionLoading: false,
       askQuestionDialog: false,
       writeReviewDialog: false,
+      editReviewDialog: false,
       deleteReviewDialog: false,
       submitCorrectionDialog: false,
       requestOwnershipDialog: false,
@@ -760,27 +772,8 @@ export default {
         })
     },
     editReviewSetup(review) {
-      this.writeReviewDialog = true
-      this.fillReviewInformation(review)
-    },
-    deleteReviewSetup(review) {
-      this.deleteReviewDialog = true
-      this.fillReviewInformation(review)
-    },
-    fillReviewInformation(review) {
-      this.newReview.title = review.title
-      this.newReview.rating = review.rating
-      this.newReview.recommend = review.recommend
-      this.newReview.lastUsed = format(review.lastUsed, 'yyyy-mm-dd')
-      this.newReview.timeUsed = review.userTimeDescription
-      review.pros.forEach(element => {
-        this.newReview.pros.push(element.text)
-      })
-      review.cons.forEach(element => {
-        this.newReview.cons.push(element.text)
-      })
-      this.newReview.comment = review.comment
-      this.newReview.editReviewId = review.reviewId
+      this.newReview = review
+      this.editReviewDialog = true
     },
     filterLightboxList() {
       if (this.detail.componentMedia) {
