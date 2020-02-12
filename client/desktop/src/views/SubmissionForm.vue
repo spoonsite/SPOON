@@ -158,7 +158,7 @@
               deletable-chips
               :items="attribute.codes"
               item-text="label"
-              item-code="code"
+              item-value="code"
               :search-input.sync="attribute.searchText"
               @keypress.enter="
                 attribute.codes.push(attribute.searchText)
@@ -182,7 +182,7 @@
               deletable-chips
               :items="attribute.codes"
               item-text="label"
-              item-code="code"
+              item-value="code"
               class="mr-3"
               :rules="
                 attribute.attributeValueType === 'NUMBER'
@@ -205,7 +205,7 @@
               :label="`${attribute.description}*`"
               :items="attribute.codes"
               item-text="label"
-              item-code="code"
+              item-value="code"
               class="mr-3"
               :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
               required
@@ -236,7 +236,7 @@
               deletable-chips
               :items="attribute.codes"
               item-text="label"
-              item-code="code"
+              item-value="code"
               :search-input.sync="attribute.searchText"
               @keypress.enter="
                 attribute.codes.push(attribute.searchText)
@@ -254,7 +254,7 @@
               deletable-chips
               :items="attribute.codes"
               item-text="label"
-              item-code="code"
+              item-value="code"
               class="mr-3"
             />
             <v-text-field
@@ -269,7 +269,7 @@
               :label="`${attribute.description}`"
               :items="attribute.codes"
               item-text="label"
-              item-code="code"
+              item-value="code"
               class="mr-3"
             />
             <v-select
@@ -448,7 +448,7 @@ export default {
       if (this.$route.params.id !== 'new') {
         // load in the data
         this.id = this.$route.params.id
-        this.loadData(this.$route.params.id)
+        this.loadData(this.id)
       } else {
         // auto fill out the user info
         if (this.$store.state.currentUser.username) {
@@ -511,6 +511,7 @@ export default {
     // Description
     description: '',
     // Attributes
+    savedAttributes: [],
     attributes: {
       required: [],
       suggested: [],
@@ -572,12 +573,14 @@ export default {
     }
   },
   methods: {
+    /**
+     * attributes cannot be loaded until the entry type is loaded
+     */
     loadData(id) {
-      console.log('load data: ', id)
       this.$http
         .get(`/openstorefront/api/v1/resource/componentsubmissions/${id}`)
         .then(response => {
-          console.log(response.data)
+          // console.log(response.data)
           let component = response.data.component
           let contacts = response.data.contacts
 
@@ -586,7 +589,7 @@ export default {
           this.description = component.description
           this.organization = component.organization
           // load tags
-          // load attributes (required/optional)
+          this.savedAttributes = response.data.attributes
 
           this.primaryPOC = contacts[0] // unsafe
           this.contacts = _.tail(contacts)
@@ -685,6 +688,17 @@ export default {
                 e.attributeUnit = ''
               }
             }
+
+            // load saved attributes
+            this.savedAttributes.forEach(attribute => {
+              if (attribute.componentAttributePk.attributeType === e.attributeType) {
+                if (Array.isArray(e.selectedCodes)) {
+                  e.selectedCodes.push(attribute.componentAttributePk.attributeCode)
+                } else {
+                  e.selectedCodes = attribute.componentAttributePk.attributeCode
+                }
+              }
+            })
           })
         })
       this.$http
@@ -703,6 +717,16 @@ export default {
                 e.attributeUnit = ''
               }
             }
+            // load saved attributes
+            this.savedAttributes.forEach(attribute => {
+              if (attribute.componentAttributePk.attributeType === e.attributeType) {
+                if (Array.isArray(e.selectedCodes)) {
+                  e.selectedCodes.push(attribute.componentAttributePk.attributeCode)
+                } else {
+                  e.selectedCodes = attribute.componentAttributePk.attributeCode
+                }
+              }
+            })
           })
         })
     },
@@ -725,6 +749,25 @@ export default {
     },
     submit(data) {
       let formData = this.getFormData()
+
+      // let userCreatedAttributes = formData.attributes.filter(el => el.userCreated)
+      // let createdCodeList = []
+      // userCreatedAttributes.forEach(el => {
+      //   createdCodeList.push({
+      //     attributeCodeLabel: el.attributeCode,
+      //     attributeType: el.attributeType
+      //   })
+      // })
+
+      // this.$http
+      //   .post('/openstorefront/api/v1/resource/attributes/attributetypes/usercodes', createdCodeList)
+      //   .then(response => {
+      //     console.log(response)
+      //   })
+      //   .catch(e => {
+      //     console.error(e)
+      //   })
+
       if (this.id && this.id !== 'new') {
         this.$http
           .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}`, formData)
