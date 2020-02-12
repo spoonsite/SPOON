@@ -316,9 +316,9 @@ export default {
         .then(response => {
           window.location.href = 'openstorefront'
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('There was an error logging out')
-          console.error(e)
+          console.error(error)
         })
     },
     parseJSON(obj) {
@@ -374,9 +374,9 @@ export default {
             }
           }
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving watches')
-          console.error(e)
+          console.error(error)
         })
         .finally(() => {
           if (this.watchNumber > 0) {

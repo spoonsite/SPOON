@@ -800,9 +800,9 @@ export default {
 
           that.searchQueryIsDirty = false
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving search results')
-          console.error(e)
+          console.error(error)
           that.searchQueryIsDirty = false
         })
         .finally(() => {

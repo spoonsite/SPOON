@@ -804,9 +804,9 @@ export default {
           this.answers[qid] = response.data
           this.isLoading = false
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving answers to questions')
-          console.error(e)
+          console.error(error)
         })
     },
     getDetail() {
@@ -815,9 +815,9 @@ export default {
         .then(response => {
           this.detail = response.data
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving the component')
-          console.error(e)
+          console.error(error)
         })
         .finally(() => {
           this.computeHasImage()
@@ -832,9 +832,9 @@ export default {
           this.questions = response.data
           this.questionLoading = false
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving component questions')
-          console.error(e)
+          console.error(error)
         })
     },
     getTags() {
@@ -846,9 +846,9 @@ export default {
             this.allTags.push(tags[i].text)
           }
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving the tag list')
-          console.error(e)
+          console.error(error)
         })
     },
     getRelatedTags() {
@@ -860,9 +860,9 @@ export default {
             this.relatedTags.push(tags[i].text)
           }
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving component tags')
-          console.error(e)
+          console.error(error)
         })
     },
     lookupTypes() {
@@ -875,9 +875,9 @@ export default {
             })
           }
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving component use lengths')
-          console.error(e)
+          console.error(error)
         })
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
@@ -889,9 +889,9 @@ export default {
             })
           }
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving review pros')
-          console.error(e)
+          console.error(error)
         })
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
@@ -903,9 +903,9 @@ export default {
             })
           }
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving review cons')
-          console.error(e)
+          console.error(error)
         })
     },
     showMediaDetails(item) {
@@ -932,9 +932,9 @@ export default {
           this.feedbackForm.message = ''
           this.$toasted.show('Correction submitted.')
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('There was a problem submitting the correction')
-          console.error(e)
+          console.error(error)
         })
     },
     submitOwnershipRequest() {
@@ -957,9 +957,9 @@ export default {
           this.buttonLoad = false
           this.$toasted.show('Ownership request submitted.')
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('There was a problem submitting the ownership request')
-          console.error(e)
+          console.error(error)
         })
     },
     determineTagType() {
@@ -1001,9 +1001,9 @@ export default {
           this.buttonLoad = false
           this.$toasted.show('Message to vendor was sent.')
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('There was a problem contacting this vendor')
-          console.error(e)
+          console.error(error)
           this.buttonLoad = false
         })
     },
@@ -1014,9 +1014,9 @@ export default {
           this.detail.tags = this.detail.tags.filter(e => e.tagId !== this.deleteTagId)
           this.tagName = ''
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('There was a problem deleting the tag')
-          console.error(e)
+          console.error(error)
         })
     },
     submitTag(name) {
@@ -1031,9 +1031,9 @@ export default {
           this.tagName = ''
           this.$toasted.show('Tag submitted.')
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('There was a problem submitting this tag')
-          console.error(e)
+          console.error(error)
         })
     },
     submitQuestion(question) {
@@ -1050,9 +1050,9 @@ export default {
             this.getQuestions()
             this.$toasted.success('Question submitted.')
           })
-          .catch(e => {
+          .catch(error => {
             this.$toasted.error('There was a problem submitting the question')
-            console.error(e)
+            console.error(error)
           })
       }
       this.askQuestionDialog = false
@@ -1108,9 +1108,9 @@ export default {
             this.isLoading = false
             this.getDetail()
           })
-          .catch(e => {
+          .catch(error => {
             this.$toasted.error('There was a problem submitting the review')
-            console.error(e)
+            console.error(error)
           })
       } else {
         this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/reviews/detail`, data)
@@ -1122,9 +1122,9 @@ export default {
             this.isLoading = false
             this.getDetail()
           })
-          .catch(e => {
+          .catch(error => {
             this.$toasted.error('There was a problem submitting the review')
-            console.error(e)
+            console.error(error)
           })
       }
     },

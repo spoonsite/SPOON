@@ -33,9 +33,9 @@ export default {
           var filtered = response.data.filter(item => item.activeStatus === 'A')
           that.questions = filtered
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving questions')
-          console.error(e)
+          console.error(error)
         })
     }
   },

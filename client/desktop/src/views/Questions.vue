@@ -259,9 +259,9 @@ export default {
         .then(response => {
           this.refreshQuestions()
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred while editing the question')
-          console.error(e)
+          console.error(error)
         })
     },
     viewComponent(componentId) {
@@ -281,15 +281,15 @@ export default {
               this.question.questions.push(...response.data)
               this.getAnswersToQuestions()
             })
-            .catch(e => {
+            .catch(error => {
               this.$toasted.error('An error occurred while refreshing the questions')
-              console.error(e)
+              console.error(error)
               this.question.isLoading = false
             })
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred while refreshing the questions')
-          console.error(e)
+          console.error(error)
           this.question.isLoading = false
         })
     },
@@ -300,9 +300,9 @@ export default {
           .then(response => {
             question.responses = response.data
           })
-          .catch(e => {
+          .catch(error => {
             this.$toasted.error('An error occurredd what getting question responses')
-            console.error(e)
+            console.error(error)
           })
       })
     },
@@ -328,9 +328,9 @@ export default {
         .then(response => {
           this.refreshAnswers()
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred submitting the answer edit')
-          console.error(e)
+          console.error(error)
         })
     },
     deleteAnswer(response) {
@@ -347,9 +347,9 @@ export default {
           this.answer.isLoading = false
           this.refreshAnswers()
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred deleting this answer')
-          console.error(e)
+          console.error(error)
           this.answer.isLoading = false
         })
     },
@@ -365,15 +365,15 @@ export default {
               this.answer.isLoading = false
               this.answer.answers.push(...response.data)
             })
-            .catch(e => {
+            .catch(error => {
               this.$toasted.error('An error occurred refreshing answers')
-              console.error(e)
+              console.error(error)
               this.answer.isLoading = false
             })
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred refreshing answers')
-          console.error(e)
+          console.error(error)
           this.answer.isLoading = false
         })
     }

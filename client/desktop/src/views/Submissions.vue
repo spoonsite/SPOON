@@ -305,10 +305,10 @@ export default {
         .then(response => {
           this.isLoading = false
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
-        }).catch(e => {
+        }).catch(error => {
           this.isLoading = false
           this.$toasted.error('An error occurred retrieving submissions')
-          console.error(e)
+          console.error(error)
         })
     },
     viewComponent(componentId) {
@@ -456,9 +456,9 @@ export default {
           this.removalForm.message = ''
           this.$toasted.show('Sent Sucessfully.')
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('There was a problem submitting the correction')
-          console.error(e)
+          console.error(error)
         })
     },
     submitDeletion() {

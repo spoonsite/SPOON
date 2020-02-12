@@ -180,9 +180,9 @@ export default {
             })
           }
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving component use times')
-          console.error(e)
+          console.error(error)
         })
 
       this.$http
@@ -195,9 +195,9 @@ export default {
             })
           }
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving component pros')
-          console.error(e)
+          console.error(error)
         })
 
       this.$http
@@ -210,9 +210,9 @@ export default {
             })
           }
         })
-        .catch(e => {
+        .catch(error => {
           this.$toasted.error('An error occurred retrieving component cons')
-          console.error(e)
+          console.error(error)
         })
     },
     submitReview() {
@@ -263,9 +263,9 @@ export default {
             this.$toasted.show('Review Submitted')
             this.$emit('close')
           })
-          .catch(e => {
+          .catch(error => {
             this.$toasted.error('There was a problem submitting the review')
-            console.error(e)
+            console.error(error)
           })
       } else {
         this.$http
@@ -274,9 +274,9 @@ export default {
             this.$toasted.show('Review Submitted')
             this.$emit('close')
           })
-          .catch(e => {
+          .catch(error => {
             this.$toasted.error('There was a problem submitting the review')
-            console.error(e)
+            console.error(error)
           })
       }
     }

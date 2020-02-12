@@ -96,9 +96,9 @@ export default {
           .then(response => {
             this.searchSuggestions = response.data
           })
-          .catch(e => {
+          .catch(error => {
             this.$toasted.error('An error occurred retrieving search suggestions')
-            console.error(e)
+            console.error(error)
           })
       }
     },
