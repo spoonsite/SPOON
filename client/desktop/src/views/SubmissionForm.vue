@@ -457,7 +457,6 @@ export default {
   name: 'SubmissionForm',
   components: { ModalTitle },
   beforeRouteLeave(to, from, next) {
-    console.log('testing')
     const answer = window.confirm('Do you really want to leave?')
     if (answer) {
       next()
