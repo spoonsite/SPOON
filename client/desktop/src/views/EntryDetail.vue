@@ -13,9 +13,17 @@
       <div v-else class="no-media"></div>
       <div class="detail-header">
         <div class="component-name">
-          <img v-if="detail.componentTypeIconUrl" :src="baseURL + detail.componentTypeIconUrl" width="40px">
-          <p class="headline">{{detail.name}}</p>
-          <star-rating class="pl-2" style="margin-top: -12px;" :rating="computeAverageRating(detail)" :read-only="true" :show-rating="false" :increment="0.01" :star-size="20"></star-rating>
+          <img v-if="detail.componentTypeIconUrl" :src="baseURL + detail.componentTypeIconUrl" width="40px" />
+          <p class="headline">{{ detail.name }}</p>
+          <star-rating
+            class="pl-2"
+            style="margin-top: -12px;"
+            :rating="computeAverageRating(detail)"
+            :read-only="true"
+            :show-rating="false"
+            :increment="0.01"
+            :star-size="20"
+          ></star-rating>
         </div>
         <div class="detail-header-body">
           <div class="detail-header-left">
@@ -52,7 +60,13 @@
             <div>
               <strong>Add a Rating:</strong>
               <p @click="writeReviewDialog = true">
-                <star-rating v-model="newReview.rating" :rating="newReview.rating" :read-only="false" :increment="1" :star-size="25"></star-rating>
+                <star-rating
+                  v-model="newReview.rating"
+                  :rating="newReview.rating"
+                  :read-only="false"
+                  :increment="1"
+                  :star-size="25"
+                ></star-rating>
               </p>
             </div>
             <div style="display: flex; flex-direction: column;">
@@ -90,6 +104,9 @@
       <v-card>
         <ModalTitle title="Submit Correction" @close="submitCorrectionDialog = false" />
         <v-card-text>
+          <v-alert class="w-100" type="warning" :value="true"
+            ><span v-html="$store.state.branding.userInputWarning"></span
+          ></v-alert>
           <v-form>
             <v-container>
               <p>Please include the section needing the correction (e.g. Contacts)</p>
@@ -131,7 +148,7 @@
         <v-card-text>
           <p>
             Your current entries can be found at
-            <a href="/openstorefront/UserTool.action?load=Submissions">User Tools > Submissions</a>:*
+            <router-link :to="{ name: 'Submissions' }">User Tools > Submissions</router-link>:*
           </p>
           <v-form>
             <v-container>
@@ -172,10 +189,13 @@
       <v-card>
         <ModalTitle title="Contact Vendor" @close="contactVendorDialog = false" />
         <v-card-text>
+          <v-alert class="w-100" type="warning" :value="true"
+            ><span v-html="$store.state.branding.userInputWarning"></span
+          ></v-alert>
           <p class="mb-0">From:</p>
           <v-text-field single-line disabled v-model="userEmail"> </v-text-field>
           <p class="mb-0">Message:</p>
-          <quill-editor v-model="vendorMessage"/>
+          <quill-editor v-model="vendorMessage" />
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -214,7 +234,10 @@
                   <tbody>
                     <tr v-for="attr in detail.attributes" :key="attr.typeDescription">
                       <td>{{ attr.typeDescription }}</td>
-                      <td>{{ attr.codeDescription }} {{ attr.unit }} <br/><strong v-if="attr.comment">Comment:</strong> {{ attr.comment }}</td>
+                      <td>
+                        {{ attr.codeDescription }} {{ attr.unit }} <br /><strong v-if="attr.comment">Comment:</strong>
+                        {{ attr.comment }}
+                      </td>
                     </tr>
                   </tbody>
                 </template>
@@ -434,19 +457,38 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-      <ReviewModal
-        v-model="writeReviewDialog"
-        @close="writeReviewDialog = false; getDetail(); isLoading = false"
-        :review="newReview"
-      >
-      </ReviewModal>
+        <ReviewModal
+          v-model="writeReviewDialog"
+          @close="
+            writeReviewDialog = false
+            getDetail()
+          "
+          :componentId="id"
+          title="Write A Review"
+        >
+        </ReviewModal>
 
-      <DeleteReviewModal
-        v-model="deleteReviewDialog"
-        @close="deleteReviewDialog = false; getDetail();"
-        :review="newReview"
-      >
-      </DeleteReviewModal>
+        <ReviewModal
+          v-model="editReviewDialog"
+          @close="
+            editReviewDialog = false
+            getDetail()
+          "
+          :componentId="id"
+          title="Edit A Review"
+          :editReview="newReview"
+        >
+        </ReviewModal>
+
+        <DeleteReviewModal
+          v-model="deleteReviewDialog"
+          @close="
+            deleteReviewDialog = false
+            getDetail()
+          "
+          :review="newReview"
+        >
+        </DeleteReviewModal>
 
         <v-dialog v-model="deleteReviewDialog" width="25em">
           <v-card>
@@ -471,42 +513,23 @@
         <v-expansion-panel>
           <v-expansion-panel-header><h2>Questions and Answers</h2></v-expansion-panel-header>
           <v-expansion-panel-content class="expansion-content">
-            <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
-            <Question
-              v-for="question in questions"
-              :key="question.question"
-              @questionDeleted="deleteQuestion(question)"
-              :question="question"
-            ></Question>
-            <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
+            <div class="text-center ma-12" v-if="questionLoading">
+              <v-progress-circular color="primary" :size="60" :width="6" indeterminate></v-progress-circular>
+            </div>
+            <div v-else>
+              <v-btn @click="askQuestionDialog = true">Ask a Question</v-btn>
+              <Question
+                v-for="question in questions"
+                :key="question.question"
+                @questionDeleted="deleteQuestion(question)"
+                :question="question"
+              ></Question>
+              <div style="margin-top: 0.5em;" v-if="questions.length === 0">There are no questions for this entry.</div>
+            </div>
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-dialog v-model="askQuestionDialog" max-width="75em">
-          <v-card>
-            <ModalTitle title="Ask a Question" @close="askQuestionDialog = false" />
-            <v-card-text>
-              <v-alert class="w-100" type="warning" :value="true"
-                ><span v-html="$store.state.branding.userInputWarning"></span
-              ></v-alert>
-              <v-alert class="w-100" type="info" :value="true"
-                ><span v-html="$store.state.branding.submissionFormWarning"></span
-              ></v-alert>
-              <quill-editor style="background-color: white;" v-model="newQuestion"></quill-editor>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer />
-              <v-btn color="success" :disabled="newQuestion === ''" @click="submitQuestion()">Submit</v-btn>
-              <v-btn
-                @click="
-                  askQuestionDialog = false
-                  newQuestion = ''
-                "
-                >Cancel</v-btn
-              >
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        <QuestionModal v-model="askQuestionDialog" title="Ask a Question" @close="submitQuestion($event)" />
 
         <v-expansion-panel>
           <v-expansion-panel-header><h2>Contacts</h2></v-expansion-panel-header>
@@ -547,13 +570,13 @@
 <script lang="js">
 import StarRating from 'vue-star-rating'
 import _ from 'lodash'
-import format from 'date-fns/format'
 import isFuture from 'date-fns/isFuture'
 import Lightbox from '@/components/Lightbox'
 import Question from '@/components/Question'
 import ModalTitle from '@/components/ModalTitle'
 import ReviewModal from '@/components/ReviewModal'
 import DeleteReviewModal from '@/components/DeleteReviewModal'
+import QuestionModal from '@/components/QuestionModal'
 
 export default {
   name: 'entry-detail-page',
@@ -563,7 +586,8 @@ export default {
     Question,
     ModalTitle,
     ReviewModal,
-    DeleteReviewModal
+    DeleteReviewModal,
+    QuestionModal
   },
   mounted() {
     if (this.$route.params.id) {
@@ -583,6 +607,10 @@ export default {
       )
     }
 
+    this.$http
+      .get(`/openstorefront/api/v1/service/application/configproperties/userreview.autoapprove`)
+      .then(response => (this.autoApprove = response.data.description === 'true'))
+
     this.getDetail()
     this.getQuestions()
     this.getTags()
@@ -591,9 +619,12 @@ export default {
     return {
       baseURL: '/openstorefront/',
       isLoading: true,
+      autoApprove: false,
+      // Questions
+      questionLoading: false,
       askQuestionDialog: false,
-      newQuestion: '',
       writeReviewDialog: false,
+      editReviewDialog: false,
       deleteReviewDialog: false,
       submitCorrectionDialog: false,
       requestOwnershipDialog: false,
@@ -648,7 +679,6 @@ export default {
       watchBeingChecked: true,
       hasImage: false,
       lightboxList: [],
-      errors: [],
       mediaDetailsDialog: false,
       currentMediaDetailItem: {},
       panels: [0, 1],
@@ -741,27 +771,8 @@ export default {
         })
     },
     editReviewSetup(review) {
-      this.writeReviewDialog = true
-      this.fillReviewInformation(review)
-    },
-    deleteReviewSetup(review) {
-      this.deleteReviewDialog = true
-      this.fillReviewInformation(review)
-    },
-    fillReviewInformation(review) {
-      this.newReview.title = review.title
-      this.newReview.rating = review.rating
-      this.newReview.recommend = review.recommend
-      this.newReview.lastUsed = format(review.lastUsed, 'yyyy-mm-dd')
-      this.newReview.timeUsed = review.userTimeDescription
-      review.pros.forEach(element => {
-        this.newReview.pros.push(element.text)
-      })
-      review.cons.forEach(element => {
-        this.newReview.cons.push(element.text)
-      })
-      this.newReview.comment = review.comment
-      this.newReview.editReviewId = review.reviewId
+      this.newReview = review
+      this.editReviewDialog = true
     },
     filterLightboxList() {
       if (this.detail.componentMedia) {
@@ -786,7 +797,10 @@ export default {
           this.answers[qid] = response.data
           this.isLoading = false
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving answers to questions')
+          console.error(error)
+        })
     },
     getDetail() {
       this.isLoading = true
@@ -794,7 +808,10 @@ export default {
         .then(response => {
           this.detail = response.data
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving the component')
+          console.error(error)
+        })
         .finally(() => {
           this.computeHasImage()
           this.filterLightboxList()
@@ -802,12 +819,16 @@ export default {
         })
     },
     getQuestions() {
-      this.isLoading = true
+      this.questionLoading = true
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/questions`)
         .then(response => {
           this.questions = response.data
+          this.questionLoading = false
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving component questions')
+          console.error(error)
+        })
     },
     getTags() {
       this.isLoading = true
@@ -818,7 +839,10 @@ export default {
             this.allTags.push(tags[i].text)
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving the tag list')
+          console.error(error)
+        })
     },
     getRelatedTags() {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/relatedtags`)
@@ -829,7 +853,10 @@ export default {
             this.relatedTags.push(tags[i].text)
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving component tags')
+          console.error(error)
+        })
     },
     lookupTypes() {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
@@ -841,7 +868,10 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving component use lengths')
+          console.error(error)
+        })
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
         .then(response => {
@@ -852,7 +882,10 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving review pros')
+          console.error(error)
+        })
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
         .then(response => {
@@ -863,7 +896,10 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving review cons')
+          console.error(error)
+        })
     },
     showMediaDetails(item) {
       this.currentMediaDetailItem = item
@@ -889,7 +925,10 @@ export default {
           this.feedbackForm.message = ''
           this.$toasted.show('Correction submitted.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
+        .catch(error => {
+          this.$toasted.error('There was a problem submitting the correction')
+          console.error(error)
+        })
     },
     submitOwnershipRequest() {
       this.buttonLoad = true
@@ -911,7 +950,10 @@ export default {
           this.buttonLoad = false
           this.$toasted.show('Ownership request submitted.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the ownership request.'))
+        .catch(error => {
+          this.$toasted.error('There was a problem submitting the ownership request')
+          console.error(error)
+        })
     },
     determineTagType() {
       this.tagName = document.getElementById('tagEntry').value
@@ -952,8 +994,9 @@ export default {
           this.buttonLoad = false
           this.$toasted.show('Message to vendor was sent.')
         })
-        .catch(e => {
-          this.$toasted.error('There was a problem contacting this vendor.')
+        .catch(error => {
+          this.$toasted.error('There was a problem contacting this vendor')
+          console.error(error)
           this.buttonLoad = false
         })
     },
@@ -963,6 +1006,10 @@ export default {
           this.$toasted.show('Tag Deleted')
           this.detail.tags = this.detail.tags.filter(e => e.tagId !== this.deleteTagId)
           this.tagName = ''
+        })
+        .catch(error => {
+          this.$toasted.error('There was a problem deleting the tag')
+          console.error(error)
         })
     },
     submitTag(name) {
@@ -977,24 +1024,31 @@ export default {
           this.tagName = ''
           this.$toasted.show('Tag submitted.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting this tag.'))
-    },
-    submitQuestion() {
-      let data = {
-        dataSensitivity: '',
-        organization: this.$store.state.currentUser.organization,
-        question: this.newQuestion,
-        securityMarkingType: '',
-        userTypeCode: this.$store.state.currentUser.userTypeCode
-      }
-      this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/questions`, data)
-        .then(response => {
-          this.questions.push(response.data)
-          this.newQuestion = ''
-          this.askQuestionDialog = false
-          this.$toasted.show('Question submitted.')
+        .catch(error => {
+          this.$toasted.error('There was a problem submitting this tag')
+          console.error(error)
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the question.'))
+    },
+    submitQuestion(question) {
+      if (question) {
+        let data = {
+          dataSensitivity: '',
+          organization: this.$store.state.currentUser.organization,
+          question: question,
+          securityMarkingType: '',
+          userTypeCode: this.$store.state.currentUser.userTypeCode
+        }
+        this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/questions`, data)
+          .then(response => {
+            this.getQuestions()
+            this.$toasted.success('Question submitted.')
+          })
+          .catch(error => {
+            this.$toasted.error('There was a problem submitting the question')
+            console.error(error)
+          })
+      }
+      this.askQuestionDialog = false
     },
     submitReview() {
       this.isLoading = true
@@ -1047,7 +1101,10 @@ export default {
             this.isLoading = false
             this.getDetail()
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
+          .catch(error => {
+            this.$toasted.error('There was a problem submitting the review')
+            console.error(error)
+          })
       } else {
         this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/reviews/detail`, data)
           .then(response => {
@@ -1058,7 +1115,10 @@ export default {
             this.isLoading = false
             this.getDetail()
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
+          .catch(error => {
+            this.$toasted.error('There was a problem submitting the review')
+            console.error(error)
+          })
       }
     },
     todaysDateFormatted(val) {

@@ -26,6 +26,7 @@
             'items-per-page-options': [10, 20, 30, 40, 50]
           }"
           :sort-by="['name']"
+          :hide-default-footer="isLoading || componentData.length === 0"
           class="tableLayout"
           :search="search"
         >
@@ -35,27 +36,17 @@
             <div v-else-if="item.submissionId" style="color: red;">Incomplete Submission</div>
             <div v-else-if="item.evaluationsAttached" style="color: red;">Evaluations Are In Progress</div>
           </template>
-          <template v-slot:item.status="{ item }">
-            <div v-if="item.status === 'A'">Active</div>
-            <div v-else-if="item.status === 'P'">Pending</div>
-            <div v-else-if="item.status === 'N'">Not Submitted</div>
-            <div v-else>{{ item.status }}</div>
-          </template>
           <template v-slot:item.submitDate="{ item }">
             <div v-if="item.submitDate">{{ item.submitDate | formatDate }}</div>
-            <div v-else-if="item.status === 'P'">{{ item.lastUpdate | formatDate }}</div>
-          </template>
-          <template v-slot:item.pendingChange="{ item }">
-            <div v-if="item.hasChangeRequest">Pending</div>
+            <div v-else-if="item.status === 'Pending'">{{ item.lastUpdate | formatDate }}</div>
           </template>
           <template v-slot:item.lastUpdate="{ item }">
             {{ item.lastUpdate | formatDate }}
           </template>
           <template v-slot:item.approvalWorkflow="{ item }">
-            <svg width="200" height="65">
+            <svg v-if="item && item.steps && item.steps.length > 0" :width="item.steps.length * 50" height="65">
               <g v-for="(step, i) in item.steps" :key="step.name" :id="step.name"  class="step">
-                <circle :cx="20 + i * 50" cy="25" r="15" stroke="black" :fill="'#' + step.color" />
-
+                <circle class="circle" :cx="20 + i * 50" cy="25" r="15" stroke="black" :fill="'#' + step.color" />
                 <line
                   v-if="i !== item.steps.length - 1"
                   :x1="35 + i * 50"
@@ -64,7 +55,7 @@
                   y2="25"
                   style="stroke:black; stroke-width:2"
                 ></line>
-                <text v-if="item.currentStep" x="55" y="60">{{ step.name }}</text>
+                <text v-if="item.currentStep" :x="i*50" y="60">{{ step.name }}</text>
               </g>
             </svg>
           </template>
@@ -85,7 +76,16 @@
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-btn icon v-on="on" style="order: 2">
+                  <v-btn
+                    v-if="item.status === 'Active'"
+                    :href="'mailto:support@spoonsite.com?subject=Change%20Request%20for%20' + item.name"
+                    icon
+                    v-on="on"
+                    style="order: 2"
+                  >
+                    <v-icon>fas fa-pencil-alt</v-icon>
+                  </v-btn>
+                  <v-btn v-else icon v-on="on" style="order: 2">
                     <v-icon>fas fa-pencil-alt</v-icon>
                   </v-btn>
                 </template>
@@ -286,9 +286,7 @@ export default {
       },
       componentDisplay: [],
       componentData: [],
-      errors: [],
       isLoading: true,
-      counter: 0,
       maxUploadSize: 0,
       isSendingFile: false,
       search: '',
@@ -326,7 +324,6 @@ export default {
   methods: {
     getUserParts() {
       this.componentData = []
-      this.counter = 0
       this.isLoading = true
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions/user')
         .then(response => {
@@ -334,7 +331,8 @@ export default {
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
         }).catch(error => {
           this.isLoading = false
-          this.errors.push(error)
+          this.$toasted.error('An error occurred retrieving submissions')
+          console.error(error)
         })
     },
     getMaxUploadSize() {
@@ -364,6 +362,8 @@ export default {
         })
         if (myWorkPlan !== null) {
           updatedComponents.push(this.generateComponent(component, myWorkPlan))
+        } else {
+          updatedComponents.push(this.generateComponent(component, null))
         }
       })
 
@@ -378,38 +378,41 @@ export default {
       let currentStep = ''
       let steps = []
 
-      workPlan.steps.forEach((step, index) => {
-        if (!seenCurrStep) {
-          if (component.stepId === step.workPlanStepId) {
-            if (index === workPlan.steps.length - 1) {
+      if (workPlan !== null) {
+        workPlan.steps.forEach((step, index) => {
+          if (!seenCurrStep) {
+            if (component.stepId === step.workPlanStepId) {
+              if (index === workPlan.steps.length - 1) {
+                steps.push({
+                  name: step.name,
+                  color: workPlan.completeColor
+                })
+              } else {
+                steps.push({
+                  name: step.name,
+                  color: workPlan.inProgressColor
+                })
+                currentStep = step.name
+              }
+              seenCurrStep = true
+            } else {
               steps.push({
                 name: step.name,
                 color: workPlan.completeColor
               })
-            } else {
-              steps.push({
-                name: step.name,
-                color: workPlan.inProgressColor
-              })
-              currentStep = step.name
             }
-            seenCurrStep = true
           } else {
             steps.push({
               name: step.name,
-              color: workPlan.completeColor
+              color: workPlan.pendingColor
             })
           }
-        } else {
-          steps.push({
-            name: step.name,
-            color: workPlan.pendingColor
-          })
+        })
+        if (currentStep === '') {
+          currentStep = 'Approved'
         }
-      })
-      if (currentStep === '') {
-        currentStep = 'Approved'
       }
+
       let updatedComponent = {}
 
       updatedComponent = {
@@ -417,8 +420,9 @@ export default {
         lastUpdate: component.lastActivityDts,
         type: component.componentTypeLabel,
         componentId: component.componentId,
-        status: component.approvalState,
+        status: this.determineApprovalStatus(component),
         submitDate: component.approvedDts,
+        pendingChange: this.determineChangeRequest(component),
         steps: steps,
         currentStep: currentStep,
         submissionOriginalComponentId: component.submissionOriginalComponentId,
@@ -434,11 +438,27 @@ export default {
         name: submission.name,
         submissionId: submission.userSubmissionId,
         type: submission.componentTypeLabel,
-        status: submission.approvalState,
+        status: this.determineApprovalStatus(submission),
         lastUpdate: submission.updateDts,
         steps: null,
         submissionOriginalComponentId: submission.submissionOriginalComponentId,
         evaluationsAttached: submission.evaluationsAttached
+      }
+    },
+    determineApprovalStatus(component) {
+      if (component.approvalState === 'A') {
+        return 'Active'
+      } else if (component.approvalState === 'P') {
+        return 'Pending'
+      } else {
+        return 'Not Submitted'
+      }
+    },
+    determineChangeRequest(component) {
+      if (component.statusOfPendingChange != null) {
+        return 'Pending'
+      } else {
+        return ''
       }
     },
     determineDeleteForm(item) {
@@ -470,7 +490,10 @@ export default {
           this.removalForm.message = ''
           this.$toasted.show('Sent Sucessfully.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
+        .catch(error => {
+          this.$toasted.error('There was a problem submitting the correction')
+          console.error(error)
+        })
     },
     submitDeletion() {
       this.isLoading = true
@@ -483,7 +506,7 @@ export default {
           })
           .catch(error => {
             this.$toasted.error('Submission could not be deleted.')
-            this.errors.push(error)
+            console.error(error)
             this.isLoading = false
           })
       } else {
@@ -495,7 +518,7 @@ export default {
           })
           .catch(error => {
             this.$toasted.error('Submission could not be deleted.')
-            this.errors.push(error)
+            console.error(error)
             this.isLoading = false
           })
       }
