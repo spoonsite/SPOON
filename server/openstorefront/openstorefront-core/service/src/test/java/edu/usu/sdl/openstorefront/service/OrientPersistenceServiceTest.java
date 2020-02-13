@@ -58,11 +58,9 @@ public class OrientPersistenceServiceTest
 
 		OrientDBManager mockManager = Mockito.mock(OrientDBManager.class);
 		Mockito.when(mockManager.getConnection()).thenReturn(mockDatabase);
-
 		TestParent p1 = new TestParent();
 		p1.setChild(new TestChild());
 		p1.getChild().setValue("This is a Test");
-
 		//Act
 		Assert.assertNull(p1.getParentId());
 		Assert.assertNull(p1.getChild().getChildId());
@@ -78,7 +76,6 @@ public class OrientPersistenceServiceTest
 		Mockito.verify(mockDatabase, Mockito.times(2)).close();
 
 		OSFCacheManager.cleanUp();
-
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="generateQuery() Tests">

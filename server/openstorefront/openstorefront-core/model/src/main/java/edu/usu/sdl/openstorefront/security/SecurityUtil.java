@@ -346,6 +346,7 @@ public class SecurityUtil
 	@SuppressWarnings("UseSpecificCatch")
 	public static void logout(HttpServletRequest request, HttpServletResponse response)
 	{
+		response.setCharacterEncoding("UTF-8");
 		Subject currentUser = SecurityUtils.getSubject();
 		String userLoggedIn = SecurityUtil.getCurrentUserName();
 

@@ -148,7 +148,7 @@
         <v-card-text>
           <p>
             Your current entries can be found at
-            <router-link :to="{name:'Submissions'}">User Tools > Submissions</router-link>:*
+            <router-link :to="{ name: 'Submissions' }">User Tools > Submissions</router-link>:*
           </p>
           <v-form>
             <v-container>
@@ -462,9 +462,21 @@
           @close="
             writeReviewDialog = false
             getDetail()
-            isLoading = false
           "
-          :review="newReview"
+          :componentId="id"
+          title="Write A Review"
+        >
+        </ReviewModal>
+
+        <ReviewModal
+          v-model="editReviewDialog"
+          @close="
+            editReviewDialog = false
+            getDetail()
+          "
+          :componentId="id"
+          title="Edit A Review"
+          :editReview="newReview"
         >
         </ReviewModal>
 
@@ -558,7 +570,6 @@
 <script lang="js">
 import StarRating from 'vue-star-rating'
 import _ from 'lodash'
-import format from 'date-fns/format'
 import isFuture from 'date-fns/isFuture'
 import Lightbox from '@/components/Lightbox'
 import Question from '@/components/Question'
@@ -613,6 +624,7 @@ export default {
       questionLoading: false,
       askQuestionDialog: false,
       writeReviewDialog: false,
+      editReviewDialog: false,
       deleteReviewDialog: false,
       submitCorrectionDialog: false,
       requestOwnershipDialog: false,
@@ -667,7 +679,6 @@ export default {
       watchBeingChecked: true,
       hasImage: false,
       lightboxList: [],
-      errors: [],
       mediaDetailsDialog: false,
       currentMediaDetailItem: {},
       panels: [0, 1],
@@ -760,27 +771,8 @@ export default {
         })
     },
     editReviewSetup(review) {
-      this.writeReviewDialog = true
-      this.fillReviewInformation(review)
-    },
-    deleteReviewSetup(review) {
-      this.deleteReviewDialog = true
-      this.fillReviewInformation(review)
-    },
-    fillReviewInformation(review) {
-      this.newReview.title = review.title
-      this.newReview.rating = review.rating
-      this.newReview.recommend = review.recommend
-      this.newReview.lastUsed = format(review.lastUsed, 'yyyy-mm-dd')
-      this.newReview.timeUsed = review.userTimeDescription
-      review.pros.forEach(element => {
-        this.newReview.pros.push(element.text)
-      })
-      review.cons.forEach(element => {
-        this.newReview.cons.push(element.text)
-      })
-      this.newReview.comment = review.comment
-      this.newReview.editReviewId = review.reviewId
+      this.newReview = review
+      this.editReviewDialog = true
     },
     filterLightboxList() {
       if (this.detail.componentMedia) {
@@ -805,7 +797,10 @@ export default {
           this.answers[qid] = response.data
           this.isLoading = false
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving answers to questions')
+          console.error(error)
+        })
     },
     getDetail() {
       this.isLoading = true
@@ -813,7 +808,10 @@ export default {
         .then(response => {
           this.detail = response.data
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving the component')
+          console.error(error)
+        })
         .finally(() => {
           this.computeHasImage()
           this.filterLightboxList()
@@ -827,7 +825,10 @@ export default {
           this.questions = response.data
           this.questionLoading = false
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving component questions')
+          console.error(error)
+        })
     },
     getTags() {
       this.isLoading = true
@@ -838,7 +839,10 @@ export default {
             this.allTags.push(tags[i].text)
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving the tag list')
+          console.error(error)
+        })
     },
     getRelatedTags() {
       this.$http.get(`/openstorefront/api/v1/resource/components/${this.id}/relatedtags`)
@@ -849,7 +853,10 @@ export default {
             this.relatedTags.push(tags[i].text)
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving component tags')
+          console.error(error)
+        })
     },
     lookupTypes() {
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ExperienceTimeType')
@@ -861,7 +868,10 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving component use lengths')
+          console.error(error)
+        })
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewPro')
         .then(response => {
@@ -872,7 +882,10 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving review pros')
+          console.error(error)
+        })
 
       this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ReviewCon')
         .then(response => {
@@ -883,7 +896,10 @@ export default {
             })
           }
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving review cons')
+          console.error(error)
+        })
     },
     showMediaDetails(item) {
       this.currentMediaDetailItem = item
@@ -909,7 +925,10 @@ export default {
           this.feedbackForm.message = ''
           this.$toasted.show('Correction submitted.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
+        .catch(error => {
+          this.$toasted.error('There was a problem submitting the correction')
+          console.error(error)
+        })
     },
     submitOwnershipRequest() {
       this.buttonLoad = true
@@ -931,7 +950,10 @@ export default {
           this.buttonLoad = false
           this.$toasted.show('Ownership request submitted.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the ownership request.'))
+        .catch(error => {
+          this.$toasted.error('There was a problem submitting the ownership request')
+          console.error(error)
+        })
     },
     determineTagType() {
       this.tagName = document.getElementById('tagEntry').value
@@ -972,8 +994,9 @@ export default {
           this.buttonLoad = false
           this.$toasted.show('Message to vendor was sent.')
         })
-        .catch(e => {
-          this.$toasted.error('There was a problem contacting this vendor.')
+        .catch(error => {
+          this.$toasted.error('There was a problem contacting this vendor')
+          console.error(error)
           this.buttonLoad = false
         })
     },
@@ -983,6 +1006,10 @@ export default {
           this.$toasted.show('Tag Deleted')
           this.detail.tags = this.detail.tags.filter(e => e.tagId !== this.deleteTagId)
           this.tagName = ''
+        })
+        .catch(error => {
+          this.$toasted.error('There was a problem deleting the tag')
+          console.error(error)
         })
     },
     submitTag(name) {
@@ -997,7 +1024,10 @@ export default {
           this.tagName = ''
           this.$toasted.show('Tag submitted.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting this tag.'))
+        .catch(error => {
+          this.$toasted.error('There was a problem submitting this tag')
+          console.error(error)
+        })
     },
     submitQuestion(question) {
       if (question) {
@@ -1013,7 +1043,10 @@ export default {
             this.getQuestions()
             this.$toasted.success('Question submitted.')
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the question.'))
+          .catch(error => {
+            this.$toasted.error('There was a problem submitting the question')
+            console.error(error)
+          })
       }
       this.askQuestionDialog = false
     },
@@ -1068,7 +1101,10 @@ export default {
             this.isLoading = false
             this.getDetail()
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
+          .catch(error => {
+            this.$toasted.error('There was a problem submitting the review')
+            console.error(error)
+          })
       } else {
         this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/reviews/detail`, data)
           .then(response => {
@@ -1079,7 +1115,10 @@ export default {
             this.isLoading = false
             this.getDetail()
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the review.'))
+          .catch(error => {
+            this.$toasted.error('There was a problem submitting the review')
+            console.error(error)
+          })
       }
     },
     todaysDateFormatted(val) {

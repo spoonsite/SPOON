@@ -42,3 +42,5 @@ tag, organization or attribute. Filtering on any of these fields will return par
 You can contact SPOON support through the menu on the top right of the window. Click the menu button (the three
 horizontal lines) and select 'Contact'. This will take you to a screen that will allow you to send SPOON support
 a message. Support will get back to you as soon as they can!
+
+!["Contact Us"](/images/ContactUs.png)
