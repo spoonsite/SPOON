@@ -379,7 +379,16 @@
           deletable-chips
           @keypress.enter="addTag"
           class="mx-4"
-        />
+        >
+          <template v-slot:prepend-item>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>Create a new tag by typing some text and then pressing enter</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider class="mt-2"></v-divider>
+          </template>
+        </v-autocomplete>
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Contacts</legend>
