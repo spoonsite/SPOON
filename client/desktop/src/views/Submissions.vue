@@ -546,6 +546,7 @@ export default {
       }
 
       // Check Mime type by sniffing the first few bytes of the file
+      // Derived from https://gist.github.com/topalex/ad13f76150e0b36de3c4a3d5ba8dc63a
       let blob = this.bulkUploadFile.slice(0, 4)
       let fileReader = new FileReader()
       let that = this
@@ -588,7 +589,7 @@ export default {
         that.isSendingFile = true
         let formData = new FormData()
         formData.append('file', that.bulkUploadFile)
-        that.$http.post(`/openstorefront/api/v1/resource/usersubmissions/upload/multiZip`, formData,
+        that.$http.post(`/openstorefront/api/v1/resource/usersubmissions/upload/zip`, formData,
           {
             headers: {
               'Content-Type': 'multipart/form-data'
@@ -608,6 +609,11 @@ export default {
                 that.uploadErrorDisplay += item.value + ' '
               })
             }
+          }).catch(error => {
+            that.bulkUploadFile = null
+            that.isSendingFile = false
+            that.$toasted.error('An error occured when sending the file to the server.')
+            console.error(error)
           })
       }
       fileReader.readAsArrayBuffer(blob)
