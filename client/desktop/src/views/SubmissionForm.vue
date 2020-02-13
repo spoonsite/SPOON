@@ -172,10 +172,15 @@
               :items="attribute.codes"
               item-text="label"
               item-value="code"
+              return-object
               :search-input.sync="attribute.searchText"
               @keypress.enter="
-                attribute.codes.push(attribute.searchText)
-                attribute.selectedCodes.push(attribute.searchText)
+                attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
+                attribute.selectedCodes.push({
+                  label: attribute.searchText,
+                  code: attribute.searchText,
+                  userCreated: true
+                })
                 attribute.searchText = ''
               "
               class="mr-3"
@@ -196,6 +201,7 @@
               :items="attribute.codes"
               item-text="label"
               item-value="code"
+              return-object
               class="mr-3"
               :rules="
                 attribute.attributeValueType === 'NUMBER'
@@ -219,6 +225,7 @@
               :items="attribute.codes"
               item-text="label"
               item-value="code"
+              return-object
               class="mr-3"
               :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
               required
@@ -250,10 +257,15 @@
               :items="attribute.codes"
               item-text="label"
               item-value="code"
+              return-object
               :search-input.sync="attribute.searchText"
               @keypress.enter="
-                attribute.codes.push(attribute.searchText)
-                attribute.selectedCodes.push(attribute.searchText)
+                attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
+                attribute.selectedCodes.push({
+                  label: attribute.searchText,
+                  code: attribute.searchText,
+                  userCreated: true
+                })
                 attribute.searchText = ''
               "
               class="mr-3"
@@ -266,6 +278,7 @@
               chips
               deletable-chips
               :items="attribute.codes"
+              return-object
               item-text="label"
               item-value="code"
               class="mr-3"
@@ -276,11 +289,12 @@
               :label="`${attribute.description}`"
               class="mr-3"
             />
-            <v-text-field
+            <v-autocomplete
               v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
               v-model="attribute.selectedCodes"
               :label="`${attribute.description}`"
               :items="attribute.codes"
+              return-object
               item-text="label"
               item-value="code"
               class="mr-3"
@@ -652,14 +666,16 @@ export default {
           el.selectedCodes.forEach(code => {
             newAttributes.push({
               componentAttributePk: {
+                userCreated: code.userCreated,
                 attributeType: el.attributeType,
-                attributeCode: code
+                attributeCode: code.code ? code.code : code
               }
             })
           })
         } else if (typeof el.selectedCodes === 'string' && el.selectedCodes !== '') {
           newAttributes.push({
             componentAttributePk: {
+              userCreated: el.userCreated,
               attributeType: el.attributeType,
               attributeCode: el.selectedCodes
             }
@@ -773,57 +789,66 @@ export default {
     submit(data) {
       let formData = this.getFormData()
 
-      // let userCreatedAttributes = formData.attributes.filter(el => el.userCreated)
-      // let createdCodeList = []
-      // userCreatedAttributes.forEach(el => {
-      //   createdCodeList.push({
-      //     attributeCodeLabel: el.attributeCode,
-      //     attributeType: el.attributeType
-      //   })
-      // })
+      // get all user created codes
+      let userCreatedAttributes = formData.attributes.filter(el => !!el.componentAttributePk.userCreated)
+      let createdCodeList = []
+      userCreatedAttributes.forEach(el => {
+        createdCodeList.push({
+          attributeCodeLabel: el.componentAttributePk.attributeCode,
+          attributeType: el.componentAttributePk.attributeType
+        })
+      })
 
-      // this.$http
-      //   .post('/openstorefront/api/v1/resource/attributes/attributetypes/usercodes', createdCodeList)
-      //   .then(response => {
-      //     console.log(response)
-      //   })
-      //   .catch(e => {
-      //     console.error(e)
-      //   })
-
-      if (this.id && this.id !== 'new') {
-        this.$http
-          .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}`, formData)
-          .then(response => {
-            if (response.data && response.data.success === false) {
-              this.errors = response.data.errors.entry
+      this.$http
+        .post('/openstorefront/api/v1/resource/attributes/attributetypes/usercodes', {
+          userAttributes: createdCodeList
+        })
+        .then(response => {
+          if (response.data && !response.data.error) {
+            // update the form with newly created attributes to attach to submission
+            if (Array.isArray(response.Data)) {
+              formData.attributes.concat(response.data)
             }
-            if (response.data && response.data.component) {
-              this.errors = []
-              this.$toasted.success('Submission Saved')
-            }
-          })
-          .catch(e => {
-            console.error(e)
-          })
-      } else {
-        this.$http
-          .post('/openstorefront/api/v1/resource/componentsubmissions', formData)
-          .then(response => {
-            if (response.data && response.data.success === false) {
-              this.errors = response.data.errors.entry
-            }
-            if (response.data && response.data.component) {
-              this.errors = []
-              this.componentId = response.data.component.componentId
-              this.$router.replace(`${this.componentId}`)
-              this.$toasted.success('Submission Saved')
-            }
-          })
-          .catch(e => {
-            console.error(e)
-          })
-      }
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
+        .finally(() => {
+          if (this.id && this.id !== 'new') {
+            this.$http
+              .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}`, formData)
+              .then(response => {
+                if (response.data && response.data.success === false) {
+                  this.errors = response.data.errors.entry
+                }
+                if (response.data && response.data.component) {
+                  this.errors = []
+                  this.$toasted.success('Submission Saved')
+                }
+              })
+              .catch(e => {
+                console.error(e)
+              })
+          } else {
+            this.$http
+              .post('/openstorefront/api/v1/resource/componentsubmissions', formData)
+              .then(response => {
+                if (response.data && response.data.success === false) {
+                  this.errors = response.data.errors.entry
+                }
+                if (response.data && response.data.component) {
+                  this.errors = []
+                  this.componentId = response.data.component.componentId
+                  this.$router.replace(`${this.componentId}`)
+                  this.$toasted.success('Submission Saved')
+                }
+              })
+              .catch(e => {
+                console.error(e)
+              })
+          }
+        })
     },
     addImage() {
       this.images.push({ file: null, caption: '', img: '' })
