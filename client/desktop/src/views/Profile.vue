@@ -173,7 +173,6 @@ export default {
   },
   data() {
     return {
-      errors: [],
       user: {
         firstName: '',
         lastName: '',
@@ -276,8 +275,9 @@ export default {
             this.saving = false
             this.formChanged = false
           })
-          .catch(e => {
+          .catch(error => {
             this.$toasted.error('Error updating profile')
+            console.error(error)
             this.saving = false
           })
       }

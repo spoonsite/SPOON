@@ -28,9 +28,7 @@ SPOON support will enter your SPOON part entries for you. This is useful if you 
 1. After you have uploaded your ZIP file, SPOON support will contact you and work with you to get your parts into the database.
 1. Sign in and navigate to **User Tools** again.
 ![The User Tools button](/images/BulkUpload/usergotousertools.png)
-1. Click to see your **Submissions**.
-![The Submissions button](/images/BulkUpload/submission.png)
-1. You should see your entry. The **Status** indicates that it cannot be processed because you have not submitted it.
+1. You should see your entry. The **Approval Workflow** graphic indicates where in the Approval Process your part is.
 ![See your Entry](/images/BulkUpload/exampleEntry.png)
 1. SPOON support will have used the files you uploaded to create submissions for you. Please review each section to ensure that all information is correct. Feel free to update any information. Click **Review Submission**, and then click **Submit For Approval**.
 ![The User Tools button](/images/BulkUpload/final.png)
@@ -40,14 +38,11 @@ SPOON support will enter your SPOON part entries for you. This is useful if you 
 
 Here we briefly explain how to submit an entry into SPOON
 
-1. To get to the **User Tools** section, click on username in the upper-right corner of the page and then select User Tools from the drop-down menu.
+1. To get to the **User Tools** section, click on the menu icon in the upper-right corner of the page and then select User Tools from the drop-down menu.
 ![The User Tools button](/images/BulkUpload/usergotousertools.png)
-
-1. Once at the **User Tools** section, click the **Submissions** button and then click the **New Submission** button.
-![User tools submission](/images/PartSubmission/userToolsSubmission.png)
+1. Click to add a new submission and fill out the fields on the next page.
 ![New submission](/images/PartSubmission/newsub.png)
-The process for submission depends on the type of entry you want to submit and how admin has configured your environment.
-The application will provide a form which will guide you through the process.
+If there any additional details that you think should be covered here, please reach out to Spoon support at support@spoonsite.com.
 
 ### Common Terms
 
