@@ -18,7 +18,7 @@
  */
 --%>
 <%@include file="../../../../layout/includes.jsp" %>
-
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 

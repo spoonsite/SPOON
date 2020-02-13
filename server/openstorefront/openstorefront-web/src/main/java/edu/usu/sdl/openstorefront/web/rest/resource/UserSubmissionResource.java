@@ -26,6 +26,7 @@ import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionComment;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.UserSubmissionMediaView;
 import edu.usu.sdl.openstorefront.core.view.UserSubmissionView;
 import edu.usu.sdl.openstorefront.core.view.WorkPlanLinkView;
@@ -35,6 +36,8 @@ import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import static edu.usu.sdl.openstorefront.web.rest.resource.Utils.handleZipFileUpload;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,6 +54,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  *
@@ -61,7 +66,6 @@ import javax.ws.rs.core.Response;
 public class UserSubmissionResource
 		extends BaseResource
 {
-
 	@GET
 	@APIDescription("Gets all user submissions for all users; Note: these are incomplete submissions")
 	@RequireSecurity(SecurityPermission.ADMIN_USER_SUBMISSIONS_READ)
@@ -161,6 +165,22 @@ public class UserSubmissionResource
 		return handleSaveSubmission(userSubmission, true);
 	}
 
+	@POST
+	@APIDescription("Accepts a zip file for use with the bulk upload process")
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
+	@Consumes({MediaType.MULTIPART_FORM_DATA})
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/upload/zip")
+	public Response bulkUpload(
+			@FormDataParam("file") InputStream uploadStream,
+			@FormDataParam("file") FormDataContentDisposition fileDisposition
+	)
+	{
+		RestErrorModel result = handleZipFileUpload(uploadStream, fileDisposition.getFileName());
+		return Response.ok(result).build();
+	}
+
+
 	//update submission	(submission - owner/admin) FIX Admin permission
 	@PUT
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_UPDATE)
@@ -183,7 +203,7 @@ public class UserSubmissionResource
 			if (response == null) {
 				userSubmission.setUserSubmissionId(submissionId);
 				String newSubmissionName = userSubmission.getFields().get(1).getRawValue();
-				if(newSubmissionName != null){
+				if (newSubmissionName != null) {
 					userSubmission.setSubmissionName(newSubmissionName);
 				}
 				response = handleSaveSubmission(userSubmission, false);
