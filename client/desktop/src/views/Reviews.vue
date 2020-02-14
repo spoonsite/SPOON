@@ -2,24 +2,15 @@
   <div>
     <h2 class="text-center">Reviews</h2>
     <v-btn class="ma-4" @click="getUserReviews()">Refresh</v-btn>
-    <v-data-table :headers="tableHeaders" :items="reviewsDisplay" class="elevation-1" :loading="isLoading">
-      <!-- <td>{{ props.item.entry }}</td>
-            <td>{{ props.item.title }}</td>
-
-            <td>
-              <star-rating
-                :rating="props.item.rating"
-                :read-only="true"
-                :show-rating="false"
-                :increment="0.01"
-                :star-size="25"
-              ></star-rating>
-            </td>
-            <td>{{ props.item.status }}</td>
-
-            <td style="word-wrap: break-word" v-if="props.item.comment.length < 200">{{ props.item.comment }}</td>
-            <td style="word-wrap: break-word" v-else>{{ props.item.comment.substring(0, 200) + '...' }}</td>
-            <td>{{ props.item.updateDate }}</td> -->
+    <v-data-table :headers="tableHeaders" :items="reviewsData" class="elevation-1" :loading="isLoading">
+      <template v-slot:item.activeStatus="{ item }">
+        <div v-if="item.activeStatus === 'A'">Active</div>
+        <div v-else-if="item.activeStatus === 'P'">Pending</div>
+        <div v-else>{{ item.activeStatus }}</div>
+      </template>
+      <template v-slot:item.comment="{ item }">
+        <div v-html="item.comment" />
+      </template>
       <template v-slot:item.updateDate="{ item }">
         {{ item.updateDate | formatDate('MM/dd/yyyy') }}
       </template>
@@ -31,7 +22,18 @@
         No entries have been reviewed...
       </template>
     </v-data-table>
-    <ReviewModal v-model="editReviewDialog" @close="editReviewDialog = false" :review="currentReview"></ReviewModal>
+
+    <ReviewModal
+      v-model="editReviewDialog"
+      @close="
+        editReviewDialog = false
+        getUserReviews()
+      "
+      :componentId="currentReview.componentId"
+      title="Edit A Review"
+      :editReview="currentReview"
+    >
+    </ReviewModal>
     <DeleteReviewModal
       v-model="deleteReviewDialog"
       @close="
@@ -44,10 +46,8 @@
 </template>
 
 <script lang="js">
-// import StarRating from 'vue-star-rating'
 import ReviewModal from '@/components/ReviewModal'
 import DeleteReviewModal from '@/components/DeleteReviewModal'
-import format from 'date-fns/format'
 
 export default {
   name: 'reviews-page',
@@ -74,16 +74,15 @@ export default {
     return {
       isLoading: false,
       tableHeaders: [
-        { text: 'Entry', value: 'entry' },
+        { text: 'Entry', value: 'name' },
         { text: 'Title', value: 'title' },
         { text: 'Rating', value: 'rating' },
-        { text: 'Status', value: 'status' },
+        { text: 'Status', value: 'activeStatus' },
         { text: 'Comment', value: 'comment', sortable: false },
         { text: 'Update Date', value: 'updateDate' },
         { text: 'Actions', value: 'actions', sortable: false }
       ],
       reviewsData: [],
-      reviewsDisplay: [],
       username: '',
       editReviewDialog: false,
       deleteReviewDialog: false,
@@ -107,65 +106,17 @@ export default {
         .then(response => {
           this.isLoading = false
           this.reviewsData = []
-          this.reviewsDisplay = []
           this.reviewsData = response.data
-          this.setUpTableArray()
         })
-    },
-    removeCommentHtml(review) {
-      var comment = review.comment
-      var tmp = document.createElement('div')
-      tmp.innerHTML = comment
-      comment = tmp.innerText
-      return comment
-    },
-    changeDateFormat(review) {
-      var updateDate = new Date(review.updateDate)
-      return updateDate
-    },
-    determineActiveOrPending(review) {
-      if (review.activeStatus === 'A') {
-        return 'Approved'
-      } else {
-        return 'Pending'
-      }
-    },
-    setUpTableArray() {
-      for (var review in this.reviewsData) {
-        this.reviewsDisplay.push({
-          entry: this.reviewsData[review].name,
-          title: this.reviewsData[review].title,
-          rating: this.reviewsData[review].rating,
-          status: this.determineActiveOrPending(this.reviewsData[review]),
-          comment: this.removeCommentHtml(this.reviewsData[review]),
-          updateDate: this.reviewsData[review].updateDate,
-          pros: this.reviewsData[review].pros,
-          cons: this.reviewsData[review].cons,
-          lastUsed: this.reviewsData[review].lastUsed,
-          timeUsed: this.reviewsData[review].userTimeDescription,
-          editReviewId: this.reviewsData[review].reviewId,
-          componentId: this.reviewsData[review].componentId
-        })
-      }
     },
     setUpEditDialog(tableReview) {
-      this.getCurrentItemData(tableReview)
+      this.currentReview = tableReview
       this.editReviewDialog = true
     },
     setUpDeleteDialog(tableReview) {
-      this.getCurrentItemData(tableReview)
+      this.currentReview = tableReview
+      this.currentReview.editReviewId = tableReview.reviewId
       this.deleteReviewDialog = true
-    },
-    getCurrentItemData(tableReview) {
-      this.currentReview.title = tableReview.title
-      this.currentReview.rating = tableReview.rating
-      this.currentReview.lastUsed = format(new Date(tableReview.lastUsed), 'yyyy-MM-d')
-      this.currentReview.timeUsed = tableReview.timeUsed
-      this.currentReview.pros = tableReview.pros
-      this.currentReview.cons = tableReview.cons
-      this.currentReview.comment = tableReview.comment
-      this.currentReview.editReviewId = tableReview.editReviewId
-      this.currentReview.componentId = tableReview.componentId
     }
   }
 }

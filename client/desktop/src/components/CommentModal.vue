@@ -173,8 +173,7 @@ export default {
       isLoading: false,
       editing: false,
       tabs: 2,
-      tab: null,
-      errors: []
+      tab: null
     }
   },
   methods: {
@@ -196,7 +195,10 @@ export default {
           this.comments = response.data
           this.isLoading = false
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('An error occurred retrieving comments')
+          console.error(error)
+        })
       var perm = ['WORKFLOW-ADMIN-SUBMISSION-COMMENTS']
       this.permission = this.checkPermissions(perm)
     },
@@ -234,7 +236,10 @@ export default {
           this.getComments(this.component)
           this.newComment = ''
         })
-        .catch(e => this.$toasted.error('There was a problem submitting your comment.'))
+        .catch(error => {
+          this.$toasted.error('There was a problem submitting your comment')
+          console.error(error)
+        })
     },
     deleteComment() {
       var deleteUrl = ''
@@ -254,7 +259,7 @@ export default {
         })
         .catch(error => {
           this.$toasted.error('Submission could not be deleted.')
-          this.errors.push(error)
+          console.error(error)
           this.isLoading = false
         })
     },
@@ -294,7 +299,10 @@ export default {
           this.newComment = ''
           this.editing = false
         })
-        .catch(e => this.$toasted.error('There was a problem editing your comment.'))
+        .catch(error => {
+          this.$toasted.error('There was a problem editing your comment')
+          console.error(error)
+        })
     },
     checkPermissions(has) {
       let ret = false

@@ -13,14 +13,6 @@
               </template>
               <span>Edit the question</span>
             </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn small v-on="on" icon @click="deleteQuestionDialog = true"
-                  ><v-icon class="icon">mdi-delete</v-icon></v-btn
-                >
-              </template>
-              <span>Delete the question</span>
-            </v-tooltip>
           </span>
         </h3>
       </div>
@@ -83,16 +75,22 @@
       :answerProp="question"
     />
 
-    <v-dialog v-model="deleteQuestionDialog" max-width="25em">
+    <v-dialog v-model="editQuestionDialog" max-width="75em">
       <v-card>
-        <ModalTitle title="Delete?" @close="deleteQuestionDialog = false" />
+        <ModalTitle title="Edit a Question" @close="editQuestionDialog = false" />
         <v-card-text>
-          <p>Are you sure you want to delete this question?</p>
+          <v-alert class="w-100" type="warning" :value="true"
+            ><span v-html="$store.state.branding.userInputWarning"></span
+          ></v-alert>
+          <v-alert class="w-100" type="info" :value="true"
+            >All questions need admin approval before being made public.</v-alert
+          >
+          <quill-editor style="background-color: white;" v-model="newQuestion"></quill-editor>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="warning" @click="deleteQuestion(question.questionId)"><v-icon>mdi-delete</v-icon> Delete</v-btn>
-          <v-btn @click="deleteQuestionDialog = false">Cancel</v-btn>
+          <v-btn color="success" @click="editQuestion(question.questionId)">Submit</v-btn>
+          <v-btn @click="editQuestionDialog = false">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -124,7 +122,7 @@ export default {
       editQuestionDialog: false,
       newAnswer: '',
       noAnswers: false,
-      errors: [],
+      newQuestion: '',
       loading: false
     }
   },
@@ -154,7 +152,10 @@ export default {
           this.checkAnswers()
           this.loading = false
         })
-        .catch(e => this.errors.push(e))
+        .catch(error => {
+          this.$toasted.error('There was a problem getting answers')
+          console.error(error)
+        })
     },
     submitAnswer(question) {
       if (question) {
@@ -177,7 +178,10 @@ export default {
             this.showAnswers = true
             this.answerQuestionDialog = false
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the answer.'))
+          .catch(error => {
+            this.$toasted.error('There was a problem submitting the answer')
+            console.error(error)
+          })
       } else {
         this.answerQuestionDialog = false
       }
@@ -192,7 +196,10 @@ export default {
           this.$toasted.success('Question deleted.')
           this.$emit('questionDeleted')
         })
-        .catch(e => this.$toasted.error('There was a problem deleting the question.'))
+        .catch(error => {
+          this.$toasted.error('There was a problem deleting the question')
+          console.error(error)
+        })
     },
     editQuestion(question) {
       if (question) {
@@ -215,7 +222,10 @@ export default {
             this.$toasted.success('Edited question submitted.')
             this.editQuestionDialog = false
           })
-          .catch(e => this.$toasted.error('There was a problem submitting the edit.'))
+          .catch(error => {
+            this.$toasted.error('There was a problem submitting the edit')
+            console.error(error)
+          })
       } else {
         this.editQuestionDialog = false
       }

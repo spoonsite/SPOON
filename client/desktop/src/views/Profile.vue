@@ -173,7 +173,6 @@ export default {
   },
   data() {
     return {
-      errors: [],
       user: {
         firstName: '',
         lastName: '',
@@ -270,15 +269,15 @@ export default {
           .put('/openstorefront/api/v1/resource/userprofiles/' + this.username, newProfile)
           .then(response => {
             // resyncing the user data
-            this.$store.dispatch('setCurrentUser', () => {
-              this.setUserInfo()
-            })
+            this.$store.dispatch('getCurrentUser')
+
             this.$toasted.show('Profile updated')
             this.saving = false
             this.formChanged = false
           })
-          .catch(e => {
+          .catch(error => {
             this.$toasted.error('Error updating profile')
+            console.error(error)
             this.saving = false
           })
       }

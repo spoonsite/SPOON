@@ -26,6 +26,7 @@
             'items-per-page-options': [10, 20, 30, 40, 50]
           }"
           :sort-by="['name']"
+          :hide-default-footer="isLoading || componentData.length === 0"
           class="tableLayout"
           :search="search"
         >
@@ -44,7 +45,7 @@
           </template>
           <template v-slot:item.approvalWorkflow="{ item }">
             <svg v-if="item && item.steps && item.steps.length > 0" :width="item.steps.length * 50" height="65">
-              <g v-for="(step, i) in item.steps" :key="step.name" :id="step.name"  class="step">
+              <g v-for="(step, i) in item.steps" :key="step.name" :id="step.name" class="step">
                 <circle class="circle" :cx="20 + i * 50" cy="25" r="15" stroke="black" :fill="'#' + step.color" />
                 <line
                   v-if="i !== item.steps.length - 1"
@@ -54,7 +55,7 @@
                   y2="25"
                   style="stroke:black; stroke-width:2"
                 ></line>
-                <text v-if="item.currentStep" :x="i*50" y="60">{{ step.name }}</text>
+                <text v-if="item.currentStep" :x="i * 50" y="60">{{ step.name }}</text>
               </g>
             </svg>
           </template>
@@ -85,13 +86,7 @@
                   >
                     <v-icon>fas fa-pencil-alt</v-icon>
                   </v-btn>
-                  <v-btn
-                    v-else
-                    :to="`submission-form/${item.componentId}`"
-                    icon
-                    v-on="on"
-                    style="order: 2"
-                  >
+                  <v-btn v-else :to="`submission-form/${item.componentId}`" icon v-on="on" style="order: 2">
                     <v-icon>fas fa-pencil-alt</v-icon>
                   </v-btn>
                 </template>
@@ -124,11 +119,7 @@
               </v-tooltip>
               <v-tooltip bottom v-if="item.status !== 'P'">
                 <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    v-on="on"
-                    @click="cloneEntry(item)"
-                    style="order: 5">
+                  <v-btn icon v-on="on" @click="cloneEntry(item)" style="order: 5">
                     <v-icon>fas fa-clone</v-icon>
                   </v-btn>
                 </template>
@@ -284,7 +275,6 @@ export default {
       },
       componentDisplay: [],
       componentData: [],
-      errors: [],
       isLoading: true,
       search: '',
       uploadFile: null,
@@ -326,7 +316,8 @@ export default {
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
         }).catch(error => {
           this.isLoading = false
-          this.errors.push(error)
+          this.$toasted.error('An error occurred retrieving submissions')
+          console.error(error)
         })
     },
     viewComponent(componentId) {
@@ -474,7 +465,10 @@ export default {
           this.removalForm.message = ''
           this.$toasted.show('Sent Sucessfully.')
         })
-        .catch(e => this.$toasted.error('There was a problem submitting the correction.'))
+        .catch(error => {
+          this.$toasted.error('There was a problem submitting the correction')
+          console.error(error)
+        })
     },
     cloneEntry(item) {
       if (item.componentId) {
@@ -486,7 +480,7 @@ export default {
           })
           .catch(error => {
             this.$toasted.error('Submission could not be cloned.')
-            this.errors.push(error)
+            console.error(error)
             this.isLoading = false
           })
       } else {
@@ -504,7 +498,7 @@ export default {
           })
           .catch(error => {
             this.$toasted.error('Submission could not be deleted.')
-            this.errors.push(error)
+            console.error(error)
             this.isLoading = false
           })
       } else {
@@ -533,7 +527,7 @@ export default {
 svg text {
   display: none;
 }
-svg g:hover text{
+svg g:hover text {
   display: block;
 }
 </style>
