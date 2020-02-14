@@ -97,15 +97,13 @@
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Image Upload</legend>
-        <v-btn color="grey lighten-2" class="mt-0 ma-4" @click="addImage" :disabled="images.length > 10">
-          <v-icon left>mdi-plus</v-icon>Add image
-        </v-btn>
-        <div class="image-row image-warning" v-for="(item, index) in images" :key="index">
+        <p v-if="!id" class="error--text">You must first save the submission to attach images to it.</p>
+        <div class="image-row">
           <div class="flex-wrap">
             <div class="bg-light-gray mb-4">
               <v-img
                 class="mw-14 ma-0"
-                :src="item.img"
+                :src="currentImage.img"
                 alt="Image preview"
                 max-height="80px"
                 max-width="120px"
@@ -114,29 +112,51 @@
               />
             </div>
             <v-file-input
-              v-model="item.file"
-              label="Upload Image*"
-              required
-              :rules="[rules.image, rules.required]"
-              @change="imageChange(index)"
+              v-model="currentImage.file"
+              label="Select an Image"
+              :rules="[rules.image]"
+              @change="imageChange()"
               :accept="allowedImageTypesString"
               class="mx-4 mw-14"
+              :disabled="!id"
             />
             <v-text-field
-              v-model="item.caption"
-              label="Image Caption*"
-              required
-              :rules="[rules.required]"
+              v-model="currentImage.caption"
+              label="Image Caption"
               class="mx-4 mw-14"
+              :disabled="!id"
             />
           </div>
           <div>
-            <v-btn fab dark depressed small title="attach" class="mr-2" @click="attachMedia(index)">
-              <v-icon dark>mdi-attachment</v-icon>
+            <v-btn fab title="attach" elevation="0" :disabled="currentImage.caption === '' || currentImage.file === null" class="mr-2" @click="attachMedia()">
+              <v-icon>mdi-plus</v-icon>
             </v-btn>
-            <v-btn icon fab small title="remove" @click="removeImage(index)">
+          </div>
+        </div>
+        <h2 class="mb-4" v-if="media && media.length > 0">Attached Media</h2>
+        <div class="image-row"  v-for="image in media" :key="image.componentMediaId">
+          <div class="flex-wrap">
+            <v-img
+              class="mw-14 ma-0 mb-4"
+              :src="`/openstorefront/Media.action?LoadMedia&mediaId=${image.file.mediaFileId}`"
+              :alt="image.file.orignalName"
+              max-height="80px"
+              max-width="120px"
+              contain
+              style="height: 80px;"
+            />
+            <div class="mx-4">
+              <p>FileName: {{ image.file.originalName }}</p>
+              <p>Caption: {{ image.caption }}</p>
+            </div>
+          </div>
+          <div>
+            <v-btn small fab elevation="0" class="mb-2" :loading="image.loading" :disabled="image.loading" title="remove" @click="removeImage(image)">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
+            <!-- <v-btn fab small elevation="0" title="edit" @click="editImage(image)">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn> -->
           </div>
         </div>
       </fieldset>
@@ -450,10 +470,18 @@
         </ul>
       </v-alert>
       <div class="mb-5">
-        <p>If you save and close the entry you will need to come back and finish to submit the entry.</p>
-        <v-btn class="mr-4 mb-3" color="primary" @click="submit">Save and close</v-btn>
+        <p>If you close the entry without submitting you will need to come back and finish to submit the entry.</p>
+        <v-btn class="mr-4 mb-3" :loading="savingAndClose" :disabled="savingAndClose" color="primary" @click="saveAndClose()">
+          Close
+          <template v-slot:loader>
+            <span>Saving...</span>
+          </template>
+        </v-btn>
         <!-- :disabled="!isFormValid" -->
-        <v-btn color="success" class="mr-4 mb-3" @click="submit">
+        <v-btn :loading="saving" :disabled="saving || !isFormValid" color="success" class="mr-4 mb-3" @click="save()">
+          Save
+        </v-btn>
+        <v-btn :loading="submitting" :disabled="submitting || !isFormValid" color="success" class="mr-4 mb-3" @click="submit()">
           Submit
         </v-btn>
       </div>
@@ -490,12 +518,12 @@ const MEDIA_TYPE_CODE = {
 }
 
 // from MediaFileType.java
-const MEDIA_FILE_TYPE = {
-  GENERAL: 'GENERAL',
-  SUPPORT: 'SUPPORT',
-  RESOURCE: 'RESOURCE',
-  MEDIA: 'MEDIA'
-}
+// const MEDIA_FILE_TYPE = {
+//   GENERAL: 'GENERAL',
+//   SUPPORT: 'SUPPORT',
+//   RESOURCE: 'RESOURCE',
+//   MEDIA: 'MEDIA'
+// }
 
 export default {
   name: 'SubmissionForm',
@@ -504,8 +532,6 @@ export default {
     const answer = window.confirm('Do you really want to leave?')
     if (answer) {
       next()
-    } else {
-      next(false)
     }
   },
   mounted() {
@@ -547,6 +573,9 @@ export default {
     })
   },
   data: () => ({
+    saving: false,
+    submitting: false,
+    savingAndClose: false,
     // server validation errors
     errors: [],
     isFormValid: false,
@@ -561,6 +590,7 @@ export default {
     organizationList: [],
     securityMarking: '',
     securityMarkingList: [],
+    media: [],
     // primaryPOC:
     primaryPOC: {
       firstName: '',
@@ -572,6 +602,11 @@ export default {
     },
     // 'SUB' -> the submitter
     // Images
+    currentImage: {
+      img: '',
+      file: null,
+      caption: ''
+    },
     images: [],
     allowedImageTypes: ['image/png', 'image/jpeg', 'image/jpg'],
     // Description
@@ -647,14 +682,16 @@ export default {
       this.$http
         .get(`/openstorefront/api/v1/resource/componentsubmissions/${id}`)
         .then(response => {
-          // console.log(response.data)
           let component = response.data.component
           let contacts = response.data.contacts
+          let media = response.data.media
+          media.forEach(el => { el.loading = false })
 
           this.entryTitle = component.name
           this.entryType = component.componentType
           this.description = component.description
           this.organization = component.organization
+          this.media = media
           // load tags
           this.savedAttributes = response.data.attributes
 
@@ -665,10 +702,10 @@ export default {
           console.error(e)
         })
     },
-    attachMedia(index) {
+    attachMedia() {
       let formData = new FormData()
-      formData.append('caption', this.images[index].caption)
-      formData.append('file', this.images[index].file)
+      formData.append('caption', this.currentImage.caption)
+      formData.append('file', this.currentImage.file)
       formData.append('mediaTypeCode', MEDIA_TYPE_CODE.IMAGE)
 
       if (this.id) {
@@ -683,9 +720,15 @@ export default {
             if (response.data && response.data.success === false) {
               this.errors = response.data.errors.entry
             }
-            // if (response.data && response.data.component) {
-
-            // }
+            if (response.data) {
+              this.media.push(response.data)
+              // reset the image form
+              this.currentImage = {
+                img: '',
+                file: null,
+                caption: ''
+              }
+            }
           })
           .catch(e => {
             console.error(e)
@@ -695,6 +738,7 @@ export default {
     getFormData() {
       let allAttributes = this.attributes.required.concat(this.attributes.suggested)
       let newAttributes = []
+      // TODO: get selected unit
       allAttributes.forEach(el => {
         if (Array.isArray(el.selectedCodes) && el.selectedCodes.length > 0) {
           el.selectedCodes.forEach(code => {
@@ -717,25 +761,6 @@ export default {
         }
       })
 
-      // retrieve media with /openstorefront/Media.action?LoadMedia&mediaId=<id>
-      // found in details.media[i].link
-      // TODO: fix hard coded example
-      let media = [
-        {
-          componentMediaId: '',
-          file: {
-            mediaFileId: '',
-            fileName: 'thing.png',
-            originalName: 'thing.png',
-            mimeType: 'image/png',
-            fileType: MEDIA_FILE_TYPE.MEDIA
-          },
-          mediaTypeCode: MEDIA_TYPE_CODE.IMAGE,
-          link: 'https://some.website.com',
-          caption: 'Looky at this image'
-        }
-      ]
-
       return {
         component: {
           name: this.entryTitle,
@@ -744,9 +769,8 @@ export default {
           organization: this.organization
         },
         attributes: newAttributes,
-        media: media,
+        // media: media,
         // TODO: fix media and resources
-        // resources: this.resources.localFiles.concat(this.resources.links),
         tags: this.tags,
         contacts: [this.primaryPOC].concat(this.contacts)
       }
@@ -840,6 +864,27 @@ export default {
       this.primaryPOC.organization = this.$store.state.currentUser.organization
     },
     submit(data) {
+      // TODO: fill out this function
+      this.submitting = true
+      window.setTimeout(() => {
+        this.$router.push({ name: 'Submissions' })
+        this.submitting = false
+      }, 1000)
+    },
+    saveAndClose(thing) {
+      this.savingAndClose = true
+      if (this.isFormValid) {
+        this.save(() => {
+          this.savingAndClose = false
+          this.$router.push({ name: 'Submissions' })
+        })
+      } else {
+        this.savingAndClose = false
+        this.$router.push({ name: 'Submissions' })
+      }
+    },
+    save(callback) {
+      this.saving = true
       let formData = this.getFormData()
 
       // get all user created codes
@@ -879,10 +924,14 @@ export default {
                   this.errors = []
                   this.$toasted.success('Submission Saved')
                 }
+                if (callback) {
+                  callback()
+                }
               })
               .catch(e => {
                 console.error(e)
               })
+              .finally(() => { this.saving = false })
           } else {
             this.$http
               .post('/openstorefront/api/v1/resource/componentsubmissions', formData)
@@ -896,21 +945,40 @@ export default {
                   this.$router.replace(`${this.id}`)
                   this.$toasted.success('Submission Saved')
                 }
+                if (callback) {
+                  callback()
+                }
               })
               .catch(e => {
                 console.error(e)
               })
+              .finally(() => { this.saving = false })
           }
         })
     },
-    addImage() {
-      this.images.push({ file: null, caption: '', img: '' })
-    },
-    removeImage(index) {
-      this.images.splice(index, 1)
+    // editImage(image) {
+    //   // TODO: support edit of media
+    // },
+    removeImage(media) {
+      // TODO: detach image from submission after confirmation
+      // @Path("/{id}/media/{mediaId}/force")
+      let mediaId = media.componentMediaId
+      media.loading = true
+      this.$http
+        .delete(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/media/${mediaId}/force`)
+        .then(response => {
+          this.$toasted.show('Deleted attached image from submission')
+          this.media = this.media.filter(el => el.componentMediaId !== mediaId)
+          media.loading = false
+        })
+        .catch(e => {
+          media.loading = false
+          console.error('Problem with deleting attached image from submission', e)
+          this.$toasted.error('Problem with deleting attached image from submission')
+        })
     },
     imageChange(index) {
-      let e = this.images[index]
+      let e = this.currentImage
       e.img = ''
       // test that the file is an image
       let validImageTypes = ['image/png', 'image/svg', 'image/jpeg', 'image/jpg']

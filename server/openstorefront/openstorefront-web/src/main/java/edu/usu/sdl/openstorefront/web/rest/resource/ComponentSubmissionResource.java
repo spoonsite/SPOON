@@ -15,11 +15,14 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
@@ -35,10 +38,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
+import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
@@ -65,11 +71,6 @@ import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  * Component Submission
@@ -318,6 +319,7 @@ public class ComponentSubmissionResource
 			componentMedia.populateBaseCreateFields();
 			componentMedia.setMediaTypeCode(mediaTypeCode);
 			componentMedia.setComponentId(componentId);
+			componentMedia.setCaption(caption);
 			// TODO: get mime type
 			componentMedia = service.getComponentService().saveMediaFile(componentMedia, uploadStream, "img/png", fileName);
 			return sendSingleEntityResponse(componentMedia);
