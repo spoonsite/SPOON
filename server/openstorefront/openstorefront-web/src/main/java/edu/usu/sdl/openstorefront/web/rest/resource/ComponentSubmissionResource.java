@@ -15,13 +15,11 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
-import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
@@ -37,9 +35,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.glassfish.jersey.media.multipart.BodyPart;
-import org.glassfish.jersey.media.multipart.ContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
@@ -56,7 +51,6 @@ import edu.usu.sdl.openstorefront.core.entity.Evaluation;
 import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
-import edu.usu.sdl.openstorefront.core.entity.Submission;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
@@ -71,7 +65,11 @@ import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import java.util.ArrayList;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  * Component Submission
@@ -298,27 +296,38 @@ public class ComponentSubmissionResource
 
 	@POST
 	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
-	@APIDescription("Creates a new Component Submission.")
+	@APIDescription("Attaches media to a Component Submission.")
 	@Produces({MediaType.APPLICATION_JSON})
-	// @Consumes({MediaType.MULTIPART_FORM_DATA})
-	@Consumes({MediaType.APPLICATION_JSON})
-	@Path("/vue")
+	@Consumes({MediaType.MULTIPART_FORM_DATA})
+	@Path("/{componentId}/attachmedia")
 	public Response createNewSubmissionVue(
-			// FormDataMultiPart body
-			ComponentAll componentAll
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@FormDataParam("file") InputStream uploadStream,
+			@FormDataParam("file") FormDataContentDisposition fileDisposition,
+			@FormDataParam("caption") String caption,
+			@FormDataParam("mediaTypeCode") String mediaTypeCode
 	)
 	{
-		// DEBUG this. Not getting all the data from the front end
 		Logger LOG = Logger.getLogger(UserSubmissionResource.class.getName());
-		// should probably use submission instead
-		// Submission submission = null;
-		// for(BodyPart part : body.getBodyParts()) {
-		// 	InputStream is = part.getEntityAs(InputStream.class);
-		// 	ContentDisposition meta = part.getContentDisposition();
-		// 	MediaType mediaType = part.getMediaType();
-		// 	LOG.log(Level.FINE, "got " + meta.getParameters().get("name") + " : " + mediaType.getType());
-		// }
-		return Response.ok("uploaded successfully !!").build();
+		String name = fileDisposition.getParameters().get("name");
+		String fileName = fileDisposition.getParameters().get("filename");
+		if (fileName != null) {
+			ComponentMedia componentMedia = new ComponentMedia();
+			componentMedia.setComponentMediaId(service.getPersistenceService().generateId());
+			componentMedia.populateBaseCreateFields();
+			componentMedia.setMediaTypeCode(mediaTypeCode);
+			componentMedia.setComponentId(componentId);
+			// TODO: get mime type
+			componentMedia = service.getComponentService().saveMediaFile(componentMedia, uploadStream, "img/png", fileName);
+			return sendSingleEntityResponse(componentMedia);
+		}
+		LOG.log(Level.FINE, "got a " + name + " : " + fileName + " : " + caption + " for " + componentId);
+
+		RestErrorModel restErrorModel = new RestErrorModel();
+		restErrorModel.setSuccess(false);
+		restErrorModel.getErrors().put("error", "Unable to save media");
+		return sendSingleEntityResponse(restErrorModel);
 	}
 
 	@PUT
@@ -538,7 +547,7 @@ public class ComponentSubmissionResource
 					if (response == null) {
 						if (ApprovalStatus.APPROVED.equals(exstingComponent.getApprovalState()) == false) {
 
-							//Pull in existing media and resources (they may be saved seperately)
+							//Pull in existing media and resources (they may be saved separately)
 							ComponentMedia componentMediaExample = new ComponentMedia();
 							componentMediaExample.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 							componentMediaExample.setComponentId(exstingComponent.getComponentId());

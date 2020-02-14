@@ -100,7 +100,7 @@
         <v-btn color="grey lighten-2" class="mt-0 ma-4" @click="addImage" :disabled="images.length > 10">
           <v-icon left>mdi-plus</v-icon>Add image
         </v-btn>
-        <div class="image-row" v-for="(item, index) in images" :key="index">
+        <div class="image-row image-warning" v-for="(item, index) in images" :key="index">
           <div class="flex-wrap">
             <div class="bg-light-gray mb-4">
               <v-img
@@ -131,7 +131,10 @@
             />
           </div>
           <div>
-            <v-btn icon title="delete" @click="removeImage(index)">
+            <v-btn fab dark depressed small title="attach" class="mr-2" @click="attachMedia(index)">
+              <v-icon dark>mdi-attachment</v-icon>
+            </v-btn>
+            <v-btn icon fab small title="remove" @click="removeImage(index)">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </div>
@@ -467,6 +470,24 @@
 import ModalTitle from '@/components/ModalTitle'
 import _ from 'lodash'
 
+// defined in MediaType.java
+const MEDIA_TYPE_CODE = {
+  IMAGE: 'IMG',
+  VIDEO: 'VID',
+  TEXT: 'TEX',
+  AUDIO: 'AUD',
+  ARCHIVE: 'ARC',
+  OTHER: 'OTH'
+}
+
+// from MediaFileType.java
+const MEDIA_FILE_TYPE = {
+  GENERAL: 'GENERAL',
+  SUPPORT: 'SUPPORT',
+  RESOURCE: 'RESOURCE',
+  MEDIA: 'MEDIA'
+}
+
 export default {
   name: 'SubmissionForm',
   components: { ModalTitle },
@@ -635,30 +656,34 @@ export default {
           console.error(e)
         })
     },
+    attachMedia(index) {
+      let formData = new FormData()
+      formData.append('caption', this.images[index].caption)
+      formData.append('file', this.images[index].file)
+      formData.append('mediaTypeCode', MEDIA_TYPE_CODE.IMAGE)
+
+      if (this.id) {
+        this.$http
+          .post(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/attachmedia`, formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            })
+          .then(response => {
+            if (response.data && response.data.success === false) {
+              this.errors = response.data.errors.entry
+            }
+            // if (response.data && response.data.component) {
+
+            // }
+          })
+          .catch(e => {
+            console.error(e)
+          })
+      }
+    },
     getFormData() {
-      // console.log(this.images)
-      // TODO: make a Browser form object
-      // let formData = new FormData()
-
-      // formData.append('name', this.entryTitle)
-      // formData.append('componentType', this.entryType)
-      // formData.append('organization', this.organization)
-      // formData.append('images', this.images)
-      // formData.append('description', this.description)
-      // // TODO: Fix attributes
-      // formData.append('requiredAttributes', this.attributes.required)
-      // formData.append('suggestedAttributes', this.attributes.suggested)
-      // formData.append('localFiles', this.resources.localFiles)
-      // formData.append('urls', this.resources.links)
-      // formData.append('tags', this.tags)
-      // formData.append('contacts', [this.primaryPOC].concat(this.contacts))
-      // for (var i = 0; i < this.images.length; i++) {
-      //   this.images[0].file.description = this.images[0].description
-      //   formData.append('file', this.images[0].file)
-      // }
-
-      // return formData
-
       let allAttributes = this.attributes.required.concat(this.attributes.suggested)
       let newAttributes = []
       allAttributes.forEach(el => {
@@ -683,6 +708,25 @@ export default {
         }
       })
 
+      // retrieve media with /openstorefront/Media.action?LoadMedia&mediaId=<id>
+      // found in details.media[i].link
+      // TODO: fix hard coded example
+      let media = [
+        {
+          componentMediaId: '',
+          file: {
+            mediaFileId: '',
+            fileName: 'thing.png',
+            originalName: 'thing.png',
+            mimeType: 'image/png',
+            fileType: MEDIA_FILE_TYPE.MEDIA
+          },
+          mediaTypeCode: MEDIA_TYPE_CODE.IMAGE,
+          link: 'https://some.website.com',
+          caption: 'Looky at this image'
+        }
+      ]
+
       return {
         component: {
           name: this.entryTitle,
@@ -691,8 +735,8 @@ export default {
           organization: this.organization
         },
         attributes: newAttributes,
+        media: media,
         // TODO: fix media and resources
-        // media: this.images,
         // resources: this.resources.localFiles.concat(this.resources.links),
         tags: this.tags,
         contacts: [this.primaryPOC].concat(this.contacts)
@@ -839,8 +883,8 @@ export default {
                 }
                 if (response.data && response.data.component) {
                   this.errors = []
-                  this.componentId = response.data.component.componentId
-                  this.$router.replace(`${this.componentId}`)
+                  this.id = response.data.component.componentId
+                  this.$router.replace(`${this.id}`)
                   this.$toasted.success('Submission Saved')
                 }
               })
@@ -914,7 +958,9 @@ export default {
 }
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
+$red : #c62828;
+
 .fieldset {
   border: 1px solid rgba(0, 0, 0, 0.2);
   background-color: white;
@@ -967,6 +1013,25 @@ export default {
 .image-row:last-child {
   border-bottom: none;
   margin-bottom: 0px;
+}
+.image-warning {
+  border: 1px solid $red;
+  border-radius: 4px;
+  position: relative;
+}
+.image-warning:last-child {
+  border: 1px solid $red;
+}
+.image-warning::before {
+  content: 'Image Not Attached';
+  background: rgba(255, 255, 255, 0.75);
+  color: $red;
+  border-radius: 4px;
+  position: absolute;
+  padding: 4px 8px;
+  top: 0;
+  left: 0;
+  z-index: 2;
 }
 .contact-row {
   display: grid;
