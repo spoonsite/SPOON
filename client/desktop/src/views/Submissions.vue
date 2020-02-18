@@ -7,14 +7,6 @@
         <v-btn class="top-buttons" @click="bulkUploadDialog = true"
           ><v-icon left>fas fa-upload</v-icon>Bulk Upload</v-btn
         >
-        <v-text-field
-          v-model="search"
-          append-icon="fas fa-search"
-          label="Search"
-          single-line
-          hide-details
-          style="padding-top: 0; margin-bottom: 1em; max-width: 20em;"
-        ></v-text-field>
       </v-flex>
       <div class="d-flex">
         <v-data-table
@@ -28,7 +20,6 @@
           :sort-by="['name']"
           :hide-default-footer="isLoading || componentData.length === 0"
           class="tableLayout"
-          :search="search"
         >
           <template v-slot:item.name="{ item }">
             {{ item.name }}
@@ -55,7 +46,10 @@
                   y2="25"
                   style="stroke:black; stroke-width:2"
                 ></line>
-                <text v-if="item.currentStep" :x="i * 50" y="60">{{ step.name }}</text>
+                <text v-if="item.currentStep && i !== 0" :x="20 + i * 50" y="60" text-anchor="middle">
+                  {{ step.name }}
+                </text>
+                <text v-else :x="i * 50" y="60" text-anchor="start">{{ step.name }}</text>
               </g>
             </svg>
           </template>
@@ -109,7 +103,7 @@
                 </template>
                 <span>Comment</span>
               </v-tooltip>
-              <v-tooltip bottom v-if="item.status !== 'P'">
+              <v-tooltip bottom v-if="item.status !== 'Pending'">
                 <template v-slot:activator="{ on }">
                   <v-btn icon v-on="on" @click="determineDeleteForm(item)" style="order: 4">
                     <v-icon>fas fa-trash</v-icon>
@@ -156,15 +150,18 @@
             ref="bulkFileSelector"
             accept=".zip"
             v-model="bulkUploadFile"
-            ></v-file-input>
+          ></v-file-input>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
           <v-btn @click="submitBulkFile()">Upload</v-btn>
-          <v-btn @click="
-          bulkUploadDialog = false
-          bulkUploadFile = null
-          ">Close</v-btn>
+          <v-btn
+            @click="
+              bulkUploadDialog = false
+              bulkUploadFile = null
+            "
+            >Close</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -197,7 +194,7 @@
           <p v-else-if="!currentComponent.hasChangeRequest && !requestRemoval" class="pt-2">
             Are you sure you want to delete: {{ currentComponent.name }}?
           </p>
-          <v-form v-if="requestRemoval" v-model="isFormValid">
+          <v-form v-if="requestRemoval" v-model="isFormValid" ref="form">
             <v-container>
               <p>Reason:*</p>
               <v-textarea
@@ -274,7 +271,6 @@ export default {
         type: '',
         submitDate: '',
         pendingChange: false,
-        isFormValid: false,
         lastUpdate: '',
         steps: [
           {
@@ -283,10 +279,10 @@ export default {
           }
         ]
       },
+      isFormValid: true,
       componentDisplay: [],
       componentData: [],
       isLoading: true,
-      search: '',
       uploadFile: null,
       bulkUploadDialog: false,
       bulkUploadFile: null,
@@ -452,9 +448,9 @@ export default {
       this.currentComponent = item
       this.requestRemoval = false
       this.deleteChange = false
-      if (this.currentComponent.status === 'A' && this.currentComponent.hasChangeRequest) {
+      if (this.currentComponent.status === 'Active' && this.currentComponent.hasChangeRequest) {
         this.requestRemoval = false
-      } else if (this.currentComponent.status === 'A') {
+      } else if (this.currentComponent.status === 'Active') {
         this.requestRemoval = true
       }
       this.deleteDialog = true
@@ -549,8 +545,7 @@ export default {
 .top-buttons {
   text-transform: none;
   background-color: #e0e0e0 !important;
-  margin-right: 1em;
-  margin-top: 0.5em;
+  margin: 0.5em 1em 1em 0;
 }
 .tableLayout {
   display: flex;
