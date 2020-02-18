@@ -499,7 +499,7 @@
           class="mr-4 mb-3"
           @click="submitHelper()"
         >
-          Submit
+          {{ isChangeRequest ? 'Submit Change Request' : 'Submit' }}
         </v-btn>
       </div>
     </v-form>
@@ -572,6 +572,9 @@ export default {
   },
   mounted() {
     this.bypassLeaveConfirmation = false
+    if (this.$route.query.changeRequest) {
+      this.isChangeRequest = true
+    }
     // load the data from an existing submission
     if (this.$route.params.id) {
       if (this.$route.params.id !== 'new') {
@@ -581,7 +584,9 @@ export default {
       } else {
         // auto fill out the user info
         if (this.$store.state.currentUser.username) {
+          console.log('testing')
           this.setName()
+          console.log('testing')
         } else {
           // trigger an update once the user has been fetched
           this.$store.watch(
@@ -611,6 +616,8 @@ export default {
   },
   data: () => ({
     saving: false,
+    submitText: 'Submit',
+    isChangeRequest: false,
     submitting: false,
     submitConfirmDialog: false,
     savingAndClose: false,
@@ -897,6 +904,7 @@ export default {
       this.lastEntryType = ''
     },
     setName() {
+      console.log(this.$store.state.currentUser)
       this.primaryPOC.firstName = this.$store.state.currentUser.firstName
       this.primaryPOC.lastName = this.$store.state.currentUser.lastName
       this.primaryPOC.phone = this.$store.state.currentUser.phone
@@ -911,9 +919,12 @@ export default {
       this.bypassLeaveConfirmation = true
       this.submitConfirmDialog = false
       this.submitting = true
+      let url = this.isChangeRequest
+        ? `/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submitchangerequest`
+        : `/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submit`
       this.save(() => {
         this.$http
-          .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submit`, this.getFormData())
+          .put(url)
           .then(response => {
             if (response.data && response.data.success === false) {
               this.errors = response.data.errors.entry

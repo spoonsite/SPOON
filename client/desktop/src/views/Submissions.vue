@@ -68,24 +68,42 @@
                 </template>
                 <span>View Entry</span>
               </v-tooltip>
-              <v-tooltip bottom>
+              <div v-if="item.status === 'Active'">
+                <v-tooltip bottom v-if="item.pendingChangeComponentId">
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      :to="{
+                        name: 'SubmissionForm',
+                        params: { id: item.pendingChangeComponentId },
+                        query: { changeRequest: true }
+                      }"
+                      icon
+                      v-on="on"
+                      style="order: 3"
+                    >
+                      <v-icon>fas fa-edit</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Edit change request</span>
+                </v-tooltip>
+                <v-tooltip bottom v-else>
+                  <template v-slot:activator="{ on }">
+                    <v-btn @click="createChangeRequest(item.componentId)" icon v-on="on" style="order: 3">
+                      <v-icon>fas fa-edit</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Create change request</span>
+                </v-tooltip>
+              </div>
+              <v-tooltip bottom v-else>
                 <template v-slot:activator="{ on }">
-                  <!-- TODO: fix change request to use the endpoint -->
-                  <v-btn
-                    v-if="item.status === 'Active'"
-                    :href="'mailto:support@spoonsite.com?subject=Change%20Request%20for%20' + item.name"
-                    icon
-                    v-on="on"
-                    style="order: 2"
-                  >
-                    <v-icon>fas fa-pencil-alt</v-icon>
-                  </v-btn>
-                  <v-btn v-else :to="`submission-form/${item.componentId}`" icon v-on="on" style="order: 2">
+                  <v-btn :to="`submission-form/${item.componentId}`" icon v-on="on" style="order: 4">
                     <v-icon>fas fa-pencil-alt</v-icon>
                   </v-btn>
                 </template>
                 <span>Edit</span>
               </v-tooltip>
+
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -96,7 +114,7 @@
                       currentComponent = item
                       commentsDialog = true
                     "
-                    style="order: 3"
+                    style="order: 5"
                   >
                     <v-icon>far fa-comment</v-icon>
                   </v-btn>
@@ -105,7 +123,7 @@
               </v-tooltip>
               <v-tooltip bottom v-if="item.status !== 'Pending'">
                 <template v-slot:activator="{ on }">
-                  <v-btn icon v-on="on" @click="determineDeleteForm(item)" style="order: 4">
+                  <v-btn icon v-on="on" @click="determineDeleteForm(item)" style="order: 6">
                     <v-icon>fas fa-trash</v-icon>
                   </v-btn>
                 </template>
@@ -113,7 +131,7 @@
               </v-tooltip>
               <v-tooltip bottom v-if="item.status !== 'P'">
                 <template v-slot:activator="{ on }">
-                  <v-btn icon v-on="on" @click="cloneEntry(item)" style="order: 5">
+                  <v-btn icon v-on="on" @click="cloneEntry(item)" style="order: 7">
                     <v-icon>fas fa-clone</v-icon>
                   </v-btn>
                 </template>
@@ -315,6 +333,18 @@ export default {
     }
   },
   methods: {
+    createChangeRequest(id) {
+      this.$http.post(`/openstorefront/api/v1/resource/components/${id}/changerequest`).then(response => {
+        this.$router.push({
+          name: 'SubmissionForm',
+          params: { id: response.data.pendingChangeId },
+          query: { changeRequest: true }
+        })
+      }).catch(error => {
+        this.$toasted.error('An error while creating change request')
+        console.error(error)
+      })
+    },
     getUserParts() {
       this.componentData = []
       this.isLoading = true
@@ -439,6 +469,7 @@ export default {
     },
     determineChangeRequest(component) {
       if (component.statusOfPendingChange != null) {
+        console.log(component)
         return 'Pending'
       } else {
         return ''

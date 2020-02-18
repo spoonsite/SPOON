@@ -36,7 +36,7 @@
               <p v-if="detail.lastSubmitDts" class="pb-0 mb-1">
                 <strong>Last Vendor Update Provided:</strong> {{ detail.lastSubmitDts | formatDate }}
               </p>
-              <p v-else class="pb-1 mb-1">
+              <p v-else-if="detail.approvedDate" class="pb-1 mb-1">
                 <strong>Last Vendor Update Provided:</strong> {{ detail.approvedDate | formatDate }}
               </p>
               <p class="pb-1 mb-1"><strong>Last System Update:</strong> {{ detail.lastActivityDts | formatDate }}</p>
