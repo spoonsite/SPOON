@@ -120,21 +120,23 @@
               class="mx-4 mw-14"
               :disabled="!id"
             />
-            <v-text-field
-              v-model="currentImage.caption"
-              label="Image Caption"
-              class="mx-4 mw-14"
-              :disabled="!id"
-            />
+            <v-text-field v-model="currentImage.caption" label="Image Caption" class="mx-4 mw-14" :disabled="!id" />
           </div>
           <div>
-            <v-btn fab title="attach" elevation="0" :disabled="currentImage.caption === '' || currentImage.file === null" class="mr-2" @click="attachMedia()">
+            <v-btn
+              fab
+              title="attach"
+              elevation="0"
+              :disabled="currentImage.caption === '' || currentImage.file === null"
+              class="mr-2"
+              @click="attachMedia()"
+            >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
           </div>
         </div>
         <h2 class="mb-4" v-if="media && media.length > 0">Attached Media</h2>
-        <div class="image-row"  v-for="image in media" :key="image.componentMediaId">
+        <div class="image-row" v-for="image in media" :key="image.componentMediaId">
           <div class="flex-wrap">
             <v-img
               class="mw-14 ma-0 mb-4"
@@ -151,7 +153,16 @@
             </div>
           </div>
           <div>
-            <v-btn small fab elevation="0" class="mb-2" :loading="image.loading" :disabled="image.loading" title="remove" @click="removeImage(image)">
+            <v-btn
+              small
+              fab
+              elevation="0"
+              class="mb-2"
+              :loading="image.loading"
+              :disabled="image.loading"
+              title="remove"
+              @click="removeImage(image)"
+            >
               <v-icon>mdi-delete</v-icon>
             </v-btn>
             <!-- <v-btn fab small elevation="0" title="edit" @click="editImage(image)">
@@ -195,7 +206,6 @@
               :items="attribute.codes"
               item-text="label"
               item-value="code"
-              return-object
               :search-input.sync="attribute.searchText"
               @keypress.enter="
                 attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
@@ -224,7 +234,6 @@
               :items="attribute.codes"
               item-text="label"
               item-value="code"
-              return-object
               class="mr-3"
               :rules="
                 attribute.attributeValueType === 'NUMBER'
@@ -248,7 +257,6 @@
               :items="attribute.codes"
               item-text="label"
               item-value="code"
-              return-object
               class="mr-3"
               :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
               required
@@ -280,7 +288,6 @@
               :items="attribute.codes"
               item-text="label"
               item-value="code"
-              return-object
               :search-input.sync="attribute.searchText"
               @keypress.enter="
                 attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
@@ -301,7 +308,6 @@
               chips
               deletable-chips
               :items="attribute.codes"
-              return-object
               item-text="label"
               item-value="code"
               class="mr-3"
@@ -317,7 +323,6 @@
               v-model="attribute.selectedCodes"
               :label="`${attribute.description}`"
               :items="attribute.codes"
-              return-object
               item-text="label"
               item-value="code"
               class="mr-3"
@@ -500,7 +505,13 @@
       </v-alert>
       <div class="mb-5">
         <p>If you close the entry without submitting you will need to come back and finish to submit the entry.</p>
-        <v-btn class="mr-4 mb-3" :loading="savingAndClose" :disabled="savingAndClose" color="primary" @click="saveAndClose()">
+        <v-btn
+          class="mr-4 mb-3"
+          :loading="savingAndClose"
+          :disabled="savingAndClose"
+          color="primary"
+          @click="saveAndClose()"
+        >
           Close
           <template v-slot:loader>
             <span>Saving...</span>
@@ -510,11 +521,32 @@
         <v-btn :loading="saving" :disabled="saving || !isFormValid" color="success" class="mr-4 mb-3" @click="save()">
           Save
         </v-btn>
-        <v-btn :loading="submitting" :disabled="submitting || !isFormValid" color="success" class="mr-4 mb-3" @click="submit()">
+        <v-btn
+          :loading="submitting"
+          :disabled="submitting || !isFormValid"
+          color="success"
+          class="mr-4 mb-3"
+          @click="submitHelper()"
+        >
           Submit
         </v-btn>
       </div>
     </v-form>
+
+    <v-dialog :value="submitConfirmDialog" @input="submitConfirmDialog = false" max-width="50em">
+      <v-card>
+        <ModalTitle title="Are you sure?" @close="submitConfirmDialog = false" />
+        <v-card-text>
+          Are you sure you want to submit your entry for review?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="warning" @click="submit">Submit</v-btn>
+          <v-btn @click="submitConfirmDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-dialog :value="showEntryTypeWarning" @input="showEntryTypeWarning = false" max-width="50em">
       <v-card>
         <ModalTitle title="Are you sure?" @close="showEntryTypeWarning = false" />
@@ -558,12 +590,17 @@ export default {
   name: 'SubmissionForm',
   components: { ModalTitle },
   beforeRouteLeave(to, from, next) {
-    const answer = window.confirm('Do you really want to leave?')
-    if (answer) {
+    if (!this.bypassLeaveConfirmation) {
+      const answer = window.confirm('Do you really want to leave?')
+      if (answer) {
+        next()
+      }
+    } else {
       next()
     }
   },
   mounted() {
+    this.bypassLeaveConfirmation = false
     // load the data from an existing submission
     if (this.$route.params.id) {
       if (this.$route.params.id !== 'new') {
@@ -604,7 +641,9 @@ export default {
   data: () => ({
     saving: false,
     submitting: false,
+    submitConfirmDialog: false,
     savingAndClose: false,
+    bypassLeaveConfirmation: false,
     // server validation errors
     errors: [],
     isFormValid: false,
@@ -869,15 +908,36 @@ export default {
       this.primaryPOC.email = this.$store.state.currentUser.email
       this.primaryPOC.organization = this.$store.state.currentUser.organization
     },
+    submitHelper() {
+      this.submitConfirmDialog = true
+    },
     submit(data) {
       // TODO: fill out this function
+      this.bypassLeaveConfirmation = true
+      this.submitConfirmDialog = false
       this.submitting = true
-      window.setTimeout(() => {
-        this.$router.push({ name: 'Submissions' })
-        this.submitting = false
-      }, 1000)
+      this.save(() => {
+        this.$http
+          .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submit`, this.getFormData())
+          .then(response => {
+            if (response.data && response.data.success === false) {
+              this.errors = response.data.errors.entry
+            }
+            if (response.data && response.data.component) {
+              this.errors = []
+            }
+          })
+          .catch(e => {
+            console.error(e)
+          })
+          .finally(() => {
+            this.submitting = false
+            this.$router.push({ name: 'Submissions' })
+          })
+      }, 'Submission Submitted')
     },
     saveAndClose() {
+      this.bypassLeaveConfirmation = true
       this.savingAndClose = true
       if (this.isFormValid) {
         this.save(() => {
@@ -889,7 +949,7 @@ export default {
         this.$router.push({ name: 'Submissions' })
       }
     },
-    save(callback) {
+    save(callback, toastMessage) {
       this.saving = true
       let formData = this.getFormData()
 
@@ -928,7 +988,7 @@ export default {
                 }
                 if (response.data && response.data.component) {
                   this.errors = []
-                  this.$toasted.success('Submission Saved')
+                  this.$toasted.success(toastMessage || 'Submission Saved')
                 }
                 if (callback) {
                   callback()
@@ -937,7 +997,9 @@ export default {
               .catch(e => {
                 console.error(e)
               })
-              .finally(() => { this.saving = false })
+              .finally(() => {
+                this.saving = false
+              })
           } else {
             this.$http
               .post('/openstorefront/api/v1/resource/componentsubmissions', formData)
@@ -958,7 +1020,9 @@ export default {
               .catch(e => {
                 console.error(e)
               })
-              .finally(() => { this.saving = false })
+              .finally(() => {
+                this.saving = false
+              })
           }
         })
     },
@@ -1129,7 +1193,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$red : #c62828;
+$red: #c62828;
 
 .fieldset {
   border: 1px solid rgba(0, 0, 0, 0.2);

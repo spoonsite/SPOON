@@ -1,3 +1,4 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <style>
 	.cell {
 		min-height: 2em;

@@ -1,4 +1,4 @@
-
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <style>
 .entry-topics-button .button-content-container {
     position: relative;
