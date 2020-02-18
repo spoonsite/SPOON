@@ -146,8 +146,8 @@
               style="height: 80px;"
             />
             <div class="mx-4">
-              <p>FileName: {{ image.file.originalName }}</p>
-              <p>Caption: {{ image.caption }}</p>
+              <p><span class="bold">File Name:</span> {{ image.file.originalName }}</p>
+              <p><span class="bold">Caption:</span> {{ image.caption }}</p>
             </div>
           </div>
           <div>
@@ -352,20 +352,17 @@
         <legend class="title legend">Resources</legend>
         <fieldset class="fieldset mt-0">
           <legend class="title legend">Local Files</legend>
-          <v-btn color="grey lighten-2" @click="addLocalFile" :disabled="resources.localFiles.length > 10"
-            >Add Local File</v-btn
-          >
-          <div class="image-row" v-for="(file, index) in resources.localFiles" :key="index">
+          <div class="image-row">
             <div class="file-grid">
               <v-select
                 label="Resource Type"
-                v-model="file.resourceType"
+                v-model="resourceFile.resourceType"
                 :items="resourceType"
                 item-text="description"
                 item-value="code"
               />
-              <v-file-input label="Add File" v-model="file.file" />
-              <v-text-field label="Description" v-model="file.description" />
+              <v-file-input label="Add File" v-model="resourceFile.file" />
+              <v-text-field label="Description" v-model="resourceFile.description" />
               <!-- <v-select
                 label="Security Marking"
                 v-model="file.securityMarking"
@@ -375,7 +372,39 @@
               />-->
             </div>
             <div>
-              <v-btn title="delete" icon @click="removeLocalFile(index)">
+              <v-btn
+                fab
+                elevation="0"
+                title="attach resource"
+                icon
+                @click="attachResource()"
+                :disabled="!resourceFile.file || !resourceFile.description || !resourceFile.resourceType"
+              >
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </div>
+          </div>
+          <h2 class="mb-4" v-if="resources.localFiles && resources.localFiles.length > 0">Attached Resources</h2>
+          <div class="image-row"  v-for="resource in resources.localFiles" :key="resource.componentMediaId">
+            <div class="flex-wrap">
+              <v-icon large>mdi-file-document-outline</v-icon>
+              <div class="mx-4">
+                <p><span class="bold">Resource Type:</span> {{ lookupType(resource.resourceType) }}</p>
+                <p><span class="bold">File Name:</span> {{ resource.file.originalName }}</p>
+                <p><span class="bold">Description:</span> {{ resource.description }}</p>
+              </div>
+            </div>
+            <div>
+              <v-btn
+                small
+                fab
+                elevation="0"
+                class="mb-2"
+                :loading="resource.loading"
+                :disabled="resource.loading"
+                :title="`remove ${resource.file.originalName}`"
+                @click="removeResource(resource)"
+              >
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
             </div>
@@ -607,6 +636,12 @@ export default {
       file: null,
       caption: ''
     },
+    resourceFile: {
+      img: '',
+      file: null,
+      description: '',
+      resourceType: ''
+    },
     images: [],
     allowedImageTypes: ['image/png', 'image/jpeg', 'image/jpg'],
     // Description
@@ -685,6 +720,7 @@ export default {
           let component = response.data.component
           let contacts = response.data.contacts
           let media = response.data.media
+          let [ resourceFiles, resourceLinks ] = _.partition(response.data.resources, el => !!el.file)
           media.forEach(el => { el.loading = false })
 
           this.entryTitle = component.name
@@ -692,48 +728,19 @@ export default {
           this.description = component.description
           this.organization = component.organization
           this.media = media
-          // load tags
+          this.resources.localFiles = resourceFiles
+          this.resources.links = resourceLinks
+          // TODO: load tags
           this.savedAttributes = response.data.attributes
 
-          this.primaryPOC = contacts[0] // unsafe
+          if (_.head(contacts)) {
+            this.primaryPOC = _.head(contacts)
+          }
           this.contacts = _.tail(contacts)
         })
         .catch(e => {
           console.error(e)
         })
-    },
-    attachMedia() {
-      let formData = new FormData()
-      formData.append('caption', this.currentImage.caption)
-      formData.append('file', this.currentImage.file)
-      formData.append('mediaTypeCode', MEDIA_TYPE_CODE.IMAGE)
-
-      if (this.id) {
-        this.$http
-          .post(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/attachmedia`, formData,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            })
-          .then(response => {
-            if (response.data && response.data.success === false) {
-              this.errors = response.data.errors.entry
-            }
-            if (response.data) {
-              this.media.push(response.data)
-              // reset the image form
-              this.currentImage = {
-                img: '',
-                file: null,
-                caption: ''
-              }
-            }
-          })
-          .catch(e => {
-            console.error(e)
-          })
-      }
     },
     getFormData() {
       let allAttributes = this.attributes.required.concat(this.attributes.suggested)
@@ -769,8 +776,7 @@ export default {
           organization: this.organization
         },
         attributes: newAttributes,
-        // media: media,
-        // TODO: fix media and resources
+        resources: this.resources.links,
         tags: this.tags,
         contacts: [this.primaryPOC].concat(this.contacts)
       }
@@ -871,7 +877,7 @@ export default {
         this.submitting = false
       }, 1000)
     },
-    saveAndClose(thing) {
+    saveAndClose() {
       this.savingAndClose = true
       if (this.isFormValid) {
         this.save(() => {
@@ -956,12 +962,105 @@ export default {
           }
         })
     },
+    attachResource() {
+      let formData = new FormData()
+      formData.append('description', this.resourceFile.description)
+      formData.append('file', this.resourceFile.file)
+      formData.append('resourceType', this.resourceFile.resourceType)
+      formData.append('mimeType', this.resourceFile.file.type)
+
+      if (this.id) {
+        this.$http
+          .post(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/attachresource`, formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            })
+          .then(response => {
+            if (response.data && response.data.success === false) {
+              this.errors = response.data.errors.entry
+            }
+            if (response.data) {
+              this.resources.localFiles.push(response.data)
+              // reset the image form
+              this.resourceFile = {
+                file: null,
+                description: '',
+                resourceType: ''
+              }
+            }
+          })
+          .catch(e => {
+            console.error(e)
+          })
+      }
+    },
+    removeResource(resource) {
+      // TODO: detach image from submission after confirmation
+      let resourceId = resource.resourceId
+      resource.loading = true
+      this.$http
+        .delete(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/resources/${resourceId}/force`)
+        .then(response => {
+          this.$toasted.show('Deleted attached resource from submission')
+          this.resources.localFiles = this.resources.localFiles.filter(el => el.resourceId !== resourceId)
+          resource.loading = false
+        })
+        .catch(e => {
+          resource.loading = false
+          console.error('Problem with deleting attached image from submission', e)
+          this.$toasted.error('Problem with deleting attached image from submission')
+        })
+    },
     // editImage(image) {
     //   // TODO: support edit of media
     // },
+    lookupType(resourceTypeCode) {
+      let result = ''
+      this.resourceType.forEach(el => {
+        if (el.code === resourceTypeCode) {
+          result = el.description
+        }
+      })
+      return result
+    },
+    attachMedia() {
+      let formData = new FormData()
+      formData.append('caption', this.currentImage.caption)
+      formData.append('file', this.currentImage.file)
+      formData.append('mediaTypeCode', MEDIA_TYPE_CODE.IMAGE)
+      formData.append('mimeType', this.currentImage.file.type)
+
+      if (this.id) {
+        this.$http
+          .post(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/attachmedia`, formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            })
+          .then(response => {
+            if (response.data && response.data.success === false) {
+              this.errors = response.data.errors.entry
+            }
+            if (response.data) {
+              this.media.push(response.data)
+              // reset the image form
+              this.currentImage = {
+                img: '',
+                file: null,
+                caption: ''
+              }
+            }
+          })
+          .catch(e => {
+            console.error(e)
+          })
+      }
+    },
     removeImage(media) {
       // TODO: detach image from submission after confirmation
-      // @Path("/{id}/media/{mediaId}/force")
       let mediaId = media.componentMediaId
       media.loading = true
       this.$http
@@ -993,12 +1092,6 @@ export default {
           e.img = ''
         }
       }
-    },
-    addLocalFile() {
-      this.resources.localFiles.push({ resourceType: '', file: null, description: '', securityMarking: '' })
-    },
-    removeLocalFile(index) {
-      this.resources.localFiles.splice(index, 1)
     },
     addLink() {
       this.resources.links.push({ resourceType: '', link: '', description: '', securityMarking: '' })
