@@ -149,12 +149,22 @@
             The information submitted to this site will be made publicly available. Please do not submit any sensitive
             information such as proprietary or ITAR restricted information.
           </p>
-          <v-file-input v-model="uploadFile" ref="bulkUploadFile"></v-file-input>
+          <p v-html="uploadErrorDisplay"></p>
+          <v-file-input
+            style="width: 100%;"
+            label="Upload Resource (Limit of 2.15 GB)"
+            ref="bulkFileSelector"
+            accept=".zip"
+            v-model="bulkUploadFile"
+            ></v-file-input>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn @click="openBulkUpload()">Upload</v-btn>
-          <v-btn @click="bulkUploadDialog = false">Close</v-btn>
+          <v-btn @click="submitBulkFile()">Upload</v-btn>
+          <v-btn @click="
+          bulkUploadDialog = false
+          bulkUploadFile = null
+          ">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -279,6 +289,8 @@ export default {
       search: '',
       uploadFile: null,
       bulkUploadDialog: false,
+      bulkUploadFile: null,
+      uploadErrorDisplay: null,
       commentsDialog: false,
       deleteDialog: false,
       requestRemoval: false,
@@ -505,8 +517,29 @@ export default {
         this.$toasted.error('Submission could not be deleted.')
       }
     },
-    openBulkUpload() {
-      window.open('openstorefront/bulkUpload.jsp', 'uploadWin', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=500, height=440')
+    submitBulkFile() {
+      let formData = new FormData()
+      formData.append('file', this.bulkUploadFile)
+      this.$http.post(`/openstorefront/api/v1/resource/usersubmissions/upload/zip`, formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then(response => {
+          this.bulkUploadFile = null
+          if (response.data.success) {
+            this.bulkUploadDialog = false
+            response.data.errors.entry.forEach((item) => {
+              this.$toasted.show(item.value)
+            })
+          } else {
+            this.uploadErrorDisplay = 'Upload Failed! '
+            response.data.errors.entry.forEach(item => {
+              this.uploadErrorDisplay += item.value + ' '
+            })
+          }
+        })
     }
   }
 }
