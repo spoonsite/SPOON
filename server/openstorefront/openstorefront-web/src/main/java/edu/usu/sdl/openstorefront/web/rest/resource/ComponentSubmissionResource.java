@@ -301,11 +301,12 @@ public class ComponentSubmissionResource
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.MULTIPART_FORM_DATA})
 	@Path("/{componentId}/attachmedia")
-	public Response createNewSubmissionVue(
+	public Response attachMedia(
 			@PathParam("componentId")
 			@RequiredParam String componentId,
 			@FormDataParam("file") InputStream uploadStream,
 			@FormDataParam("file") FormDataContentDisposition fileDisposition,
+			@FormDataParam("mimeType") String mimeType,
 			@FormDataParam("caption") String caption,
 			@FormDataParam("mediaTypeCode") String mediaTypeCode
 	)
@@ -320,15 +321,53 @@ public class ComponentSubmissionResource
 			componentMedia.setMediaTypeCode(mediaTypeCode);
 			componentMedia.setComponentId(componentId);
 			componentMedia.setCaption(caption);
-			// TODO: get mime type
-			componentMedia = service.getComponentService().saveMediaFile(componentMedia, uploadStream, "img/png", fileName);
+			componentMedia = service.getComponentService().saveMediaFile(componentMedia, uploadStream, mimeType, fileName);
+			
 			return sendSingleEntityResponse(componentMedia);
 		}
-		LOG.log(Level.FINE, "got a " + name + " : " + fileName + " : " + caption + " for " + componentId);
+		LOG.log(Level.FINE, "attached media " + name + " : " + fileName + " : " + caption + " for " + componentId);
 
 		RestErrorModel restErrorModel = new RestErrorModel();
 		restErrorModel.setSuccess(false);
 		restErrorModel.getErrors().put("error", "Unable to save media");
+		return sendSingleEntityResponse(restErrorModel);
+	}
+
+	@POST
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
+	@APIDescription("Attaches a resource file to a Component Submission.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.MULTIPART_FORM_DATA})
+	@Path("/{componentId}/attachresource")
+	public Response attachResource(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@FormDataParam("file") InputStream uploadStream,
+			@FormDataParam("file") FormDataContentDisposition fileDisposition,
+			@FormDataParam("resourceType") String resourceType,
+			@FormDataParam("description") String description,
+			@FormDataParam("mimeType") String mimeType
+	)
+	{
+		Logger LOG = Logger.getLogger(UserSubmissionResource.class.getName());
+		String name = fileDisposition.getParameters().get("name");
+		String fileName = fileDisposition.getParameters().get("filename");
+		if (fileName != null) {
+			ComponentResource componentResource = new ComponentResource();
+			componentResource.setResourceId(service.getPersistenceService().generateId());
+			componentResource.populateBaseCreateFields();
+			componentResource.setResourceType(resourceType);
+			componentResource.setComponentId(componentId);
+			componentResource.setDescription(description);
+			componentResource = service.getComponentService().saveResourceFile(componentResource, uploadStream, mimeType, fileName);
+
+			return sendSingleEntityResponse(componentResource);
+		}
+		LOG.log(Level.FINE, "attached file resource " + name + " : " + fileName + " : " + description + " for " + componentId);
+
+		RestErrorModel restErrorModel = new RestErrorModel();
+		restErrorModel.setSuccess(false);
+		restErrorModel.getErrors().put("error", "Unable to save resource file");
 		return sendSingleEntityResponse(restErrorModel);
 	}
 
