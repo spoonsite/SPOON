@@ -89,20 +89,4 @@ export function crushNumericString(inputNumber) {
   return parseFloat(inputNumber)
 }
 
-/**
- * This method transforms the given number of bytes into a string representation of the number using SI prefixes
- * @param {Number} numBytes The size in bytes to translate
- * @returns {String} A string representing a human readable, truncated form of the input number of bytes
- * Source: https://stackoverflow.com/a/20732091/8223925
- * Examples:
- *   humanReadableBytes(0) // "0 B"
- *   humanReadableBytes(1000) // "1000 B"
- *   humanReadableBytes(1026) // "1 kB"
- *   humanReadableBytes(10260000) // "9.78 MB"
- */
-export function humanReadableBytes(numBytes) {
-  const i = numBytes === 0 ? 0 : Math.floor(Math.log(numBytes) / Math.log(1024))
-  return Number((numBytes / Math.pow(1024, i)).toFixed(2)) + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i]
-}
-
 export default { crushNumericString, scientificToDecimal }
