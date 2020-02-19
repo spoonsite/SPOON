@@ -157,6 +157,7 @@
             v-model="isSendingFile"
             @click="submitBulkFile()"
             :disabled="isSendingFile"
+            :loading="isSendingFile"
           >Upload</v-btn>
           <v-btn
             @click="
