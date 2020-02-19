@@ -245,7 +245,7 @@
 <script lang="js">
 import ModalTitle from '@/components/ModalTitle'
 import CommentModal from '@/components/CommentModal'
-import { humanReadableBytes } from '@/util/scientificToDecimal'
+import { humanReadableBytes, MiBtoBytes, getFileTypeFromSignature } from '@/util/fileUtils'
 
 export default {
   name: 'submissions-page',
@@ -336,11 +336,10 @@ export default {
         })
     },
     getMaxUploadSize() {
-      const sizeMB = 1048576
       this.$http.get('/openstorefront/api/v1/service/application/configproperties/max.post.size').then(
         response => {
           if (response.data.description) {
-            this.maxUploadSize = parseInt(response.data.description) * sizeMB
+            this.maxUploadSize = parseInt(response.data.description) * MiBtoBytes
           }
         }
       )
