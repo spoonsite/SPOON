@@ -469,7 +469,6 @@ export default {
     },
     determineChangeRequest(component) {
       if (component.statusOfPendingChange != null) {
-        console.log(component)
         return 'Pending'
       } else {
         return ''

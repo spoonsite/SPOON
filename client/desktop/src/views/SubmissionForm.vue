@@ -392,7 +392,7 @@
             </div>
           </div>
           <h2 class="mb-4" v-if="resources.localFiles && resources.localFiles.length > 0">Attached Resources</h2>
-          <div class="image-row"  v-for="resource in resources.localFiles" :key="resource.componentMediaId">
+          <div class="image-row" v-for="resource in resources.localFiles" :key="resource.componentMediaId">
             <div class="flex-wrap">
               <v-icon large>mdi-file-document-outline</v-icon>
               <div class="mx-4">
@@ -779,8 +779,10 @@ export default {
           let component = response.data.component
           let contacts = response.data.contacts
           let media = response.data.media
-          let [ resourceFiles, resourceLinks ] = _.partition(response.data.resources, el => !!el.file)
-          media.forEach(el => { el.loading = false })
+          let [resourceFiles, resourceLinks] = _.partition(response.data.resources, el => !!el.file)
+          media.forEach(el => {
+            el.loading = false
+          })
 
           this.entryTitle = component.name
           this.entryType = component.componentType
@@ -922,7 +924,6 @@ export default {
       this.lastEntryType = ''
     },
     setName() {
-      console.log(this.$store.state.currentUser)
       this.primaryPOC.firstName = this.$store.state.currentUser.firstName
       this.primaryPOC.lastName = this.$store.state.currentUser.lastName
       this.primaryPOC.phone = this.$store.state.currentUser.phone
@@ -974,7 +975,6 @@ export default {
       }
     },
     save(callback, toastMessage, showToast) {
-      console.log(callback)
       this.saving = true
       let formData = this.getFormData()
 
@@ -1060,12 +1060,11 @@ export default {
 
       if (this.id) {
         this.$http
-          .post(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/attachresource`, formData,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            })
+          .post(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/attachresource`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          })
           .then(response => {
             if (response.data && response.data.success === false) {
               this.errors = response.data.errors.entry
@@ -1123,12 +1122,11 @@ export default {
 
       if (this.id) {
         this.$http
-          .post(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/attachmedia`, formData,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            })
+          .post(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/attachmedia`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          })
           .then(response => {
             if (response.data && response.data.success === false) {
               this.errors = response.data.errors.entry
