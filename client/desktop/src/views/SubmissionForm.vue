@@ -475,6 +475,7 @@
         </ul>
       </v-alert>
       <div class="mb-5">
+        <p class="mb-2" v-if="saveTime">Last saved at: {{ saveTime | format('Pp') }}</p>
         <p>If you close the entry without submitting you will need to come back and finish to submit the entry.</p>
         <v-btn
           class="mr-4 mb-3"
@@ -584,9 +585,7 @@ export default {
       } else {
         // auto fill out the user info
         if (this.$store.state.currentUser.username) {
-          console.log('testing')
           this.setName()
-          console.log('testing')
         } else {
           // trigger an update once the user has been fetched
           this.$store.watch(
@@ -613,9 +612,21 @@ export default {
     this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ContactType').then(response => {
       this.contactTypeList = response.data
     })
+    setTimeout(() => {
+      if (this.isFormValid) {
+        this.save(
+          () => {
+            this.saveTime = new Date()
+          },
+          null,
+          false
+        )
+      }
+    }, 30000)
   },
   data: () => ({
     saving: false,
+    saveTime: null,
     submitText: 'Submit',
     isChangeRequest: false,
     submitting: false,
@@ -955,7 +966,8 @@ export default {
         this.$router.push({ name: 'Submissions' })
       }
     },
-    save(callback, toastMessage) {
+    save(callback, toastMessage, showToast) {
+      console.log(callback)
       this.saving = true
       let formData = this.getFormData()
 
@@ -994,7 +1006,7 @@ export default {
                 }
                 if (response.data && response.data.component) {
                   this.errors = []
-                  this.$toasted.success(toastMessage || 'Submission Saved')
+                  if (showToast) this.$toasted.success(toastMessage || 'Submission Saved')
                 }
                 if (callback) {
                   callback()
