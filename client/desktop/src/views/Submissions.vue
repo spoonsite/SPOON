@@ -148,6 +148,7 @@
             v-model="bulkUploadFile"
             @change="uploadErrorDisplay = ''"
             :error-messages="uploadErrorDisplay"
+            :disabled="isSendingFile"
             ></v-file-input>
         </v-card-text>
         <v-card-actions>
