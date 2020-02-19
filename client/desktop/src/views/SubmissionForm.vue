@@ -196,11 +196,12 @@
             No required attributes, please select an entry type.
           </p>
           <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
-            <v-autocomplete
+            <v-combobox
               v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
               v-model="attribute.selectedCodes"
               :label="`${attribute.description}*`"
               multiple
+              append-icon
               chips
               deletable-chips
               :items="attribute.codes"
@@ -278,10 +279,11 @@
             No suggested attributes, please select an entry type.
           </p>
           <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
-            <v-autocomplete
+            <v-combobox
               v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
               v-model="attribute.selectedCodes"
               :label="`${attribute.description}`"
+              append-icon
               multiple
               chips
               deletable-chips
@@ -685,7 +687,7 @@ export default {
         if (Array.isArray(value)) {
           let valid = true
           value.forEach(e => {
-            if (/\d+(\.\d+)?/.exec(e)[0] === e) {
+            if (/\d+(\.\d+)?/.exec(e) === null || /\d+(\.\d+)?/.exec(e)[0] !== e) {
               valid = false
             }
           })
