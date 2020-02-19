@@ -546,78 +546,43 @@ export default {
         return
       }
 
-      // Check Mime type by sniffing the first few bytes of the file
-      // Derived from https://gist.github.com/topalex/ad13f76150e0b36de3c4a3d5ba8dc63a
-      let blob = this.bulkUploadFile.slice(0, 4)
-      let fileReader = new FileReader()
-      let that = this
-      fileReader.onloadend = function(e) {
-        let bytes = new Uint8Array(e.target.result)
-        let header = ''
-        for (let i = 0; i < bytes.length; i++) {
-          header += bytes[i].toString(16)
-        }
-
-        // Check the file signature against known types. Source: https://en.wikipedia.org/wiki/List_of_file_signatures
-        let type = 'unknown'
-        switch (header) {
-          case '89504e47':
-            type = 'image/png'
-            break
-          case '47494638':
-            type = 'image/gif'
-            break
-          case 'ffd8ffe0':
-          case 'ffd8ffe1':
-          case 'ffd8ffe2':
-            type = 'image/jpeg'
-            break
-          case '25504446':
-            type = 'application/pdf'
-            break
-          case '504b34':
-          case '504b56':
-          case '504b78':
-            type = 'application/zip'
-            break
-        }
-
-        if (type !== 'application/zip') {
-          that.uploadErrorDisplay = 'Item selected is not a zip file! File type is ' + type
-          return
-        }
-
-        that.isSendingFile = true
-        let formData = new FormData()
-        formData.append('file', that.bulkUploadFile)
-        that.$http.post(`/openstorefront/api/v1/resource/usersubmissions/upload/zip`, formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          })
-          .then(response => {
-            that.bulkUploadFile = null
-            that.isSendingFile = false
-            if (response.data.success) {
-              that.bulkUploadDialog = false
-              response.data.errors.entry.forEach((item) => {
-                that.$toasted.show(item.value)
-              })
-            } else {
-              that.uploadErrorDisplay = 'Upload Failed! '
-              response.data.errors.entry.forEach(item => {
-                that.uploadErrorDisplay += item.value + ' '
-              })
-            }
-          }).catch(error => {
-            that.bulkUploadFile = null
-            that.isSendingFile = false
-            that.$toasted.error('An error occured when sending the file to the server.')
-            console.error(error)
-          })
+      getFileTypeFromSignature(this.bulkUploadFile, this.handleFileTypeCheck)
+    },
+    handleFileTypeCheck(type) {
+      if (type !== 'application/zip') {
+        this.uploadErrorDisplay = 'Item selected is not a zip file! File type is ' + type
+        return
       }
-      fileReader.readAsArrayBuffer(blob)
+
+      this.isSendingFile = true
+      let formData = new FormData()
+      formData.append('file', this.bulkUploadFile)
+      this.$http.post(`/openstorefront/api/v1/resource/usersubmissions/upload/zip`, formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then(response => {
+          this.bulkUploadFile = null
+          this.isSendingFile = false
+          if (response.data.success) {
+            this.bulkUploadDialog = false
+            response.data.errors.entry.forEach((item) => {
+              this.$toasted.show(item.value)
+            })
+          } else {
+            this.uploadErrorDisplay = 'Upload Failed! '
+            response.data.errors.entry.forEach(item => {
+              this.uploadErrorDisplay += item.value + ' '
+            })
+          }
+        }).catch(error => {
+          this.bulkUploadFile = null
+          this.isSendingFile = false
+          this.$toasted.error('An error occured when sending the file to the server.')
+          console.error(error)
+        })
     }
   }
 }
