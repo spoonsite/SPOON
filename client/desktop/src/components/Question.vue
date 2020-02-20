@@ -128,13 +128,14 @@ export default {
   },
   methods: {
     checkAnswers() {
+      this.answers = this.answers.filter(el => el.activeStatus !== 'I' && el.activeStatus !== 'P')
       this.noAnswers = false
       if (this.answers.length === 0) {
         this.noAnswers = true
       } else {
         let hasAnswer = false
         this.answers.forEach(function(el) {
-          if (el.activeStatus !== 'I') {
+          if (el.activeStatus !== 'I' || el.activeStatus !== 'P') {
             hasAnswer = true
           }
         })
