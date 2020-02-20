@@ -506,7 +506,7 @@
         </ul>
       </v-alert>
       <div class="mb-5">
-        <p class="mb-2" v-if="saveTime">Last saved at: {{ saveTime | format('Pp') }}</p>
+        <p class="mb-2" v-if="saveTime">Last saved at: {{ saveTime | formatDate('Pp') }}</p>
         <p>If you close the entry without submitting you will need to come back and finish to submit the entry.</p>
         <v-btn
           class="mr-4 mb-3"
@@ -645,13 +645,7 @@ export default {
     })
     setTimeout(() => {
       if (this.isFormValid) {
-        this.save(
-          () => {
-            this.saveTime = new Date()
-          },
-          null,
-          false
-        )
+        this.save()
       }
     }, 30000)
   },
@@ -791,7 +785,7 @@ export default {
           this.media = media
           this.resources.localFiles = resourceFiles
           this.resources.links = resourceLinks
-          // TODO: load tags
+          this.tags = response.data.tags
           this.savedAttributes = response.data.attributes
 
           if (_.head(contacts)) {
@@ -1013,6 +1007,7 @@ export default {
                 }
                 if (response.data && response.data.component) {
                   this.errors = []
+                  this.saveTime = new Date()
                   if (showToast) this.$toasted.success(toastMessage || 'Submission Saved')
                 }
                 if (callback) {
@@ -1036,6 +1031,7 @@ export default {
                   this.errors = []
                   this.id = response.data.component.componentId
                   this.$router.replace(`${this.id}`)
+                  this.saveTime = new Date()
                   this.$toasted.success('Submission Saved')
                 }
                 if (callback) {
@@ -1209,6 +1205,32 @@ export default {
         }
         this.lastEntryType = oldVal
         this.showEntryTypeWarning = true
+      }
+    },
+    tags: function(newVal, oldVal) {
+      let newTag = _.differenceBy(newVal, oldVal, 'text')
+      let removedTag = _.differenceBy(oldVal, newVal, 'text')
+      if (newTag && newTag.length > 0) {
+        // add new tag
+        this.$http
+          .post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
+            text: newTag[0].text
+          })
+          .then(res => {
+          })
+          .catch(e => {
+            console.error('Problem adding tag')
+          })
+      }
+      if (removedTag && removedTag.length > 0) {
+        // add new tag
+        this.$http
+          .delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${removedTag[0].tagId}`)
+          .then(res => {
+          })
+          .catch(e => {
+            console.error('Problem deleting tag')
+          })
       }
     }
   }
