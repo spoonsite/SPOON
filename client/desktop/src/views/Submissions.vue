@@ -68,24 +68,29 @@
                 </template>
                 <span>View Entry</span>
               </v-tooltip>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <!-- TODO: fix change request to use the endpoint -->
-                  <v-btn
-                    v-if="item.status === 'Active'"
-                    :href="'mailto:support@spoonsite.com?subject=Change%20Request%20for%20' + item.name"
-                    icon
-                    v-on="on"
-                    style="order: 2"
-                  >
-                    <v-icon>fas fa-pencil-alt</v-icon>
-                  </v-btn>
-                  <v-btn v-else :to="`submission-form/${item.componentId}`" icon v-on="on" style="order: 2">
-                    <v-icon>fas fa-pencil-alt</v-icon>
-                  </v-btn>
-                </template>
-                <span>Edit</span>
-              </v-tooltip>
+              <div style="order: 2">
+                <v-tooltip bottom v-if="item.status === 'Active'">
+                  <template v-slot:activator="{ on }">
+                    <!-- TODO: fix change request to use the endpoint -->
+                    <v-btn
+                      :href="'mailto:support@spoonsite.com?subject=Change%20Request%20for%20' + item.name"
+                      icon
+                      v-on="on"
+                    >
+                      <v-icon>fas fa-pencil-alt</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Email For Change Request</span>
+                </v-tooltip>
+                <v-tooltip bottom v-else>
+                  <template v-slot:activator="{ on }">
+                    <v-btn :to="`submission-form/${item.componentId}`" icon v-on="on">
+                      <v-icon>fas fa-pencil-alt</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Edit</span>
+                </v-tooltip>
+              </div>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
