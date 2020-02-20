@@ -44,7 +44,6 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
-import edu.usu.sdl.openstorefront.core.api.PersistenceService;
 import edu.usu.sdl.openstorefront.core.api.query.GenerateStatementOption;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
 import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
@@ -671,7 +670,6 @@ public class ComponentSubmissionResource
 				response = Response.ok(componentAll).build();
 			}
 		}
-		// TODO: not returning the tags
 		return response;
 	}
 
