@@ -148,25 +148,31 @@
             The information submitted to this site will be made publicly available. Please do not submit any sensitive
             information such as proprietary or ITAR restricted information.
           </p>
-          <p v-html="uploadErrorDisplay"></p>
           <v-file-input
             style="width: 100%;"
-            label="Upload Resource (Limit of 2.15 GB)"
+            :label="`Upload Resource (Limit of ${makeHumanReadable(maxUploadSize)})`"
             ref="bulkFileSelector"
             accept=".zip"
             v-model="bulkUploadFile"
-          ></v-file-input>
+            @change="uploadErrorDisplay = ''"
+            :error-messages="uploadErrorDisplay"
+            :disabled="isSendingFile"
+            ></v-file-input>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn @click="submitBulkFile()">Upload</v-btn>
+          <v-btn
+            v-model="isSendingFile"
+            @click="submitBulkFile()"
+            :disabled="isSendingFile"
+            :loading="isSendingFile"
+          >Upload</v-btn>
           <v-btn
             @click="
               bulkUploadDialog = false
               bulkUploadFile = null
-            "
-            >Close</v-btn
-          >
+              "
+          >Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -248,6 +254,7 @@
 <script lang="js">
 import ModalTitle from '@/components/ModalTitle'
 import CommentModal from '@/components/CommentModal'
+import { humanReadableBytes, MiBtoBytes, getFileTypeFromSignature } from '@/util/fileUtils'
 
 export default {
   name: 'submissions-page',
@@ -257,6 +264,7 @@ export default {
   },
   mounted() {
     this.getUserParts()
+    this.getMaxUploadSize()
   },
   data() {
     return {
@@ -288,6 +296,9 @@ export default {
       componentDisplay: [],
       componentData: [],
       isLoading: true,
+      maxUploadSize: 0,
+      isSendingFile: false,
+      search: '',
       uploadFile: null,
       bulkUploadDialog: false,
       bulkUploadFile: null,
@@ -332,6 +343,15 @@ export default {
           this.$toasted.error('An error occurred retrieving submissions')
           console.error(error)
         })
+    },
+    getMaxUploadSize() {
+      this.$http.get('/openstorefront/api/v1/service/application/configproperties/max.post.size').then(
+        response => {
+          if (response.data.description) {
+            this.maxUploadSize = parseInt(response.data.description) * MiBtoBytes
+          }
+        }
+      )
     },
     viewComponent(componentId) {
       this.$router.push({ name: 'Entry Detail', params: { id: componentId } })
@@ -518,7 +538,37 @@ export default {
         this.$toasted.error('Submission could not be deleted.')
       }
     },
+    makeHumanReadable(inputBytes) {
+      return humanReadableBytes(inputBytes)
+    },
     submitBulkFile() {
+      this.uploadErrorDisplay = ''
+      if (!(this.bulkUploadFile instanceof File)) {
+        this.uploadErrorDisplay = 'Item selected for upload is not a file!'
+        return
+      }
+      if (this.bulkUploadFile.name.slice(-4) !== '.zip') {
+        this.uploadErrorDisplay = 'Item selected is not a zip file! File must end in ".zip"'
+        return
+      }
+      if (this.bulkUploadFile.size >= this.maxUploadSize) {
+        this.uploadErrorDisplay = 'Item selected is too large to upload!'
+        return
+      }
+      if (this.bulkUploadFile.size === 0) {
+        this.uploadErrorDisplay = 'Item selected is empty!'
+        return
+      }
+
+      getFileTypeFromSignature(this.bulkUploadFile, this.handleFileTypeCheck)
+    },
+    handleFileTypeCheck(type) {
+      if (type !== 'application/zip') {
+        this.uploadErrorDisplay = 'Item selected is not a zip file! File type is ' + type
+        return
+      }
+
+      this.isSendingFile = true
       let formData = new FormData()
       formData.append('file', this.bulkUploadFile)
       this.$http.post(`/openstorefront/api/v1/resource/usersubmissions/upload/zip`, formData,
@@ -529,6 +579,7 @@ export default {
         })
         .then(response => {
           this.bulkUploadFile = null
+          this.isSendingFile = false
           if (response.data.success) {
             this.bulkUploadDialog = false
             response.data.errors.entry.forEach((item) => {
@@ -540,6 +591,11 @@ export default {
               this.uploadErrorDisplay += item.value + ' '
             })
           }
+        }).catch(error => {
+          this.bulkUploadFile = null
+          this.isSendingFile = false
+          this.$toasted.error('An error occured when sending the file to the server.')
+          console.error(error)
         })
     }
   }
