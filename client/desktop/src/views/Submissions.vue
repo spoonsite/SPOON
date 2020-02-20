@@ -32,7 +32,7 @@
             <div v-else-if="item.status === 'Pending'">{{ item.lastUpdate | formatDate }}</div>
           </template>
           <template v-slot:item.lastUpdate="{ item }">
-            {{ item.lastUpdate | formatDate }}
+            <span>{{ item.lastUpdate | formatDate }}</span>
           </template>
           <template v-slot:item.approvalWorkflow="{ item }">
             <svg v-if="item && item.steps && item.steps.length > 0" :width="item.steps.length * 50" height="65">

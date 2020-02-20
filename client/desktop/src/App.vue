@@ -172,7 +172,6 @@ export default {
         return response
       },
       error => {
-        console.error(error.response)
         this.currentError = error.response
         this.errorDialog = true
         return Promise.reject(error)
