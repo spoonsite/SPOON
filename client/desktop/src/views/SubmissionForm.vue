@@ -531,7 +531,7 @@
           class="mr-4 mb-3"
           @click="submitHelper()"
         >
-          {{ isChangeRequest ? 'Submit Change Request' : 'Submit' }}
+          Submit
         </v-btn>
       </div>
     </v-form>
@@ -604,9 +604,6 @@ export default {
   },
   mounted() {
     this.bypassLeaveConfirmation = false
-    if (this.$route.query.changeRequest) {
-      this.isChangeRequest = true
-    }
     // load the data from an existing submission
     if (this.$route.params.id) {
       if (this.$route.params.id !== 'new') {
@@ -932,12 +929,9 @@ export default {
       this.bypassLeaveConfirmation = true
       this.submitConfirmDialog = false
       this.submitting = true
-      let url = this.isChangeRequest
-        ? `/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submitchangerequest`
-        : `/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submit`
       this.save(() => {
         this.$http
-          .put(url)
+          .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submit`, this.getFormData())
           .then(response => {
             if (response.data && response.data.success === false) {
               this.errors = response.data.errors.entry
@@ -1216,8 +1210,7 @@ export default {
           .post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
             text: newTag[0].text
           })
-          .then(res => {
-          })
+          .then(res => {})
           .catch(e => {
             console.error('Problem adding tag')
           })
@@ -1226,8 +1219,7 @@ export default {
         // add new tag
         this.$http
           .delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${removedTag[0].tagId}`)
-          .then(res => {
-          })
+          .then(res => {})
           .catch(e => {
             console.error('Problem deleting tag')
           })
