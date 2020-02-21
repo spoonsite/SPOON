@@ -1,5 +1,5 @@
 export default {
-  'ADMIN': [
+  ADMIN: [
     'ADMIN-ALERTS-PAGE',
     'ADMIN-API-PAGE',
     'ADMIN-ATTRIBUTE-PAGE',

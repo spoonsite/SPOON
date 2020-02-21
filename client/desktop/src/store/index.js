@@ -35,13 +35,15 @@ export default new Vuex.Store({
     },
     setPermissionMap(state, response) {
       response.data.roles.forEach(roles => {
-        roles.permissions.forEach(permission => {
-          let found = false
-          state.permissionMap.forEach(search => {
-            if (permission.permission === search) found = true
+        if (roles.permissions) {
+          roles.permissions.forEach(permission => {
+            let found = false
+            state.permissionMap.forEach(search => {
+              if (permission.permission === search) found = true
+            })
+            if (!found) state.permissionMap.push(permission.permission)
           })
-          if (!found) state.permissionMap.push(permission.permission)
-        })
+        }
       })
     },
     setComponentTypeList(state, response) {
@@ -59,13 +61,13 @@ export default new Vuex.Store({
   },
   actions: {
     getSecurityPolicy(context) {
-      axios.get('/openstorefront/api/v1/resource/securitypolicy')
-        .then(response => {
-          context.commit('setSecurityPolicy', response)
-        })
+      axios.get('/openstorefront/api/v1/resource/securitypolicy').then(response => {
+        context.commit('setSecurityPolicy', response)
+      })
     },
     getCurrentUser(context, callback) {
-      axios.get('/openstorefront/api/v1/resource/userprofiles/currentuser')
+      axios
+        .get('/openstorefront/api/v1/resource/userprofiles/currentuser')
         .then(response => {
           context.commit('setCurrentUser', response)
           context.commit('setPermissionMap', response)
@@ -77,13 +79,13 @@ export default new Vuex.Store({
         })
     },
     getAppVersion(context) {
-      axios.get('/openstorefront/api/v1/service/application/version')
-        .then(response => {
-          context.commit('setAppVersion', response)
-        })
+      axios.get('/openstorefront/api/v1/service/application/version').then(response => {
+        context.commit('setAppVersion', response)
+      })
     },
     getBranding(context, callback) {
-      axios.get('/openstorefront/api/v1/resource/branding/current')
+      axios
+        .get('/openstorefront/api/v1/resource/branding/current')
         .then(response => {
           context.commit('setBranding', response)
         })
@@ -94,27 +96,24 @@ export default new Vuex.Store({
         })
     },
     getComponentTypeList(context) {
-      axios.get('/openstorefront/api/v1/resource/componenttypes')
-        .then(response => {
-          context.commit('setComponentTypeList', response)
-        })
+      axios.get('/openstorefront/api/v1/resource/componenttypes').then(response => {
+        context.commit('setComponentTypeList', response)
+      })
     },
     getAttributeMap(context) {
-      axios.get('/openstorefront/api/v1/resource/attributes')
-        .then(response => {
-          context.commit('setAttributeMap', response)
-        })
+      axios.get('/openstorefront/api/v1/resource/attributes').then(response => {
+        context.commit('setAttributeMap', response)
+      })
     },
     getHelpUrl(context, callback) {
-      axios.get('/openstorefront/api/v1/service/application/configproperties/help.url')
-        .then(response => {
-          context.commit('setHelpUrl', response)
-        })
+      axios.get('/openstorefront/api/v1/service/application/configproperties/help.url').then(response => {
+        context.commit('setHelpUrl', response)
+      })
     }
   },
   getters: {
     // call this.$store.getters.hasPermission('ADMIN-...')
-    hasPermission: (state) => (search) => state.permissionMap.indexOf(search) >= 0,
-    getSelectedComponentTypes: (state) => state.selectedComponentTypes
+    hasPermission: state => search => state.permissionMap.indexOf(search) >= 0,
+    getSelectedComponentTypes: state => state.selectedComponentTypes
   }
 })
