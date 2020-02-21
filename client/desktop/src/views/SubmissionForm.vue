@@ -641,7 +641,7 @@ export default {
       this.resourceType = response.data
     })
     this.$http.get(`/openstorefront/api/v1/resource/components/tags`).then(response => {
-      this.tagsList = response.data
+      this.tagsList = response.data.sort((e1, e2) => e1.text > e2.text)
     })
     this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ContactType').then(response => {
       this.contactTypeList = response.data
