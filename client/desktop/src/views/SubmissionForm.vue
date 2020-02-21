@@ -128,7 +128,8 @@
               <v-btn
                 title="attach"
                 elevation="0"
-                :disabled="currentImage.caption === '' || currentImage.file === null"
+                :loading="uploadMedia"
+                :disabled="currentImage.caption === '' || currentImage.file === null || uploadMedia"
                 class="mr-2"
                 @click="attachMedia()"
               >
@@ -200,7 +201,10 @@
                 elevation="0"
                 title="attach resource"
                 @click="attachResource()"
-                :disabled="!resourceFile.file || !resourceFile.description || !resourceFile.resourceType"
+                :loading="uploadingResource"
+                :disabled="
+                  !resourceFile.file || !resourceFile.description || !resourceFile.resourceType || uploadingResource
+                "
               >
                 Upload
               </v-btn>
@@ -706,6 +710,8 @@ export default {
       missingAttribute: ''
     },
     // Resources
+    uploadMedia: false,
+    uploadingResource: false,
     resources: {
       localFiles: [],
       links: []
@@ -1044,6 +1050,7 @@ export default {
         })
     },
     attachResource() {
+      this.uploadingResource = true
       let formData = new FormData()
       formData.append('description', this.resourceFile.description)
       formData.append('file', this.resourceFile.file)
@@ -1073,6 +1080,9 @@ export default {
           })
           .catch(e => {
             console.error(e)
+          })
+          .finally(() => {
+            this.uploadingResource = false
           })
       }
     },
@@ -1106,6 +1116,7 @@ export default {
       return result
     },
     attachMedia() {
+      this.uploadMedia = true
       let formData = new FormData()
       formData.append('caption', this.currentImage.caption)
       formData.append('file', this.currentImage.file)
@@ -1135,6 +1146,9 @@ export default {
           })
           .catch(e => {
             console.error(e)
+          })
+          .finally(() => {
+            this.uploadMedia = false
           })
       }
     },
