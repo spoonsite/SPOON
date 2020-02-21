@@ -82,7 +82,7 @@
                   </template>
                   <span>Email For Change Request</span>
                 </v-tooltip>
-                <v-tooltip bottom v-else>
+                <v-tooltip bottom v-else-if="item.componentId">
                   <template v-slot:activator="{ on }">
                     <v-btn :to="`submission-form/${item.componentId}`" icon v-on="on">
                       <v-icon>fas fa-pencil-alt</v-icon>
