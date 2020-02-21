@@ -424,6 +424,7 @@
 
       <fieldset class="fieldset">
         <legend class="title legend">Tags</legend>
+        <p v-if="!id" class="error--text">You must first save the submission to add tags to it.</p>
         <v-autocomplete
           label="Add tags"
           v-model="tags"
@@ -431,6 +432,7 @@
           return-object
           :items="tagsList"
           chips
+          :disabled="!id"
           deletable-chips
           @keypress.enter="addTag"
           class="mx-4"
