@@ -67,7 +67,10 @@
                     <td v-else-if="component.approvalState === 'P'" class="title font-weight-regular">Pending</td>
                     <td v-else class="title font-weight-regular">Not Submitted</td>
                     <td v-if="component.approvalState === 'N'" style="text-align: center;">
-                      <v-btn icon>
+                      <v-btn
+                        icon
+                        :to="{ name: 'SubmissionForm', params: { id: component.componentId } }"
+                      >
                         <v-icon>fas fa-pencil-alt</v-icon>
                       </v-btn>
                     </td>
