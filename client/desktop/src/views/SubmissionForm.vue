@@ -336,6 +336,7 @@
               item-text="unit"
               item-value="unit"
               class="mr-3 unit"
+              v-model="attribute.selectedUnit"
             />
           </div>
         </fieldset>
@@ -403,6 +404,7 @@
               item-text="unit"
               item-value="unit"
               class="mr-3 unit"
+              v-model="attribute.selectedUnit"
             />
           </div>
         </fieldset>
@@ -807,19 +809,37 @@ export default {
           console.error(e)
         })
     },
+    convertNumber(value, conversionFactor) {
+      let numValue = Number(value)
+      if (!isNaN(numValue)) {
+        numValue /= conversionFactor
+        return String(numValue)
+      } else {
+        return value
+      }
+    },
     getFormData() {
       let allAttributes = this.attributes.required.concat(this.attributes.suggested)
       let newAttributes = []
-      // TODO: get selected unit
       allAttributes.forEach(el => {
+        // get conversion factor
+        let conversionFactor = 1
+        el.attributeUnitList.forEach(unit => {
+          if (unit.unit === el.selectedUnit) {
+            conversionFactor = unit.conversionFactor
+          }
+        })
+
         if (Array.isArray(el.selectedCodes) && el.selectedCodes.length > 0) {
           el.selectedCodes.forEach(code => {
+            let codeValue = code.code ? code.code : code
             newAttributes.push({
               componentAttributePk: {
                 userCreated: code.userCreated,
                 attributeType: el.attributeType,
-                attributeCode: code.code ? code.code : code
-              }
+                attributeCode: this.convertNumber(codeValue, conversionFactor)
+              },
+              preferredUnit: el.selectedUnit
             })
           })
         } else if (typeof el.selectedCodes === 'string' && el.selectedCodes !== '') {
@@ -827,7 +847,7 @@ export default {
             componentAttributePk: {
               userCreated: el.userCreated,
               attributeType: el.attributeType,
-              attributeCode: el.selectedCodes
+              attributeCode: this.convertNumber(el.selectedCodes, conversionFactor)
             }
           })
         }
@@ -856,6 +876,8 @@ export default {
           // TODO: Add check for hideOnSubmission
           this.attributes.required = response.data
           this.attributes.required.forEach(e => {
+            // set default selected unit value
+            e.selectedUnit = e.attributeUnit
             // Set up values for required codes
             if (e.allowMultipleFlg && e.allowUserGeneratedCodes) {
               e.selectedCodes = []
@@ -893,6 +915,8 @@ export default {
         .then(response => {
           this.attributes.suggested = response.data.filter(e => e.attributeType !== 'MISSINGATTRIBUTE')
           this.attributes.suggested.forEach(e => {
+            // set default selected unit value
+            e.selectedUnit = e.attributeUnit
             if (e.allowMultipleFlg) {
               e.selectedCodes = []
             } else {
