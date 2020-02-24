@@ -110,8 +110,6 @@
           </div>
         </v-slide-y-transition>
       </fieldset>
-      <fieldset class="fieldset">
-        <legend class="title legend">Attributes</legend>
         <!-- TODO: Fix the issue with multiple select -->
         <!-- TODO: Check into these more in regard to the flags on the attributes -->
         <fieldset class="fieldset mt-0 attribute-grid">
@@ -264,16 +262,17 @@
             />
           </div>
         </fieldset>
+              <fieldset class="fieldset">
+        <legend class="title legend">Request New Attribute (opt.)</legend>
         <div class="mx-4 mt-4">
           <p class="mb-0">Please describe the attribute you would like to have added.</p>
           <p class="mb-3">
             Include the value for your entry, a brief description, and how your part is defined by the attribute.
           </p>
-          <label class="title" for="request-new-attribute">Request New Attribute (opt.)</label>
           <v-textarea
             outlined
             id="request-new-attribute"
-            placeholder="Request new attribute"
+            placeholder="New attribute details"
             class=""
             v-model="attributes.missingAttribute"
           />
