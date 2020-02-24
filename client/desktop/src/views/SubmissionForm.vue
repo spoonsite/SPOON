@@ -569,8 +569,8 @@
       <v-card>
         <ModalTitle title="Are you sure?" @close="showEntryTypeWarning = false" />
         <v-card-text>
-          Changing the entry type will change the associated attributes. If you change your entry type the form may
-          delete some of the entered attributes.
+          Changing the entry type will change the associated attributes. If you change your entry type the form will
+          delete all of the entered attributes.
         </v-card-text>
         <v-card-actions>
           <v-spacer />
