@@ -653,7 +653,7 @@ export default {
     this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ContactType').then(response => {
       this.contactTypeList = response.data
     })
-    setTimeout(() => {
+    setInterval(() => {
       if (this.isFormValid) {
         this.save()
       }
