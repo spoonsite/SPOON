@@ -195,6 +195,15 @@
             />
           </div>
         </fieldset>
+        <v-btn
+          :loading="saving"
+          :disabled="saving"
+          v-if="isFormValid && id === null"
+          color="success"
+          class="mr-4 mb-3"
+          @click="save()">
+          Save
+        </v-btn>
         <fieldset class="fieldset attribute-grid">
           <legend class="title legend">Suggested Attributes (opt.)</legend>
           <p v-if="attributes.suggested.length === 0">
