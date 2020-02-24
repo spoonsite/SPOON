@@ -96,148 +96,6 @@
         </div>
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend">Resources</legend>
-        <fieldset class="fieldset mt-0">
-          <legend class="title legend">Image Upload</legend>
-          <p v-if="!id" class="error--text">You must first save the submission to attach images to it.</p>
-          <div class="image-row">
-            <div class="flex-wrap">
-              <div class="bg-light-gray mb-4">
-                <v-img
-                  class="mw-14 ma-0"
-                  :src="currentImage.img"
-                  alt="Image preview"
-                  max-height="80px"
-                  max-width="120px"
-                  contain
-                  style="height: 80px;"
-                />
-              </div>
-              <v-file-input
-                v-model="currentImage.file"
-                label="Select an Image*"
-                :rules="[rules.image]"
-                @change="imageChange()"
-                :accept="allowedImageTypesString"
-                class="mx-4 mw-14"
-                :disabled="!id"
-              />
-              <v-text-field v-model="currentImage.caption" label="Image Caption*" class="mx-4 mw-14" :disabled="!id" />
-            </div>
-            <div>
-              <v-btn
-                title="attach"
-                elevation="0"
-                :loading="uploadMedia"
-                :disabled="currentImage.caption === '' || currentImage.file === null || uploadMedia"
-                class="mr-2"
-                @click="attachMedia()"
-              >
-                Upload
-              </v-btn>
-            </div>
-          </div>
-          <h2 class="mb-4" v-if="media && media.length > 0">Attached Media</h2>
-          <div class="image-row" v-for="image in media" :key="image.componentMediaId">
-            <div class="flex-wrap">
-              <v-img
-                class="mw-14 ma-0 mb-4"
-                :src="`/openstorefront/Media.action?LoadMedia&mediaId=${image.file.mediaFileId}`"
-                :alt="image.file.orignalName"
-                max-height="80px"
-                max-width="120px"
-                contain
-                style="height: 80px;"
-              />
-              <div class="mx-4">
-                <p><span class="bold">File Name:</span> {{ image.file.originalName }}</p>
-                <p><span class="bold">Caption:</span> {{ image.caption }}</p>
-              </div>
-            </div>
-            <div>
-              <v-btn
-                small
-                fab
-                elevation="0"
-                class="mb-2"
-                :loading="image.loading"
-                :disabled="image.loading"
-                title="remove"
-                @click="removeImage(image)"
-              >
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-              <!-- <v-btn fab small elevation="0" title="edit" @click="editImage(image)">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn> -->
-            </div>
-          </div>
-        </fieldset>
-        <fieldset class="fieldset mt-0">
-          <legend class="title legend">Local Files</legend>
-          <p v-if="!id" class="error--text">You must first save the submission to attach local files to it.</p>
-          <div class="image-row">
-            <div class="file-grid">
-              <v-select
-                label="Resource Type*"
-                v-model="resourceFile.resourceType"
-                :items="resourceType"
-                item-text="description"
-                item-value="code"
-                :disabled="!id"
-              />
-              <v-file-input label="Add File*" :disabled="!id" v-model="resourceFile.file" />
-              <v-text-field label="Description*" :disabled="!id" v-model="resourceFile.description" />
-              <!-- <v-select
-                label="Security Marking"
-                v-model="file.securityMarking"
-                :items="securityMarkingList"
-                item-text="description"
-                item-value="code"
-              />-->
-            </div>
-            <div>
-              <v-btn
-                elevation="0"
-                title="attach resource"
-                @click="attachResource()"
-                :loading="uploadingResource"
-                :disabled="
-                  !resourceFile.file || !resourceFile.description || !resourceFile.resourceType || uploadingResource
-                "
-              >
-                Upload
-              </v-btn>
-            </div>
-          </div>
-          <h2 class="mb-4" v-if="resources.localFiles && resources.localFiles.length > 0">Attached Resources</h2>
-          <div class="image-row" v-for="resource in resources.localFiles" :key="resource.componentMediaId">
-            <div class="flex-wrap">
-              <v-icon large>mdi-file-document-outline</v-icon>
-              <div class="mx-4">
-                <p><span class="bold">Resource Type:</span> {{ lookupType(resource.resourceType) }}</p>
-                <p><span class="bold">File Name:</span> {{ resource.file.originalName }}</p>
-                <p><span class="bold">Description:</span> {{ resource.description }}</p>
-              </div>
-            </div>
-            <div>
-              <v-btn
-                small
-                fab
-                elevation="0"
-                class="mb-2"
-                :loading="resource.loading"
-                :disabled="resource.loading"
-                :title="`remove ${resource.file.originalName}`"
-                @click="removeResource(resource)"
-              >
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-            </div>
-          </div>
-        </fieldset>
-      </fieldset>
-      <fieldset class="fieldset">
         <legend class="title legend">Description*</legend>
         <quill-editor class="ma-2" v-model="description" maxLength="20" />
         <v-alert color="red" :value="false" transition="fade-transition">
@@ -421,7 +279,150 @@
           />
         </div>
       </fieldset>
-
+      <fieldset class="fieldset">
+        <legend class="title legend">Resources</legend>
+        <fieldset class="fieldset mt-0">
+          <legend class="title legend">Image Upload</legend>
+          <p v-if="!id" class="error--text">You must first save the submission to attach images to it.</p>
+          <p>Choose an image to add to this part, add a descriptive caption, then upload the image.</p>
+          <div class="image-row">
+            <div class="flex-wrap">
+              <div class="bg-light-gray mb-4">
+                <v-img
+                  class="mw-14 ma-0"
+                  :src="currentImage.img"
+                  alt="Image preview"
+                  max-height="80px"
+                  max-width="120px"
+                  contain
+                  style="height: 80px;"
+                />
+              </div>
+              <v-file-input
+                v-model="currentImage.file"
+                label="Select an Image*"
+                :rules="[rules.image]"
+                @change="imageChange()"
+                :accept="allowedImageTypesString"
+                class="mx-4 mw-14"
+                :disabled="!id"
+              />
+              <v-text-field v-model="currentImage.caption" label="Image Caption*" class="mx-4 mw-14" :disabled="!id" />
+            </div>
+            <div>
+              <v-btn
+                title="attach"
+                elevation="0"
+                :loading="uploadMedia"
+                :disabled="currentImage.caption === '' || currentImage.file === null || uploadMedia"
+                class="mr-2"
+                @click="attachMedia()"
+              >
+                Upload
+              </v-btn>
+            </div>
+          </div>
+          <h2 class="mb-4" v-if="media && media.length > 0">Attached Media</h2>
+          <div class="image-row" v-for="image in media" :key="image.componentMediaId">
+            <div class="flex-wrap">
+              <v-img
+                class="mw-14 ma-0 mb-4"
+                :src="`/openstorefront/Media.action?LoadMedia&mediaId=${image.file.mediaFileId}`"
+                :alt="image.file.orignalName"
+                max-height="80px"
+                max-width="120px"
+                contain
+                style="height: 80px;"
+              />
+              <div class="mx-4">
+                <p><span class="bold">File Name:</span> {{ image.file.originalName }}</p>
+                <p><span class="bold">Caption:</span> {{ image.caption }}</p>
+              </div>
+            </div>
+            <div>
+              <v-btn
+                small
+                fab
+                elevation="0"
+                class="mb-2"
+                :loading="image.loading"
+                :disabled="image.loading"
+                title="remove"
+                @click="removeImage(image)"
+              >
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+              <!-- <v-btn fab small elevation="0" title="edit" @click="editImage(image)">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn> -->
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="fieldset mt-0">
+          <legend class="title legend">Local Files</legend>
+          <p v-if="!id" class="error--text">You must first save the submission to attach local files to it.</p>
+          <p>Choose a file to add to this part, add a descriptive caption, select a category for the file, then upload the file.</p>
+          <div class="image-row">
+            <div class="file-grid">
+              <v-select
+                label="Resource Type*"
+                v-model="resourceFile.resourceType"
+                :items="resourceType"
+                item-text="description"
+                item-value="code"
+                :disabled="!id"
+              />
+              <v-file-input label="Add File*" :disabled="!id" v-model="resourceFile.file" />
+              <v-text-field label="Description*" :disabled="!id" v-model="resourceFile.description" />
+              <!-- <v-select
+                label="Security Marking"
+                v-model="file.securityMarking"
+                :items="securityMarkingList"
+                item-text="description"
+                item-value="code"
+              />-->
+            </div>
+            <div>
+              <v-btn
+                elevation="0"
+                title="attach resource"
+                @click="attachResource()"
+                :loading="uploadingResource"
+                :disabled="
+                  !resourceFile.file || !resourceFile.description || !resourceFile.resourceType || uploadingResource
+                "
+              >
+                Upload
+              </v-btn>
+            </div>
+          </div>
+          <h2 class="mb-4" v-if="resources.localFiles && resources.localFiles.length > 0">Attached Resources</h2>
+          <div class="image-row" v-for="resource in resources.localFiles" :key="resource.componentMediaId">
+            <div class="flex-wrap">
+              <v-icon large>mdi-file-document-outline</v-icon>
+              <div class="mx-4">
+                <p><span class="bold">Resource Type:</span> {{ lookupType(resource.resourceType) }}</p>
+                <p><span class="bold">File Name:</span> {{ resource.file.originalName }}</p>
+                <p><span class="bold">Description:</span> {{ resource.description }}</p>
+              </div>
+            </div>
+            <div>
+              <v-btn
+                small
+                fab
+                elevation="0"
+                class="mb-2"
+                :loading="resource.loading"
+                :disabled="resource.loading"
+                :title="`remove ${resource.file.originalName}`"
+                @click="removeResource(resource)"
+              >
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </div>
+          </div>
+        </fieldset>
+      </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Tags</legend>
         <v-autocomplete
