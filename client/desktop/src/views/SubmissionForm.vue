@@ -5,7 +5,7 @@
       <h2>Caution!</h2>
       <p v-html="$store.state.branding.userInputWarning"></p>
     </div>
-    <v-form v-model="isFormValid" ref="submissionForm" style="width: 80%;" class="mx-auto">
+    <v-form v-model="isFormValid" ref="submissionForm" style="width: 80%;" class="mx-auto" autocomplete="off">
       <fieldset class="fieldset flex-wrap">
         <legend class="legend title">Entry Details*</legend>
         <v-text-field
