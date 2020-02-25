@@ -5,7 +5,7 @@
       <h2>Caution!</h2>
       <p v-html="$store.state.branding.userInputWarning"></p>
     </div>
-    <v-form v-model="isFormValid" ref="submissionForm" style="width: 80%;" class="mx-auto">
+    <v-form v-model="formValidation" ref="submissionForm" style="width: 80%;" class="mx-auto">
       <fieldset class="fieldset flex-wrap">
         <legend class="legend title">Entry Details*</legend>
         <v-text-field
@@ -663,7 +663,7 @@ export default {
     bypassLeaveConfirmation: false,
     // server validation errors
     errors: [],
-    isFormValid: false,
+    formValidation: false,
     // entryDetails:
     id: null,
     entryTitle: '',
@@ -765,6 +765,9 @@ export default {
   computed: {
     allowedImageTypesString() {
       return this.allowedImageTypes.join(',')
+    },
+    isFormValid() {
+      return this.description !== '' && this.formValidation
     }
   },
   methods: {
