@@ -509,7 +509,7 @@
         Form validation errors. Please check the form.
       </v-alert>
       <v-alert type="error" outlined v-if="resourceFile.file || currentImage.file">
-        You have selected files to upload but have not uploaded it.
+        You have selected files to upload but have not uploaded them.
       </v-alert>
       <v-alert type="error" v-if="errors.length > 0" colored-border border="left" elevation="2">
         <ul>
