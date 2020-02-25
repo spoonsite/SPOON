@@ -776,7 +776,10 @@ export default {
   },
   methods: {
     /**
-     * attributes cannot be loaded until the entry type is loaded
+     * Fetch and load submission data into the form
+     * Note that attributes cannot be loaded until the entry type is loaded.
+     *
+     * @param {string} id - the submission component id
      */
     loadData(id) {
       this.$http
@@ -809,6 +812,17 @@ export default {
           console.error(e)
         })
     },
+    /**
+     * Applies the unit conversion factor to a number
+     *
+     * @param {string} value - the number to be converted
+     * @param {number} conversionFactor - the factor to be divided by
+     *
+     * @example
+     *
+     *      let tenMeters = 10
+     *      let convertedToCentimeters = convertNumber(tenMeters, 1/100)
+     */
     convertNumber(value, conversionFactor) {
       let numValue = Number(value)
       if (!isNaN(numValue)) {
@@ -818,6 +832,9 @@ export default {
         return value
       }
     },
+    /**
+     * Aggregate all the form data to submit to the server
+     */
     getFormData() {
       let allAttributes = this.attributes.required.concat(this.attributes.suggested)
       let newAttributes = []
@@ -830,6 +847,7 @@ export default {
           }
         })
 
+        // deal with multiple select and single select attributes
         if (Array.isArray(el.selectedCodes) && el.selectedCodes.length > 0) {
           el.selectedCodes.forEach(code => {
             let codeValue = code.code ? code.code : code
@@ -866,6 +884,9 @@ export default {
         contacts: [this.primaryPOC].concat(this.contacts)
       }
     },
+    /**
+     * Fetch and load the suggested and required attributes for a given entry type
+     */
     setAttributes() {
       if (this.entryType === '') {
         return
