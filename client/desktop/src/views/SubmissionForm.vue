@@ -542,7 +542,7 @@
           :disabled="submitting || !isFormValid"
           color="success"
           class="mr-4 mb-3"
-          @click="submitHelper()"
+          @click="submitConfirmDialog = true"
         >
           Submit
         </v-btn>
@@ -957,9 +957,6 @@ export default {
       this.primaryPOC.phone = this.$store.state.currentUser.phone
       this.primaryPOC.email = this.$store.state.currentUser.email
       this.primaryPOC.organization = this.$store.state.currentUser.organization
-    },
-    submitHelper() {
-      this.submitConfirmDialog = true
     },
     submit(data) {
       // TODO: fill out this function
