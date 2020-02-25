@@ -670,7 +670,7 @@ export default {
     bypassLeaveConfirmation: false,
     // server validation errors
     errors: [],
-    isFormValid: false,
+    formValidation: false,
     // entryDetails:
     id: null,
     entryTitle: '',
@@ -772,6 +772,9 @@ export default {
   computed: {
     allowedImageTypesString() {
       return this.allowedImageTypes.join(',')
+    },
+    isFormValid() {
+      return this.description !== '' && this.formValidation
     }
   },
   methods: {
