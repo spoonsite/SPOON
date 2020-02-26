@@ -1252,7 +1252,6 @@ export default {
     },
     setupAutoSave() {
       this.saveTimer = setInterval(() => {
-        console.log('Autosave Event Triggered', Date())
         if (this.isFormValid) {
           this.save()
         }
