@@ -512,7 +512,7 @@
         </ul>
       </v-alert>
       <div class="mb-5">
-        <p class="mb-2" v-if="saveTime">Last saved at: {{ saveTime | formatDate('Pp') }}</p>
+        <p class="mb-2" v-if="timeLastSaved">Last saved at: {{ timeLastSaved | formatDate('Pp') }}</p>
         <p>If you close the entry without submitting you will need to come back and finish to submit the entry.</p>
         <v-btn
           class="mr-4 mb-3"
@@ -646,15 +646,12 @@ export default {
     this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ContactType').then(response => {
       this.contactTypeList = response.data
     })
-    setTimeout(() => {
-      if (this.isFormValid) {
-        this.save()
-      }
-    }, 30000)
+    this.setupAutoSave()
   },
   data: () => ({
     saving: false,
-    saveTime: null,
+    timeLastSaved: null,
+    saveTimer: null,
     submitText: 'Submit',
     isChangeRequest: false,
     submitting: false,
@@ -1012,7 +1009,7 @@ export default {
                 }
                 if (response.data && response.data.component) {
                   this.errors = []
-                  this.saveTime = new Date()
+                  this.timeLastSaved = new Date()
                   if (showToast) this.$toasted.success(toastMessage || 'Submission Saved')
                 }
                 if (callback) {
@@ -1036,7 +1033,7 @@ export default {
                   this.errors = []
                   this.id = response.data.component.componentId
                   this.$router.replace(`${this.id}`)
-                  this.saveTime = new Date()
+                  this.timeLastSaved = new Date()
                   this.$toasted.success('Submission Saved')
                 }
                 if (callback) {
@@ -1205,6 +1202,14 @@ export default {
     },
     removeContact(index) {
       this.contacts.splice(index, 1)
+    },
+    setupAutoSave() {
+      this.saveTimer = setInterval(() => {
+        console.log('Autosave Event Triggered', Date())
+        if (this.isFormValid) {
+          this.save()
+        }
+      }, 30000)
     }
   },
   watch: {
@@ -1249,6 +1254,9 @@ export default {
         this.save()
       }
     }
+  },
+  beforeDestroy() {
+    clearInterval(this.saveTimer)
   }
 }
 </script>
