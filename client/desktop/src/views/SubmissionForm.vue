@@ -1003,9 +1003,9 @@ export default {
       }, 'Submission Submitted')
     },
     saveAndClose() {
-      this.bypassLeaveConfirmation = true
       this.savingAndClose = true
       if (this.isFormValid) {
+        this.bypassLeaveConfirmation = true
         this.save(() => {
           this.savingAndClose = false
           this.$router.push({ name: 'Submissions' })
