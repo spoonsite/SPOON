@@ -5,7 +5,7 @@
       <h2>Caution!</h2>
       <p v-html="$store.state.branding.userInputWarning"></p>
     </div>
-    <v-form v-model="formValidation" ref="submissionForm" style="width: 80%;" class="mx-auto">
+    <v-form v-model="isFormValid" ref="submissionForm" style="width: 80%;" class="mx-auto" autocomplete="off">
       <fieldset class="fieldset flex-wrap">
         <legend class="legend title">Entry Details*</legend>
         <v-text-field
@@ -192,6 +192,7 @@
               item-text="unit"
               item-value="unit"
               class="mr-3 unit"
+              v-model="attribute.selectedUnit"
             />
           </div>
         </fieldset>
@@ -259,6 +260,7 @@
               item-text="unit"
               item-value="unit"
               class="mr-3 unit"
+              v-model="attribute.selectedUnit"
             />
           </div>
         </fieldset>
@@ -424,6 +426,7 @@
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Tags</legend>
+        <p v-if="!id" class="error--text">You must first save the submission to add tags to it.</p>
         <v-autocomplete
           label="Add tags"
           v-model="tags"
@@ -431,6 +434,7 @@
           return-object
           :items="tagsList"
           chips
+          :disabled="!id"
           deletable-chips
           @keypress.enter="addTag"
           class="mx-4"
@@ -504,6 +508,9 @@
       <v-alert type="error" v-if="!isFormValid" prominent outlined>
         Form validation errors. Please check the form.
       </v-alert>
+      <v-alert type="error" outlined v-if="resourceFile.file || currentImage.file">
+        You have selected files to upload but have not uploaded them.
+      </v-alert>
       <v-alert type="error" v-if="errors.length > 0" colored-border border="left" elevation="2">
         <ul>
           <li v-for="error in errors" :key="error.key">
@@ -535,7 +542,7 @@
           :disabled="submitting || !isFormValid"
           color="success"
           class="mr-4 mb-3"
-          @click="submitHelper()"
+          @click="submitConfirmDialog = true"
         >
           Submit
         </v-btn>
@@ -769,7 +776,10 @@ export default {
   },
   methods: {
     /**
-     * attributes cannot be loaded until the entry type is loaded
+     * Fetch and load submission data into the form
+     * Note that attributes cannot be loaded until the entry type is loaded.
+     *
+     * @param {string} id - the submission component id
      */
     loadData(id) {
       this.$http
@@ -802,19 +812,52 @@ export default {
           console.error(e)
         })
     },
+    /**
+     * Applies the unit conversion factor to a number
+     *
+     * @param {string} value - the number to be converted
+     * @param {number} conversionFactor - the factor to be divided by
+     *
+     * @example
+     *
+     *      let tenMeters = 10
+     *      let convertedToCentimeters = convertNumber(tenMeters, 1/100)
+     */
+    convertNumber(value, conversionFactor) {
+      let numValue = Number(value)
+      if (!isNaN(numValue)) {
+        numValue /= conversionFactor
+        return String(numValue)
+      } else {
+        return value
+      }
+    },
+    /**
+     * Aggregate all the form data to submit to the server
+     */
     getFormData() {
       let allAttributes = this.attributes.required.concat(this.attributes.suggested)
       let newAttributes = []
-      // TODO: get selected unit
       allAttributes.forEach(el => {
+        // get conversion factor
+        let conversionFactor = 1
+        el.attributeUnitList.forEach(unit => {
+          if (unit.unit === el.selectedUnit) {
+            conversionFactor = unit.conversionFactor
+          }
+        })
+
+        // deal with multiple select and single select attributes
         if (Array.isArray(el.selectedCodes) && el.selectedCodes.length > 0) {
           el.selectedCodes.forEach(code => {
+            let codeValue = code.code ? code.code : code
             newAttributes.push({
               componentAttributePk: {
                 userCreated: code.userCreated,
                 attributeType: el.attributeType,
-                attributeCode: code.code ? code.code : code
-              }
+                attributeCode: this.convertNumber(codeValue, conversionFactor)
+              },
+              preferredUnit: el.selectedUnit
             })
           })
         } else if (typeof el.selectedCodes === 'string' && el.selectedCodes !== '') {
@@ -822,7 +865,7 @@ export default {
             componentAttributePk: {
               userCreated: el.userCreated,
               attributeType: el.attributeType,
-              attributeCode: el.selectedCodes
+              attributeCode: this.convertNumber(el.selectedCodes, conversionFactor)
             }
           })
         }
@@ -841,6 +884,9 @@ export default {
         contacts: [this.primaryPOC].concat(this.contacts)
       }
     },
+    /**
+     * Fetch and load the suggested and required attributes for a given entry type
+     */
     setAttributes() {
       if (this.entryType === '') {
         return
@@ -851,6 +897,8 @@ export default {
           // TODO: Add check for hideOnSubmission
           this.attributes.required = response.data
           this.attributes.required.forEach(e => {
+            // set default selected unit value
+            e.selectedUnit = e.attributeUnit
             // Set up values for required codes
             if (e.allowMultipleFlg && e.allowUserGeneratedCodes) {
               e.selectedCodes = []
@@ -888,6 +936,8 @@ export default {
         .then(response => {
           this.attributes.suggested = response.data.filter(e => e.attributeType !== 'MISSINGATTRIBUTE')
           this.attributes.suggested.forEach(e => {
+            // set default selected unit value
+            e.selectedUnit = e.attributeUnit
             if (e.allowMultipleFlg) {
               e.selectedCodes = []
             } else {
@@ -928,9 +978,6 @@ export default {
       this.primaryPOC.phone = this.$store.state.currentUser.phone
       this.primaryPOC.email = this.$store.state.currentUser.email
       this.primaryPOC.organization = this.$store.state.currentUser.organization
-    },
-    submitHelper() {
-      this.submitConfirmDialog = true
     },
     submit(data) {
       // TODO: fill out this function
