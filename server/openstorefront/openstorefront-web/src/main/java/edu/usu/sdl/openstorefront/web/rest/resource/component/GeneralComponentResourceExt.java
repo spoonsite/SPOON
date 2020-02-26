@@ -650,7 +650,11 @@ public abstract class GeneralComponentResourceExt
 	public Response updateComponent(
 			@PathParam("id")
 			@RequiredParam String componentId,
-			@RequiredParam RequiredForComponent component)
+			@RequiredParam RequiredForComponent component,
+			@QueryParam("notify")
+			@APIDescription("Notifies the owner of an admin change to the entry.")
+			@DefaultValue("true") Boolean notify
+			)
 	{
 		Response response = checkComponentOwner(componentId, SecurityPermission.ADMIN_ENTRY_UPDATE);
 		if (response != null) {
@@ -726,7 +730,8 @@ public abstract class GeneralComponentResourceExt
 			Boolean hasPermission = permissions.contains(SecurityPermission.ADMIN_ENTRY_UPDATE);
 			String vendor = updatedComponent.getOwnerUser();
 
-			if (hasPermission && vendor != null) {
+			// sometimes we don't want to notify the vendor of an update
+			if (hasPermission && vendor != null && notify) {
 
 				String vendorEmail = service.getUserService().getEmailFromUserProfile(vendor);
 				if(vendorEmail != "" && vendorEmail != null){
