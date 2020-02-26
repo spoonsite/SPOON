@@ -70,6 +70,7 @@
                       <v-btn
                         icon
                         :to="{ name: 'SubmissionForm', params: { id: component.componentId } }"
+                        v-if="component.componentId"
                       >
                         <v-icon>fas fa-pencil-alt</v-icon>
                       </v-btn>
