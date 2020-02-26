@@ -133,10 +133,6 @@ public class ComponentSubmissionResource
 
 			List<ComponentView> views = ComponentView.toViewList(components);
 
-			List<SubmissionView> submissionViews = flagSubmissionsWithEvaluations(views);
-			processPendingChanges(submissionViews);
-			findUserSubmissionForView(submissionViews);
-
 			WorkPlan workPlanExample = new WorkPlan();
 			workPlanExample.setActiveStatus(WorkPlan.ACTIVE_STATUS);
 
@@ -144,7 +140,7 @@ public class ComponentSubmissionResource
 
 			List<ComponentSubmissionView> componentSubmissionViews = new ArrayList<ComponentSubmissionView>();
 
-			for (SubmissionView view : submissionViews) {
+			for (ComponentView view : views) {
 				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 				workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
 				workPlanLinkExample.setComponentId(view.getComponentId());

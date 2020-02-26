@@ -21,12 +21,12 @@
           :hide-default-footer="isLoading || componentData.length === 0"
           class="tableLayout"
         >
-          <template v-slot:item.name="{ item }">
+          <!-- <template v-slot:item.name="{ item }">
             {{ item.name }}
             <div v-if="item.submissionOriginalComponentId" style="color: red;">Incomplete Change Request</div>
             <div v-else-if="item.submissionId" style="color: red;">Incomplete Submission</div>
             <div v-else-if="item.evaluationsAttached" style="color: red;">Evaluations Are In Progress</div>
-          </template>
+          </template> -->
           <template v-slot:item.submitDate="{ item }">
             <div v-if="item.submitDate">{{ item.submitDate | formatDate }}</div>
             <div v-else-if="item.status === 'Pending'">{{ item.lastUpdate | formatDate }}</div>
@@ -358,7 +358,6 @@ export default {
     },
     combineComponentsAndWorkPlans(allComponents, workPlans) {
       let components = allComponents.filter(e => e.componentId !== undefined)
-      let submissions = allComponents.filter(e => e.userSubmissionId !== undefined)
       let updatedComponents = []
 
       components.forEach(component => {
@@ -373,10 +372,6 @@ export default {
         } else {
           updatedComponents.push(this.generateComponent(component, null))
         }
-      })
-
-      submissions.forEach(submission => {
-        updatedComponents.push(this.generateSubmission(submission))
       })
 
       return updatedComponents
@@ -441,18 +436,18 @@ export default {
 
       return updatedComponent
     },
-    generateSubmission(submission) {
-      return {
-        name: submission.name,
-        submissionId: submission.userSubmissionId,
-        type: submission.componentTypeLabel,
-        status: this.determineApprovalStatus(submission),
-        lastUpdate: submission.updateDts,
-        steps: null,
-        submissionOriginalComponentId: submission.submissionOriginalComponentId,
-        evaluationsAttached: submission.evaluationsAttached
-      }
-    },
+    // generateSubmission(submission) {
+    //   return {
+    //     name: submission.name,
+    //     submissionId: submission.userSubmissionId,
+    //     type: submission.componentTypeLabel,
+    //     status: this.determineApprovalStatus(submission),
+    //     lastUpdate: submission.updateDts,
+    //     steps: null,
+    //     submissionOriginalComponentId: submission.submissionOriginalComponentId,
+    //     evaluationsAttached: submission.evaluationsAttached
+    //   }
+    // },
     determineApprovalStatus(component) {
       if (component.approvalState === 'A') {
         return 'Active'
