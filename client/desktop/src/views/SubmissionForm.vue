@@ -5,7 +5,7 @@
       <h2>Caution!</h2>
       <p v-html="$store.state.branding.userInputWarning"></p>
     </div>
-    <v-form v-model="isFormValid" ref="submissionForm" style="width: 80%;" class="mx-auto" autocomplete="off">
+    <v-form v-model="formValidation" ref="submissionForm" style="width: 80%;" class="mx-auto" autocomplete="off">
       <fieldset class="fieldset flex-wrap">
         <legend class="legend title">Entry Details*</legend>
         <v-text-field
@@ -533,7 +533,6 @@
             <span>Saving...</span>
           </template>
         </v-btn>
-        <!-- :disabled="!isFormValid" -->
         <v-btn :loading="saving" :disabled="saving || !isFormValid" color="success" class="mr-4 mb-3" @click="save()">
           Save
         </v-btn>
@@ -983,7 +982,6 @@ export default {
       this.primaryPOC.organization = this.$store.state.currentUser.organization
     },
     submit(data) {
-      // TODO: fill out this function
       this.bypassLeaveConfirmation = true
       this.submitConfirmDialog = false
       this.submitting = true
@@ -1153,9 +1151,6 @@ export default {
           this.$toasted.error('Problem with deleting attached image from submission')
         })
     },
-    // editImage(image) {
-    //   // TODO: support edit of media
-    // },
     lookupType(resourceTypeCode) {
       let result = ''
       this.resourceType.forEach(el => {
