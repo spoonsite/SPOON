@@ -809,6 +809,7 @@ export default {
           this.contacts = _.tail(contacts)
         })
         .catch(e => {
+          this.$toasted.error('There was a problem fetching data for this submission')
           console.error(e)
         })
     },
@@ -995,6 +996,7 @@ export default {
             }
           })
           .catch(e => {
+            this.$toasted.error('There was a problem submitting this entry')
             console.error(e)
           })
           .finally(() => {
@@ -1043,6 +1045,7 @@ export default {
           }
         })
         .catch(e => {
+          this.$toasted.error('There was a problem saving attributes')
           console.error(e)
         })
         .finally(() => {
@@ -1063,6 +1066,7 @@ export default {
                 }
               })
               .catch(e => {
+                this.$toasted.error('There was a problem saving the submission')
                 console.error(e)
               })
               .finally(() => {
@@ -1087,6 +1091,7 @@ export default {
                 }
               })
               .catch(e => {
+                this.$toasted.error('There was a problem saving the submission')
                 console.error(e)
               })
               .finally(() => {
@@ -1125,6 +1130,7 @@ export default {
             }
           })
           .catch(e => {
+            this.$toasted.error('There was a problem attaching a resource to the submission')
             console.error(e)
           })
           .finally(() => {
@@ -1188,6 +1194,7 @@ export default {
             }
           })
           .catch(e => {
+            this.$toasted.error('There was a problem attaching media to the submission')
             console.error(e)
           })
           .finally(() => {
@@ -1312,7 +1319,8 @@ export default {
           .delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${removedTag[0].tagId}`)
           .then(res => {})
           .catch(e => {
-            console.error('Problem deleting tag')
+            this.$toasted.error('There was a problem deleteing a tag from the submission')
+            console.error('Problem deleting tag', removedTag)
           })
       }
     },
