@@ -1,6 +1,13 @@
 <template>
   <div>
-    <h1 class="text-center mt-4">New Entry Submission Form</h1>
+    <h1 class="text-center mt-4">
+      <div v-if="isChangeRequest">
+        Change Request Form
+      </div>
+      <div v-else>
+        New Entry Submission Form
+      </div>
+    </h1>
     <div class="text-center px-2 error--text">
       <h2>Caution!</h2>
       <p v-html="$store.state.branding.userInputWarning"></p>
@@ -617,6 +624,7 @@ export default {
   mounted() {
     this.bypassLeaveConfirmation = false
     // load the data from an existing submission
+    this.isChangeRequest = !!this.$route.query.changeRequest
     if (this.$route.params.id) {
       if (this.$route.params.id !== 'new') {
         // load in the data

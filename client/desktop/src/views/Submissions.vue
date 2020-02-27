@@ -69,18 +69,21 @@
                 <span>View Entry</span>
               </v-tooltip>
               <div style="order: 2">
-                <v-tooltip bottom v-if="item.status === 'Active'">
+                <v-tooltip bottom v-if="item.status === 'Active' && !item.pendingChangeComponentId">
                   <template v-slot:activator="{ on }">
-                    <!-- TODO: fix change request to use the endpoint -->
-                    <v-btn
-                      :href="'mailto:support@spoonsite.com?subject=Change%20Request%20for%20' + item.name"
-                      icon
-                      v-on="on"
-                    >
-                      <v-icon>fas fa-pencil-alt</v-icon>
+                    <v-btn @click="createChangeRequest(item.componentId)" :loading="changeRequestLoader" icon v-on="on">
+                      <v-icon>fas fa-edit</v-icon>
                     </v-btn>
                   </template>
-                  <span>Email For Change Request</span>
+                  <span>Create Change Request</span>
+                </v-tooltip>
+                <v-tooltip bottom v-else-if="item.status === 'Active' && item.pendingChangeComponentId">
+                  <template v-slot:activator="{ on }">
+                    <v-btn :to="`submission-form/${item.pendingChangeComponentId}?changeRequest=true`" icon v-on="on">
+                      <v-icon>fas fa-edit</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Edit Change Request</span>
                 </v-tooltip>
                 <v-tooltip bottom v-else-if="item.componentId">
                   <template v-slot:activator="{ on }">
@@ -157,22 +160,20 @@
             @change="uploadErrorDisplay = ''"
             :error-messages="uploadErrorDisplay"
             :disabled="isSendingFile"
-            ></v-file-input>
+          ></v-file-input>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            v-model="isSendingFile"
-            @click="submitBulkFile()"
-            :disabled="isSendingFile"
-            :loading="isSendingFile"
-          >Upload</v-btn>
+          <v-btn v-model="isSendingFile" @click="submitBulkFile()" :disabled="isSendingFile" :loading="isSendingFile"
+            >Upload</v-btn
+          >
           <v-btn
             @click="
               bulkUploadDialog = false
               bulkUploadFile = null
-              "
-          >Close</v-btn>
+            "
+            >Close</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -307,6 +308,7 @@ export default {
       deleteDialog: false,
       requestRemoval: false,
       deleteChange: false,
+      changeRequestLoader: false,
       currentComponent: {},
       removalForm: {
         message: '',
@@ -479,6 +481,19 @@ export default {
         this.requestRemoval = true
       }
       this.deleteDialog = true
+    },
+    createChangeRequest(componentId) {
+      this.changeRequestLoader = true
+      this.$http.post(`/openstorefront/api/v1/resource/components/${componentId}/changerequest`)
+        .then(response => {
+          this.changeRequestLoader = false
+          this.$router.push(`/submission-form/${response.data.componentId}?changeRequest=true`)
+        })
+        .catch(error => {
+          this.changeRequestLoader = false
+          this.$toasted.error('There was a problem creating the change request')
+          console.error(error)
+        })
     },
     submitRemoval() {
       let data = {
