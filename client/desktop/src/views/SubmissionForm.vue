@@ -988,6 +988,7 @@ export default {
           .then(response => {
             if (response.data && response.data.success === false) {
               this.errors = response.data.errors.entry
+              this.$toasted.error('There was an error when submitting! Changes have not been submitted.')
             }
             if (response.data && response.data.component) {
               this.errors = []
@@ -1034,6 +1035,9 @@ export default {
           userAttributes: createdCodeList
         })
         .then(response => {
+          if (response.data.error) {
+            console.error('Server returned error when getting attribute usercodes', response.data.error)
+          }
           if (response.data && !response.data.error) {
             // update the form with newly created attributes to attach to submission
             if (Array.isArray(response.Data)) {
@@ -1053,6 +1057,7 @@ export default {
                   this.errors = response.data.errors.entry
                 }
                 if (response.data && response.data.component) {
+                  this.$toasted.error('There was an error when saving! Changes have not been saved.')
                   this.errors = []
                   this.timeLastSaved = new Date()
                   if (showToast) this.$toasted.success(toastMessage || 'Submission Saved')
@@ -1075,6 +1080,7 @@ export default {
                   this.errors = response.data.errors.entry
                 }
                 if (response.data && response.data.component) {
+                  this.$toasted.error('There was an error when saving! Changes have not been saved.')
                   this.errors = []
                   this.id = response.data.component.componentId
                   this.$router.replace(`${this.id}`)
