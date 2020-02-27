@@ -437,6 +437,7 @@
           :disabled="!id"
           deletable-chips
           @keypress.enter="addTag"
+          :search-input.sync="tagSearchText"
           class="mx-4"
         >
           <template v-slot:prepend-item>
@@ -1235,8 +1236,8 @@ export default {
       this.resources.links.splice(index, 1)
     },
     addTag() {
-      this.tagsList.push(this.tagSearchText)
-      this.tags.push(this.tagSearchText)
+      this.tagsList.push({ text: this.tagSearchText })
+      this.tags.push({ text: this.tagSearchText })
       this.tagSearchText = ''
     },
     addContact() {
@@ -1251,6 +1252,26 @@ export default {
           this.save()
         }
       }, 30000)
+    },
+    getTags() {
+      this.$http
+        .get(`/openstorefront/api/v1/resource/components/${this.id}/tagsview`)
+        .then(res => {
+          // update the tagIds for all attached tags on the submission
+          this.tags.forEach(el => {
+            if (Array.isArray(res.data)) {
+              res.data.forEach(el2 => {
+                if (el.text === el2.text) {
+                  el.tagId = el2.tagId
+                }
+              })
+            }
+          })
+        })
+        .catch(e => {
+          this.$toasted.error('There was a problem fetching tags for the submission')
+          console.error('problem fetching tags for the submission')
+        })
     }
   },
   watch: {
@@ -1275,9 +1296,14 @@ export default {
           .post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
             text: newTag[0].text
           })
-          .then(res => {})
+          .then(res => {
+            // fetch all tags for submission
+            // inefficient but it guarentees that the tagIds are valid
+            this.getTags()
+          })
           .catch(e => {
-            console.error('Problem adding tag')
+            this.$toasted.error('There was a problem adding a tag to the submission')
+            console.error('Problem adding tag', newTag)
           })
       }
       if (removedTag && removedTag.length > 0) {
