@@ -64,11 +64,16 @@ public class ComponentTypeView
 			throw new OpenStorefrontRuntimeException(ex);
 		}
 
-		Service service = ServiceProxyFactory.getServiceProxy();
-		view.setTemplate(service.getComponentService().findTemplateForComponentType(componentType.getComponentType()));
-		view.setUsers(service.getComponentService().findUserForComponentType(componentType.getComponentType()));
-		view.setRoles(service.getComponentService().findRoleGroupsForComponentType(componentType.getComponentType()));
-		view.setParentLabel(service.getComponentService().getComponentTypeParentsString(componentType.getComponentType(), true));
+		ComponentService service = ServiceProxyFactory.getServiceProxy().getComponentService();
+		ComponentTypeTemplateResolution template = service.findTemplateForComponentType(type);
+		ComponentTypeUserResolution user = service.findUserForComponentType(type);
+		ComponentTypeRoleResolution role = service.findRoleGroupsForComponentType(type);
+		String parents = service.getComponentTypeParentsString(type, true);
+
+		view.setTemplate(template);
+		view.setUsers(user);
+		view.setRoles(role);
+		view.setParentLabel(parents);
 		return view;
 	}
 
