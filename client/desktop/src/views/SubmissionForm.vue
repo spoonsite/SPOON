@@ -1305,7 +1305,7 @@ export default {
           })
           .then(res => {
             // fetch all tags for submission
-            // inefficient but it guarentees that the tagIds are valid
+            // inefficient but it guarantees that the tagIds are valid
             this.getTags()
           })
           .catch(e => {
