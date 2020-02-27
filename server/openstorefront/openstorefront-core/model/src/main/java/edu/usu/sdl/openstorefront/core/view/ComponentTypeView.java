@@ -16,6 +16,7 @@
 package edu.usu.sdl.openstorefront.core.view;
 
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
+import edu.usu.sdl.openstorefront.core.api.ComponentService;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.ComponentType;
@@ -25,6 +26,8 @@ import edu.usu.sdl.openstorefront.core.model.ComponentTypeUserResolution;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
@@ -35,6 +38,7 @@ public class ComponentTypeView
 		extends ComponentType
 {
 
+	private static final Logger LOG = Logger.getLogger(ComponentTypeView.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	private ComponentTypeTemplateResolution template;
@@ -45,6 +49,15 @@ public class ComponentTypeView
 	public static ComponentTypeView toView(ComponentType componentType)
 	{
 		ComponentTypeView view = new ComponentTypeView();
+		if (componentType == null) {
+			LOG.log(Level.WARNING, "componentType was null.");
+		}
+		
+		String type = componentType.getComponentType();
+		if (type == null) {
+			LOG.log(Level.WARNING, "componentType's type was null.");
+		}
+
 		try {
 			BeanUtils.copyProperties(view, componentType);
 		} catch (IllegalAccessException | InvocationTargetException ex) {
