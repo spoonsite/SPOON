@@ -15,7 +15,7 @@
           required
           :rules="[rules.required, rules.len255]"
           class="mx-4 mw-18"
-          counter="255"
+          counter="225"
           autofocus
         />
         <v-autocomplete
