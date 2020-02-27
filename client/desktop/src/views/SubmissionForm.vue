@@ -1055,12 +1055,13 @@ export default {
               .then(response => {
                 if (response.data && response.data.success === false) {
                   this.errors = response.data.errors.entry
-                }
-                if (response.data && response.data.component) {
                   this.$toasted.error('There was an error when saving! Changes have not been saved.')
+                } else if (response.data && response.data.component) {
                   this.errors = []
                   this.timeLastSaved = new Date()
                   if (showToast) this.$toasted.success(toastMessage || 'Submission Saved')
+                } else {
+                  console.error(`Recieved unexpected response from server on put call to componentsubmissions/${this.id}`, response.data)
                 }
                 if (callback) {
                   callback()
@@ -1078,14 +1079,15 @@ export default {
               .then(response => {
                 if (response.data && response.data.success === false) {
                   this.errors = response.data.errors.entry
-                }
-                if (response.data && response.data.component) {
                   this.$toasted.error('There was an error when saving! Changes have not been saved.')
+                } else if (response.data && response.data.component) {
                   this.errors = []
                   this.id = response.data.component.componentId
                   this.$router.replace(`${this.id}`)
                   this.timeLastSaved = new Date()
                   this.$toasted.success('Submission Saved')
+                } else {
+                  console.error(`Recieved unexpected response from server on post call to componentsubmissions`, response.data)
                 }
                 if (callback) {
                   callback()
