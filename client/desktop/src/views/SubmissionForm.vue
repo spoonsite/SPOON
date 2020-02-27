@@ -110,161 +110,161 @@
           </div>
         </v-slide-y-transition>
       </fieldset>
-        <!-- TODO: Fix the issue with multiple select -->
-        <!-- TODO: Check into these more in regard to the flags on the attributes -->
-        <fieldset class="fieldset mt-0 attribute-grid">
-          <legend class="title legend">Required Attributes*</legend>
-          <p v-if="attributes.required.length === 0">
-            No required attributes, please select an entry type.
-          </p>
-          <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
-            <v-combobox
-              v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
-              multiple
-              append-icon
-              chips
-              deletable-chips
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              :search-input.sync="attribute.searchText"
-              @keypress.enter="
-                attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
-                attribute.selectedCodes.push({
-                  label: attribute.searchText,
-                  code: attribute.searchText,
-                  userCreated: true
-                })
-                attribute.searchText = ''
-              "
-              class="mr-3"
-              :rules="
-                attribute.attributeValueType === 'NUMBER'
-                  ? [rules.requiredArray, rules.numberOnly]
-                  : [rules.requiredArray]
-              "
-              required
-            />
-            <v-autocomplete
-              v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
-              multiple
-              chips
-              deletable-chips
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              class="mr-3"
-              :rules="
-                attribute.attributeValueType === 'NUMBER'
-                  ? [rules.requiredArray, rules.numberOnly]
-                  : [rules.requiredArray]
-              "
-              required
-            />
-            <v-text-field
-              v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
-              class="mr-3"
-              :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
-              required
-            />
-            <v-autocomplete
-              v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              class="mr-3"
-              :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
-              required
-            />
-            <v-select
-              label="Unit"
-              v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-              :value="attribute.attributeUnit"
-              :items="attribute.attributeUnitList"
-              item-text="unit"
-              item-value="unit"
-              class="mr-3 unit"
-              v-model="attribute.selectedUnit"
-            />
-          </div>
-        </fieldset>
-        <fieldset class="fieldset attribute-grid">
-          <legend class="title legend">Suggested Attributes (opt.)</legend>
-          <p v-if="attributes.suggested.length === 0">
-            No suggested attributes, please select an entry type.
-          </p>
-          <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
-            <v-combobox
-              v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}`"
-              append-icon
-              multiple
-              chips
-              deletable-chips
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              :search-input.sync="attribute.searchText"
-              @keypress.enter="
-                attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
-                attribute.selectedCodes.push({
-                  label: attribute.searchText,
-                  code: attribute.searchText,
-                  userCreated: true
-                })
-                attribute.searchText = ''
-              "
-              class="mr-3"
-            />
-            <v-autocomplete
-              v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}`"
-              multiple
-              chips
-              deletable-chips
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              class="mr-3"
-            />
-            <v-text-field
-              v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}`"
-              class="mr-3"
-            />
-            <v-autocomplete
-              v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}`"
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              class="mr-3"
-            />
-            <v-select
-              label="Unit"
-              v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-              :value="attribute.attributeUnit"
-              :items="attribute.attributeUnitList"
-              item-text="unit"
-              item-value="unit"
-              class="mr-3 unit"
-              v-model="attribute.selectedUnit"
-            />
-          </div>
-        </fieldset>
-              <fieldset class="fieldset">
+      <!-- TODO: Fix the issue with multiple select -->
+      <!-- TODO: Check into these more in regard to the flags on the attributes -->
+      <fieldset class="fieldset mt-0 attribute-grid">
+        <legend class="title legend">Required Attributes*</legend>
+        <p v-if="attributes.required.length === 0">
+          No required attributes, please select an entry type.
+        </p>
+        <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
+          <v-combobox
+            v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}*`"
+            multiple
+            append-icon
+            chips
+            deletable-chips
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            :search-input.sync="attribute.searchText"
+            @keypress.enter="
+              attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
+              attribute.selectedCodes.push({
+                label: attribute.searchText,
+                code: attribute.searchText,
+                userCreated: true
+              })
+              attribute.searchText = ''
+            "
+            class="mr-3"
+            :rules="
+              attribute.attributeValueType === 'NUMBER'
+                ? [rules.requiredArray, rules.numberOnly]
+                : [rules.requiredArray]
+            "
+            required
+          />
+          <v-autocomplete
+            v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}*`"
+            multiple
+            chips
+            deletable-chips
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            class="mr-3"
+            :rules="
+              attribute.attributeValueType === 'NUMBER'
+                ? [rules.requiredArray, rules.numberOnly]
+                : [rules.requiredArray]
+            "
+            required
+          />
+          <v-text-field
+            v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}*`"
+            class="mr-3"
+            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
+            required
+          />
+          <v-autocomplete
+            v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}*`"
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            class="mr-3"
+            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
+            required
+          />
+          <v-select
+            label="Unit"
+            v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+            :value="attribute.attributeUnit"
+            :items="attribute.attributeUnitList"
+            item-text="unit"
+            item-value="unit"
+            class="mr-3 unit"
+            v-model="attribute.selectedUnit"
+          />
+        </div>
+      </fieldset>
+      <fieldset class="fieldset attribute-grid">
+        <legend class="title legend">Suggested Attributes (opt.)</legend>
+        <p v-if="attributes.suggested.length === 0">
+          No suggested attributes, please select an entry type.
+        </p>
+        <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
+          <v-combobox
+            v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}`"
+            append-icon
+            multiple
+            chips
+            deletable-chips
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            :search-input.sync="attribute.searchText"
+            @keypress.enter="
+              attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
+              attribute.selectedCodes.push({
+                label: attribute.searchText,
+                code: attribute.searchText,
+                userCreated: true
+              })
+              attribute.searchText = ''
+            "
+            class="mr-3"
+          />
+          <v-autocomplete
+            v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}`"
+            multiple
+            chips
+            deletable-chips
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            class="mr-3"
+          />
+          <v-text-field
+            v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}`"
+            class="mr-3"
+          />
+          <v-autocomplete
+            v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}`"
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            class="mr-3"
+          />
+          <v-select
+            label="Unit"
+            v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+            :value="attribute.attributeUnit"
+            :items="attribute.attributeUnitList"
+            item-text="unit"
+            item-value="unit"
+            class="mr-3 unit"
+            v-model="attribute.selectedUnit"
+          />
+        </div>
+      </fieldset>
+      <fieldset class="fieldset">
         <legend class="title legend">Request New Attribute (opt.)</legend>
         <div class="mx-4 mt-4">
           <p class="mb-0">Please describe the attribute you would like to have added.</p>
@@ -362,7 +362,10 @@
         <fieldset class="fieldset mt-0">
           <legend class="title legend">Local Files</legend>
           <p v-if="!id" class="error--text">You must first save the submission to attach local files to it.</p>
-          <p>Choose a file to add to this part, add a descriptive caption, select a category for the file, then upload the file.</p>
+          <p>
+            Choose a file to add to this part, add a descriptive caption, select a category for the file, then upload
+            the file.
+          </p>
           <div class="image-row">
             <div class="file-grid">
               <v-select
@@ -867,6 +870,14 @@ export default {
               attributeCode: this.convertNumber(el.selectedCodes, conversionFactor)
             }
           })
+        } else if (typeof el.selectedCodes === 'object' && el.selectedCodes) {
+          newAttributes.push({
+            componentAttributePk: {
+              userCreated: el.userCreated,
+              attributeType: el.attributeType,
+              attributeCode: this.convertNumber(el.selectedCodes.code, conversionFactor)
+            }
+          })
         }
       })
 
@@ -883,6 +894,32 @@ export default {
         contacts: [this.primaryPOC].concat(this.contacts)
       }
     },
+    loadSavedAttributes(topAttribute) {
+      // load saved attributes
+      this.savedAttributes.forEach(attribute => {
+        if (attribute.componentAttributePk.attributeType === topAttribute.attributeType) {
+          // get the attribute label
+          // set the default label to the code
+          let label = attribute.componentAttributePk.attributeCode
+          topAttribute.codes.forEach(el => {
+            if (el.code === attribute.componentAttributePk.attributeCode) {
+              label = el.label
+            }
+          })
+          if (Array.isArray(topAttribute.selectedCodes)) {
+            topAttribute.selectedCodes.push({
+              code: attribute.componentAttributePk.attributeCode,
+              label: label
+            })
+          } else {
+            topAttribute.selectedCodes = {
+              code: attribute.componentAttributePk.attributeCode,
+              label: label
+            }
+          }
+        }
+      })
+    },
     /**
      * Fetch and load the suggested and required attributes for a given entry type
      */
@@ -897,7 +934,6 @@ export default {
           this.attributes.required = response.data
           this.attributes.required.forEach(e => {
             // set default selected unit value
-            console.log('response required attribute', e)
             e.selectedUnit = e.attributeUnit
             // Set up values for required codes
             if (e.allowMultipleFlg && e.allowUserGeneratedCodes) {
@@ -911,6 +947,8 @@ export default {
               e.selectedCodes = ''
             }
 
+            this.loadSavedAttributes(e)
+
             // Set up unit stuff
             if (e.attributeUnitList) {
               e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
@@ -918,31 +956,6 @@ export default {
                 e.attributeUnit = ''
               }
             }
-
-            // load saved attributes
-            this.savedAttributes.forEach(attribute => {
-              if (attribute.componentAttributePk.attributeType === e.attributeType) {
-                // get the attribute label
-                // set the default label to the code
-                let label = attribute.componentAttributePk.attributeCode
-                e.codes.forEach(el => {
-                  if (el.code === attribute.componentAttributePk.attributeCode) {
-                    label = el.label
-                  }
-                })
-                if (Array.isArray(e.selectedCodes)) {
-                  e.selectedCodes.push({
-                    code: attribute.componentAttributePk.attributeCode,
-                    label: label
-                  })
-                } else {
-                  e.selectedCodes = {
-                    code: attribute.componentAttributePk.attributeCode,
-                    label: label
-                  }
-                }
-              }
-            })
           })
         })
       this.$http
@@ -963,22 +976,8 @@ export default {
                 e.attributeUnit = ''
               }
             }
-            // load saved attributes
-            this.savedAttributes.forEach(attribute => {
-              if (attribute.componentAttributePk.attributeType === e.attributeType) {
-                if (Array.isArray(e.selectedCodes)) {
-                  e.selectedCodes.push({
-                    code: attribute.componentAttributePk.attributeCode,
-                    label: attribute.componentAttributePk.attributeCode
-                  })
-                } else {
-                  e.selectedCodes = {
-                    code: attribute.componentAttributePk.attributeCode,
-                    label: attribute.componentAttributePk.attributeCode
-                  }
-                }
-              }
-            })
+
+            this.loadSavedAttributes(e)
           })
         })
     },
