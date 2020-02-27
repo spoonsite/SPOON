@@ -1310,7 +1310,7 @@ export default {
           })
           .catch(e => {
             this.$toasted.error('There was a problem adding a tag to the submission')
-            console.error('Problem adding tag', newTag)
+            console.error('Problem adding tag: ', newTag)
           })
       }
       if (removedTag && removedTag.length > 0) {
