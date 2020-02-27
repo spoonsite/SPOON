@@ -1320,7 +1320,7 @@ export default {
           .then(res => {})
           .catch(e => {
             this.$toasted.error('There was a problem deleteing a tag from the submission')
-            console.error('Problem deleting tag', removedTag)
+            console.error('Problem deleting tag: ', removedTag)
           })
       }
     },
