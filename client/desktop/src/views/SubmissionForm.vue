@@ -897,6 +897,7 @@ export default {
           this.attributes.required = response.data
           this.attributes.required.forEach(e => {
             // set default selected unit value
+            console.log('response required attribute', e)
             e.selectedUnit = e.attributeUnit
             // Set up values for required codes
             if (e.allowMultipleFlg && e.allowUserGeneratedCodes) {
@@ -921,10 +922,24 @@ export default {
             // load saved attributes
             this.savedAttributes.forEach(attribute => {
               if (attribute.componentAttributePk.attributeType === e.attributeType) {
+                // get the attribute label
+                // set the default label to the code
+                let label = attribute.componentAttributePk.attributeCode
+                e.codes.forEach(el => {
+                  if (el.code === attribute.componentAttributePk.attributeCode) {
+                    label = el.label
+                  }
+                })
                 if (Array.isArray(e.selectedCodes)) {
-                  e.selectedCodes.push(attribute.componentAttributePk.attributeCode)
+                  e.selectedCodes.push({
+                    code: attribute.componentAttributePk.attributeCode,
+                    label: label
+                  })
                 } else {
-                  e.selectedCodes = attribute.componentAttributePk.attributeCode
+                  e.selectedCodes = {
+                    code: attribute.componentAttributePk.attributeCode,
+                    label: label
+                  }
                 }
               }
             })
@@ -952,9 +967,15 @@ export default {
             this.savedAttributes.forEach(attribute => {
               if (attribute.componentAttributePk.attributeType === e.attributeType) {
                 if (Array.isArray(e.selectedCodes)) {
-                  e.selectedCodes.push(attribute.componentAttributePk.attributeCode)
+                  e.selectedCodes.push({
+                    code: attribute.componentAttributePk.attributeCode,
+                    label: attribute.componentAttributePk.attributeCode
+                  })
                 } else {
-                  e.selectedCodes = attribute.componentAttributePk.attributeCode
+                  e.selectedCodes = {
+                    code: attribute.componentAttributePk.attributeCode,
+                    label: attribute.componentAttributePk.attributeCode
+                  }
                 }
               }
             })
