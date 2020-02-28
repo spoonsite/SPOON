@@ -1267,7 +1267,6 @@ export default {
       this.tags.push({ text: this.tagSearchText })
       this.addNewTag(this.tagSearchText)
       this.tagSearchText = ''
-      // request new tag to be added
     },
     addNewTag(text) {
       this.$http
