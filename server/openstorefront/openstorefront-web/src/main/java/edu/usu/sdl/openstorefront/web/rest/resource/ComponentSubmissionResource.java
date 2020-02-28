@@ -132,6 +132,10 @@ public class ComponentSubmissionResource
 			pullOldOwnedComponents(componentExample, components);
 
 			List<ComponentView> views = ComponentView.toViewList(components);
+			
+			List<SubmissionView> submissionViews = flagSubmissionsWithEvaluations(views);
+			processPendingChanges(submissionViews);
+//			findUserSubmissionForView(submissionViews);
 
 			WorkPlan workPlanExample = new WorkPlan();
 			workPlanExample.setActiveStatus(WorkPlan.ACTIVE_STATUS);
@@ -140,7 +144,7 @@ public class ComponentSubmissionResource
 
 			List<ComponentSubmissionView> componentSubmissionViews = new ArrayList<ComponentSubmissionView>();
 
-			for (ComponentView view : views) {
+			for (SubmissionView view : submissionViews) {
 				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 				workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
 				workPlanLinkExample.setComponentId(view.getComponentId());

@@ -38,22 +38,22 @@ public class ComponentSubmissionView
 
     public ComponentSubmissionView(){}
 
-    public ComponentSubmissionView(ComponentView componentView, String workPlanId, String stepId){		
-		super.setComponentTypeLabel(componentView.getComponentTypeLabel());
-		super.setApprovalStateLabel(componentView.getApprovalStateLabel());
-		super.setNumberOfPendingChanges(componentView.getNumberOfPendingChanges());
-		super.setStatusOfPendingChange(componentView.getStatusOfPendingChange());
-		super.setPendingChangeComponentId(componentView.getPendingChangeComponentId());
-		super.setPendingChangeSubmitDts(componentView.getPendingChangeSubmitDts());
-		super.setUserSubmissionId(componentView.getUserSubmissionId());
-		super.setName(componentView.getName());
-		super.setApprovalState(componentView.getApprovalState());
-		super.setApprovedDts(componentView.getApprovedDts());
-		super.setDescription(componentView.getDescription());
-		super.setLastActivityDts(componentView.getLastActivityDts());
-		super.setComponentId(componentView.getComponentId());
-		super.setUpdateDts(componentView.getUpdateDts());
-		super.setSubmissionOriginalComponentId(componentView.getSubmissionOriginalComponentId());
+    public ComponentSubmissionView(SubmissionView submissionView, String workPlanId, String stepId){		
+		super.setComponentTypeLabel(submissionView.getComponentTypeLabel());
+		super.setApprovalStateLabel(submissionView.getApprovalStateLabel());
+		super.setNumberOfPendingChanges(submissionView.getNumberOfPendingChanges());
+		super.setStatusOfPendingChange(submissionView.getStatusOfPendingChange());
+		super.setPendingChangeComponentId(submissionView.getPendingChangeComponentId());
+		super.setPendingChangeSubmitDts(submissionView.getPendingChangeSubmitDts());
+		super.setUserSubmissionId(submissionView.getUserSubmissionId());
+		super.setName(submissionView.getName());
+		super.setApprovalState(submissionView.getApprovalState());
+		super.setApprovedDts(submissionView.getApprovedDts());
+		super.setDescription(submissionView.getDescription());
+		super.setLastActivityDts(submissionView.getLastActivityDts());
+		super.setComponentId(submissionView.getComponentId());
+		super.setUpdateDts(submissionView.getUpdateDts());
+		super.setSubmissionOriginalComponentId(submissionView.getSubmissionOriginalComponentId());
 		if(workPlanId != null && stepId != null){
 			this.workPlanID = workPlanId;
 			this.stepId = stepId;
