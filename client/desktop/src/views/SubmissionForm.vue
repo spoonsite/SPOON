@@ -872,7 +872,7 @@ export default {
               attributeCode: this.convertNumber(el.selectedCodes, conversionFactor)
             }
           })
-        } else if (typeof el.selectedCodes === 'object' && el.selectedCodes) {
+        } else if (typeof el.selectedCodes === 'object' && el.selectedCodes && !Array.isArray(el.selectedCodes)) {
           newAttributes.push({
             componentAttributePk: {
               userCreated: el.userCreated,
@@ -1281,7 +1281,23 @@ export default {
     addTag() {
       this.tagsList.push({ text: this.tagSearchText })
       this.tags.push({ text: this.tagSearchText })
+      this.addNewTag(this.tagSearchText)
       this.tagSearchText = ''
+    },
+    addNewTag(text) {
+      this.$http
+        .post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
+          text: text
+        })
+        .then(res => {
+          // fetch all tags for submission
+          // inefficient but it guarantees that the tagIds are valid
+          this.getTags()
+        })
+        .catch(e => {
+          this.$toasted.error('There was a problem adding a tag to the submission')
+          console.error('Problem adding tag: ', text)
+        })
     },
     addContact() {
       this.contacts.push({ firstName: '', lastName: '', contactType: '', organization: '', email: '', phone: '' })
@@ -1335,19 +1351,7 @@ export default {
       let removedTag = _.differenceBy(oldVal, newVal, 'text')
       if (newTag && newTag.length > 0) {
         // add new tag
-        this.$http
-          .post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
-            text: newTag[0].text
-          })
-          .then(res => {
-            // fetch all tags for submission
-            // inefficient but it guarantees that the tagIds are valid
-            this.getTags()
-          })
-          .catch(e => {
-            this.$toasted.error('There was a problem adding a tag to the submission')
-            console.error('Problem adding tag: ', newTag)
-          })
+        this.addNewTag(newTag[0].text)
       }
       if (removedTag && removedTag.length > 0) {
         // add new tag
