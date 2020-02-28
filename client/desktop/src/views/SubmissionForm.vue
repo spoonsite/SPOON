@@ -22,7 +22,7 @@
           required
           :rules="[rules.required, rules.len255]"
           class="mx-4 mw-18"
-          counter="255"
+          counter="225"
           autofocus
         />
         <v-autocomplete
@@ -103,10 +103,196 @@
         </div>
       </fieldset>
       <fieldset class="fieldset">
+        <legend class="title legend">Description*</legend>
+        <quill-editor class="ma-2" v-model="description" maxLength="20" />
+        <v-alert color="red" :value="false" transition="fade-transition">
+          test
+        </v-alert>
+        <v-slide-y-transition>
+          <div v-if="description.length === 0" class="mx-2 error--text caption">
+            Description is required
+          </div>
+          <div v-if="description.length > 65536" class="mx-2 error--text caption">
+            Description has a character limit of 64k
+          </div>
+        </v-slide-y-transition>
+      </fieldset>
+      <!-- TODO: Fix the issue with multiple select -->
+      <!-- TODO: Check into these more in regard to the flags on the attributes -->
+      <fieldset class="fieldset mt-0 attribute-grid">
+        <legend class="title legend">Required Attributes*</legend>
+        <p v-if="attributes.required.length === 0">
+          No required attributes, please select an entry type.
+        </p>
+        <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
+          <v-combobox
+            v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}*`"
+            multiple
+            append-icon
+            chips
+            deletable-chips
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            :search-input.sync="attribute.searchText"
+            @keypress.enter="
+              attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
+              attribute.selectedCodes.push({
+                label: attribute.searchText,
+                code: attribute.searchText,
+                userCreated: true
+              })
+              attribute.searchText = ''
+            "
+            class="mr-3"
+            :rules="
+              attribute.attributeValueType === 'NUMBER'
+                ? [rules.requiredArray, rules.numberOnly]
+                : [rules.requiredArray]
+            "
+            required
+          />
+          <v-autocomplete
+            v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}*`"
+            multiple
+            chips
+            deletable-chips
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            class="mr-3"
+            :rules="
+              attribute.attributeValueType === 'NUMBER'
+                ? [rules.requiredArray, rules.numberOnly]
+                : [rules.requiredArray]
+            "
+            required
+          />
+          <v-text-field
+            v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}*`"
+            class="mr-3"
+            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
+            required
+          />
+          <v-autocomplete
+            v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}*`"
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            class="mr-3"
+            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
+            required
+          />
+          <v-select
+            label="Unit"
+            v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+            :value="attribute.attributeUnit"
+            :items="attribute.attributeUnitList"
+            item-text="unit"
+            item-value="unit"
+            class="mr-3 unit"
+            v-model="attribute.selectedUnit"
+          />
+        </div>
+      </fieldset>
+      <fieldset class="fieldset attribute-grid">
+        <legend class="title legend">Suggested Attributes (opt.)</legend>
+        <p v-if="attributes.suggested.length === 0">
+          No suggested attributes, please select an entry type.
+        </p>
+        <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
+          <v-combobox
+            v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}`"
+            append-icon
+            multiple
+            chips
+            deletable-chips
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            :search-input.sync="attribute.searchText"
+            @keypress.enter="
+              attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
+              attribute.selectedCodes.push({
+                label: attribute.searchText,
+                code: attribute.searchText,
+                userCreated: true
+              })
+              attribute.searchText = ''
+            "
+            class="mr-3"
+          />
+          <v-autocomplete
+            v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}`"
+            multiple
+            chips
+            deletable-chips
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            class="mr-3"
+          />
+          <v-text-field
+            v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}`"
+            class="mr-3"
+          />
+          <v-autocomplete
+            v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+            v-model="attribute.selectedCodes"
+            :label="`${attribute.description}`"
+            :items="attribute.codes"
+            item-text="label"
+            item-value="code"
+            class="mr-3"
+          />
+          <v-select
+            label="Unit"
+            v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+            :value="attribute.attributeUnit"
+            :items="attribute.attributeUnitList"
+            item-text="unit"
+            item-value="unit"
+            class="mr-3 unit"
+            v-model="attribute.selectedUnit"
+          />
+        </div>
+      </fieldset>
+      <fieldset class="fieldset">
+        <legend class="title legend">Request New Attribute (opt.)</legend>
+        <div class="mx-4 mt-4">
+          <p class="mb-0">Please describe the attribute you would like to have added.</p>
+          <p class="mb-3">
+            Include the value for your entry, a brief description, and how your part is defined by the attribute.
+          </p>
+          <v-textarea
+            outlined
+            id="request-new-attribute"
+            placeholder="New attribute details"
+            class=""
+            v-model="attributes.missingAttribute"
+          />
+        </div>
+      </fieldset>
+      <fieldset class="fieldset">
         <legend class="title legend">Resources</legend>
         <fieldset class="fieldset mt-0">
           <legend class="title legend">Image Upload</legend>
           <p v-if="!id" class="error--text">You must first save the submission to attach images to it.</p>
+          <p>Choose an image to add to this part, add a descriptive caption, then upload the image.</p>
           <div class="image-row">
             <div class="flex-wrap">
               <div class="bg-light-gray mb-4">
@@ -183,6 +369,10 @@
         <fieldset class="fieldset mt-0">
           <legend class="title legend">Local Files</legend>
           <p v-if="!id" class="error--text">You must first save the submission to attach local files to it.</p>
+          <p>
+            Choose a file to add to this part, add a descriptive caption, select a category for the file, then upload
+            the file.
+          </p>
           <div class="image-row">
             <div class="file-grid">
               <v-select
@@ -245,193 +435,6 @@
         </fieldset>
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="title legend">Description*</legend>
-        <quill-editor class="ma-2" v-model="description" maxLength="20" />
-        <v-alert color="red" :value="false" transition="fade-transition">
-          test
-        </v-alert>
-        <v-slide-y-transition>
-          <div v-if="description.length === 0" class="mx-2 error--text caption">
-            Description is required
-          </div>
-          <div v-if="description.length > 65536" class="mx-2 error--text caption">
-            Description has a character limit of 64k
-          </div>
-        </v-slide-y-transition>
-      </fieldset>
-      <fieldset class="fieldset">
-        <legend class="title legend">Attributes</legend>
-        <!-- TODO: Fix the issue with multiple select -->
-        <!-- TODO: Check into these more in regard to the flags on the attributes -->
-        <fieldset class="fieldset mt-0 attribute-grid">
-          <legend class="title legend">Required Attributes*</legend>
-          <p v-if="attributes.required.length === 0">
-            No required attributes, please select an entry type.
-          </p>
-          <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
-            <v-combobox
-              v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
-              multiple
-              append-icon
-              chips
-              deletable-chips
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              :search-input.sync="attribute.searchText"
-              @keypress.enter="
-                attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
-                attribute.selectedCodes.push({
-                  label: attribute.searchText,
-                  code: attribute.searchText,
-                  userCreated: true
-                })
-                attribute.searchText = ''
-              "
-              class="mr-3"
-              :rules="
-                attribute.attributeValueType === 'NUMBER'
-                  ? [rules.requiredArray, rules.numberOnly]
-                  : [rules.requiredArray]
-              "
-              required
-            />
-            <v-autocomplete
-              v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
-              multiple
-              chips
-              deletable-chips
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              class="mr-3"
-              :rules="
-                attribute.attributeValueType === 'NUMBER'
-                  ? [rules.requiredArray, rules.numberOnly]
-                  : [rules.requiredArray]
-              "
-              required
-            />
-            <v-text-field
-              v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
-              class="mr-3"
-              :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
-              required
-            />
-            <v-autocomplete
-              v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}*`"
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              class="mr-3"
-              :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
-              required
-            />
-            <v-select
-              label="Unit"
-              v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-              :value="attribute.attributeUnit"
-              :items="attribute.attributeUnitList"
-              item-text="unit"
-              item-value="unit"
-              class="mr-3 unit"
-              v-model="attribute.selectedUnit"
-            />
-          </div>
-        </fieldset>
-        <fieldset class="fieldset attribute-grid">
-          <legend class="title legend">Suggested Attributes (opt.)</legend>
-          <p v-if="attributes.suggested.length === 0">
-            No suggested attributes, please select an entry type.
-          </p>
-          <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
-            <v-combobox
-              v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}`"
-              append-icon
-              multiple
-              chips
-              deletable-chips
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              :search-input.sync="attribute.searchText"
-              @keypress.enter="
-                attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
-                attribute.selectedCodes.push({
-                  label: attribute.searchText,
-                  code: attribute.searchText,
-                  userCreated: true
-                })
-                attribute.searchText = ''
-              "
-              class="mr-3"
-            />
-            <v-autocomplete
-              v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}`"
-              multiple
-              chips
-              deletable-chips
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              class="mr-3"
-            />
-            <v-text-field
-              v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}`"
-              class="mr-3"
-            />
-            <v-autocomplete
-              v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
-              v-model="attribute.selectedCodes"
-              :label="`${attribute.description}`"
-              :items="attribute.codes"
-              item-text="label"
-              item-value="code"
-              class="mr-3"
-            />
-            <v-select
-              label="Unit"
-              v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-              :value="attribute.attributeUnit"
-              :items="attribute.attributeUnitList"
-              item-text="unit"
-              item-value="unit"
-              class="mr-3 unit"
-              v-model="attribute.selectedUnit"
-            />
-          </div>
-        </fieldset>
-        <div class="mx-4 mt-4">
-          <p class="mb-0">Please describe the attribute you would like to have added.</p>
-          <p class="mb-3">
-            Include the value for your entry, a brief description, and how your part is defined by the attribute.
-          </p>
-          <label class="title" for="request-new-attribute">Request New Attribute (opt.)</label>
-          <v-textarea
-            outlined
-            id="request-new-attribute"
-            placeholder="Request new attribute"
-            class=""
-            v-model="attributes.missingAttribute"
-          />
-        </div>
-      </fieldset>
-
-      <fieldset class="fieldset">
         <legend class="title legend">Tags</legend>
         <p v-if="!id" class="error--text">You must first save the submission to add tags to it.</p>
         <v-autocomplete
@@ -444,6 +447,7 @@
           :disabled="!id"
           deletable-chips
           @keypress.enter="addTag"
+          :search-input.sync="tagSearchText"
           class="mx-4"
         >
           <template v-slot:prepend-item>
@@ -526,7 +530,7 @@
         </ul>
       </v-alert>
       <div class="mb-5">
-        <p class="mb-2" v-if="saveTime">Last saved at: {{ saveTime | formatDate('Pp') }}</p>
+        <p class="mb-2" v-if="timeLastSaved">Last saved at: {{ timeLastSaved | formatDate('Pp') }}</p>
         <p>If you close the entry without submitting you will need to come back and finish to submit the entry.</p>
         <v-btn
           class="mr-4 mb-3"
@@ -573,8 +577,8 @@
       <v-card>
         <ModalTitle title="Are you sure?" @close="showEntryTypeWarning = false" />
         <v-card-text>
-          Changing the entry type will change the associated attributes. If you change your entry type the form may
-          delete some of the entered attributes.
+          Changing the entry type will change the associated attributes. If you change your entry type the form will
+          delete all of the entered attributes.
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -660,15 +664,12 @@ export default {
     this.$http.get('/openstorefront/api/v1/resource/lookuptypes/ContactType').then(response => {
       this.contactTypeList = response.data
     })
-    setInterval(() => {
-      if (this.isFormValid) {
-        this.save()
-      }
-    }, 30000)
+    this.setupAutoSave()
   },
   data: () => ({
     saving: false,
-    saveTime: null,
+    timeLastSaved: null,
+    saveTimer: null,
     submitText: 'Submit',
     isChangeRequest: false,
     pendingChangeId: null,
@@ -821,6 +822,7 @@ export default {
           this.contacts = _.tail(contacts)
         })
         .catch(e => {
+          this.$toasted.error('There was a problem fetching data for this submission')
           console.error(e)
         })
     },
@@ -880,6 +882,14 @@ export default {
               attributeCode: this.convertNumber(el.selectedCodes, conversionFactor)
             }
           })
+        } else if (typeof el.selectedCodes === 'object' && el.selectedCodes) {
+          newAttributes.push({
+            componentAttributePk: {
+              userCreated: el.userCreated,
+              attributeType: el.attributeType,
+              attributeCode: this.convertNumber(el.selectedCodes.code, conversionFactor)
+            }
+          })
         }
       })
 
@@ -896,6 +906,32 @@ export default {
         tags: this.tags,
         contacts: [this.primaryPOC].concat(this.contacts)
       }
+    },
+    loadSavedAttributes(topAttribute) {
+      // load saved attributes
+      this.savedAttributes.forEach(attribute => {
+        if (attribute.componentAttributePk.attributeType === topAttribute.attributeType) {
+          // get the attribute label
+          // set the default label to the code
+          let label = attribute.componentAttributePk.attributeCode
+          topAttribute.codes.forEach(el => {
+            if (el.code === attribute.componentAttributePk.attributeCode) {
+              label = el.label
+            }
+          })
+          if (Array.isArray(topAttribute.selectedCodes)) {
+            topAttribute.selectedCodes.push({
+              code: attribute.componentAttributePk.attributeCode,
+              label: label
+            })
+          } else {
+            topAttribute.selectedCodes = {
+              code: attribute.componentAttributePk.attributeCode,
+              label: label
+            }
+          }
+        }
+      })
     },
     /**
      * Fetch and load the suggested and required attributes for a given entry type
@@ -924,6 +960,8 @@ export default {
               e.selectedCodes = ''
             }
 
+            this.loadSavedAttributes(e)
+
             // Set up unit stuff
             if (e.attributeUnitList) {
               e.attributeUnitList = e.attributeUnitList.filter(e => e.unit !== undefined)
@@ -931,17 +969,6 @@ export default {
                 e.attributeUnit = ''
               }
             }
-
-            // load saved attributes
-            this.savedAttributes.forEach(attribute => {
-              if (attribute.componentAttributePk.attributeType === e.attributeType) {
-                if (Array.isArray(e.selectedCodes)) {
-                  e.selectedCodes.push(attribute.componentAttributePk.attributeCode)
-                } else {
-                  e.selectedCodes = attribute.componentAttributePk.attributeCode
-                }
-              }
-            })
           })
         })
       this.$http
@@ -962,16 +989,8 @@ export default {
                 e.attributeUnit = ''
               }
             }
-            // load saved attributes
-            this.savedAttributes.forEach(attribute => {
-              if (attribute.componentAttributePk.attributeType === e.attributeType) {
-                if (Array.isArray(e.selectedCodes)) {
-                  e.selectedCodes.push(attribute.componentAttributePk.attributeCode)
-                } else {
-                  e.selectedCodes = attribute.componentAttributePk.attributeCode
-                }
-              }
-            })
+
+            this.loadSavedAttributes(e)
           })
         })
     },
@@ -1011,6 +1030,7 @@ export default {
             }
           })
           .catch(e => {
+            this.$toasted.error('There was a problem submitting this entry')
             console.error(e)
           })
           .finally(() => {
@@ -1020,9 +1040,9 @@ export default {
       }, 'Submission Submitted')
     },
     saveAndClose() {
-      this.bypassLeaveConfirmation = true
       this.savingAndClose = true
       if (this.isFormValid) {
+        this.bypassLeaveConfirmation = true
         this.save(() => {
           this.savingAndClose = false
           this.$router.push({ name: 'Submissions' })
@@ -1059,6 +1079,7 @@ export default {
           }
         })
         .catch(e => {
+          this.$toasted.error('There was a problem saving attributes')
           console.error(e)
         })
         .finally(() => {
@@ -1071,7 +1092,7 @@ export default {
                 }
                 if (response.data && response.data.component) {
                   this.errors = []
-                  this.saveTime = new Date()
+                  this.timeLastSaved = new Date()
                   if (showToast) this.$toasted.success(toastMessage || 'Submission Saved')
                 }
                 if (callback) {
@@ -1079,6 +1100,7 @@ export default {
                 }
               })
               .catch(e => {
+                this.$toasted.error('There was a problem saving the submission')
                 console.error(e)
               })
               .finally(() => {
@@ -1095,7 +1117,7 @@ export default {
                   this.errors = []
                   this.id = response.data.component.componentId
                   this.$router.replace(`${this.id}`)
-                  this.saveTime = new Date()
+                  this.timeLastSaved = new Date()
                   this.$toasted.success('Submission Saved')
                 }
                 if (callback) {
@@ -1103,6 +1125,7 @@ export default {
                 }
               })
               .catch(e => {
+                this.$toasted.error('There was a problem saving the submission')
                 console.error(e)
               })
               .finally(() => {
@@ -1141,6 +1164,7 @@ export default {
             }
           })
           .catch(e => {
+            this.$toasted.error('There was a problem attaching a resource to the submission')
             console.error(e)
           })
           .finally(() => {
@@ -1204,6 +1228,7 @@ export default {
             }
           })
           .catch(e => {
+            this.$toasted.error('There was a problem attaching media to the submission')
             console.error(e)
           })
           .finally(() => {
@@ -1252,8 +1277,8 @@ export default {
       this.resources.links.splice(index, 1)
     },
     addTag() {
-      this.tagsList.push(this.tagSearchText)
-      this.tags.push(this.tagSearchText)
+      this.tagsList.push({ text: this.tagSearchText })
+      this.tags.push({ text: this.tagSearchText })
       this.tagSearchText = ''
     },
     addContact() {
@@ -1261,6 +1286,33 @@ export default {
     },
     removeContact(index) {
       this.contacts.splice(index, 1)
+    },
+    setupAutoSave() {
+      this.saveTimer = setInterval(() => {
+        if (this.isFormValid) {
+          this.save()
+        }
+      }, 30000)
+    },
+    getTags() {
+      this.$http
+        .get(`/openstorefront/api/v1/resource/components/${this.id}/tagsview`)
+        .then(res => {
+          // update the tagIds for all attached tags on the submission
+          this.tags.forEach(el => {
+            if (Array.isArray(res.data)) {
+              res.data.forEach(el2 => {
+                if (el.text === el2.text) {
+                  el.tagId = el2.tagId
+                }
+              })
+            }
+          })
+        })
+        .catch(e => {
+          this.$toasted.error('There was a problem fetching tags for the submission')
+          console.error('problem fetching tags for the submission')
+        })
     }
   },
   watch: {
@@ -1285,9 +1337,14 @@ export default {
           .post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
             text: newTag[0].text
           })
-          .then(res => {})
+          .then(res => {
+            // fetch all tags for submission
+            // inefficient but it guarantees that the tagIds are valid
+            this.getTags()
+          })
           .catch(e => {
-            console.error('Problem adding tag')
+            this.$toasted.error('There was a problem adding a tag to the submission')
+            console.error('Problem adding tag: ', newTag)
           })
       }
       if (removedTag && removedTag.length > 0) {
@@ -1296,10 +1353,19 @@ export default {
           .delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${removedTag[0].tagId}`)
           .then(res => {})
           .catch(e => {
-            console.error('Problem deleting tag')
+            this.$toasted.error('There was a problem deleteing a tag from the submission')
+            console.error('Problem deleting tag: ', removedTag)
           })
       }
+    },
+    isFormValid: function(newVal, oldVal) {
+      if (newVal && this.id === null) {
+        this.save()
+      }
     }
+  },
+  beforeDestroy() {
+    clearInterval(this.saveTimer)
   }
 }
 </script>
