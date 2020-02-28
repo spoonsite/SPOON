@@ -671,6 +671,7 @@ export default {
     saveTime: null,
     submitText: 'Submit',
     isChangeRequest: false,
+    pendingChangeId: null,
     submitting: false,
     submitConfirmDialog: false,
     savingAndClose: false,
@@ -795,6 +796,7 @@ export default {
       this.$http
         .get(`/openstorefront/api/v1/resource/componentsubmissions/${id}`)
         .then(response => {
+          this.pendingChangeId = response.data.component.pendingChangeId
           let component = response.data.component
           let contacts = response.data.contacts
           let media = response.data.media
@@ -884,6 +886,7 @@ export default {
       return {
         component: {
           name: this.entryTitle,
+          pendingChangeId: this.pendingChangeId,
           description: this.description,
           componentType: this.entryType,
           organization: this.organization
@@ -993,9 +996,12 @@ export default {
       this.bypassLeaveConfirmation = true
       this.submitConfirmDialog = false
       this.submitting = true
+      let url = this.isChangeRequest
+        ? `/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submitchangerequest`
+        : `/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submit`
       this.save(() => {
         this.$http
-          .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submit`, this.getFormData())
+          .put(url, this.getFormData())
           .then(response => {
             if (response.data && response.data.success === false) {
               this.errors = response.data.errors.entry
