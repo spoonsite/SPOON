@@ -882,7 +882,7 @@ export default {
               attributeCode: this.convertNumber(el.selectedCodes, conversionFactor)
             }
           })
-        } else if (typeof el.selectedCodes === 'object' && el.selectedCodes) {
+        } else if (typeof el.selectedCodes === 'object' && el.selectedCodes && !Array.isArray(el.selectedCodes)) {
           newAttributes.push({
             componentAttributePk: {
               userCreated: el.userCreated,
@@ -1024,6 +1024,7 @@ export default {
           .then(response => {
             if (response.data && response.data.success === false) {
               this.errors = response.data.errors.entry
+              this.$toasted.error('There was an error when submitting! Changes have not been submitted.')
             }
             if (response.data && response.data.component) {
               this.errors = []
@@ -1071,6 +1072,9 @@ export default {
           userAttributes: createdCodeList
         })
         .then(response => {
+          if (response.data.error) {
+            console.error('Server returned error when getting attribute usercodes', response.data.error)
+          }
           if (response.data && !response.data.error) {
             // update the form with newly created attributes to attach to submission
             if (Array.isArray(response.Data)) {
@@ -1089,14 +1093,20 @@ export default {
               .then(response => {
                 if (response.data && response.data.success === false) {
                   this.errors = response.data.errors.entry
-                }
-                if (response.data && response.data.component) {
+                  this.$toasted.error('There was an error when saving! Changes have not been saved.')
+                } else if (response.data && response.data.component) {
                   this.errors = []
                   this.timeLastSaved = new Date()
                   if (showToast) this.$toasted.success(toastMessage || 'Submission Saved')
-                }
-                if (callback) {
-                  callback()
+
+                  if (callback) {
+                    callback()
+                  }
+                } else {
+                  console.error(
+                    `Recieved unexpected response from server on put call to componentsubmissions/${this.id}`,
+                    response.data
+                  )
                 }
               })
               .catch(e => {
@@ -1112,16 +1122,22 @@ export default {
               .then(response => {
                 if (response.data && response.data.success === false) {
                   this.errors = response.data.errors.entry
-                }
-                if (response.data && response.data.component) {
+                  this.$toasted.error('There was an error when saving! Changes have not been saved.')
+                } else if (response.data && response.data.component) {
                   this.errors = []
                   this.id = response.data.component.componentId
                   this.$router.replace(`${this.id}`)
                   this.timeLastSaved = new Date()
                   this.$toasted.success('Submission Saved')
-                }
-                if (callback) {
-                  callback()
+
+                  if (callback) {
+                    callback()
+                  }
+                } else {
+                  console.error(
+                    `Recieved unexpected response from server on post call to componentsubmissions`,
+                    response.data
+                  )
                 }
               })
               .catch(e => {
@@ -1279,7 +1295,23 @@ export default {
     addTag() {
       this.tagsList.push({ text: this.tagSearchText })
       this.tags.push({ text: this.tagSearchText })
+      this.addNewTag(this.tagSearchText)
       this.tagSearchText = ''
+    },
+    addNewTag(text) {
+      this.$http
+        .post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
+          text: text
+        })
+        .then(res => {
+          // fetch all tags for submission
+          // inefficient but it guarantees that the tagIds are valid
+          this.getTags()
+        })
+        .catch(e => {
+          this.$toasted.error('There was a problem adding a tag to the submission')
+          console.error('Problem adding tag: ', text)
+        })
     },
     addContact() {
       this.contacts.push({ firstName: '', lastName: '', contactType: '', organization: '', email: '', phone: '' })
@@ -1333,19 +1365,7 @@ export default {
       let removedTag = _.differenceBy(oldVal, newVal, 'text')
       if (newTag && newTag.length > 0) {
         // add new tag
-        this.$http
-          .post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
-            text: newTag[0].text
-          })
-          .then(res => {
-            // fetch all tags for submission
-            // inefficient but it guarantees that the tagIds are valid
-            this.getTags()
-          })
-          .catch(e => {
-            this.$toasted.error('There was a problem adding a tag to the submission')
-            console.error('Problem adding tag: ', newTag)
-          })
+        this.addNewTag(newTag[0].text)
       }
       if (removedTag && removedTag.length > 0) {
         // add new tag
