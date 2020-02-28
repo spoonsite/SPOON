@@ -1010,6 +1010,7 @@ export default {
           .then(response => {
             if (response.data && response.data.success === false) {
               this.errors = response.data.errors.entry
+              this.$toasted.error('There was an error when submitting! Changes have not been submitted.')
             }
             if (response.data && response.data.component) {
               this.errors = []
@@ -1057,6 +1058,9 @@ export default {
           userAttributes: createdCodeList
         })
         .then(response => {
+          if (response.data.error) {
+            console.error('Server returned error when getting attribute usercodes', response.data.error)
+          }
           if (response.data && !response.data.error) {
             // update the form with newly created attributes to attach to submission
             if (Array.isArray(response.Data)) {
@@ -1075,14 +1079,20 @@ export default {
               .then(response => {
                 if (response.data && response.data.success === false) {
                   this.errors = response.data.errors.entry
-                }
-                if (response.data && response.data.component) {
+                  this.$toasted.error('There was an error when saving! Changes have not been saved.')
+                } else if (response.data && response.data.component) {
                   this.errors = []
                   this.timeLastSaved = new Date()
                   if (showToast) this.$toasted.success(toastMessage || 'Submission Saved')
-                }
-                if (callback) {
-                  callback()
+
+                  if (callback) {
+                    callback()
+                  }
+                } else {
+                  console.error(
+                    `Recieved unexpected response from server on put call to componentsubmissions/${this.id}`,
+                    response.data
+                  )
                 }
               })
               .catch(e => {
@@ -1098,16 +1108,22 @@ export default {
               .then(response => {
                 if (response.data && response.data.success === false) {
                   this.errors = response.data.errors.entry
-                }
-                if (response.data && response.data.component) {
+                  this.$toasted.error('There was an error when saving! Changes have not been saved.')
+                } else if (response.data && response.data.component) {
                   this.errors = []
                   this.id = response.data.component.componentId
                   this.$router.replace(`${this.id}`)
                   this.timeLastSaved = new Date()
                   this.$toasted.success('Submission Saved')
-                }
-                if (callback) {
-                  callback()
+
+                  if (callback) {
+                    callback()
+                  }
+                } else {
+                  console.error(
+                    `Recieved unexpected response from server on post call to componentsubmissions`,
+                    response.data
+                  )
                 }
               })
               .catch(e => {
