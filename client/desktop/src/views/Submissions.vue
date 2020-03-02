@@ -25,14 +25,6 @@
         <template v-slot:item.pendingChangeSubmitDate="{ item }">
           <span v-if="item.pendingChangeSubmitDate">{{ item.pendingChangeSubmitDate | formatDate }}</span>
         </template>
-          <!-- <template v-slot:item.pendingChange="{ item }"> -->
-            <!-- <v-layout justify-center>
-              <v-icon style="text-align: center;" v-if="item.pendingChange === 'Pending'">fas fa-check</v-icon>
-              <v-icon style="text-align: center;" v-else>fas fa-minus</v-icon> -->
-              <!-- <span v-if="item.pendingChange === 'Pending'" style="font-weight: bold; font-size: 2em;">P</span>
-              <span v-else style="font-weight: bold; font-size: 2em;">&mdash;</span> -->
-            <!-- </v-layout> -->
-          <!-- </template> -->
           <template v-slot:item.submitDate="{ item }">
             <div v-if="item.submitDate">{{ item.submitDate | formatDate }}</div>
             <div v-else-if="item.status === 'Pending'">{{ item.lastUpdate | formatDate }}</div>
@@ -343,7 +335,6 @@ export default {
       this.$http.get('/openstorefront/api/v1/resource/componentsubmissions/user')
         .then(response => {
           this.isLoading = false
-          console.log(response.data)
           this.componentData = this.combineComponentsAndWorkPlans(response.data.componentSubmissionView, response.data.workPlans)
         }).catch(error => {
           this.isLoading = false
@@ -366,9 +357,6 @@ export default {
     combineComponentsAndWorkPlans(allComponents, workPlans) {
       let components = allComponents.filter(e => e.componentId !== undefined)
       let updatedComponents = []
-      allComponents.forEach(comp => {
-        // console.log(comp)
-      })
 
       components.forEach(component => {
         let myWorkPlan = null
@@ -440,7 +428,6 @@ export default {
         steps: steps,
         currentStep: currentStep,
         submissionOriginalComponentId: component.submissionOriginalComponentId,
-        evaluationsAttached: component.evaluationsAttached,
         hasChangeRequest: component.statusOfPendingChange != null,
         pendingChangeComponentId: component.pendingChangeComponentId
       }
@@ -612,8 +599,5 @@ svg text {
 }
 svg g:hover text {
   display: block;
-}
-.status-data > td {
-
 }
 </style>
