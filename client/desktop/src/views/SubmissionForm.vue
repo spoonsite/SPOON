@@ -1078,6 +1078,8 @@ export default {
               .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}`, formData)
               .then(response => {
                 if (response.data && response.data.success === false) {
+                  this.savingAndClose = false
+                  this.submitting = false
                   this.errors = response.data.errors.entry
                   this.$toasted.error('There was an error when saving! Changes have not been saved.')
                 } else if (response.data && response.data.component) {
@@ -1107,6 +1109,8 @@ export default {
               .post('/openstorefront/api/v1/resource/componentsubmissions', formData)
               .then(response => {
                 if (response.data && response.data.success === false) {
+                  this.savingAndClose = false
+                  this.submitting = false
                   this.errors = response.data.errors.entry
                   this.$toasted.error('There was an error when saving! Changes have not been saved.')
                 } else if (response.data && response.data.component) {
