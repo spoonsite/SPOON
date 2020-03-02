@@ -269,7 +269,7 @@ export default {
       tableHeaders: [
         { text: 'Name', value: 'name' },
         { text: 'Status', value: 'status' },
-        { text: 'Change Request', value: 'pendingChangeSubmitDate' },
+        { text: 'Latest Change Request', value: 'pendingChangeSubmitDate' },
         { text: 'Type', value: 'type' },
         { text: 'Submit/Approved Date', value: 'submitDate' },
         { text: 'Last Update', value: 'lastUpdate' },
