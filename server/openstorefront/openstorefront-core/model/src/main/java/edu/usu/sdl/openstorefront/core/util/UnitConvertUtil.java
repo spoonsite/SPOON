@@ -57,19 +57,38 @@ public class UnitConvertUtil
 				// get the conversion factor between the baseUnit and the preferredUnit
 				Unit userUnit = Unit.valueOf(userUnitUOM);
 				Unit baseUnit = Unit.valueOf(baseUnitUOM);
-				@SuppressWarnings("unchecked")
 				Amount factor = Amount.valueOf(1, baseUnit).to(userUnit);
+				if (userUnit == null || baseUnit == null || factor == null) {
+					LOG.log(Level.WARNING,
+							"Unable to generate conversion factor between base unit and user unit.\nBase Unit: {0}. User Unit: {1}. Original Value: {2}",
+							new Object[]{baseUnitUOM, userUnitUOM, originalValue});
+					return null;
+				}
 				unitView = new AttributeUnitView(userUnitUOM, BigDecimal.valueOf(factor.getEstimatedValue()));
 
 				//Convert user unit to base (multiply)
 				final char seperator = new DecimalFormatSymbols().getDecimalSeparator(); // TODO: grab the locale specific seperator
 				final String regex = "-?[^\\d" + seperator + "]";
 				String cleaned = originalValue.replaceAll(regex, "");
+				if (cleaned == null) {
+					LOG.log(Level.WARNING,
+							"Original value to convert did not contain any decimal digits.\nBase Unit: {0}. User Unit: {1}. Original Value: {2}",
+							new Object[]{baseUnitUOM, userUnitUOM, originalValue});
+					return null;
+				}
 				BigDecimal originalValueNumber = Convert.toBigDecimal(cleaned);
+				if (originalValueNumber == null) {
+					LOG.log(Level.WARNING,
+							"Conversion of original value failure.\nBase Unit: {0}. User Unit: {1}. Original Value: {2}. Cleaned value {3}",
+							new Object[]{baseUnitUOM, userUnitUOM, originalValue, cleaned});
+					return null;
+				}
 				unitView.setConvertedValue(originalValueNumber.multiply(unitView.getConversionFactor()));
 
 			} catch (IllegalArgumentException e) {
-				LOG.log(Level.WARNING, "Unable to process unit conversion factors for: {0} and {1}\n{2}", new Object[]{userUnitUOM, baseUnitUOM, e.toString()});
+				LOG.log(Level.WARNING, 
+						"Unable to process unit conversion factors for: {0} and {1}\n{2}", 
+						new Object[]{userUnitUOM, baseUnitUOM, e.toString()});
 			}
 		}
 
