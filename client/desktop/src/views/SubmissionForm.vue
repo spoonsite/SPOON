@@ -21,7 +21,7 @@
         <v-autocomplete
           label="Entry Type*"
           v-model="entryType"
-          :items="this.$store.state.componentTypeList"
+          :items="this.entryTypeList"
           item-text="parentLabel"
           item-value="componentType"
           required
@@ -224,6 +224,11 @@
               attribute.searchText = ''
             "
             class="mr-3"
+            :rules="
+              attribute.attributeValueType === 'NUMBER'
+                ? [rules.requiredArray, rules.numberOnly]
+                : [rules.requiredArray]
+            "
           />
           <v-autocomplete
             v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
@@ -597,6 +602,8 @@ const MEDIA_TYPE_CODE = {
   OTHER: 'OTH'
 }
 
+const MAX_DESCRIPTION_LENGTH = 65536
+
 // from MediaFileType.java
 // const MEDIA_FILE_TYPE = {
 //   GENERAL: 'GENERAL',
@@ -736,7 +743,7 @@ export default {
       required: value => !!value || 'Required',
       requiredArray: value => value.length !== 0 || 'Required',
       len255: value => value.length < 255 || 'Must have less than 255 characters',
-      len64k: value => value.length < 65536 || 'Must have less than 64k characters',
+      len64k: value => value.length < MAX_DESCRIPTION_LENGTH || 'Must have less than 64k characters',
       numberOnly: value => {
         // If the value is null, we don't care about validation, in this case
         if (value === null) {
@@ -774,7 +781,11 @@ export default {
       return this.allowedImageTypes.join(',')
     },
     isFormValid() {
-      return this.description !== '' && this.formValidation
+      return this.description !== '' && this.description.length < MAX_DESCRIPTION_LENGTH && this.formValidation
+    },
+    entryTypeList() {
+      let list = this.$store.state.componentTypeList
+      return list.sort((a, b) => a.parentLabel > b.parentLabel)
     }
   },
   methods: {
