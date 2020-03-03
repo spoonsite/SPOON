@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.util.Convert;
 import edu.usu.sdl.openstorefront.core.view.AttributeUnitView;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.text.DecimalFormatSymbols;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.Unit;
@@ -61,7 +62,10 @@ public class UnitConvertUtil
 				unitView = new AttributeUnitView(userUnitUOM, BigDecimal.valueOf(factor.getEstimatedValue()));
 
 				//Convert user unit to base (multiply)
-				BigDecimal originalValueNumber = Convert.toBigDecimal(originalValue);
+				final char seperator = new DecimalFormatSymbols().getDecimalSeparator(); // TODO: grab the locale specific seperator
+				final String regex = "-?[^\\d" + seperator + "]";
+				String cleaned = originalValue.replaceAll(regex, "");
+				BigDecimal originalValueNumber = Convert.toBigDecimal(cleaned);
 				unitView.setConvertedValue(originalValueNumber.multiply(unitView.getConversionFactor()));
 
 			} catch (IllegalArgumentException e) {
