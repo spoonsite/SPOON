@@ -650,7 +650,7 @@ export default {
     }
     this.$http.get('/openstorefront/api/v1/resource/organizations').then(response => {
       this.organizationList = response.data.data
-      this.organizationList.sort((a, b) => a.name > b.name)
+      this.organizationList.sort((a, b) => a.name > b.name ? 1 : -1)
     })
     this.$http.get('/openstorefront/api/v1/resource/lookuptypes/SecurityMarkingType').then(response => {
       this.securityMarkingList = response.data
