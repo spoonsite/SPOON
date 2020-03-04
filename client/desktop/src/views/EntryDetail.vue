@@ -52,7 +52,7 @@
               </span>
             </div>
           </div>
-          <div class="detail-header-right" v-if="!isSubmission">
+          <div v-if="!isSubmission" class="detail-header-right">
             <v-switch
               class="watching"
               color="success"
