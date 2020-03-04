@@ -221,11 +221,7 @@
               attribute.searchText = ''
             "
             class="mr-3"
-            :rules="
-              attribute.attributeValueType === 'NUMBER'
-                ? [rules.numberOnly]
-                : []
-            "
+            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly] : []"
           />
           <v-autocomplete
             v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
@@ -645,7 +641,7 @@ export default {
     }
     this.$http.get('/openstorefront/api/v1/resource/organizations').then(response => {
       this.organizationList = response.data.data
-      this.organizationList.sort((a, b) => a.name > b.name ? 1 : -1)
+      this.organizationList.sort((a, b) => (a.name > b.name ? 1 : -1))
     })
     this.$http.get('/openstorefront/api/v1/resource/lookuptypes/SecurityMarkingType').then(response => {
       this.securityMarkingList = response.data
@@ -750,6 +746,9 @@ export default {
         if (Array.isArray(value)) {
           let valid = true
           value.forEach(e => {
+            if (typeof e === 'object') {
+              e = e.code
+            }
             if (/\d+(\.\d+)?/.exec(e) === null || /\d+(\.\d+)?/.exec(e)[0] !== e) {
               valid = false
             }
@@ -818,6 +817,7 @@ export default {
             this.primaryPOC = _.head(contacts)
           }
           this.contacts = _.tail(contacts)
+          this.$refs.submissionForm.validate()
         })
         .catch(e => {
           this.$toasted.error('There was a problem fetching data for this submission')
