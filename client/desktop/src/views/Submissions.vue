@@ -60,7 +60,7 @@
                   <v-btn
                     icon
                     v-on="on"
-                    :to="{ name: 'Entry Detail', params: { id: item.componentId } }"
+                    :to="{ name: 'Entry Detail', params: { id: item.componentId }, query: { submission: true } }"
                     style="order: 1"
                   >
                     <v-icon>fas fa-eye</v-icon>
@@ -157,22 +157,20 @@
             @change="uploadErrorDisplay = ''"
             :error-messages="uploadErrorDisplay"
             :disabled="isSendingFile"
-            ></v-file-input>
+          ></v-file-input>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            v-model="isSendingFile"
-            @click="submitBulkFile()"
-            :disabled="isSendingFile"
-            :loading="isSendingFile"
-          >Upload</v-btn>
+          <v-btn v-model="isSendingFile" @click="submitBulkFile()" :disabled="isSendingFile" :loading="isSendingFile"
+            >Upload</v-btn
+          >
           <v-btn
             @click="
               bulkUploadDialog = false
               bulkUploadFile = null
-              "
-          >Close</v-btn>
+            "
+            >Close</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>

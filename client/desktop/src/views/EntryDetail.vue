@@ -50,7 +50,7 @@
               </span>
             </div>
           </div>
-          <div class="detail-header-right">
+          <div class="detail-header-right" v-if="!isSubmission">
             <v-switch
               class="watching"
               color="success"
@@ -590,6 +590,7 @@ export default {
     QuestionModal
   },
   mounted() {
+    this.isSubmission = this.$route.query.submission
     if (this.$route.params.id) {
       this.id = this.$route.params.id
       this.newReview.componentId = this.id
@@ -617,6 +618,7 @@ export default {
   },
   data() {
     return {
+      isSubmission: false,
       baseURL: '/openstorefront/',
       isLoading: true,
       autoApprove: false,
