@@ -223,8 +223,8 @@
             class="mr-3"
             :rules="
               attribute.attributeValueType === 'NUMBER'
-                ? [rules.requiredArray, rules.numberOnly]
-                : [rules.requiredArray]
+                ? [rules.numberOnly]
+                : []
             "
           />
           <v-autocomplete
