@@ -22,6 +22,10 @@
           :hide-default-footer="isLoading || componentData.length === 0"
           class="tableLayout"
         >
+        <template v-slot:item.name="{ item }">
+          {{ item.name }}
+          <div v-if="item.evaluationsAttached" style="color: red;">Evaluations Are In Progress</div>
+        </template>
         <template v-slot:item.pendingChangeSubmitDate="{ item }">
           <span v-if="item.pendingChangeSubmitDate">{{ item.pendingChangeSubmitDate | formatDate }}</span>
         </template>
@@ -429,7 +433,8 @@ export default {
         currentStep: currentStep,
         submissionOriginalComponentId: component.submissionOriginalComponentId,
         hasChangeRequest: component.statusOfPendingChange != null,
-        pendingChangeComponentId: component.pendingChangeComponentId
+        pendingChangeComponentId: component.pendingChangeComponentId,
+        evaluationsAttached: component.evaluationsAttached
       }
 
       return updatedComponent
