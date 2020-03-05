@@ -28,7 +28,7 @@
         <v-autocomplete
           label="Entry Type*"
           v-model="entryType"
-          :items="this.$store.state.componentTypeList"
+          :items="this.entryTypeList"
           item-text="parentLabel"
           item-value="componentType"
           required
@@ -105,14 +105,11 @@
       <fieldset class="fieldset">
         <legend class="title legend">Description*</legend>
         <quill-editor class="ma-2" v-model="description" maxLength="20" />
-        <v-alert color="red" :value="false" transition="fade-transition">
-          test
-        </v-alert>
         <v-slide-y-transition>
           <div v-if="description.length === 0" class="mx-2 error--text caption">
             Description is required
           </div>
-          <div v-if="description.length > 65536" class="mx-2 error--text caption">
+          <div v-if="description.length > MAX_DESCRIPTION_LENGTH" class="mx-2 error--text caption">
             Description has a character limit of 64k
           </div>
         </v-slide-y-transition>
@@ -231,6 +228,7 @@
               attribute.searchText = ''
             "
             class="mr-3"
+            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly] : []"
           />
           <v-autocomplete
             v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
@@ -651,6 +649,7 @@ export default {
     }
     this.$http.get('/openstorefront/api/v1/resource/organizations').then(response => {
       this.organizationList = response.data.data
+      this.organizationList.sort((a, b) => (a.name > b.name ? 1 : -1))
     })
     this.$http.get('/openstorefront/api/v1/resource/lookuptypes/SecurityMarkingType').then(response => {
       this.securityMarkingList = response.data
@@ -667,6 +666,8 @@ export default {
     this.setupAutoSave()
   },
   data: () => ({
+    // NOTE: Server supports more but sometimes prettifies the html which means this needs to be a smaller value
+    MAX_DESCRIPTION_LENGTH: 64000,
     saving: false,
     timeLastSaved: null,
     saveTimer: null,
@@ -745,7 +746,6 @@ export default {
       required: value => !!value || 'Required',
       requiredArray: value => value.length !== 0 || 'Required',
       len255: value => value.length < 255 || 'Must have less than 255 characters',
-      len64k: value => value.length < 65536 || 'Must have less than 64k characters',
       numberOnly: value => {
         // If the value is null, we don't care about validation, in this case
         if (value === null) {
@@ -755,6 +755,9 @@ export default {
         if (Array.isArray(value)) {
           let valid = true
           value.forEach(e => {
+            if (typeof e === 'object') {
+              e = e.code
+            }
             if (/\d+(\.\d+)?/.exec(e) === null || /\d+(\.\d+)?/.exec(e)[0] !== e) {
               valid = false
             }
@@ -783,7 +786,11 @@ export default {
       return this.allowedImageTypes.join(',')
     },
     isFormValid() {
-      return this.description !== '' && this.formValidation
+      return this.description !== '' && this.description.length <= this.MAX_DESCRIPTION_LENGTH && this.formValidation
+    },
+    entryTypeList() {
+      let list = this.$store.state.componentTypeList
+      return list.sort((a, b) => a.parentLabel > b.parentLabel)
     }
   },
   methods: {
@@ -820,6 +827,7 @@ export default {
             this.primaryPOC = _.head(contacts)
           }
           this.contacts = _.tail(contacts)
+          this.$refs.submissionForm.validate()
         })
         .catch(e => {
           this.$toasted.error('There was a problem fetching data for this submission')
@@ -1092,6 +1100,8 @@ export default {
               .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}`, formData)
               .then(response => {
                 if (response.data && response.data.success === false) {
+                  this.savingAndClose = false
+                  this.submitting = false
                   this.errors = response.data.errors.entry
                   this.$toasted.error('There was an error when saving! Changes have not been saved.')
                 } else if (response.data && response.data.component) {
@@ -1121,6 +1131,8 @@ export default {
               .post('/openstorefront/api/v1/resource/componentsubmissions', formData)
               .then(response => {
                 if (response.data && response.data.success === false) {
+                  this.savingAndClose = false
+                  this.submitting = false
                   this.errors = response.data.errors.entry
                   this.$toasted.error('There was an error when saving! Changes have not been saved.')
                 } else if (response.data && response.data.component) {

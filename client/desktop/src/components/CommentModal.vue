@@ -5,20 +5,14 @@
         <ModalTitle title="Workflow Comments" @close="close" />
         <v-card-text>
           <p class="">{{ component.name }}</p>
-          <v-tabs
-            v-model="tab"
-            grow
-          >
-            <v-tabs-slider></v-tabs-slider>
-            <v-tab href="#tab-1" >Public</v-tab>
-            <v-tab href="#tab-2" v-if="permission">Private</v-tab>
-          </v-tabs>
-          <v-tabs-items v-model="tab">
-            <v-tab-item
-              v-for="i in 2"
-              :key="i"
-              :value="'tab-' + i"
-            >
+          <v-tabs grow>
+            <v-tab>
+              Public
+            </v-tab>
+            <v-tab v-if="permission">
+              Private
+            </v-tab>
+            <v-tab-item>
               <v-card flat>
                 <div class="background">
                   <v-layout row justify-center align-center v-if="isLoading" style="height:100%;">
@@ -33,7 +27,7 @@
                       class="mx-1"
                       style="overflow: hidden;"
                   >
-                    <div v-if="!comment.privateComment && i === 1">
+                    <div v-if="!comment.privateComment">
                       <v-flex xs8
                         v-if="comment.updateUser === $store.state.currentUser.username"
                         class="user-text-location"
@@ -53,7 +47,7 @@
                               </v-btn>
                             </template>
                             <v-list>
-                              <v-list-item @click="editing = true; newComment = comment.comment; currentComment = comment">
+                              <v-list-item @click="editing = true; publicComment = comment.comment; currentComment = comment">
                                 <v-list-item-title>Edit</v-list-item-title>
                               </v-list-item>
                               <v-list-item @click="currentComment=comment; deleteDialog = true;">
@@ -72,8 +66,33 @@
                         <div class="contact-comments" v-html="comment.comment"/>
                       </v-flex>
                     </div>
-
-                    <div v-else-if="comment.privateComment && i === 2">
+                  </div>
+                </div>
+                <quill-editor
+                  style="background-color: white;"
+                  v-model="publicComment"
+                ></quill-editor>
+                <p class="ma-0 red--text">This comment will be sent to the vendor.</p>
+                <v-btn v-if="!editing" @click="submitPublicComment()">Post Comment</v-btn>
+                <v-btn v-else-if="editing" @click="editPublicComment()">Update Comment</v-btn>
+              </v-card>
+            </v-tab-item>
+            <v-tab-item>
+              <v-card flat>
+                <div class="background">
+                  <v-layout row justify-center align-center v-if="isLoading" style="height:100%;">
+                    <v-flex xs1>
+                      <v-progress-circular color="primary" :size="60" :width="6" indeterminate class="spinner"></v-progress-circular>
+                    </v-flex>
+                  </v-layout>
+                  <div
+                    v-else
+                    v-for="comment in comments"
+                      :key="comment.comment"
+                      class="mx-1"
+                      style="overflow: hidden;"
+                  >
+                    <div v-if="comment.privateComment">
                       <v-flex xs8
                         v-if="comment.updateUser === $store.state.currentUser.username"
                         class="user-text-location"
@@ -94,7 +113,7 @@
                               </v-btn>
                             </template>
                             <v-list>
-                              <v-list-item @click="editing = true; newComment=comment.comment; currentComment = comment">
+                              <v-list-item @click="editing = true; privateComment=comment.comment; currentComment = comment">
                                 <v-list-item-title>Edit</v-list-item-title>
                               </v-list-item>
                               <v-list-item @click="currentComment=comment; deleteDialog = true;">
@@ -116,16 +135,13 @@
                 </div>
                 <quill-editor
                   style="background-color: white;"
-                  v-model="newComment"
+                  v-model="privateComment"
                 ></quill-editor>
-                <p class="ma-0 red--text" v-if="i===1">This comment will be sent to the vendor.</p>
-                <v-btn v-if="i === 1 && !editing" @click="submitPublicComment()">Post Comment</v-btn>
-                <v-btn v-else-if="i ===2 && !editing" @click="submitPrivateComment()">Post Comment</v-btn>
-                <v-btn v-else-if="i===1 && editing" @click="editPublicComment()">Update Comment</v-btn>
-                <v-btn v-else-if="i===2 && editing" @click="editPrivateComment()">Update Comment</v-btn>
+                <v-btn v-if="!editing" @click="submitPrivateComment()">Post Comment</v-btn>
+                <v-btn v-else-if="editing" @click="editPrivateComment()">Update Comment</v-btn>
               </v-card>
             </v-tab-item>
-          </v-tabs-items>
+          </v-tabs>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -166,7 +182,8 @@ export default {
   data() {
     return {
       comments: [],
-      newComment: '',
+      publicComment: '',
+      privateComment: '',
       currentComment: '',
       deleteDialog: false,
       permission: false,
@@ -205,7 +222,7 @@ export default {
     submitPrivateComment() {
       this.isLoading = true
       let data = {
-        comment: this.newComment,
+        comment: this.privateComment,
         commentType: 'SUBMISSION',
         privateComment: true,
         willSendEmail: false
@@ -215,7 +232,7 @@ export default {
     submitPublicComment() {
       this.isLoading = true
       let data = {
-        comment: this.newComment,
+        comment: this.publicComment,
         commentType: 'SUBMISSION',
         privateComment: false,
         willSendEmail: false
@@ -234,7 +251,8 @@ export default {
       this.$http.post(submitUrl, data)
         .then(response => {
           this.getComments(this.component)
-          this.newComment = ''
+          this.publicComment = ''
+          this.privateComment = ''
         })
         .catch(error => {
           this.$toasted.error('There was a problem submitting your comment')
@@ -266,7 +284,7 @@ export default {
     editPublicComment() {
       this.isLoading = true
       let data = {
-        comment: this.newComment,
+        comment: this.publicComment,
         commentType: 'SUBMISSION',
         privateComment: false,
         willSendEmail: false
@@ -276,7 +294,7 @@ export default {
     editPrivateComment() {
       this.isLoading = true
       let data = {
-        comment: this.newComment,
+        comment: this.privateComment,
         commentType: 'SUBMISSION',
         privateComment: true,
         willSendEmail: false
@@ -296,7 +314,8 @@ export default {
         .then(response => {
           this.getComments(this.component)
           this.currentComment = ''
-          this.newComment = ''
+          this.publicComment = ''
+          this.privateComment = ''
           this.editing = false
         })
         .catch(error => {
