@@ -71,7 +71,7 @@
               <div style="order: 2">
                 <v-tooltip bottom v-if="item.status === 'Active' && !item.pendingChangeComponentId">
                   <template v-slot:activator="{ on }">
-                    <v-btn @click="createChangeRequest(item.componentId)" :loading="changeRequestLoader" icon v-on="on">
+                    <v-btn @click="createChangeRequest(item)" :loading="item.pendingChangeSpinner" icon v-on="on">
                       <v-icon>fas fa-edit</v-icon>
                     </v-btn>
                   </template>
@@ -182,24 +182,30 @@
       <v-card>
         <ModalTitle title="Delete?" @close="deleteDialog = false" />
         <v-card-text>
-          <v-btn
-            v-if="currentComponent.hasChangeRequest"
-            @click="
-              requestRemoval = true
-              deleteChange = false
-            "
-          >
-            Request Removal
-          </v-btn>
-          <v-btn
-            v-if="currentComponent.hasChangeRequest"
-            @click="
-              deleteChange = true
-              requestRemoval = false
-            "
-          >
-            Delete Change
-          </v-btn>
+          <div class="d-flex justify-space-around">
+            <v-btn
+              v-if="currentComponent.hasChangeRequest"
+              @click="
+                requestRemoval = true
+                deleteChange = false
+              "
+              class="my-3"
+              color="warning"
+            >
+              Request Removal
+            </v-btn>
+            <v-btn
+              v-if="currentComponent.hasChangeRequest"
+              @click="
+                deleteChange = true
+                requestRemoval = false
+              "
+              class="my-3"
+              color="warning"
+            >
+              Delete Change
+            </v-btn>
+          </div>
           <p v-if="currentComponent.hasChangeRequest && deleteChange" class="pt-2">
             Are you sure you want to delete the change request for: {{ currentComponent.name }}?
           </p>
@@ -438,7 +444,8 @@ export default {
         submissionOriginalComponentId: component.submissionOriginalComponentId,
         evaluationsAttached: component.evaluationsAttached,
         hasChangeRequest: component.statusOfPendingChange != null,
-        pendingChangeComponentId: component.pendingChangeComponentId
+        pendingChangeComponentId: component.pendingChangeComponentId,
+        pendingChangeSpinner: false
       }
 
       return updatedComponent
@@ -487,15 +494,16 @@ export default {
       }
       this.deleteDialog = true
     },
-    createChangeRequest(componentId) {
+    createChangeRequest(component) {
+      component.pendingChangeSpinner = true
       this.changeRequestLoader = true
-      this.$http.post(`/openstorefront/api/v1/resource/components/${componentId}/changerequest`)
+      this.$http.post(`/openstorefront/api/v1/resource/components/${component.componentId}/changerequest`)
         .then(response => {
-          this.changeRequestLoader = false
+          component.pendingChangeSpinner = false
           this.$router.push(`/submission-form/${response.data.componentId}?changeRequest=true`)
         })
         .catch(error => {
-          this.changeRequestLoader = false
+          component.pendingChangeSpinner = false
           this.$toasted.error('There was a problem creating the change request')
           console.error(error)
         })
@@ -551,7 +559,11 @@ export default {
         this.isLoading = true
         this.$http.delete(`/openstorefront/api/v1/resource/components/${id}/cascade`)
           .then(response => {
-            this.$toasted.show('Submission Deleted')
+            if (this.currentComponent.pendingChangeComponentId) {
+              this.$toasted.show('Change Request Deleted')
+            } else {
+              this.$toasted.show('Submission Deleted')
+            }
             this.getUserParts()
             this.deleteDialog = false
           })

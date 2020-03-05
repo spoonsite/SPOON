@@ -101,6 +101,9 @@
             />
           </div>
         </div>
+        <div class="d-flex flex-row-reverse">
+          <v-btn @click="setName()" color="primary" class="text-center">Populate With My Information</v-btn>
+        </div>
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Description*</legend>
