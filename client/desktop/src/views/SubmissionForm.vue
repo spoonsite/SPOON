@@ -432,11 +432,12 @@
           <div style="padding-bottom: 1em;" v-if="tags && tags.length !== 0">
             <span v-for="tag in tags" :key="tag.text" class="mr-2" >
               <v-chip
+                class="mb-2"
                 close
                 @click:close="deleteTag(tag)"
-                class="mb-2"
               >
-                {{ tag.text }}
+              <div v-html="tag.text">
+                </div>
               </v-chip>
             </span>
           </div>
@@ -456,6 +457,9 @@
                 </v-list-item-content>
               </v-list-item>
               <v-divider class="mt-2"></v-divider>
+            </template>
+            <template v-slot:item="{ item }">
+              <div v-html="item.text"></div>
             </template>
           </v-combobox>
         </div>
