@@ -499,13 +499,14 @@ export default {
       this.changeRequestLoader = true
       this.$http.post(`/openstorefront/api/v1/resource/components/${component.componentId}/changerequest`)
         .then(response => {
-          component.pendingChangeSpinner = false
           this.$router.push(`/submission-form/${response.data.componentId}?changeRequest=true`)
         })
         .catch(error => {
-          component.pendingChangeSpinner = false
           this.$toasted.error('There was a problem creating the change request')
           console.error(error)
+        })
+        .finally(() => {
+          component.pendingChangeSpinner = false
         })
     },
     submitRemoval() {
@@ -559,11 +560,7 @@ export default {
         this.isLoading = true
         this.$http.delete(`/openstorefront/api/v1/resource/components/${id}/cascade`)
           .then(response => {
-            if (this.currentComponent.pendingChangeComponentId) {
-              this.$toasted.show('Change Request Deleted')
-            } else {
-              this.$toasted.show('Submission Deleted')
-            }
+            this.$toasted.info(this.currentComponent.pendingChangeComponentId ? 'Change Request Deleted' : 'Submission Deleted')
             this.getUserParts()
             this.deleteDialog = false
           })
