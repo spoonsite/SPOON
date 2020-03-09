@@ -440,37 +440,25 @@
               </v-chip>
             </span>
           </div>
-          <v-combobox label="Add Tags" :items="tagsList" v-model="tagName" clearable :disabled="!id" />
-          <v-btn v-if="typeof tagName === 'object'" @click="addNewTag(tagName.text)" :disabled="tagName === ''">
-            Add
-          </v-btn>
-          <v-btn v-else @click="addNewTag(tagName)" :disabled="tagName === ''">
-            Add
-          </v-btn>
+          <v-combobox
+            label="Add Tags"
+            :search-input.sync="tagSearchText"
+            :items="tagsList"
+            v-model="tagName"
+            clearable
+            :disabled="!id"
+            @keyup.enter="addNewTag()"
+          >
+            <template v-slot:prepend-item>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Create a new tag by typing some text and then pressing enter</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider class="mt-2"></v-divider>
+            </template>
+          </v-combobox>
         </div>
-        <!-- <v-autocomplete
-          label="Add tags"
-          v-model="tags"
-          multiple
-          return-object
-          :items="tagsList"
-          chips
-          :disabled="!id"
-          deletable-chips
-          @keypress.enter="addTag"
-          :search-input.sync="tagSearchText"
-          class="mx-4"
-          :rules="[rules.noSpecialChar]"
-        >
-          <template v-slot:prepend-item>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title>Create a new tag by typing some text and then pressing enter</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-divider class="mt-2"></v-divider>
-          </template>
-        </v-autocomplete> -->
       </fieldset>
 
       <fieldset class="fieldset mb-1">
@@ -759,32 +747,6 @@ export default {
       required: value => !!value || 'Required',
       requiredArray: value => value.length !== 0 || 'Required',
       len255: value => value.length < 255 || 'Must have less than 255 characters',
-      noSpecialChar: value => {
-        // var characters = /[\W]+/
-        if (value === null) {
-          return true
-        }
-        if (Array.isArray(value)) {
-          let valid = true
-          value.forEach(e => {
-            if (typeof e === 'object') {
-              e = e.text
-              // console.log(e)
-            }
-            // console.log(e)
-            if (/^[-@.,`'~!$%^*[()="/#\]{}&+\\|:;?\w\s]*$/.exec(e) === null || /^[-@.,`'~!$%^*"[\][{}()=/#&+\\|:;?\w\s]*$/.exec(e)[0] !== e) {
-              valid = false
-            }
-          })
-          if (valid === false) {
-            return 'Invalid Character'
-          } else {
-            return true
-          }
-        }
-        // else it is just a string, so check that
-        return /\d+(\.\d+)?/.exec(value)[0] === value || 'Invalid Number'
-      },
       numberOnly: value => {
         // If the value is null, we don't care about validation, in this case
         if (value === null) {
@@ -1338,27 +1300,27 @@ export default {
     removeLink(index) {
       this.resources.links.splice(index, 1)
     },
-    addNewTag(tagName) {
-      tagName.trim()
-      if (!this.tags.some(obj => obj.text === tagName)) {
+    addNewTag() {
+      this.tagSearchText = this.tagSearchText.trim()
+      if (!this.tags.some(tag => tag.text === this.tagSearchText)) {
         this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
-          text: tagName
+          text: this.tagSearchText
         })
           .then(response => {
             if (response.data.errors) {
-              this.$toasted.error('Problem adding tag: ' + tagName)
+              this.$toasted.error('Problem adding tag: ' + this.tagSearchText)
               console.error(response.data.errors)
             } else {
               this.tags.push(response.data)
-              this.tagName = ''
+              this.tagSearchText = ''
             }
           })
           .catch(error => {
-            this.$toasted.error('Problem adding tag: ', tagName)
+            this.$toasted.error('Problem adding tag: ', this.tagSearchText)
             console.error(error)
           })
       } else {
-        this.$toasted.error('The tag ' + tagName + ' already exists')
+        this.$toasted.error('The tag ' + this.tagSearchText + ' already exists')
       }
     },
     deleteTag(tag) {
@@ -1419,24 +1381,6 @@ export default {
         this.showEntryTypeWarning = true
       }
     },
-    // tags: function(newVal, oldVal) {
-    //   let newTag = _.differenceBy(newVal, oldVal, 'text')
-    //   let removedTag = _.differenceBy(oldVal, newVal, 'text')
-    //   if (newTag && newTag.length > 0) {
-    //     // add new tag
-    //     this.addNewTag(newTag[0].text)
-    //   }
-    //   if (removedTag && removedTag.length > 0) {
-    //     // add new tag
-    //     this.$http
-    //       .delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${removedTag[0].tagId}`)
-    //       .then(res => {})
-    //       .catch(e => {
-    //         this.$toasted.error('There was a problem deleteing a tag from the submission')
-    //         console.error('Problem deleting tag: ', removedTag)
-    //       })
-    //   }
-    // },
     isFormValid: function(newVal, oldVal) {
       if (newVal && this.id === null) {
         this.save()
