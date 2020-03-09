@@ -1320,7 +1320,7 @@ export default {
             }
           })
           .catch(error => {
-            this.$toasted.error('Problem adding tag: ', this.tagSearchText)
+            this.$toasted.error('Problem adding tag: ' + this.tagSearchText)
             console.error(error)
           })
       } else {
@@ -1334,7 +1334,7 @@ export default {
           this.tagName = ''
         })
         .catch(error => {
-          this.$toasted.error('There was a problem deleting the tag')
+          this.$toasted.error('There was a problem deleting the tag' + this.tagSearchText)
           console.error(error)
         })
     },
