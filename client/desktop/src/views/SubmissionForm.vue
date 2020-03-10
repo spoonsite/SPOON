@@ -163,7 +163,7 @@
                 : [rules.required, rules.attrMaxLen]
             "
             required
-            counter="200"
+            :counter="ATTR_CODE_MAX_LEN"
           />
           <v-autocomplete
             v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
