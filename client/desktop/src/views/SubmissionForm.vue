@@ -126,21 +126,11 @@
             :items="attribute.codes"
             item-text="label"
             item-value="code"
-            :search-input.sync="attribute.searchText"
-            @keypress.enter="
-              attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
-              attribute.selectedCodes.push({
-                label: attribute.searchText,
-                code: attribute.searchText,
-                userCreated: true
-              })
-              attribute.searchText = ''
-            "
             class="mr-3"
             :rules="
               attribute.attributeValueType === 'NUMBER'
-                ? [rules.requiredArray, rules.numberOnly]
-                : [rules.requiredArray]
+                ? [rules.requiredArray, rules.numberOnly, rules.attrMaxLenArray]
+                : [rules.requiredArray, rules.attrMaxLenArray]
             "
             required
           />
@@ -169,8 +159,8 @@
             class="mr-3"
             :rules="
               attribute.attributeValueType === 'NUMBER'
-                ? [rules.required, rules.numberOnly, rules.len200]
-                : [rules.required, rules.len200]
+                ? [rules.required, rules.numberOnly, rules.attrMaxLen]
+                : [rules.required, rules.attrMaxLen]
             "
             required
             counter="200"
@@ -215,18 +205,12 @@
             :items="attribute.codes"
             item-text="label"
             item-value="code"
-            :search-input.sync="attribute.searchText"
-            @keypress.enter="
-              attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
-              attribute.selectedCodes.push({
-                label: attribute.searchText,
-                code: attribute.searchText,
-                userCreated: true
-              })
-              attribute.searchText = ''
-            "
             class="mr-3"
-            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly] : []"
+            :rules="
+              attribute.attributeValueType === 'NUMBER'
+                ? [rules.numberOnly, rules.attrMaxLenArray]
+                : [rules.attrMaxLenArray]
+            "
           />
           <v-autocomplete
             v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
@@ -245,8 +229,10 @@
             v-model="attribute.selectedCodes"
             :label="`${attribute.description}`"
             class="mr-3"
-            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly, rules.len200] : [rules.len200]"
-            counter="200"
+            :rules="
+              attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly, rules.attrMaxLen] : [rules.attrMaxLen]
+            "
+            :counter="ATTR_CODE_MAX_LEN"
           />
           <v-autocomplete
             v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
@@ -602,6 +588,8 @@ const MEDIA_TYPE_CODE = {
   OTHER: 'OTH'
 }
 
+const ATTR_CODE_MAX_LEN = 200
+
 // from MediaFileType.java
 // const MEDIA_FILE_TYPE = {
 //   GENERAL: 'GENERAL',
@@ -744,7 +732,20 @@ export default {
       required: value => !!value || 'Required',
       requiredArray: value => value.length !== 0 || 'Required',
       len255: value => value.length < 255 || 'Must have less than 255 characters',
-      len200: value => value.length < 200 || 'Must have less than 200 characters',
+      attrMaxLen: value => value.length < ATTR_CODE_MAX_LEN || `Must have less than ${ATTR_CODE_MAX_LEN} characters`,
+      attrMaxLenArray: value => {
+        let isValid = true
+        value.forEach(e => {
+          if (e.code) {
+            if (e.code.length > ATTR_CODE_MAX_LEN) {
+              isValid = false
+            }
+          } else if (e.length > ATTR_CODE_MAX_LEN) {
+            isValid = false
+          }
+        })
+        return isValid ? true : `All codes must have less than ${ATTR_CODE_MAX_LEN} characters`
+      },
       numberOnly: value => {
         // If the value is null, we don't care about validation, in this case
         if (value === null) {
@@ -937,6 +938,7 @@ export default {
           }
         }
       })
+      this.$refs.submissionForm.validate()
     },
     /**
      * Fetch and load the suggested and required attributes for a given entry type
@@ -1327,6 +1329,7 @@ export default {
     },
     setupAutoSave() {
       this.saveTimer = setInterval(() => {
+        this.$refs.submissionForm.validate()
         if (this.isFormValid) {
           this.save()
         }
