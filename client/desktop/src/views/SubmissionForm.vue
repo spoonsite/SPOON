@@ -1324,7 +1324,7 @@ export default {
             console.error(error)
           })
       } else {
-        this.$toasted.error('The tag ' + this.tagSearchText + ' already exists')
+        this.$toasted.info('The tag ' + this.tagSearchText + ' already exists')
       }
     },
     deleteTag(tag) {
