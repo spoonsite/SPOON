@@ -453,7 +453,7 @@
             <template v-slot:prepend-item>
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>Create a new tag by typing some text and then pressing enter</v-list-item-title>
+                  <v-list-item-title>Create a new tag by typing some text or selecting one below and then pressing enter</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-divider class="mt-2"></v-divider>
@@ -1307,7 +1307,6 @@ export default {
     addNewTag() {
       if (this.tagSearchText !== null) {
         this.tagSearchText = this.tagSearchText.trim()
-        console.log(this.tagSearchText)
         if (this.tagSearchText === null) {
           this.$toasted.info('The tag field is empty')
         } else if (!this.tags.some(tag => tag.text === this.tagSearchText)) {
@@ -1333,7 +1332,6 @@ export default {
       }
     },
     deleteTag(tag) {
-      console.log(tag)
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${tag.tagId}`)
         .then(response => {
           this.tags = this.tags.filter(e => e.tagId !== tag.tagId)
