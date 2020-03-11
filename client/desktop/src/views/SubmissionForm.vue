@@ -449,6 +449,7 @@
             clearable
             :disabled="!id"
             @keyup.enter="addNewTag()"
+            @blur="addNewTag()"
           >
             <template v-slot:prepend-item>
               <v-list-item>
