@@ -1305,29 +1305,35 @@ export default {
       this.resources.links.splice(index, 1)
     },
     addNewTag() {
-      this.tagSearchText = this.tagSearchText.trim()
-      if (!this.tags.some(tag => tag.text === this.tagSearchText)) {
-        this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
-          text: this.tagSearchText
-        })
-          .then(response => {
-            if (response.data.errors) {
+      if (this.tagSearchText !== null) {
+        this.tagSearchText = this.tagSearchText.trim()
+        console.log(this.tagSearchText)
+        if (this.tagSearchText === null) {
+          this.$toasted.info('The tag field is empty')
+        } else if (!this.tags.some(tag => tag.text === this.tagSearchText)) {
+          this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
+            text: this.tagSearchText
+          })
+            .then(response => {
+              if (response.data.errors) {
+                this.$toasted.error('Problem adding tag: ' + this.tagSearchText)
+                console.error(response.data.errors)
+              } else {
+                this.tags.push(response.data)
+                this.tagSearchText = ''
+              }
+            })
+            .catch(error => {
               this.$toasted.error('Problem adding tag: ' + this.tagSearchText)
-              console.error(response.data.errors)
-            } else {
-              this.tags.push(response.data)
-              this.tagSearchText = ''
-            }
-          })
-          .catch(error => {
-            this.$toasted.error('Problem adding tag: ' + this.tagSearchText)
-            console.error(error)
-          })
-      } else {
-        this.$toasted.info('The tag ' + this.tagSearchText + ' already exists')
+              console.error(error)
+            })
+        } else {
+          this.$toasted.info('The tag ' + this.tagSearchText + ' already exists')
+        }
       }
     },
     deleteTag(tag) {
+      console.log(tag)
       this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${tag.tagId}`)
         .then(response => {
           this.tags = this.tags.filter(e => e.tagId !== tag.tagId)
@@ -1350,26 +1356,6 @@ export default {
           this.save()
         }
       }, 30000)
-    },
-    getTags() {
-      this.$http
-        .get(`/openstorefront/api/v1/resource/components/${this.id}/tagsview`)
-        .then(res => {
-          // update the tagIds for all attached tags on the submission
-          this.tags.forEach(el => {
-            if (Array.isArray(res.data)) {
-              res.data.forEach(el2 => {
-                if (el.text === el2.text) {
-                  el.tagId = el2.tagId
-                }
-              })
-            }
-          })
-        })
-        .catch(e => {
-          this.$toasted.error('There was a problem fetching tags for the submission')
-          console.error('problem fetching tags for the submission')
-        })
     }
   },
   watch: {
