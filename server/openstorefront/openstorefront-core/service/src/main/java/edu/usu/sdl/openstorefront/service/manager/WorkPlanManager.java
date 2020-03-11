@@ -19,6 +19,7 @@ import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
+import edu.usu.sdl.openstorefront.core.entity.DBLogRecord;
 import edu.usu.sdl.openstorefront.core.entity.EntityEventType;
 import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
@@ -105,8 +106,8 @@ public class WorkPlanManager
 	}
 
 	/**
-	 * This function passes an event to the event handlers. It is up to the trigger itself to
-	 * determine if the event in question is relevant.
+	 * This function passes an event to the event handlers. It is up to the
+	 * trigger itself to determine if the event in question is relevant.
 	 *
 	 * @param entityEventModel record of event that is happening
 	 */
@@ -131,6 +132,15 @@ public class WorkPlanManager
 
 	private void handleComponentEvent(EntityEventModel entityEventModel)
 	{
+		if (entityEventModel.getEventType().equals("DELETE") || entityEventModel.getEventType().equals("ENTRY_DELETE")) {
+			// We don't need a workplan if the part is being deleted
+			return;
+		}
+		if (entityEventModel.getEntityChanged() instanceof DBLogRecord) {
+			// log records don't need a workplan
+			return;
+		}
+
 		//For now we are only look for events related to components (ignore bulk, rely on sync)
 		Component component = null;
 		if ((entityEventModel.getEntityChanged() != null
@@ -139,6 +149,11 @@ public class WorkPlanManager
 		}
 
 		if (component != null) {
+			if (StringUtils.isBlank(component.getComponentType())) {
+				// If the component doesn't exist, don't handle any events on it
+				return;
+			}
+
 			ServiceProxy service = ServiceProxy.getProxy();
 			WorkPlanLink workPlanLink = service.getWorkPlanService().getWorkPlanForComponent(component.getComponentId());
 

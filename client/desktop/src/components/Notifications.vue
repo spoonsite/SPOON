@@ -3,7 +3,7 @@
     <v-menu offset-y left :close-on-content-click="false">
       <template v-slot:activator="{ on }">
         <v-btn icon v-on="on">
-          <v-badge left overlap light color="info">
+          <v-badge left overlap light color="info" :value="newNotifications">
             <span v-if="notifications && notifications.length > 0" slot="badge">{{ newNotifications }}</span>
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
