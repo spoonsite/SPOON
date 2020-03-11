@@ -749,7 +749,7 @@ export default {
             if (typeof e === 'object') {
               e = e.code
             }
-            if (/\d+(\.\d+)?/.exec(e) === null || /\d+(\.\d+)?/.exec(e)[0] !== e) {
+            if (/-?\d+(\.\d+)?/.exec(e) === null || /-?\d+(\.\d+)?/.exec(e)[0] !== e) {
               valid = false
             }
           })
@@ -761,7 +761,7 @@ export default {
           }
         }
         // else it is just a string, so check that
-        return /\d+(\.\d+)?/.exec(value)[0] === value || 'Invalid Number'
+        return /-?\d+(\.\d+)?/.exec(value)[0] === value || 'Invalid Number'
       },
       image: value => {
         if (value === null) {
