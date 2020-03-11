@@ -127,7 +127,12 @@ public interface WorkPlanService
 	WorkPlan getWorkPlan(String workplanId);
 
 	/**
-	 * Sync work plan to the state of work plan
+	 * Finds the WorkPlan Step that has a "Approval State To Match" (i.e., "Pending", or "Approved")
+	 * that matches the component's Approval Status, then moves the WorkPlan Link of said component
+	 * into that step.
+	 *
+	 * Finds the last WorkPlan Step that matches, so if there is more than one step that is found
+	 * matching, the last occurring one is the one the WorkPlanLink is moved into.
 	 *
 	 * @param componentId
 	 */
