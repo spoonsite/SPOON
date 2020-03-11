@@ -41,7 +41,7 @@ public class TransactionInterceptor
 	@Override
 	public void after(Object proxy, Method m, Object[] args, ProxyContext context)
 	{
-		log.log(Level.FINER, "Commiting transaction");
+		log.log(Level.FINER, "Committing transaction");
 		context.getPersistenceService().commit();
 	}
 

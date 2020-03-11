@@ -642,8 +642,7 @@ public class WorkPlanServiceImpl
 	@Override
 	public void updatedWorkPlanLinkToMatchState(String componentId)
 	{
-		//Assume when this method; the system needs to put the component
-		//in the state that matches the component
+		// the system needs to put the component in the state that matches the component
 		WorkPlanLink workPlanLink = getWorkPlanForComponent(componentId);
 
 		WorkPlan workPlan = getWorkPlan(workPlanLink.getWorkPlanId());
@@ -651,7 +650,6 @@ public class WorkPlanServiceImpl
 		String stepId = matchWorkPlanStepWithStatus(workPlan, componentId);
 		if (!workPlanLink.getCurrentStepId().equals(stepId)) {
 
-			//apply actions?
 			moveWorkLinkToStep(workPlanLink, stepId, true);
 		}
 	}

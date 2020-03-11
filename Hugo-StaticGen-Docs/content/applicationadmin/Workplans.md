@@ -4,9 +4,20 @@ description = ""
 weight = 240
 +++
 
+![Simple illustration of a Work Plan diagram](/images/AppAdmin/Workplans/summarypic.png)
+
+## Table of Contents
+
+1. [**Create A New Workplan**](/applicationadmin/workplans/#create-a-new-workplan)
+  * [**Create the Workplan**](/applicationadmin/workplans/#create-the-workplan)
+  * [**Define WorkPlan Steps**](/applicationadmin/workplans/#define-workplan-steps)
+2. [**WorkPlan Progress (For Admins and SMEs)**](/applicationadmin/workplans/#workplan-progress-for-admins-and-smes)
+3. [**Submissions Page**](/applicationadmin/workplans/#for-submission-owners)
+
 ## Create a new Workplan
 
-A step-by-step guide to creating a workplan.
+A step-by-step guide to creating a workplan. There is a built in default workplan that cannot be deleted. There is no limit on the number of WorkPlans
+ that can be created.
 
 ### Create the Workplan
 
@@ -19,7 +30,7 @@ A step-by-step guide to creating a workplan.
     * Workplan For: Entry
     * Entry Type: Choose the entry type that this workplan will apply to
 
-### 1.2  Define Workplan Steps
+###  Define Workplan Steps
 
 It is a good idea to define the steps to be taken with each entry before creating the actual steps.
 
@@ -27,34 +38,43 @@ It is a good idea to define the steps to be taken with each entry before creatin
 1. Step Configuration:
     * **Step name**: Unique step name
     * **Short Description**: A description of the step. Keep it brief, but be sure to include enough information for the person responsible for the step
-    * **Approval State to Match**: This will be the status of a entry while it is in this step
-    * **Active On**: The state that an entry is currently in when it is assigned to that step
-    * **Role Access**: What role group will be able to view this entry in their Workplan Progress page
+    * **Approval State to Match**: is used to place new entries into matching WorkPlan steps in instances where an entry has never been represented in
+        the particular WorkPlan before. When a new WorkPlan is created, this is what is used to decide where entries should be placed in the new WorkPlan.
 
-1. Step Actions: Step Actions are events that will occur when a step becomes active
+        For example, imagine that the current WorkPlan had a number of entries moving through it such that at any given moment there was a fair number
+        of parts in every WorkPlan step. Let there be a new WorkPlan was created that may or may not have a different number fo steps, different actions,
+        triggers, etc. When the new WorkPlan is made active, and the WorkPlanSync [Job](/applicationadmin/applicationmanagement/#jobs) is run (without running manually, it will run automatically every
+        15 minutes or so), all of the entries in the old, recently inactivated WorkPlan will be placed under WorkPlan step.
 
-{{% notice warning %}}
-In Spoon v2.12, most of the "Active On" options are in Alpha, which means that they will not work as expected because their functionaity has not been programmed into Spoon yet. Those options are
- there as placeholders (if you want these features, please email your adminstator/developer team). The "Update" and "Create" options do work however. Any of the in-alpha options will behave the same
-  as if they were the "Create" option. See below for more details.
-{{% /notice %}}
+        The diagram below shows where entries (the brown cards marked with their current Approval Status) would be placed in a newly created
+        WorkPlan with a different number of steps. Note that when new steps are added to an existing, active WorkPlan, this matching process
+        does not happen.
 
-##### __Step Configuration:__ "Active On" VS "Approval State to Match"
+        ![Example Diagram of Approval State To Matches effect](/images/AppAdmin/Workplans/approvaltomatch.png)
 
-It's important to know the difference between "Active On" and "Approval State to Match". Both define what events will cause a part to be sent to the Workplan Step in question. The difference is in
-the timing of when they take effect. "Active On" events are handled first, then the "Approval State" of a part is checked, and placed into the first step that has a "Approval State to Match".
+    * **Role Access**: What role group will be able to view or move this entry in their Workplan Progress page. Role groups who are put here will be able to see "Forward" and "Back" buttons on their display.
+    * **Active On**: "Triggers" or "Traps" for component events. When an entry experiences an event, it will be sent to the WorkPlan step that has a matching Active On status as that event.
 
-For example, say that a part sitting in a Workplan is manaully set from having an Approval state of "Pending" to "Approved"  (an admin is able to do this through Admin Tools > Data Management > Entries,
-click "Edit"). When the part is re-saved into the database with this new Approval status, an approved event [should] be fired. In the Workplan, the first Step that has an "Active On" option of
- "Approved" will receive that part. Then the Approval State will be checked on the part, and the first step in the Workplan that has an "Approval State to Match" of Approved will recieve the part.
- Thus if there is a workplan step A that has "Active On" attribute Approved, and a workplan step B with an "Approval State to Match" of Approved, then after a part has been approved, the part will
- appear in step B.
+    |      Role Access Option        |                                                                                                                                                                                                                                                     Meaning                                                                                                                                                                                                                                                     |
+    |:------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+    | Active                         | Fires when a component is submitted to the server as needing to  be activated. *                                                                                                                                                                                                                                                                                                                                                                                                                                |
+    | Approve                        | Fires when a component is submitted to the server to be approved.*                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+    | Create                         | Fires when component is first created.                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+    | Deactivated                    | Fires when a component is submitted to the server as needing to be  deactivated. *                                                                                                                                                                                                                                                                                                                                                                                                                              |
+    | Delete                         | This trigger fires, but does nothing. If there is some specific behavior  you would like to see from this event firing, please contact the  development team.                                                                                                                                                                                                                                                                                                                                                   |
+    | Entry Delete                   | This trigger does nothing.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+    | New Submission (Not Submitted) | Only fires when a entry is submitted to be saved, before it is submitted to as pending, where the entry is a "Partial Submission" object, not a "Component"  object. If you are using SPOON v1.12 or greater, you will likely not need this as all user created entries will be "Component" objects.                                                                                                                                                                                                                    |
+    | Pending                        | Fires when a Not-Submitted component is submitted to the server. This trigger is NOT fired when an Admin user manually sets a component's Approval Status to Pending.                                                                                                                                                                                                                                                                                                                                           |
+    | Pending Change Request         | Fires when a change request is submitted to the server.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+    | Published Evaluation           | Fires when an evaluation is submitted to the server as to be Published.                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+    | Unpublished Evaluation         | Fires when an evaluation is submitted to the server as being un-Published.                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+    | Update                         | Fires anytime a component is saved for any reason, in any way. Even editing & saving an entry from the Admin Tools > Data Management > Entries > "Edit" screen fires this trigger. If you attach this trigger to a WorkPlan step, an entry may appear to be "stuck" in that step, as any Action of a step that alters the entry enough to re-save it will trigger the Update trap which sends the entry back to the Update-marked WorkPlan step (An infinite loop, basically). For this reason we do not recommend you use this trigger unless you desire this behavior. Moving a entry manually between steps will not fire the Update trigger.  |
+    __In cases marked with *, note that this trigger is not fired if the entry's status is manually changed by the Admin user from the Admin Tools >
+    Data Management > Entries > "Edit" screen. These triggers are only fired when the status change happens through other means, such as Action Steps.__
 
-Note that in v2.12 of Spoon, only "Create" and "Update" are supported, therefore some events are treated as if they are "Create": Activate, Deactivate, Pending Change Request, Published Evaluation
- (? untested), Unpublished Evaluation (? untested). The Approved and Pending events are treated like Update events. So setting those options will cause the step in question to catch Created and
- Updated parts, respectively.
+3. Step Actions: Step Actions are events that will occur when a step becomes active
 
-## 2. Workplan Progress for Admins and SMEs
+## Workplan Progress for Admins and SMEs
 
 Each step of a workplan will be assigned to a certain group. That group will see the entries that are assigned to them when they access the Workplan Progress page
 (__Data Management &rarr; Workplan Progress__). Each group will complete the task assigned to them. Once completed it will move to the next group.
@@ -64,6 +84,6 @@ The comments feature has two uses. The first is to enable communication between 
 
 The __Assign__ box has a number of operations used to assign a submission to an admin, unassign or assign it to yourself, or reassign it to another user.
 
-## 3. For Submission Owners
+## For Submission Owners
 
 Submission owners will get notifications of comments on their submissions. Owners are expected to update material as recommended by SMEs and reviewers.

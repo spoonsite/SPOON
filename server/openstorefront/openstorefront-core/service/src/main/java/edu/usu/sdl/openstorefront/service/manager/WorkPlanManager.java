@@ -156,7 +156,7 @@ public class WorkPlanManager
 					break;
 				}
 			}
-
+			
 			if (eventStep != null && !eventStep.equals(workPlanLink.getCurrentStepId())) {
 				service.getWorkPlanService().moveWorkLinkToStep(workPlanLink, eventStep, false);
 			}
