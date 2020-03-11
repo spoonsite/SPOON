@@ -60,7 +60,7 @@
                   <v-btn
                     icon
                     v-on="on"
-                    :to="{ name: 'Entry Detail', params: { id: item.componentId } }"
+                    :to="{ name: 'Entry Detail', params: { id: item.componentId }, query: { submission: true } }"
                     style="order: 1"
                   >
                     <v-icon>fas fa-eye</v-icon>
@@ -157,22 +157,20 @@
             @change="uploadErrorDisplay = ''"
             :error-messages="uploadErrorDisplay"
             :disabled="isSendingFile"
-            ></v-file-input>
+          ></v-file-input>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            v-model="isSendingFile"
-            @click="submitBulkFile()"
-            :disabled="isSendingFile"
-            :loading="isSendingFile"
-          >Upload</v-btn>
+          <v-btn v-model="isSendingFile" @click="submitBulkFile()" :disabled="isSendingFile" :loading="isSendingFile"
+            >Upload</v-btn
+          >
           <v-btn
             @click="
               bulkUploadDialog = false
               bulkUploadFile = null
-              "
-          >Close</v-btn>
+            "
+            >Close</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -228,7 +226,7 @@
           <v-btn v-if="requestRemoval" color="warning" @click="submitRemoval()" :disabled="!isFormValid">
             Submit
           </v-btn>
-          <v-btn color="warning" v-else @click="submitDeletion()">
+          <v-btn color="warning" v-else-if="deleteChange" @click="submitDeletion()">
             Delete
           </v-btn>
           <v-btn
@@ -475,8 +473,13 @@ export default {
       this.deleteChange = false
       if (this.currentComponent.status === 'Active' && this.currentComponent.hasChangeRequest) {
         this.requestRemoval = false
+        this.deleteChange = false
       } else if (this.currentComponent.status === 'Active') {
         this.requestRemoval = true
+        this.deleteChange = false
+      } else if (this.currentComponent.status !== 'Active') {
+        this.requestRemoval = false
+        this.deleteChange = true
       }
       this.deleteDialog = true
     },
@@ -521,9 +524,15 @@ export default {
       }
     },
     submitDeletion() {
-      if (this.currentComponent.componentId) {
+      var id = ''
+      if (this.currentComponent.pendingChangeComponentId) {
+        id = this.currentComponent.pendingChangeComponentId
+      } else if (this.currentComponent.componentId) {
+        id = this.currentComponent.componentId
+      }
+      if (id !== '') {
         this.isLoading = true
-        this.$http.delete(`/openstorefront/api/v1/resource/components/${this.currentComponent.componentId}/cascade`)
+        this.$http.delete(`/openstorefront/api/v1/resource/components/${id}/cascade`)
           .then(response => {
             this.$toasted.show('Submission Deleted')
             this.getUserParts()
@@ -538,6 +547,7 @@ export default {
         this.$toasted.error('Submission could not be deleted.')
       }
     },
+
     makeHumanReadable(inputBytes) {
       return humanReadableBytes(inputBytes)
     },

@@ -36,10 +36,12 @@
               <p v-if="detail.lastSubmitDts" class="pb-0 mb-1">
                 <strong>Last Vendor Update Provided:</strong> {{ detail.lastSubmitDts | formatDate }}
               </p>
-              <p v-else class="pb-1 mb-1">
+              <p v-else-if="detail.approvedDate" class="pb-1 mb-1">
                 <strong>Last Vendor Update Provided:</strong> {{ detail.approvedDate | formatDate }}
               </p>
-              <p class="pb-1 mb-1"><strong>Last System Update:</strong> {{ detail.lastActivityDts | formatDate }}</p>
+              <p v-if="detail.lastActivityDts" class="pb-1 mb-1">
+                <strong>Last System Update:</strong> {{ detail.lastActivityDts | formatDate }}
+              </p>
             </div>
             <div style="padding-bottom: 1em;" class="clearfix tags" v-if="detail.tags && detail.tags.length !== 0">
               <span v-for="tag in detail.tags" :key="tag.text" style="margin-right: 0.8em;;">
@@ -50,7 +52,7 @@
               </span>
             </div>
           </div>
-          <div class="detail-header-right">
+          <div v-if="!isSubmission" class="detail-header-right">
             <v-switch
               class="watching"
               color="success"
@@ -590,6 +592,7 @@ export default {
     QuestionModal
   },
   mounted() {
+    this.isSubmission = this.$route.query.submission
     if (this.$route.params.id) {
       this.id = this.$route.params.id
       this.newReview.componentId = this.id
@@ -617,6 +620,7 @@ export default {
   },
   data() {
     return {
+      isSubmission: false,
       baseURL: '/openstorefront/',
       isLoading: true,
       autoApprove: false,

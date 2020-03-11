@@ -236,6 +236,7 @@ public class UserSubmissionResource
 			@PathParam("submissionId") String submissionId
 	)
 	{
+		// TODO: FIX THIS!!! If a bad submission is submitted the submission is deleted from the DB.
 		UserSubmission existing = new UserSubmission();
 		existing.setUserSubmissionId(submissionId);
 		existing = existing.find();
