@@ -129,8 +129,8 @@
             class="mr-3"
             :rules="
               attribute.attributeValueType === 'NUMBER'
-                ? [rules.requiredArray, rules.numberOnly, rules.attrMaxLenArray]
-                : [rules.requiredArray, rules.attrMaxLenArray]
+                ? [rules.requiredArray, rules.numberOnly, rules.len200Array]
+                : [rules.requiredArray, rules.len200Array]
             "
             required
           />
@@ -159,8 +159,8 @@
             class="mr-3"
             :rules="
               attribute.attributeValueType === 'NUMBER'
-                ? [rules.required, rules.numberOnly, rules.attrMaxLen]
-                : [rules.required, rules.attrMaxLen]
+                ? [rules.required, rules.numberOnly, rules.len200]
+                : [rules.required, rules.len200]
             "
             required
             :counter="ATTR_CODE_MAX_LEN"
@@ -207,9 +207,7 @@
             item-value="code"
             class="mr-3"
             :rules="
-              attribute.attributeValueType === 'NUMBER'
-                ? [rules.numberOnly, rules.attrMaxLenArray]
-                : [rules.attrMaxLenArray]
+              attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly, rules.len200Array] : [rules.len200Array]
             "
           />
           <v-autocomplete
@@ -229,9 +227,7 @@
             v-model="attribute.selectedCodes"
             :label="`${attribute.description}`"
             class="mr-3"
-            :rules="
-              attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly, rules.attrMaxLen] : [rules.attrMaxLen]
-            "
+            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly, rules.len200] : [rules.len200]"
             :counter="ATTR_CODE_MAX_LEN"
           />
           <v-autocomplete
@@ -588,8 +584,6 @@ const MEDIA_TYPE_CODE = {
   OTHER: 'OTH'
 }
 
-const ATTR_CODE_MAX_LEN = 200
-
 // from MediaFileType.java
 // const MEDIA_FILE_TYPE = {
 //   GENERAL: 'GENERAL',
@@ -655,6 +649,7 @@ export default {
   data: () => ({
     // NOTE: Server supports more but sometimes prettifies the html which means this needs to be a smaller value
     MAX_DESCRIPTION_LENGTH: 64000,
+    ATTR_CODE_MAX_LEN: 200,
     saving: false,
     timeLastSaved: null,
     saveTimer: null,
@@ -732,19 +727,19 @@ export default {
       required: value => !!value || 'Required',
       requiredArray: value => value.length !== 0 || 'Required',
       len255: value => value.length < 255 || 'Must have less than 255 characters',
-      attrMaxLen: value => value.length < ATTR_CODE_MAX_LEN || `Must have less than ${ATTR_CODE_MAX_LEN} characters`,
-      attrMaxLenArray: value => {
+      len200: value => value.length < 200 || 'Must have less than 200 characters',
+      len200Array: value => {
         let isValid = true
         value.forEach(e => {
           if (e.code) {
-            if (e.code.length > ATTR_CODE_MAX_LEN) {
+            if (e.code.length > 200) {
               isValid = false
             }
-          } else if (e.length > ATTR_CODE_MAX_LEN) {
+          } else if (e.length > 200) {
             isValid = false
           }
         })
-        return isValid ? true : `All codes must have less than ${ATTR_CODE_MAX_LEN} characters`
+        return isValid ? true : 'All codes must have less than 200 characters'
       },
       numberOnly: value => {
         // If the value is null, we don't care about validation, in this case
