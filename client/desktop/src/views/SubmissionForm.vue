@@ -525,8 +525,8 @@
         <p>If you close the entry without submitting you will need to come back and finish to submit the entry.</p>
         <v-btn
           class="mr-4 mb-3"
-          :loading="savingAndClose"
-          :disabled="savingAndClose"
+          :loading="savingAndClose || submitting || saving"
+          :disabled="savingAndClose || submitting || saving"
           color="primary"
           @click="saveAndClose()"
         >
@@ -540,7 +540,7 @@
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="submitting || !isFormValid"
+          :disabled="submitting || !isFormValid || saving || savingAndClose"
           color="success"
           class="mr-4 mb-3"
           @click="submitConfirmDialog = true"
