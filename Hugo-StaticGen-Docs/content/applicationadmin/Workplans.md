@@ -38,8 +38,9 @@ It is a good idea to define the steps to be taken with each entry before creatin
 1. Step Configuration:
     * **Step name**: Unique step name
     * **Short Description**: A description of the step. Keep it brief, but be sure to include enough information for the person responsible for the step
-    * **Approval State to Match**: is used to place new entries into matching WorkPlan steps in instances where an entry has never been represented in
+    * **Approval State to Match**: is only used to place new entries into matching WorkPlan steps in instances where an entry has never been represented in
         the particular WorkPlan before. When a new WorkPlan is created, this is what is used to decide where entries should be placed in the new WorkPlan.
+        Transitions between WorkPlans are the only time this marker is used.
 
         For example, imagine that the current WorkPlan had a number of entries moving through it such that at any given moment there was a fair number
         of parts in every WorkPlan step. Let there be a new WorkPlan was created that may or may not have a different number of steps, different actions,

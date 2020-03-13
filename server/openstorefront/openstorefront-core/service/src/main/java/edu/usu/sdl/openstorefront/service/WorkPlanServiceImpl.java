@@ -598,7 +598,7 @@ public class WorkPlanServiceImpl
 			for (Component component : components) {
 				//critical loop
 				try {
-					//ignore return
+					//ignore return. This function creates a new WorkPlanLink for the component if it doesn't exist in active WorkPlan
 					getWorkPlanForComponent(component.getComponentId());
 					synced++;
 				} catch (Exception e) {
@@ -636,7 +636,6 @@ public class WorkPlanServiceImpl
 		}
 		final int totalSyncSubmission = synced;
 		LOG.log(Level.FINER, () -> "Synced " + totalSyncSubmission + " Partial Submission worklinks.");
-
 	}
 
 	@Override
