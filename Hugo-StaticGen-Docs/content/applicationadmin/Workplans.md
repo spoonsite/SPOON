@@ -8,16 +8,23 @@ weight = 240
 
 ## Table of Contents
 
-1. [**Create A New Workplan**](/applicationadmin/workplans/#create-a-new-workplan)
+1. [**Workplans**](/applicationadmin/workplans/#workplans)
   * [**Create the Workplan**](/applicationadmin/workplans/#create-the-workplan)
   * [**Define WorkPlan Steps**](/applicationadmin/workplans/#define-workplan-steps)
 2. [**WorkPlan Progress (For Admins and SMEs)**](/applicationadmin/workplans/#workplan-progress-for-admins-and-smes)
 3. [**Submissions Page**](/applicationadmin/workplans/#for-submission-owners)
 
-## Create a new Workplan
+## Workplans
 
-A step-by-step guide to creating a workplan. There is a built in default workplan that cannot be deleted. There is no limit on the number of WorkPlans
+A step-by-step guide to creating and managing workplans. There is a built in default workplan that cannot be deleted. There is no limit on the number of WorkPlans
  that can be created.
+
+ The __Default WorkPlan__: Spoon comes with a default workplan that is not deleteable. This workplan serves
+ as a safe fallback in the event of unusual and unlikely bugs affecting Spoon.
+
+ There can only be __two active workplans__ at a time. All entries should be in an active workplan, and if they are not,
+ they are automatically migrated to current active workplan that has a matching Entry Type. Look up the WorkPlanSync Job
+ for information on how this process can be expedited.
 
 ### Create the Workplan
 
