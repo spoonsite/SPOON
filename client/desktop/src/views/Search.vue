@@ -687,7 +687,7 @@ export default {
       })
 
       // Sort attribute codes
-      for (let key in that.searchResultsAttributes) {
+      for (const key in that.searchResultsAttributes) {
         that.searchResultsAttributes[key].codes.sort((e1, e2) => e1.code > e2.code)
       }
 
