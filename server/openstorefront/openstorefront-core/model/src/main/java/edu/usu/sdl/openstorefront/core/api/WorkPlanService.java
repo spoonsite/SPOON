@@ -137,7 +137,7 @@ public interface WorkPlanService
 	 * Finds the last WorkPlan Step that matches, so if there is more than one step that is found
 	 * matching, the last occurring one is the one the WorkPlanLink is moved into.
 	 *
-	 * @param componentId
+	 * @param componentId The UUID of the component to update
 	 */
 	void updatedWorkPlanLinkToMatchState(String componentId);
 
