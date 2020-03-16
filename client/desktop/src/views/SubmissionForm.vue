@@ -1,6 +1,13 @@
 <template>
   <div>
-    <h1 class="text-center mt-4">New Entry Submission Form</h1>
+    <h1 class="text-center mt-4">
+      <div v-if="isChangeRequest">
+        Change Request Form
+      </div>
+      <div v-else>
+        New Entry Submission Form
+      </div>
+    </h1>
     <div class="text-center px-2 error--text">
       <h2>Caution!</h2>
       <p v-html="$store.state.branding.userInputWarning"></p>
@@ -93,6 +100,9 @@
               class="mx-4 mw-18"
             />
           </div>
+        </div>
+        <div class="d-flex flex-row-reverse">
+          <v-btn @click="setName()" color="primary" class="text-center">Populate With My Information</v-btn>
         </div>
       </fieldset>
       <fieldset class="fieldset">
@@ -619,6 +629,7 @@ export default {
   mounted() {
     this.bypassLeaveConfirmation = false
     // load the data from an existing submission
+    this.isChangeRequest = !!this.$route.query.changeRequest
     if (this.$route.params.id) {
       if (this.$route.params.id !== 'new') {
         // load in the data
@@ -665,6 +676,7 @@ export default {
     saveTimer: null,
     submitText: 'Submit',
     isChangeRequest: false,
+    pendingChangeId: null,
     submitting: false,
     submitConfirmDialog: false,
     savingAndClose: false,
@@ -795,6 +807,7 @@ export default {
       this.$http
         .get(`/openstorefront/api/v1/resource/componentsubmissions/${id}`)
         .then(response => {
+          this.pendingChangeId = response.data.component.pendingChangeId
           let component = response.data.component
           let contacts = response.data.contacts
           let media = response.data.media
@@ -894,6 +907,7 @@ export default {
       return {
         component: {
           name: this.entryTitle,
+          pendingChangeId: this.pendingChangeId,
           description: this.description,
           componentType: this.entryType,
           organization: this.organization
@@ -1012,9 +1026,12 @@ export default {
       this.bypassLeaveConfirmation = true
       this.submitConfirmDialog = false
       this.submitting = true
+      let url = this.isChangeRequest
+        ? `/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submitchangerequest`
+        : `/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submit`
       this.save(() => {
         this.$http
-          .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submit`, this.getFormData())
+          .put(url, this.getFormData())
           .then(response => {
             if (response.data && response.data.success === false) {
               this.errors = response.data.errors.entry
