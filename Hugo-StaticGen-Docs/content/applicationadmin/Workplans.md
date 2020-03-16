@@ -20,11 +20,25 @@ A step-by-step guide to creating and managing workplans. There is a built in def
  that can be created.
 
  The __Default WorkPlan__: Spoon comes with a default workplan that is not deleteable. This workplan serves
- as a safe fallback in the event of unusual and unlikely bugs affecting Spoon.
+  as a safe fallback in the event of unusual and unlikely bugs affecting Spoon.
 
- There can only be __two active workplans__ at a time. All entries should be in an active workplan, and if they are not,
- they are automatically migrated to current active workplan that has a matching Entry Type. Look up the WorkPlanSync Job
- for information on how this process can be expedited.
+ __"Active" Workplans__ an active workplan is the workplan the system will use to classify all entries on Spoon.
+  All entries should be in an active workplan; approximately every 10 minutes the WorkPlanSync [Job](/applicationadmin/applicationmanagement/#jobs) which checks every entry on Spoon to ensure that it is represented in an active workplan,
+  and for those that are not (possibly because they used to reside in a just-recently de-activated WorkPlan), they are
+  reassgined to the WorkPlan marked for entries of their Entry Type*.
+
+  __Entry Types__ are the kinds of types an entry can be. Workplans can be assigned to one or more Entry Types
+  simultaneously. Learn about [creating Entry Types](/applicationadmin/attributes/#entry-types), or learn about [setting
+  a Workplan's Entry Types](/applicationadmin/workplans/#create-the-workplan)
+
+  If there is no active WorkPlan that is marked to accept entries of the Entry Type needed, that entry will be
+  assigned to the default WorkPlan.
+
+  If an entry is in a Workplan that is inactiaved, and there is another, active WorkPlan that has a matching Entry Type,
+  the entry will be moved to that WorkPlan.
+
+  *If an entry is in a WorkPlan that is inactivated and there is NOT another active WorkPlan with a matching Entry Type,
+  the entry will stay in the inactivated Workplan, it will NOT be moved to the default Workplan.
 
 ### Create the Workplan
 
@@ -33,7 +47,7 @@ A step-by-step guide to creating and managing workplans. There is a built in def
 3. Click __+Add Workplan__ ![Workplan Creation Tool](/images/AppAdmin/AddWorkplan.JPG)
 4. First fill in the Workplan Config Section
     * Workplan Name: Unique Workplan name
-    * Workplan Admin Role: Choose the user group that will have access to entries in this workplan
+    * Workplan Admin Role: Allows users that have this role to manage records that have this work plan
     * Workplan For: Entry
     * Entry Type: Choose the entry type that this workplan will apply to
 
