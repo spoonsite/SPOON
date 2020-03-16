@@ -17,16 +17,18 @@
           :footer-props="{
             'items-per-page-options': [10, 20, 30, 40, 50]
           }"
-          :sort-by="['name']"
+          :sort-by="['lastUpdate']"
+          sort-desc
           :hide-default-footer="isLoading || componentData.length === 0"
           class="tableLayout"
         >
-          <template v-slot:item.name="{ item }">
-            {{ item.name }}
-            <div v-if="item.submissionOriginalComponentId" style="color: red;">Incomplete Change Request</div>
-            <div v-else-if="item.submissionId" style="color: red;">Incomplete Submission</div>
-            <div v-else-if="item.evaluationsAttached" style="color: red;">Evaluations Are In Progress</div>
-          </template>
+        <template v-slot:item.name="{ item }">
+          {{ item.name }}
+          <div v-if="item.evaluationsAttached" style="color: red;">Evaluations Are In Progress</div>
+        </template>
+        <template v-slot:item.pendingChangeSubmitDate="{ item }">
+          <span v-if="item.pendingChangeSubmitDate">{{ item.pendingChangeSubmitDate | formatDate }}</span>
+        </template>
           <template v-slot:item.submitDate="{ item }">
             <div v-if="item.submitDate">{{ item.submitDate | formatDate }}</div>
             <div v-else-if="item.status === 'Pending'">{{ item.lastUpdate | formatDate }}</div>
@@ -278,9 +280,9 @@ export default {
       tableHeaders: [
         { text: 'Name', value: 'name' },
         { text: 'Status', value: 'status' },
+        { text: 'Latest Change Request', value: 'pendingChangeSubmitDate' },
         { text: 'Type', value: 'type' },
         { text: 'Submit/Approved Date', value: 'submitDate' },
-        { text: 'Pending Change', value: 'pendingChange' },
         { text: 'Last Update', value: 'lastUpdate' },
         { text: 'Approval Workflow', value: 'approvalWorkflow', sortable: false },
         { text: 'Actions', value: 'actions', sortable: false }
@@ -366,7 +368,6 @@ export default {
     },
     combineComponentsAndWorkPlans(allComponents, workPlans) {
       let components = allComponents.filter(e => e.componentId !== undefined)
-      let submissions = allComponents.filter(e => e.userSubmissionId !== undefined)
       let updatedComponents = []
 
       components.forEach(component => {
@@ -381,10 +382,6 @@ export default {
         } else {
           updatedComponents.push(this.generateComponent(component, null))
         }
-      })
-
-      submissions.forEach(submission => {
-        updatedComponents.push(this.generateSubmission(submission))
       })
 
       return updatedComponents
@@ -439,28 +436,17 @@ export default {
         status: this.determineApprovalStatus(component),
         submitDate: component.approvedDts,
         pendingChange: this.determineChangeRequest(component),
+        pendingChangeSubmitDate: component.pendingChangeSubmitDts,
         steps: steps,
         currentStep: currentStep,
         submissionOriginalComponentId: component.submissionOriginalComponentId,
-        evaluationsAttached: component.evaluationsAttached,
         hasChangeRequest: component.statusOfPendingChange != null,
         pendingChangeComponentId: component.pendingChangeComponentId,
+        evaluationsAttached: component.evaluationsAttached,
         pendingChangeSpinner: false
       }
 
       return updatedComponent
-    },
-    generateSubmission(submission) {
-      return {
-        name: submission.name,
-        submissionId: submission.userSubmissionId,
-        type: submission.componentTypeLabel,
-        status: this.determineApprovalStatus(submission),
-        lastUpdate: submission.updateDts,
-        steps: null,
-        submissionOriginalComponentId: submission.submissionOriginalComponentId,
-        evaluationsAttached: submission.evaluationsAttached
-      }
     },
     determineApprovalStatus(component) {
       if (component.approvalState === 'A') {
