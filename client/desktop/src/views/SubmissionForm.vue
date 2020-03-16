@@ -807,11 +807,12 @@ export default {
           this.entryType = component.componentType
           this.description = component.description
           this.organization = component.organization
+
           this.media = media.filter(e => e.file)
           if (this.media.length !== media.length) {
             this.$toasted.info('Some images failed to import, please double check the Resources section')
           }
-          console.log(media)
+
           this.resources.localFiles = resourceFiles
           this.resources.links = resourceLinks
           this.tags = response.data.tags
