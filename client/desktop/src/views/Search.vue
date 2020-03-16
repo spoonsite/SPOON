@@ -103,10 +103,10 @@
           <h3>Sort by:</h3>
           <v-select v-model="searchSortField" :items="searchSortFields"></v-select>
           <h3>Page Size</h3>
-          {{ searchPageSize }}
+          {{ pageSize }}
           <div class="d-flex">
-            <v-slider v-model="searchPageSize" step="4" min="4" thumb-label></v-slider>
-            <v-btn @click="updatePageSize()" class="primary">Update</v-btn>
+            <v-slider v-model="pageSize" step="4" min="4" thumb-label></v-slider>
+            <v-btn @click="updatePageSize(pageSize)" class="primary">Update</v-btn>
           </div>
           <h2>Display Options</h2>
           <v-checkbox
@@ -1011,7 +1011,8 @@ export default {
         this.showFilters = true
       }
     },
-    updatePageSize() {
+    updatePageSize(pageSize) {
+      this.searchPageSize = pageSize
       window.localStorage.setItem('searchPageSize', JSON.stringify(this.searchPageSize))
       this.newSearch()
     }
