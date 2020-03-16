@@ -209,9 +209,14 @@
             <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="attributeQuery = ''">mdi-close</v-icon>
           </div>
           <div style="overflow-x: auto;">
-            <v-chip style="max-width: none;" close v-for="attr in filters.attributes" :key="attr" @click:close="removeAttributeFilter(attr)">{{
-              printAttribute(attr)
-            }}</v-chip>
+            <v-chip
+              style="max-width: none;"
+              close
+              v-for="attr in filters.attributes"
+              :key="attr"
+              @click:close="removeAttributeFilter(attr)"
+              >{{ printAttribute(attr) }}</v-chip
+            >
           </div>
           <div v-if="Object.keys(searchResultsAttributes).length !== 0">
             Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes
@@ -298,7 +303,13 @@
             </v-avatar>
             {{ filters.organization }}
           </v-chip>
-          <v-chip close @click:close="removeAttributeFilter(attr)" v-for="attr in filters.attributes" :key="attr" style="max-width: none;">
+          <v-chip
+            close
+            @click:close="removeAttributeFilter(attr)"
+            v-for="attr in filters.attributes"
+            :key="attr"
+            style="max-width: none;"
+          >
             <v-avatar left>
               <v-icon small>fas fa-clipboard-list</v-icon>
             </v-avatar>
@@ -674,6 +685,11 @@ export default {
           }
         }
       })
+
+      // Sort attribute codes
+      for (const key in that.searchResultsAttributes) {
+        that.searchResultsAttributes[key].codes.sort((e1, e2) => e1.code > e2.code)
+      }
 
       // Get the first 10 attributes
       that.attributeKeys = Object.keys(that.searchResultsAttributes)
