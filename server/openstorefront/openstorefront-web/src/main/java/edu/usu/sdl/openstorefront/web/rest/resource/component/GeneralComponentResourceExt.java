@@ -1123,7 +1123,7 @@ public abstract class GeneralComponentResourceExt
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(UserSubmission.class)
-	@APIDescription("Create a change request user submission")
+	@APIDescription("[DEPRECIATED] Create a change request user submission")
 	@Path("/{id}/changerequestforsubmission")
 	public Response changeRequestForSubmission(
 			@PathParam("id")
