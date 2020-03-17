@@ -19,11 +19,9 @@ weight = 240
 A step-by-step guide to creating and managing workplans. There is a built in __Default WorkPlan__ that cannot be deleted. There is no limit on the number of WorkPlans that can be created.
 
  The __"Active" Workplans__ will be used by the system to classify all entries on Spoon.
-  All entries should be in an active workplan; approximately every 10 minutes the WorkPlanSync [Job]({{<relref "ApplicationManagement.md#jobs">}}) which checks every entry on Spoon to ensure that it is represented in an active workplan,
-  and for those that are not (possibly because they used to reside in a just-recently de-activated WorkPlan), they are
-  reassgined to the WorkPlan marked for entries of their Entry Type*.
+  All entries should be in an active workplan. To enforce this, approximately every 10 minutes the WorkPlanSync [Job]({{<relref "ApplicationManagement.md#jobs">}}) This job checks every entry on Spoon to ensure that it is represented in an active WorkPlan. For those that are not, possibly because they used to reside in a recently de-activated WorkPlan, they are reassgined to the WorkPlan marked for entries of their Entry Type or the Default WorkPlan if no active WorkPlans have an appropriate type^[ There is a notable exception to this rule: If an entry is in a WorkPlan that is inactivated and there is NOT another active WorkPlan with a matching Entry Type, the entry will stay in the inactivated Workplan, it will NOT be moved to the default Workplan. So it is possible for a entry to be in an inactivated plan. In this state these entries can be acted upon in the same manner as normal entries. ].
 
-  __Entry Types__ are the kinds of types an entry can be. Workplans can be assigned to one or more Entry Types
+  Workplans can be assigned to one or more [Entry Types]({{<relref "#create-the-workplan">}})
   simultaneously. Learn about [creating Entry Types]({{<relref "Attributes.md#entry-types">}}), or learn about [setting
   a Workplan's Entry Types]({{<relref "#create-the-workplan">}})
 
@@ -33,9 +31,6 @@ A step-by-step guide to creating and managing workplans. There is a built in __D
   If an entry is in a Workplan that is inactiaved, and there is another, active WorkPlan that has a matching Entry Type,
   the entry will be moved to that WorkPlan.
 
-  *If an entry is in a WorkPlan that is inactivated and there is NOT another active WorkPlan with a matching Entry Type,
-  the entry will stay in the inactivated Workplan, it will NOT be moved to the default Workplan.
-
 ### Create the Workplan
 
 1. Navigate to __Admin Tools__ if you are not already there (click your username in the upper-right, then Admin Tools)
@@ -43,7 +38,7 @@ A step-by-step guide to creating and managing workplans. There is a built in __D
 3. Click __+Add Workplan__ ![Workplan Creation Tool](/images/AppAdmin/AddWorkplan.JPG)
 4. First fill in the Workplan Config Section
     * Workplan Name: Unique Workplan name
-    * Workplan Admin Role: Allows users that have this role to manage records that have this work plan
+    * Workplan Admin Role: Choose the user group that will have access to entries in this workplan
     * Workplan For: Entry
     * Entry Type: Choose the entry type that this workplan will apply to
 
