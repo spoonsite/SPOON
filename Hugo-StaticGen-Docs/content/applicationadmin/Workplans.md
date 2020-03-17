@@ -32,12 +32,6 @@ A step-by-step guide to creating and managing workplans. There is a built in __D
   simultaneously. Learn about [creating Entry Types]({{<relref "Attributes.md#entry-types">}}), or learn about [setting
   a Workplan's Entry Types]({{<relref "#create-the-workplan">}})
 
-  If there is no active WorkPlan that is marked to accept entries of the Entry Type needed, that entry will be
-  assigned to the default WorkPlan.
-
-  If an entry is in a Workplan that is inactiaved, and there is another, active WorkPlan that has a matching Entry Type,
-  the entry will be moved to that WorkPlan.
-
 ### Create the Workplan
 
 1. Navigate to __Admin Tools__ if you are not already there (click your username in the upper-right, then Admin Tools)
