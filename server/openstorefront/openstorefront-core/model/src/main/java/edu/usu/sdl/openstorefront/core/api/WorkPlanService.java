@@ -114,7 +114,6 @@ public interface WorkPlanService
 	public void nextStep(WorkPlanLink workPlanLink);
 
 	/**
-	 * Update all worklinks to accurately reflect other data.
 	 * Loops through all the components and checks that there is a WorkPlan Link in the current
 	 * active WorkPlan. If there is not, it will create one and place it in according to "Approval Status To Match"
 	 * step marker.

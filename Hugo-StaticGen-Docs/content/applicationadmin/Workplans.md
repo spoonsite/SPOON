@@ -8,11 +8,11 @@ weight = 240
 
 ## Table of Contents
 
-1. [**Workplans**](/applicationadmin/workplans/#workplans)
-  * [**Create the Workplan**](/applicationadmin/workplans/#create-the-workplan)
-  * [**Define WorkPlan Steps**](/applicationadmin/workplans/#define-workplan-steps)
-2. [**WorkPlan Progress (For Admins and SMEs)**](/applicationadmin/workplans/#workplan-progress-for-admins-and-smes)
-3. [**Submissions Page**](/applicationadmin/workplans/#for-submission-owners)
+1. [**Workplans**]({{<ref "#workplans" >}})
+  * [**Create the Workplan**]({{<relref "#create-the-workplan">}})
+  * [**Define WorkPlan Steps**]({{<relref "#define-workplan-steps">}})
+2. [**WorkPlan Progress (For Admins and SMEs)**]({{<relref "#workplan-progress-for-admins-and-smes">}})
+3. [**Submissions Page**]({{<relref "#for-submission-owners">}})
 
 ## Workplans
 
@@ -23,13 +23,13 @@ A step-by-step guide to creating and managing workplans. There is a built in def
   as a safe fallback in the event of unusual and unlikely bugs affecting Spoon.
 
  __"Active" Workplans__ an active workplan is the workplan the system will use to classify all entries on Spoon.
-  All entries should be in an active workplan; approximately every 10 minutes the WorkPlanSync [Job](/applicationadmin/applicationmanagement/#jobs) which checks every entry on Spoon to ensure that it is represented in an active workplan,
+  All entries should be in an active workplan; approximately every 10 minutes the WorkPlanSync [Job]({{<relref "ApplicationManagement.md#jobs">}}) which checks every entry on Spoon to ensure that it is represented in an active workplan,
   and for those that are not (possibly because they used to reside in a just-recently de-activated WorkPlan), they are
   reassgined to the WorkPlan marked for entries of their Entry Type*.
 
   __Entry Types__ are the kinds of types an entry can be. Workplans can be assigned to one or more Entry Types
-  simultaneously. Learn about [creating Entry Types](/applicationadmin/attributes/#entry-types), or learn about [setting
-  a Workplan's Entry Types](/applicationadmin/workplans/#create-the-workplan)
+  simultaneously. Learn about [creating Entry Types]({{<relref "Attributes.md#entry-types">}}), or learn about [setting
+  a Workplan's Entry Types]({{<relref "#create-the-workplan">}})
 
   If there is no active WorkPlan that is marked to accept entries of the Entry Type needed, that entry will be
   assigned to the default WorkPlan.
@@ -65,7 +65,7 @@ It is a good idea to define the steps to be taken with each entry before creatin
 
         For example, imagine that the current WorkPlan had a number of entries moving through it such that at any given moment there was a fair number
         of parts in every WorkPlan step. Let there be a new WorkPlan was created that may or may not have a different number of steps, different actions,
-        triggers, etc. When the new WorkPlan is made active, and the WorkPlanSync [Job](/applicationadmin/applicationmanagement/#jobs) is run (without running manually, it will run automatically every
+        triggers, etc. When the new WorkPlan is made active, and the WorkPlanSync [Job]({{<relref "ApplicationManagement.md#jobs">}}) is run (without running manually, it will run automatically every
         15 minutes or so), all of the entries in the old, recently inactivated WorkPlan will be placed under WorkPlan step.
 
         The diagram below shows where entries (the brown cards marked with their current Approval Status) would be placed in a newly created
