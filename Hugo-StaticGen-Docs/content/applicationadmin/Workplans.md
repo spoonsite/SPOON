@@ -16,13 +16,9 @@ weight = 240
 
 ## Workplans
 
-A step-by-step guide to creating and managing workplans. There is a built in default workplan that cannot be deleted. There is no limit on the number of WorkPlans
- that can be created.
+A step-by-step guide to creating and managing workplans. There is a built in __Default WorkPlan__ that cannot be deleted. There is no limit on the number of WorkPlans that can be created.
 
- The __Default WorkPlan__: Spoon comes with a default workplan that is not deleteable. This workplan serves
-  as a safe fallback in the event of unusual and unlikely bugs affecting Spoon.
-
- __"Active" Workplans__ an active workplan is the workplan the system will use to classify all entries on Spoon.
+ The __"Active" Workplans__ will be used by the system to classify all entries on Spoon.
   All entries should be in an active workplan; approximately every 10 minutes the WorkPlanSync [Job]({{<relref "ApplicationManagement.md#jobs">}}) which checks every entry on Spoon to ensure that it is represented in an active workplan,
   and for those that are not (possibly because they used to reside in a just-recently de-activated WorkPlan), they are
   reassgined to the WorkPlan marked for entries of their Entry Type*.
