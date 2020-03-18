@@ -117,7 +117,7 @@
         <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">
           <v-combobox
             v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-            v-model="attribute.selectedCodes"
+            v-model="attribute.attributeEntries"
             :label="`${attribute.description}*`"
             multiple
             append-icon
@@ -126,16 +126,6 @@
             :items="attribute.codes"
             item-text="label"
             item-value="code"
-            :search-input.sync="attribute.searchText"
-            @keypress.enter="
-              attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
-              attribute.selectedCodes.push({
-                label: attribute.searchText,
-                code: attribute.searchText,
-                userCreated: true
-              })
-              attribute.searchText = ''
-            "
             class="mr-3"
             :rules="
               attribute.attributeValueType === 'NUMBER'
@@ -164,7 +154,7 @@
           />
           <v-text-field
             v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-            v-model="attribute.selectedCodes"
+            v-model="attribute.attributeEntries"
             :label="`${attribute.description}*`"
             class="mr-3"
             :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
@@ -201,29 +191,18 @@
         <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
           <v-combobox
             v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-            v-model="attribute.selectedCodes"
             :label="`${attribute.description}`"
             append-icon
             multiple
             chips
             deletable-chips
-            :items="attribute.codes"
             item-text="label"
             item-value="code"
-            :search-input.sync="attribute.searchText"
-            @keypress.enter="
-              attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
-              attribute.selectedCodes.push({
-                label: attribute.searchText,
-                code: attribute.searchText,
-                userCreated: true
-              })
-              attribute.searchText = ''
-            "
+            v-model="attribute.attributeEntries"
             class="mr-3"
             :rules="attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly] : []"
           />
-          <v-autocomplete
+          <v-select
             v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
             v-model="attribute.selectedCodes"
             :label="`${attribute.description}`"
@@ -237,11 +216,11 @@
           />
           <v-text-field
             v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-            v-model="attribute.selectedCodes"
+            v-model="attribute.attributeEntries"
             :label="`${attribute.description}`"
             class="mr-3"
           />
-          <v-autocomplete
+          <v-select
             v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
             v-model="attribute.selectedCodes"
             :label="`${attribute.description}`"
@@ -712,6 +691,7 @@ export default {
     description: '',
     // Attributes
     savedAttributes: [],
+    attributeText: '',
     attributes: {
       required: [],
       suggested: [],
@@ -812,6 +792,7 @@ export default {
           this.resources.links = resourceLinks
           this.tags = response.data.tags
           this.savedAttributes = response.data.attributes
+          // this.changeObjectsToStrings()
 
           if (_.head(contacts)) {
             this.primaryPOC = _.head(contacts)
@@ -849,6 +830,7 @@ export default {
      */
     getFormData() {
       let allAttributes = this.attributes.required.concat(this.attributes.suggested)
+      this.changeStringAttributesToObjects(allAttributes)
       let newAttributes = []
       allAttributes.forEach(el => {
         // get conversion factor
@@ -905,6 +887,7 @@ export default {
       }
     },
     loadSavedAttributes(topAttribute) {
+      topAttribute.attributeEntries = []
       // load saved attributes
       this.savedAttributes.forEach(attribute => {
         if (attribute.componentAttributePk.attributeType === topAttribute.attributeType) {
@@ -921,11 +904,13 @@ export default {
               code: attribute.componentAttributePk.attributeCode,
               label: label
             })
+            topAttribute.attributeEntries.push(label)
           } else {
             topAttribute.selectedCodes = {
               code: attribute.componentAttributePk.attributeCode,
               label: label
             }
+            topAttribute.attributeEntries = label
           }
         }
       })
@@ -990,6 +975,47 @@ export default {
             this.loadSavedAttributes(e)
           })
         })
+    },
+    changeStringAttributesToObjects(allAttributes) {
+      allAttributes.forEach(att => {
+        var tempEntries = []
+        if (att.allowUserGeneratedCodes) {
+          if (Array.isArray(att.attributeEntries)) {
+            att.attributeEntries.forEach(entry => {
+              tempEntries.push({
+                label: entry,
+                code: entry,
+                userCreated: true
+              })
+            })
+          } else {
+            tempEntries.push({
+              label: att.attributeEntries,
+              code: att.attributeEntries,
+              userCreated: true
+            })
+          }
+          att.selectedCodes = tempEntries
+        }
+      })
+    },
+    changeObjectsToStrings() {
+      // let allAttributes = this.attributes.required.concat(this.attributes.suggested)
+      // console.log(this.savedAttributes)
+      // allAttributes.forEach(att => {
+      // att.attributeEntries = []
+      // if (att.attributeType === topAttribute.attributeType && topAttribute.allowUserGeneratedCodes && topAttribute.allowMultipleFlg) {
+      // console.log(topAttribute)
+      // console.log(topAttribute.attributeType)
+      // console.log(topAttribute)
+      // topAttribute.selectedCodes.forEach(code => {
+      // att.attributeEntries.push(code.label)
+      // console.log(att.attributeEntries)
+      // })
+      // } else if (att.attributeType === topAttribute.attributeType && topAttribute.allowUserGeneratedCodes) {
+      // att.attributeEntries = topAttribute.selectedCodes[0]
+      // }
+      // })
     },
     changeEntryType() {
       this.showEntryTypeWarning = false
@@ -1071,9 +1097,14 @@ export default {
           }
           if (response.data && !response.data.error) {
             // update the form with newly created attributes to attach to submission
-            if (Array.isArray(response.Data)) {
-              formData.attributes.concat(response.data)
+            if (Array.isArray(response.data)) {
+              formData.attributes.forEach(att => {
+                if (att.componentAttributePk.userCreated) {
+                  att.componentAttributePk.attributeCode = att.componentAttributePk.attributeCode.toUpperCase()
+                }
+              })
             }
+            // console.log(formData)
           }
         })
         .catch(e => {
