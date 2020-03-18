@@ -691,7 +691,6 @@ export default {
     description: '',
     // Attributes
     savedAttributes: [],
-    attributeText: '',
     attributes: {
       required: [],
       suggested: [],
@@ -792,7 +791,6 @@ export default {
           this.resources.links = resourceLinks
           this.tags = response.data.tags
           this.savedAttributes = response.data.attributes
-          // this.changeObjectsToStrings()
 
           if (_.head(contacts)) {
             this.primaryPOC = _.head(contacts)
@@ -999,24 +997,6 @@ export default {
         }
       })
     },
-    changeObjectsToStrings() {
-      // let allAttributes = this.attributes.required.concat(this.attributes.suggested)
-      // console.log(this.savedAttributes)
-      // allAttributes.forEach(att => {
-      // att.attributeEntries = []
-      // if (att.attributeType === topAttribute.attributeType && topAttribute.allowUserGeneratedCodes && topAttribute.allowMultipleFlg) {
-      // console.log(topAttribute)
-      // console.log(topAttribute.attributeType)
-      // console.log(topAttribute)
-      // topAttribute.selectedCodes.forEach(code => {
-      // att.attributeEntries.push(code.label)
-      // console.log(att.attributeEntries)
-      // })
-      // } else if (att.attributeType === topAttribute.attributeType && topAttribute.allowUserGeneratedCodes) {
-      // att.attributeEntries = topAttribute.selectedCodes[0]
-      // }
-      // })
-    },
     changeEntryType() {
       this.showEntryTypeWarning = false
       this.setAttributes()
@@ -1104,7 +1084,6 @@ export default {
                 }
               })
             }
-            // console.log(formData)
           }
         })
         .catch(e => {
