@@ -103,8 +103,11 @@
           <h3>Sort by:</h3>
           <v-select v-model="searchSortField" :items="searchSortFields"></v-select>
           <h3>Page Size</h3>
-          {{ searchPageSize }}
-          <v-slider v-model="searchPageSize" step="4" min="4" thumb-label></v-slider>
+          {{ pageSize }}
+          <div class="d-flex">
+            <v-slider v-model="pageSize" step="4" min="4" thumb-label></v-slider>
+            <v-btn @click="updatePageSize(pageSize)" class="primary">Update</v-btn>
+          </div>
           <h2>Display Options</h2>
           <v-checkbox
             v-model="displayOptions.organization"
@@ -209,9 +212,14 @@
             <v-icon v-if="attributeQuery !== ''" class="search-icon" @click="attributeQuery = ''">mdi-close</v-icon>
           </div>
           <div style="overflow-x: auto;">
-            <v-chip style="max-width: none;" close v-for="attr in filters.attributes" :key="attr" @click:close="removeAttributeFilter(attr)">{{
-              printAttribute(attr)
-            }}</v-chip>
+            <v-chip
+              style="max-width: none;"
+              close
+              v-for="attr in filters.attributes"
+              :key="attr"
+              @click:close="removeAttributeFilter(attr)"
+              >{{ printAttribute(attr) }}</v-chip
+            >
           </div>
           <div v-if="Object.keys(searchResultsAttributes).length !== 0">
             Showing {{ attributeKeys.length }} of {{ Object.keys(searchResultsAttributes).length }} attributes
@@ -298,7 +306,13 @@
             </v-avatar>
             {{ filters.organization }}
           </v-chip>
-          <v-chip close @click:close="removeAttributeFilter(attr)" v-for="attr in filters.attributes" :key="attr" style="max-width: none;">
+          <v-chip
+            close
+            @click:close="removeAttributeFilter(attr)"
+            v-for="attr in filters.attributes"
+            :key="attr"
+            style="max-width: none;"
+          >
             <v-avatar left>
               <v-icon small>fas fa-clipboard-list</v-icon>
             </v-avatar>
@@ -675,6 +689,11 @@ export default {
         }
       })
 
+      // Sort attribute codes
+      for (const key in that.searchResultsAttributes) {
+        that.searchResultsAttributes[key].codes.sort((e1, e2) => e1.code > e2.code)
+      }
+
       // Get the first 10 attributes
       that.attributeKeys = Object.keys(that.searchResultsAttributes)
         .sort()
@@ -1007,6 +1026,11 @@ export default {
       } else {
         this.showFilters = true
       }
+    },
+    updatePageSize(pageSize) {
+      this.searchPageSize = pageSize
+      window.localStorage.setItem('searchPageSize', JSON.stringify(this.searchPageSize))
+      this.newSearch()
     }
   },
   watch: {
@@ -1031,10 +1055,6 @@ export default {
     },
     searchSortOrder() {
       window.localStorage.setItem('searchSortOrder', JSON.stringify(this.searchSortOrder))
-      this.newSearch()
-    },
-    searchPageSize() {
-      window.localStorage.setItem('searchPageSize', JSON.stringify(this.searchPageSize))
       this.newSearch()
     },
     displayOptions: {
@@ -1093,6 +1113,7 @@ export default {
       searchQueryIsDirty: false,
       searchPage: 0,
       searchPageSize: 12,
+      pageSize: 12,
       totalSearchResults: 0,
       searchSortOrder: 'DESC',
       searchSortField: '_score',

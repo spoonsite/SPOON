@@ -17,16 +17,18 @@
           :footer-props="{
             'items-per-page-options': [10, 20, 30, 40, 50]
           }"
-          :sort-by="['name']"
+          :sort-by="['lastUpdate']"
+          sort-desc
           :hide-default-footer="isLoading || componentData.length === 0"
           class="tableLayout"
         >
-          <template v-slot:item.name="{ item }">
-            {{ item.name }}
-            <div v-if="item.submissionOriginalComponentId" style="color: red;">Incomplete Change Request</div>
-            <div v-else-if="item.submissionId" style="color: red;">Incomplete Submission</div>
-            <div v-else-if="item.evaluationsAttached" style="color: red;">Evaluations Are In Progress</div>
-          </template>
+        <template v-slot:item.name="{ item }">
+          {{ item.name }}
+          <div v-if="item.evaluationsAttached" style="color: red;">Evaluations Are In Progress</div>
+        </template>
+        <template v-slot:item.pendingChangeSubmitDate="{ item }">
+          <span v-if="item.pendingChangeSubmitDate">{{ item.pendingChangeSubmitDate | formatDate }}</span>
+        </template>
           <template v-slot:item.submitDate="{ item }">
             <div v-if="item.submitDate">{{ item.submitDate | formatDate }}</div>
             <div v-else-if="item.status === 'Pending'">{{ item.lastUpdate | formatDate }}</div>
@@ -69,18 +71,21 @@
                 <span>View Entry</span>
               </v-tooltip>
               <div style="order: 2">
-                <v-tooltip bottom v-if="item.status === 'Active'">
+                <v-tooltip bottom v-if="item.status === 'Active' && !item.pendingChangeComponentId">
                   <template v-slot:activator="{ on }">
-                    <!-- TODO: fix change request to use the endpoint -->
-                    <v-btn
-                      :href="'mailto:support@spoonsite.com?subject=Change%20Request%20for%20' + item.name"
-                      icon
-                      v-on="on"
-                    >
-                      <v-icon>fas fa-pencil-alt</v-icon>
+                    <v-btn @click="createChangeRequest(item)" :loading="item.pendingChangeSpinner" icon v-on="on">
+                      <v-icon>fas fa-edit</v-icon>
                     </v-btn>
                   </template>
-                  <span>Email For Change Request</span>
+                  <span>Create Change Request</span>
+                </v-tooltip>
+                <v-tooltip bottom v-else-if="item.status === 'Active' && item.pendingChangeComponentId">
+                  <template v-slot:activator="{ on }">
+                    <v-btn :to="`submission-form/${item.pendingChangeComponentId}?changeRequest=true`" icon v-on="on">
+                      <v-icon>fas fa-edit</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Edit Change Request</span>
                 </v-tooltip>
                 <v-tooltip bottom v-else-if="item.componentId">
                   <template v-slot:activator="{ on }">
@@ -179,24 +184,30 @@
       <v-card>
         <ModalTitle title="Delete?" @close="deleteDialog = false" />
         <v-card-text>
-          <v-btn
-            v-if="currentComponent.hasChangeRequest"
-            @click="
-              requestRemoval = true
-              deleteChange = false
-            "
-          >
-            Request Removal
-          </v-btn>
-          <v-btn
-            v-if="currentComponent.hasChangeRequest"
-            @click="
-              deleteChange = true
-              requestRemoval = false
-            "
-          >
-            Delete Change
-          </v-btn>
+          <div class="d-flex justify-space-around">
+            <v-btn
+              v-if="currentComponent.hasChangeRequest"
+              @click="
+                requestRemoval = true
+                deleteChange = false
+              "
+              class="my-3"
+              color="warning"
+            >
+              Request Removal
+            </v-btn>
+            <v-btn
+              v-if="currentComponent.hasChangeRequest"
+              @click="
+                deleteChange = true
+                requestRemoval = false
+              "
+              class="my-3"
+              color="warning"
+            >
+              Delete Change
+            </v-btn>
+          </div>
           <p v-if="currentComponent.hasChangeRequest && deleteChange" class="pt-2">
             Are you sure you want to delete the change request for: {{ currentComponent.name }}?
           </p>
@@ -269,9 +280,9 @@ export default {
       tableHeaders: [
         { text: 'Name', value: 'name' },
         { text: 'Status', value: 'status' },
+        { text: 'Latest Change Request', value: 'pendingChangeSubmitDate' },
         { text: 'Type', value: 'type' },
         { text: 'Submit/Approved Date', value: 'submitDate' },
-        { text: 'Pending Change', value: 'pendingChange' },
         { text: 'Last Update', value: 'lastUpdate' },
         { text: 'Approval Workflow', value: 'approvalWorkflow', sortable: false },
         { text: 'Actions', value: 'actions', sortable: false }
@@ -305,6 +316,7 @@ export default {
       deleteDialog: false,
       requestRemoval: false,
       deleteChange: false,
+      changeRequestLoader: false,
       currentComponent: {},
       removalForm: {
         message: '',
@@ -356,7 +368,6 @@ export default {
     },
     combineComponentsAndWorkPlans(allComponents, workPlans) {
       let components = allComponents.filter(e => e.componentId !== undefined)
-      let submissions = allComponents.filter(e => e.userSubmissionId !== undefined)
       let updatedComponents = []
 
       components.forEach(component => {
@@ -371,10 +382,6 @@ export default {
         } else {
           updatedComponents.push(this.generateComponent(component, null))
         }
-      })
-
-      submissions.forEach(submission => {
-        updatedComponents.push(this.generateSubmission(submission))
       })
 
       return updatedComponents
@@ -429,27 +436,17 @@ export default {
         status: this.determineApprovalStatus(component),
         submitDate: component.approvedDts,
         pendingChange: this.determineChangeRequest(component),
+        pendingChangeSubmitDate: component.pendingChangeSubmitDts,
         steps: steps,
         currentStep: currentStep,
         submissionOriginalComponentId: component.submissionOriginalComponentId,
-        evaluationsAttached: component.evaluationsAttached,
         hasChangeRequest: component.statusOfPendingChange != null,
-        pendingChangeComponentId: component.pendingChangeComponentId
+        pendingChangeComponentId: component.pendingChangeComponentId,
+        evaluationsAttached: component.evaluationsAttached,
+        pendingChangeSpinner: false
       }
 
       return updatedComponent
-    },
-    generateSubmission(submission) {
-      return {
-        name: submission.name,
-        submissionId: submission.userSubmissionId,
-        type: submission.componentTypeLabel,
-        status: this.determineApprovalStatus(submission),
-        lastUpdate: submission.updateDts,
-        steps: null,
-        submissionOriginalComponentId: submission.submissionOriginalComponentId,
-        evaluationsAttached: submission.evaluationsAttached
-      }
     },
     determineApprovalStatus(component) {
       if (component.approvalState === 'A') {
@@ -482,6 +479,21 @@ export default {
         this.deleteChange = true
       }
       this.deleteDialog = true
+    },
+    createChangeRequest(component) {
+      component.pendingChangeSpinner = true
+      this.changeRequestLoader = true
+      this.$http.post(`/openstorefront/api/v1/resource/components/${component.componentId}/changerequest`)
+        .then(response => {
+          this.$router.push(`/submission-form/${response.data.componentId}?changeRequest=true`)
+        })
+        .catch(error => {
+          this.$toasted.error('There was a problem creating the change request')
+          console.error(error)
+        })
+        .finally(() => {
+          component.pendingChangeSpinner = false
+        })
     },
     submitRemoval() {
       let data = {
@@ -534,7 +546,7 @@ export default {
         this.isLoading = true
         this.$http.delete(`/openstorefront/api/v1/resource/components/${id}/cascade`)
           .then(response => {
-            this.$toasted.show('Submission Deleted')
+            this.$toasted.info(this.currentComponent.pendingChangeComponentId ? 'Change Request Deleted' : 'Submission Deleted')
             this.getUserParts()
             this.deleteDialog = false
           })

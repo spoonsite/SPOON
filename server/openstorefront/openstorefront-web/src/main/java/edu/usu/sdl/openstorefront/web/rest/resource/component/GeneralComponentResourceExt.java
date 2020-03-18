@@ -738,7 +738,7 @@ public abstract class GeneralComponentResourceExt
 					Email email = MailManager.newEmail();
 					email.setSubject("SPOON Entry Updated");
 					email.setText(
-						"Your entry, " + 
+						"Your entry, " +
 						updatedComponent.getName() +
 						", on spoonsite.com, has been updated by a system administrator. "
 					);
@@ -1123,7 +1123,7 @@ public abstract class GeneralComponentResourceExt
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@DataType(UserSubmission.class)
-	@APIDescription("Create a change request component")
+	@APIDescription("[DEPRECIATED] Create a change request user submission")
 	@Path("/{id}/changerequestforsubmission")
 	public Response changeRequestForSubmission(
 			@PathParam("id")
