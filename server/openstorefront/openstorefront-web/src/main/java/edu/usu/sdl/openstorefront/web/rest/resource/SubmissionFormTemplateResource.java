@@ -290,6 +290,7 @@ public class SubmissionFormTemplateResource
 
 			if (userSubmission != null) {
 				VerifySubmissionTemplateResult result = service.getSubmissionFormService().verifySubmission(userSubmission);
+				service.getSubmissionFormService().deleteUserSubmission(userSubmission.getUserSubmissionId());
 				if (result.getValidationResult().valid()) {
 					return Response.ok().build();
 				} else {
