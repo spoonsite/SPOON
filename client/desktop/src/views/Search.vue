@@ -103,8 +103,11 @@
           <h3>Sort by:</h3>
           <v-select v-model="searchSortField" :items="searchSortFields"></v-select>
           <h3>Page Size</h3>
-          {{ searchPageSize }}
-          <v-slider v-model="searchPageSize" step="4" min="4" thumb-label></v-slider>
+          {{ pageSize }}
+          <div class="d-flex">
+            <v-slider v-model="pageSize" step="4" min="4" thumb-label></v-slider>
+            <v-btn @click="updatePageSize(pageSize)" class="primary">Update</v-btn>
+          </div>
           <h2>Display Options</h2>
           <v-checkbox
             v-model="displayOptions.organization"
@@ -1023,6 +1026,11 @@ export default {
       } else {
         this.showFilters = true
       }
+    },
+    updatePageSize(pageSize) {
+      this.searchPageSize = pageSize
+      window.localStorage.setItem('searchPageSize', JSON.stringify(this.searchPageSize))
+      this.newSearch()
     }
   },
   watch: {
@@ -1047,10 +1055,6 @@ export default {
     },
     searchSortOrder() {
       window.localStorage.setItem('searchSortOrder', JSON.stringify(this.searchSortOrder))
-      this.newSearch()
-    },
-    searchPageSize() {
-      window.localStorage.setItem('searchPageSize', JSON.stringify(this.searchPageSize))
       this.newSearch()
     },
     displayOptions: {
@@ -1109,6 +1113,7 @@ export default {
       searchQueryIsDirty: false,
       searchPage: 0,
       searchPageSize: 12,
+      pageSize: 12,
       totalSearchResults: 0,
       searchSortOrder: 'DESC',
       searchSortField: '_score',
