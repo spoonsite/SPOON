@@ -477,6 +477,11 @@
       <fieldset class="fieldset">
         <legend class="title legend">Contacts</legend>
         <v-btn color="grey lighten-2" @click="addContact">Add Contact</v-btn>
+        <v-slide-y-transition>
+          <div v-if="isContactValid" class="mx-2 error--text caption">
+            More information is required for one of the following Contacts
+          </div>
+        </v-slide-y-transition>
         <div class="image-row mx-4" v-for="(contact, index) in contacts" :key="index">
           <div class="contact-grid">
             <!-- get fields from backend -->
@@ -486,17 +491,19 @@
               label="Contact Type"
               item-text="description"
               item-value="code"
+              autocomplete="off"
             />
-            <v-text-field v-model="contact.firstName" label="First Name" />
-            <v-text-field v-model="contact.lastName" label="Last Name" />
-            <v-text-field v-model="contact.email" label="Email" />
-            <v-text-field v-model="contact.phone" label="Phone" />
+            <v-text-field v-model="contact.firstName" label="First Name" autocomplete="off" />
+            <v-text-field v-model="contact.lastName" label="Last Name" autocomplete="off" />
+            <v-text-field v-model="contact.email" label="Email" autocomplete="off" />
+            <v-text-field v-model="contact.phone" label="Phone" autocomplete="off" />
             <v-autocomplete
               label="Organization"
               v-model="contact.organization"
               :items="organizationList"
               item-text="name"
               item-value="name"
+              autocomplete="off"
             />
           </div>
           <div>
@@ -798,6 +805,17 @@ export default {
     entryTypeList() {
       let list = this.$store.state.componentTypeList
       return list.sort((a, b) => a.parentLabel > b.parentLabel)
+    },
+    isContactValid() {
+      let isValid = true // innocent until proven guilty
+      console.log('here....')
+      this.contacts.forEach((contact) => {
+        console.log('Wasssup?', contact)
+        if (!contact.firstName || !contact.organization) {
+          isValid = false
+        }
+      })
+      return isValid
     }
   },
   methods: {
