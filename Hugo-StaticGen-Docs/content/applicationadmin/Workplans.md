@@ -20,9 +20,8 @@ A step-by-step guide to creating and managing workplans. There is a built in __D
 
  The __"Active" Workplans__ will be used by the system to classify all entries on Spoon.
   All entries should be in an active workplan. To enforce this, approximately every 10 minutes the WorkPlanSync [Job]({{<relref "ApplicationManagement.md#jobs">}}) is ran.
-  This job checks every entry on Spoon to ensure that it is represented in an active WorkPlan. For those that are not,
-  possibly because they used to reside in a recently de-activated WorkPlan, they are reassgined to the WorkPlan marked
-  for entries of their Entry Type or the Default WorkPlan if no active WorkPlans have an appropriate type^[ There is a
+  This job checks every entry on Spoon to ensure that it is represented in an active WorkPlan. When a workplan is deactivated, the entries that used to be in it are reassigned to the WorkPlan marked for entries of their Entry Type.
+  If there is no active Workplan with a matching Entry Type, they are sent to the Default WorkPlan.^[ There is a
   notable exception to this rule: If an entry is in a WorkPlan that is inactivated and there is NOT another active
   WorkPlan with a matching Entry Type, the entry will stay in the inactivated Workplan, it will NOT be moved to the
   default Workplan. So it is possible for a entry to be in an inactivated plan. In this state these entries can be
