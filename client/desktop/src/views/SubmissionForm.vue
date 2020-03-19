@@ -488,17 +488,17 @@
             <v-select
               :items="contactTypeList"
               v-model="contact.contactType"
-              label="Contact Type"
+              label="Contact Type*"
               item-text="description"
               item-value="code"
               autocomplete="off"
             />
-            <v-text-field v-model="contact.firstName" label="First Name" autocomplete="off" />
+            <v-text-field v-model="contact.firstName" label="First Name*" autocomplete="off" />
             <v-text-field v-model="contact.lastName" label="Last Name" autocomplete="off" />
             <v-text-field v-model="contact.email" label="Email" autocomplete="off" />
             <v-text-field v-model="contact.phone" label="Phone" autocomplete="off" />
             <v-autocomplete
-              label="Organization"
+              label="Organization*"
               v-model="contact.organization"
               :items="organizationList"
               item-text="name"
