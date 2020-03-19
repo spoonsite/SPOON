@@ -800,7 +800,7 @@ export default {
       return this.allowedImageTypes.join(',')
     },
     isFormValid() {
-      return this.description !== '' && this.description.length <= this.MAX_DESCRIPTION_LENGTH && this.formValidation
+      return this.description !== '' && this.description.length <= this.MAX_DESCRIPTION_LENGTH && this.formValidation && this.isContactValid
     },
     entryTypeList() {
       let list = this.$store.state.componentTypeList
