@@ -1103,7 +1103,6 @@ export default {
     save(callback, toastMessage, showToast) {
       this.saving = true
       let formData = this.getFormData()
-
       // get all user created codes
       let userCreatedAttributes = formData.attributes.filter(el => !!el.componentAttributePk.userCreated)
       let createdCodeList = []
@@ -1127,10 +1126,11 @@ export default {
             if (Array.isArray(response.data)) {
               formData.attributes.forEach(att => {
                 if (att.componentAttributePk.userCreated) {
-                  att.componentAttributePk.attributeCode = att.componentAttributePk.attributeCode.toUpperCase()
+                  att.componentAttributePk.attributeCode = att.componentAttributePk.attributeCode.replace(/\s/g, '').toUpperCase()
                 }
               })
             }
+            console.log(formData.attributes)
           }
         })
         .catch(e => {
