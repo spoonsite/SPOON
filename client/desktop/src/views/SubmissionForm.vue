@@ -478,7 +478,7 @@
         <legend class="title legend">Contacts</legend>
         <v-btn color="grey lighten-2" @click="addContact">Add Contact</v-btn>
         <v-slide-y-transition>
-          <div v-if="isContactValid" class="mx-2 error--text caption">
+          <div v-if="!isContactValid" class="mx-2 error--text caption">
             More information is required for one of the following Contacts
           </div>
         </v-slide-y-transition>
@@ -808,11 +808,9 @@ export default {
     },
     isContactValid() {
       let isValid = true // innocent until proven guilty
-      console.log('here....')
       this.contacts.forEach((contact) => {
-        console.log('Wasssup?', contact)
-        if (!contact.firstName || !contact.organization) {
-          isValid = false
+        if (!contact.firstName || !contact.organization || !contact.contactType) {
+          isValid = false // guilty!
         }
       })
       return isValid
