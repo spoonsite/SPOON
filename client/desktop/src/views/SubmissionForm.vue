@@ -198,81 +198,71 @@
           />
         </div>
       </fieldset>
-      <fieldset class="fieldset attribute-grid">
+      <fieldset class="fieldset">
         <legend class="title legend">Suggested Attributes (opt.)</legend>
         <p v-if="attributes.suggested.length === 0">
           No suggested attributes, please select an entry type.
         </p>
-        <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
-          <v-combobox
-            v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-            :label="`${attribute.description}`"
-            append-icon
-            multiple
-            chips
-            deletable-chips
-            item-text="label"
-            item-value="code"
-            v-model="attribute.attributeEntries"
-            class="mr-3"
-            :rules="
-              attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly, rules.len200Array] : [rules.len200Array]
-            "
-          />
-          <v-select
-            v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
-            v-model="attribute.selectedCodes"
-            :label="`${attribute.description}`"
-            multiple
-            chips
-            deletable-chips
-            :items="attribute.codes"
-            item-text="label"
-            item-value="code"
-            class="mr-3"
-          />
-          <v-text-field
-            v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
-            v-model="attribute.attributeEntries"
-            :label="`${attribute.description}`"
-            class="mr-3"
-            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly, rules.len200] : [rules.len200]"
-            :counter="ATTR_CODE_MAX_LEN"
-          />
-          <v-select
-            v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
-            v-model="attribute.selectedCodes"
-            :label="`${attribute.description}`"
-            :items="attribute.codes"
-            item-text="label"
-            item-value="code"
-            class="mr-3"
-          />
-          <v-select
-            label="Unit"
-            v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
-            :value="attribute.attributeUnit"
-            :items="attribute.attributeUnitList"
-            item-text="unit"
-            item-value="unit"
-            class="mr-3 unit"
-            v-model="attribute.selectedUnit"
-          />
-        </div>
-      </fieldset>
-      <fieldset class="fieldset">
-        <legend class="title legend">Request New Attribute (opt.)</legend>
-        <div class="mx-4 mt-4">
-          <p class="mb-0">Please describe the attribute you would like to have added.</p>
-          <p class="mb-3">
-            Include the value for your entry, a brief description, and how your part is defined by the attribute.
-          </p>
-          <v-textarea
-            outlined
-            placeholder="New attribute details"
-            class=""
-            v-model="attributes.missingAttribute"
-          />
+        <p v-else>
+          If you would like to attach an attribute that is not found in this list, please put the information in the description field above or request the attribute via comment on your submission.
+        </p>
+        <div class="attribute-grid">
+          <div class="attribute" v-for="attribute in attributes.suggested" :key="attribute.attributeType">
+            <v-combobox
+              v-if="attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+              :label="`${attribute.description}`"
+              append-icon
+              multiple
+              chips
+              deletable-chips
+              item-text="label"
+              item-value="code"
+              v-model="attribute.attributeEntries"
+              class="mr-3"
+              :rules="
+                attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly, rules.len200Array] : [rules.len200Array]
+              "
+            />
+            <v-select
+              v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+              v-model="attribute.selectedCodes"
+              :label="`${attribute.description}`"
+              multiple
+              chips
+              deletable-chips
+              :items="attribute.codes"
+              item-text="label"
+              item-value="code"
+              class="mr-3"
+            />
+            <v-text-field
+              v-if="!attribute.allowMultipleFlg && attribute.allowUserGeneratedCodes"
+              v-model="attribute.attributeEntries"
+              :label="`${attribute.description}`"
+              class="mr-3"
+              :rules="attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly, rules.len200] : [rules.len200]"
+              :counter="ATTR_CODE_MAX_LEN"
+            />
+            <v-select
+              v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
+              v-model="attribute.selectedCodes"
+              :label="`${attribute.description}`"
+              :items="attribute.codes"
+              item-text="label"
+              item-value="code"
+              class="mr-3"
+            />
+            <v-select
+              label="Unit"
+              v-if="attribute.attributeValueType === 'NUMBER' && attribute.attributeUnit !== ''"
+              :value="attribute.attributeUnit"
+              :items="attribute.attributeUnitList"
+              item-text="unit"
+              item-value="unit"
+              class="mr-3 unit"
+              v-model="attribute.selectedUnit"
+            />
+          </div>
         </div>
       </fieldset>
       <fieldset class="fieldset">
@@ -714,8 +704,7 @@ export default {
     savedAttributes: [],
     attributes: {
       required: [],
-      suggested: [],
-      missingAttribute: ''
+      suggested: []
     },
     // Resources
     uploadMedia: false,
