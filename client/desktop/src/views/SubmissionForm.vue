@@ -169,8 +169,8 @@
             class="mr-3"
             :rules="
               attribute.attributeValueType === 'NUMBER'
-                ? [rules.required, rules.numberOnly, rules.len200]
-                : [rules.required, rules.len200]
+                ? [rules.required, rules.requiredArray, rules.numberOnly, rules.len200]
+                : [rules.required, rules.requiredArray, rules.len200]
             "
             required
             :counter="ATTR_CODE_MAX_LEN"
