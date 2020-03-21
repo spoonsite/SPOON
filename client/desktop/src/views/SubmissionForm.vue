@@ -269,7 +269,6 @@
           </p>
           <v-textarea
             outlined
-            id="request-new-attribute"
             placeholder="New attribute details"
             class=""
             v-model="attributes.missingAttribute"
@@ -1126,6 +1125,8 @@ export default {
             if (Array.isArray(response.data)) {
               formData.attributes.forEach(att => {
                 if (att.componentAttributePk.userCreated) {
+                  // TODO: BEWARE -- the codes should be fetched from the newly saved user codes.
+                  // this will fail with special characters
                   att.componentAttributePk.attributeCode = att.componentAttributePk.attributeCode.replace(/\s/g, '').toUpperCase()
                 }
               })
