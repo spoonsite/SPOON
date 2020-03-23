@@ -133,7 +133,6 @@
             append-icon
             chips
             deletable-chips
-            :items="attribute.codes"
             item-text="label"
             item-value="code"
             class="mr-3"
