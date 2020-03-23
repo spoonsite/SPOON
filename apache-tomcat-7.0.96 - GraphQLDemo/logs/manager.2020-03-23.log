@@ -1,0 +1,12 @@
+Mar 23, 2020 12:01:36 PM org.apache.catalina.core.ApplicationContext log
+INFO: Manager: init: Associated with Deployer 'Catalina:type=Deployer,host=localhost'
+Mar 23, 2020 12:01:36 PM org.apache.catalina.core.ApplicationContext log
+INFO: Manager: init: Global resources are available
+Mar 23, 2020 12:01:36 PM org.apache.catalina.core.ApplicationContext log
+INFO: Manager: list: Listing contexts for virtual host 'localhost'
+Mar 23, 2020 12:01:36 PM org.apache.catalina.core.ApplicationContext log
+INFO: Manager: list: Listing contexts for virtual host 'localhost'
+Mar 23, 2020 12:01:36 PM org.apache.catalina.core.ApplicationContext log
+INFO: Manager: install: Installing context configuration at 'file:/C:/Users/tsavage/AppData/Local/Temp/context7317357396004513369.xml'
+Mar 23, 2020 12:01:37 PM org.apache.catalina.core.ApplicationContext log
+INFO: Manager: start: Starting web application '/hackernews-graphql-java'
