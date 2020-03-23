@@ -1008,9 +1008,9 @@ export default {
     },
     changeStringAttributesToObjects(allAttributes) {
       allAttributes.forEach(att => {
-        var tempEntries = []
         if (att.allowUserGeneratedCodes) {
           if (Array.isArray(att.attributeEntries)) {
+            var tempEntries = []
             att.attributeEntries.forEach(entry => {
               tempEntries.push({
                 label: entry,
@@ -1018,14 +1018,15 @@ export default {
                 userCreated: true
               })
             })
+            att.selectedCodes = tempEntries
           } else {
-            tempEntries.push({
+            var tempEntry = {
               label: att.attributeEntries,
               code: att.attributeEntries,
               userCreated: true
-            })
+            }
+            att.selectedCodes = tempEntry
           }
-          att.selectedCodes = tempEntries
         }
       })
     },
@@ -1120,7 +1121,6 @@ export default {
                 }
               })
             }
-            console.log(formData.attributes)
           }
         })
         .catch(e => {
