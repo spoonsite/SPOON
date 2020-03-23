@@ -1,6 +1,13 @@
 <template>
   <div>
-    <h1 class="text-center mt-4">New Entry Submission Form</h1>
+    <h1 class="text-center mt-4">
+      <div v-if="isChangeRequest">
+        Change Request Form
+      </div>
+      <div v-else>
+        New Entry Submission Form
+      </div>
+    </h1>
     <div class="text-center px-2 error--text">
       <h2>Caution!</h2>
       <p v-html="$store.state.branding.userInputWarning"></p>
@@ -94,6 +101,9 @@
             />
           </div>
         </div>
+        <div class="d-flex flex-row-reverse">
+          <v-btn @click="setName()" color="primary" class="text-center">Populate With My Information</v-btn>
+        </div>
       </fieldset>
       <fieldset class="fieldset">
         <legend class="title legend">Description*</legend>
@@ -126,21 +136,11 @@
             :items="attribute.codes"
             item-text="label"
             item-value="code"
-            :search-input.sync="attribute.searchText"
-            @keypress.enter="
-              attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
-              attribute.selectedCodes.push({
-                label: attribute.searchText,
-                code: attribute.searchText,
-                userCreated: true
-              })
-              attribute.searchText = ''
-            "
             class="mr-3"
             :rules="
               attribute.attributeValueType === 'NUMBER'
-                ? [rules.requiredArray, rules.numberOnly]
-                : [rules.requiredArray]
+                ? [rules.requiredArray, rules.numberOnly, rules.len200Array]
+                : [rules.requiredArray, rules.len200Array]
             "
             required
           />
@@ -167,8 +167,13 @@
             v-model="attribute.selectedCodes"
             :label="`${attribute.description}*`"
             class="mr-3"
-            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.required, rules.numberOnly] : [rules.required]"
+            :rules="
+              attribute.attributeValueType === 'NUMBER'
+                ? [rules.required, rules.numberOnly, rules.len200]
+                : [rules.required, rules.len200]
+            "
             required
+            :counter="ATTR_CODE_MAX_LEN"
           />
           <v-autocomplete
             v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
@@ -210,18 +215,10 @@
             :items="attribute.codes"
             item-text="label"
             item-value="code"
-            :search-input.sync="attribute.searchText"
-            @keypress.enter="
-              attribute.codes.push({ label: attribute.searchText, code: attribute.searchText, userCreated: true })
-              attribute.selectedCodes.push({
-                label: attribute.searchText,
-                code: attribute.searchText,
-                userCreated: true
-              })
-              attribute.searchText = ''
-            "
             class="mr-3"
-            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly] : []"
+            :rules="
+              attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly, rules.len200Array] : [rules.len200Array]
+            "
           />
           <v-autocomplete
             v-if="attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
@@ -240,6 +237,8 @@
             v-model="attribute.selectedCodes"
             :label="`${attribute.description}`"
             class="mr-3"
+            :rules="attribute.attributeValueType === 'NUMBER' ? [rules.numberOnly, rules.len200] : [rules.len200]"
+            :counter="ATTR_CODE_MAX_LEN"
           />
           <v-autocomplete
             v-if="!attribute.allowMultipleFlg && !attribute.allowUserGeneratedCodes"
@@ -492,26 +491,33 @@
       <fieldset class="fieldset">
         <legend class="title legend">Contacts</legend>
         <v-btn color="grey lighten-2" @click="addContact">Add Contact</v-btn>
+        <v-slide-y-transition>
+          <div v-if="!isContactValid" class="mx-2 error--text caption">
+            More information is required for one of the following Contacts
+          </div>
+        </v-slide-y-transition>
         <div class="image-row mx-4" v-for="(contact, index) in contacts" :key="index">
           <div class="contact-grid">
             <!-- get fields from backend -->
             <v-select
               :items="contactTypeList"
               v-model="contact.contactType"
-              label="Contact Type"
+              label="Contact Type*"
               item-text="description"
               item-value="code"
+              autocomplete="off"
             />
-            <v-text-field v-model="contact.firstName" label="First Name" />
-            <v-text-field v-model="contact.lastName" label="Last Name" />
-            <v-text-field v-model="contact.email" label="Email" />
-            <v-text-field v-model="contact.phone" label="Phone" />
+            <v-text-field v-model="contact.firstName" label="First Name*" autocomplete="off" />
+            <v-text-field v-model="contact.lastName" label="Last Name" autocomplete="off" />
+            <v-text-field v-model="contact.email" label="Email" autocomplete="off" />
+            <v-text-field v-model="contact.phone" label="Phone" autocomplete="off" />
             <v-autocomplete
-              label="Organization"
+              label="Organization*"
               v-model="contact.organization"
               :items="organizationList"
               item-text="name"
               item-value="name"
+              autocomplete="off"
             />
           </div>
           <div>
@@ -539,8 +545,8 @@
         <p>If you close the entry without submitting you will need to come back and finish to submit the entry.</p>
         <v-btn
           class="mr-4 mb-3"
-          :loading="savingAndClose"
-          :disabled="savingAndClose"
+          :loading="savingAndClose || submitting || saving"
+          :disabled="savingAndClose || submitting || saving"
           color="primary"
           @click="saveAndClose()"
         >
@@ -554,7 +560,7 @@
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="submitting || !isFormValid"
+          :disabled="submitting || !isFormValid || saving || savingAndClose"
           color="success"
           class="mr-4 mb-3"
           @click="submitConfirmDialog = true"
@@ -633,6 +639,7 @@ export default {
   mounted() {
     this.bypassLeaveConfirmation = false
     // load the data from an existing submission
+    this.isChangeRequest = !!this.$route.query.changeRequest
     if (this.$route.params.id) {
       if (this.$route.params.id !== 'new') {
         // load in the data
@@ -674,11 +681,13 @@ export default {
   data: () => ({
     // NOTE: Server supports more but sometimes prettifies the html which means this needs to be a smaller value
     MAX_DESCRIPTION_LENGTH: 64000,
+    ATTR_CODE_MAX_LEN: 200,
     saving: false,
     timeLastSaved: null,
     saveTimer: null,
     submitText: 'Submit',
     isChangeRequest: false,
+    pendingChangeId: null,
     submitting: false,
     submitConfirmDialog: false,
     savingAndClose: false,
@@ -752,6 +761,20 @@ export default {
       required: value => !!value || 'Required',
       requiredArray: value => value.length !== 0 || 'Required',
       len255: value => value.length < 255 || 'Must have less than 255 characters',
+      len200: value => value.length < 200 || 'Must have less than 200 characters',
+      len200Array: value => {
+        let isValid = true
+        value.forEach(e => {
+          if (e.code) {
+            if (e.code.length > 200) {
+              isValid = false
+            }
+          } else if (e.length > 200) {
+            isValid = false
+          }
+        })
+        return isValid ? true : 'All codes must have less than 200 characters'
+      },
       numberOnly: value => {
         // If the value is null, we don't care about validation, in this case
         if (value === null) {
@@ -792,11 +815,20 @@ export default {
       return this.allowedImageTypes.join(',')
     },
     isFormValid() {
-      return this.description !== '' && this.description.length <= this.MAX_DESCRIPTION_LENGTH && this.formValidation
+      return this.description !== '' && this.description.length <= this.MAX_DESCRIPTION_LENGTH && this.formValidation && this.isContactValid
     },
     entryTypeList() {
       let list = this.$store.state.componentTypeList
       return list.sort((a, b) => a.parentLabel > b.parentLabel)
+    },
+    isContactValid() {
+      let isValid = true // innocent until proven guilty
+      this.contacts.forEach((contact) => {
+        if (!contact.firstName || !contact.organization || !contact.contactType) {
+          isValid = false // guilty!
+        }
+      })
+      return isValid
     }
   },
   methods: {
@@ -810,6 +842,7 @@ export default {
       this.$http
         .get(`/openstorefront/api/v1/resource/componentsubmissions/${id}`)
         .then(response => {
+          this.pendingChangeId = response.data.component.pendingChangeId
           let component = response.data.component
           let contacts = response.data.contacts
           let media = response.data.media
@@ -822,7 +855,12 @@ export default {
           this.entryType = component.componentType
           this.description = component.description
           this.organization = component.organization
-          this.media = media
+
+          this.media = media.filter(e => e.file)
+          if (this.media.length !== media.length) {
+            this.$toasted.info('Some images failed to import, please double check the Resources section')
+          }
+
           this.resources.localFiles = resourceFiles
           this.resources.links = resourceLinks
           this.tags = response.data.tags
@@ -909,6 +947,7 @@ export default {
       return {
         component: {
           name: this.entryTitle,
+          pendingChangeId: this.pendingChangeId,
           description: this.description,
           componentType: this.entryType,
           organization: this.organization
@@ -944,6 +983,7 @@ export default {
           }
         }
       })
+      this.$refs.submissionForm.validate()
     },
     /**
      * Fetch and load the suggested and required attributes for a given entry type
@@ -1027,9 +1067,12 @@ export default {
       this.bypassLeaveConfirmation = true
       this.submitConfirmDialog = false
       this.submitting = true
+      let url = this.isChangeRequest
+        ? `/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submitchangerequest`
+        : `/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submit`
       this.save(() => {
         this.$http
-          .put(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/submit`, this.getFormData())
+          .put(url, this.getFormData())
           .then(response => {
             if (response.data && response.data.success === false) {
               this.errors = response.data.errors.entry
@@ -1351,6 +1394,7 @@ export default {
     },
     setupAutoSave() {
       this.saveTimer = setInterval(() => {
+        this.$refs.submissionForm.validate()
         if (this.isFormValid) {
           this.save()
         }

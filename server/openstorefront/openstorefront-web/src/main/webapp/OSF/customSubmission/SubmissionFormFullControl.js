@@ -160,7 +160,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 					hidden: true,
 					handler: function() {
 						var submissionFormFullControl = this.up('panel');
-						submissionFormFullControl.submitSumissionForApproval();						
+						submissionFormFullControl.submitSubmissionForApproval();						
 					}
 				},				
 				{
@@ -382,7 +382,7 @@ Ext.define('OSF.customSubmission.SubmissionFormFullControl', {
 		});
 	},
 	
-	submitSumissionForApproval: function() {
+	submitSubmissionForApproval: function() {
 		var submissionFormFullControl = this;
 		var form = submissionFormFullControl.queryById('submissionForm');
 		

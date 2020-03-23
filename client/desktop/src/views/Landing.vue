@@ -307,13 +307,14 @@ export default {
     },
     getSubmissionData() {
       this.isLoading = true
-      this.$http.get('/openstorefront/api/v1/resource/componentsubmissions')
+      this.$http.get('/openstorefront/api/v1/resource/componentsubmissions/user')
         .then(response => {
-          this.submissionData = response.data
+          this.submissionData = response.data.componentSubmissionView
           this.submissionData.sort((a, b) => (new Date(a.updateDts) < new Date(b.updateDts) ? 1 : -1))
           this.isLoading = false
         }).catch(error => {
-          this.errors.push(error)
+          console.error(error)
+          this.toasted.error('There was an error retrieving submissions')
           this.isLoading = false
         })
     },

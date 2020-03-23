@@ -231,7 +231,9 @@ public class WorkPlanServiceImpl
 
 				for (WorkPlanLink workPlanLink : workPlanLinks) {
 					workPlanLink.setWorkPlanId(workPlanRemoveMigration.getWorkPlanId());
-
+					if (workPlanLink.getWorkPlanId() == null) {
+						continue;
+					}
 					Map<String, String> stepConvertMap = workPlanRemoveMigration.getStepMigrations()
 							.stream()
 							.collect(Collectors.toMap(WorkPlanStepMigration::getFromStepId, WorkPlanStepMigration::getToStepId));

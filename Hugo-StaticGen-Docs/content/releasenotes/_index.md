@@ -6,6 +6,14 @@ weight = 9999
 
 For more information, please see [GitHub](https://github.com/spoonsite/SPOON/releases).
 
+## Release Notes for v2.12
+
+This release finished converting all user tools to VueJS. This effort was mostly to update the submission form.
+
+* Updated up the emails
+* Fixed login page redirect
+* Removed JIRA plugin
+
 ## Release Notes for v2.11.1
 
 * Fixed a small bug that prevented viewing of some entries for Admins reviewing submission
