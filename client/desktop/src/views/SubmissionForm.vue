@@ -1396,6 +1396,7 @@ export default {
       }
     },
     deleteTag(tag) {
+      console.log(tag)
       this.$http
         .delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${tag.tagId}`)
         .then(response => {
@@ -1403,7 +1404,7 @@ export default {
           this.tagName = ''
         })
         .catch(error => {
-          this.$toasted.error('There was a problem deleting the tag ' + this.tagSearchText)
+          this.$toasted.error('There was a problem deleting the tag ' + tag.text)
           console.error(error)
         })
     },
