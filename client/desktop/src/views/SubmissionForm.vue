@@ -444,7 +444,7 @@
             :items="filteredTagsList"
             v-model="tagName"
             clearable
-            :disabled="!id || disableTagField"
+            :disabled="!id || isTagFieldEnabled"
             @keyup.enter="addNewTag(false)"
             @blur="addNewTag(true)"
           >
@@ -739,7 +739,7 @@ export default {
     },
     resourceType: [],
     // Tags
-    disableTagField: false,
+    isTagFieldEnabled: false,
     tagSearchText: '',
     tags: [],
     tagsList: [],
@@ -1362,9 +1362,9 @@ export default {
         if (
           this.tagSearchText !== '' &&
           !this.tags.some(tag => tag.text === this.tagSearchText) &&
-          !this.disableTagField
+          !this.isTagFieldEnabled
         ) {
-          this.disableTagField = true
+          this.isTagFieldEnabled = true
           this.$http
             .post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
               text: this.tagSearchText
@@ -1384,7 +1384,7 @@ export default {
             .finally(() => {
               this.tagSearchText = ''
               this.tagName = ''
-              this.disableTagField = false
+              this.isTagFieldEnabled = false
             })
         } else {
           this.$toasted.info('The tag ' + this.tagSearchText + ' already exists')
