@@ -429,14 +429,9 @@
         <p v-if="!id" class="error--text">You must first save the submission to add tags to it.</p>
         <div>
           <div style="padding-bottom: 1em;" v-if="tags && tags.length !== 0">
-            <span v-for="tag in tags" :key="tag.text" class="mr-2" >
-              <v-chip
-                class="mb-2"
-                close
-                @click:close="deleteTag(tag)"
-              >
-              <div v-html="tag.text">
-                </div>
+            <span v-for="tag in tags" :key="tag.text" class="mr-2">
+              <v-chip class="mb-2" close @click:close="deleteTag(tag)">
+                <div v-html="tag.text"></div>
               </v-chip>
             </span>
           </div>
@@ -446,20 +441,22 @@
             :items="tagsList"
             v-model="tagName"
             clearable
-            :disabled="!id"
-            @keyup.enter="addNewTag()"
-            @blur="addNewTag()"
+            :disabled="!id || disableTagField"
+            @keyup.enter="addNewTag(false)"
+            @blur="addNewTag(true)"
           >
             <template v-slot:prepend-item>
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title>Create a new tag by typing some text or selecting one below and then pressing enter</v-list-item-title>
+                  <v-list-item-title>
+                    Create a new tag by typing some text or selecting one below and then pressing enter
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-divider class="mt-2"></v-divider>
             </template>
             <template v-slot:item="{ item }">
-              <div v-html="item.text"></div>
+              <div v-html="item.text" @click="testing()"></div>
             </template>
           </v-combobox>
         </div>
@@ -749,6 +746,7 @@ export default {
     },
     resourceType: [],
     // Tags
+    disableTagField: false,
     tagSearchText: '',
     tags: [],
     tagsList: [],
@@ -815,7 +813,12 @@ export default {
       return this.allowedImageTypes.join(',')
     },
     isFormValid() {
-      return this.description !== '' && this.description.length <= this.MAX_DESCRIPTION_LENGTH && this.formValidation && this.isContactValid
+      return (
+        this.description !== '' &&
+        this.description.length <= this.MAX_DESCRIPTION_LENGTH &&
+        this.formValidation &&
+        this.isContactValid
+      )
     },
     entryTypeList() {
       let list = this.$store.state.componentTypeList
@@ -823,7 +826,7 @@ export default {
     },
     isContactValid() {
       let isValid = true // innocent until proven guilty
-      this.contacts.forEach((contact) => {
+      this.contacts.forEach(contact => {
         if (!contact.firstName || !contact.organization || !contact.contactType) {
           isValid = false // guilty!
         }
@@ -1348,15 +1351,30 @@ export default {
     removeLink(index) {
       this.resources.links.splice(index, 1)
     },
-    addNewTag() {
+    testing() {
+      console.log('ttetsting')
+    },
+    addNewTag: _.debounce(
+      function(bluring) {
+        this.addNewTagHelper(bluring)
+      },
+      500,
+      { leading: true }
+    ),
+    addNewTagHelper(bluring) {
       if (this.tagSearchText !== null) {
         this.tagSearchText = this.tagSearchText.trim()
-        if (this.tagSearchText === null) {
-          this.$toasted.info('The tag field is empty')
-        } else if (!this.tags.some(tag => tag.text === this.tagSearchText)) {
-          this.$http.post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
-            text: this.tagSearchText
-          })
+        if (
+          this.tagSearchText !== '' &&
+          !this.tags.some(tag => tag.text === this.tagSearchText) &&
+          !this.disableTagField
+        ) {
+          this.disableTagField = true
+          console.log('add tag')
+          this.$http
+            .post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
+              text: this.tagSearchText
+            })
             .then(response => {
               if (response.data.errors) {
                 this.$toasted.error('Problem adding tag: ' + this.tagSearchText)
@@ -1370,19 +1388,27 @@ export default {
               this.$toasted.error('Problem adding tag: ' + this.tagSearchText)
               console.error(error)
             })
+            .finally(() => {
+              this.disableTagField = false
+            })
         } else {
           this.$toasted.info('The tag ' + this.tagSearchText + ' already exists')
+        }
+      } else {
+        if (!bluring) {
+          this.$toasted.info('The tag field is empty', { duration: 750 })
         }
       }
     },
     deleteTag(tag) {
-      this.$http.delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${tag.tagId}`)
+      this.$http
+        .delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${tag.tagId}`)
         .then(response => {
           this.tags = this.tags.filter(e => e.tagId !== tag.tagId)
           this.tagName = ''
         })
         .catch(error => {
-          this.$toasted.error('There was a problem deleting the tag' + this.tagSearchText)
+          this.$toasted.error('There was a problem deleting the tag ' + this.tagSearchText)
           console.error(error)
         })
     },
