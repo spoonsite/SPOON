@@ -844,6 +844,9 @@ export default {
      *      let convertedToCentimeters = convertNumber(tenMeters, 1/100)
      */
     convertNumber(value, conversionFactor) {
+      if (conversionFactor === 1) {
+        return value
+      }
       let numValue = Number(value)
       if (!isNaN(numValue)) {
         numValue /= conversionFactor
