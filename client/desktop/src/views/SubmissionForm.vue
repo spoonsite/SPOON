@@ -900,7 +900,6 @@ export default {
           })
         }
       })
-
       return {
         component: {
           name: this.entryTitle,
@@ -1020,12 +1019,8 @@ export default {
             })
             att.selectedCodes = tempEntries
           } else {
-            var tempEntry = {
-              label: att.attributeEntries,
-              code: att.attributeEntries,
-              userCreated: true
-            }
-            att.selectedCodes = tempEntry
+            att.selectedCodes = att.attributeEntries
+            att.userCreated = true
           }
         }
       })
@@ -1113,12 +1108,15 @@ export default {
           if (response.data && !response.data.error) {
             // update the form with newly created attributes to attach to submission
             if (Array.isArray(response.data)) {
-              formData.attributes.forEach(att => {
-                if (att.componentAttributePk.userCreated) {
-                  // TODO: BEWARE -- the codes should be fetched from the newly saved user codes.
-                  // this will fail with special characters
-                  att.componentAttributePk.attributeCode = att.componentAttributePk.attributeCode.replace(/\s/g, '').toUpperCase()
-                }
+              formData.attributes = formData.attributes.filter(el => !el.componentAttributePk.userCreated)
+              let userAttributes = response.data
+              userAttributes.forEach(att => {
+                formData.attributes.push({
+                  componentAttributePk: {
+                    attributeCode: att.attributeCodePk.attributeCode,
+                    attributeType: att.attributeCodePk.attributeType
+                  }
+                })
               })
             }
           }
