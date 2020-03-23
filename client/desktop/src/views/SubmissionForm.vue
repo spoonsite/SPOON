@@ -427,6 +427,9 @@
       <fieldset class="fieldset">
         <legend class="title legend">Tags</legend>
         <p v-if="!id" class="error--text">You must first save the submission to add tags to it.</p>
+        <p>
+          Add a tag to your entry by selecting one from the dropdown or typing text into the field and pressing enter.
+        </p>
         <div>
           <div style="padding-bottom: 1em;" v-if="tags && tags.length !== 0">
             <span v-for="tag in tags" :key="tag.text" class="mr-2">
@@ -438,25 +441,15 @@
           <v-combobox
             label="Add Tags"
             :search-input.sync="tagSearchText"
-            :items="tagsList"
+            :items="filteredTagsList"
             v-model="tagName"
             clearable
             :disabled="!id || disableTagField"
             @keyup.enter="addNewTag(false)"
             @blur="addNewTag(true)"
           >
-            <template v-slot:prepend-item>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    Create a new tag by typing some text or selecting one below and then pressing enter
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider class="mt-2"></v-divider>
-            </template>
             <template v-slot:item="{ item }">
-              <div v-html="item.text" @click="testing()"></div>
+              <div v-html="item.text"></div>
             </template>
           </v-combobox>
         </div>
@@ -832,6 +825,11 @@ export default {
         }
       })
       return isValid
+    },
+    filteredTagsList() {
+      // Remove any tags from the tags list that have already been selected
+      let smashedTags = this.tags.map(e => e.text)
+      return this.tagsList.filter(e => !smashedTags.includes(e.text))
     }
   },
   methods: {
@@ -1351,9 +1349,6 @@ export default {
     removeLink(index) {
       this.resources.links.splice(index, 1)
     },
-    testing() {
-      console.log('ttetsting')
-    },
     addNewTag: _.debounce(
       function(bluring) {
         this.addNewTagHelper(bluring)
@@ -1370,7 +1365,6 @@ export default {
           !this.disableTagField
         ) {
           this.disableTagField = true
-          console.log('add tag')
           this.$http
             .post(`/openstorefront/api/v1/resource/components/${this.id}/tags`, {
               text: this.tagSearchText
@@ -1381,7 +1375,6 @@ export default {
                 console.error(response.data.errors)
               } else {
                 this.tags.push(response.data)
-                this.tagSearchText = ''
               }
             })
             .catch(error => {
@@ -1389,6 +1382,8 @@ export default {
               console.error(error)
             })
             .finally(() => {
+              this.tagSearchText = ''
+              this.tagName = ''
               this.disableTagField = false
             })
         } else {
