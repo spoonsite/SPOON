@@ -1396,7 +1396,6 @@ export default {
       }
     },
     deleteTag(tag) {
-      console.log(tag)
       this.$http
         .delete(`/openstorefront/api/v1/resource/components/${this.id}/tags/${tag.tagId}`)
         .then(response => {
