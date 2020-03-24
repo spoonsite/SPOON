@@ -600,7 +600,7 @@ public class WorkPlanServiceImpl
 			for (Component component : components) {
 				//critical loop
 				try {
-					//ignore return
+					//ignore return. This function creates a new WorkPlanLink for the component if it doesn't exist in active WorkPlan
 					getWorkPlanForComponent(component.getComponentId());
 					synced++;
 				} catch (Exception e) {
@@ -638,22 +638,21 @@ public class WorkPlanServiceImpl
 		}
 		final int totalSyncSubmission = synced;
 		LOG.log(Level.FINER, () -> "Synced " + totalSyncSubmission + " Partial Submission worklinks.");
-
 	}
 
 	@Override
 	public void updatedWorkPlanLinkToMatchState(String componentId)
 	{
-		//Assume when this method; the system needs to put the component
-		//in the state that matches the component
+		// gather WorkPlanLink information
 		WorkPlanLink workPlanLink = getWorkPlanForComponent(componentId);
 
 		WorkPlan workPlan = getWorkPlan(workPlanLink.getWorkPlanId());
 
+		// find matching WorkPlanStep based on approval status
 		String stepId = matchWorkPlanStepWithStatus(workPlan, componentId);
-		if (!workPlanLink.getCurrentStepId().equals(stepId)) {
 
-			//apply actions?
+		// Move the WorkplanLink if it isn't already in target step
+		if (!workPlanLink.getCurrentStepId().equals(stepId)) {
 			moveWorkLinkToStep(workPlanLink, stepId, true);
 		}
 	}
