@@ -28,7 +28,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * This file was derived from the tutorial 
+ * found here: https://www.howtographql.com/graphql-java/1-getting-started/
  * @author afine
  */
 @WebServlet(urlPatterns = "/graphql") 

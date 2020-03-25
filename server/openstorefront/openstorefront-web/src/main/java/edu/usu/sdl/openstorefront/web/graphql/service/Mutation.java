@@ -20,7 +20,8 @@ package edu.usu.sdl.openstorefront.web.graphql.service;
 import io.leangen.graphql.annotations.GraphQLMutation;
 
 /**
- *
+ * This file was derived from the tutorial 
+ * found here: https://www.howtographql.com/graphql-java/1-getting-started/
  * @author afine
  */
 public class Mutation
