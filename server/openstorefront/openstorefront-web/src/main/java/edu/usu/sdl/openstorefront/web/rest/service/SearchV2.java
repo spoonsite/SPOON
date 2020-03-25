@@ -39,6 +39,7 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import java.io.IOException;
 
 import org.elasticsearch.action.search.SearchResponse;
 
@@ -75,7 +76,7 @@ public class SearchV2
 					searchFilters.getAttributes(),
 					TypeFactory.defaultInstance().constructArrayType(AttributeSearchType.class));
 
-			ArrayList<AttributeSearchType> list = new ArrayList<AttributeSearchType>(Arrays.asList(attributeSearchType));
+			ArrayList<AttributeSearchType> list = new ArrayList<>(Arrays.asList(attributeSearchType));
 
 			searchFilters.setAttributeSearchType(list);
 
@@ -90,6 +91,9 @@ public class SearchV2
 		} catch (JsonProcessingException ex) {
 			LOG.log(Level.SEVERE, null, ex);
 			return Response.ok("Search was not formatted correctly").build();
+		} catch (IOException ex) {
+			LOG.log(Level.SEVERE, "IO Exception when doing attribute search type", ex);
+			return Response.ok("IO Error on search").build();
 		}
 	}
 }
