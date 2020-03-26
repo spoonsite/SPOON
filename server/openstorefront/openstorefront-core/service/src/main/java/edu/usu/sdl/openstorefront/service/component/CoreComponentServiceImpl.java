@@ -1808,14 +1808,13 @@ public class CoreComponentServiceImpl
 	public boolean checkComponentApproval(String componentId)
 	{
 		boolean approved = false;
-		Element element = OSFCacheManager.getComponentApprovalCache().get(componentId);
-		if (element != null) {
-			String approvalState = (String) element.getObjectValue();
-			if (StringUtils.isNotBlank(approvalState)) {
+		String found = OSFCacheManager.getComponentApprovalCache().get(componentId);
+		if (found != null) {
+			if (StringUtils.isNotBlank(found)) {
 				approved = true;
 			}
 		} else {
-			if (OSFCacheManager.getComponentApprovalCache().getKeysWithExpiryCheck().isEmpty()) {
+			if (OSFCacheManager.isEmpty(OSFCacheManager.getComponentApprovalCache())) {
 
 				Component componentExample = new Component();
 				componentExample.setActiveStatus(Component.ACTIVE_STATUS);
@@ -1823,14 +1822,13 @@ public class CoreComponentServiceImpl
 				List<Component> components = componentExample.findByExampleProxy();
 
 				for (Component component : components) {
-					Element newElement = new Element(component.getComponentId(), component.getApprovalState());
 					if (component.getComponentId().equals(componentId)) {
 						String approvalState = component.getApprovalState();
 						if (StringUtils.isNotBlank(approvalState)) {
 							approved = true;
 						}
 					}
-					OSFCacheManager.getComponentApprovalCache().put(newElement);
+					OSFCacheManager.getComponentApprovalCache().put(component.getComponentId(), component.getApprovalState());
 				}
 			}
 		}

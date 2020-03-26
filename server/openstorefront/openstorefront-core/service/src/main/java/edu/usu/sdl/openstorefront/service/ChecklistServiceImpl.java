@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -51,11 +50,9 @@ public class ChecklistServiceImpl
 	{
 		Objects.requireNonNull(questionId);
 
-		ChecklistQuestion found = null;
-
-		Element element = OSFCacheManager.getChecklistQuestionCache().get(questionId);
-		if (element != null) {
-			found = (ChecklistQuestion) element.getObjectValue();
+		ChecklistQuestion found = OSFCacheManager.getChecklistQuestionCache().get(questionId);
+		if (found != null) {
+			return found;
 		} else {
 
 			ChecklistQuestion checklistQuestion = new ChecklistQuestion();
@@ -65,8 +62,7 @@ public class ChecklistServiceImpl
 					found = question;
 				}
 
-				element = new Element(question.getQuestionId(), question);
-				OSFCacheManager.getChecklistQuestionCache().put(element);
+				OSFCacheManager.getChecklistQuestionCache().put(question.getQuestionId(), question);
 			}
 		}
 
@@ -105,7 +101,7 @@ public class ChecklistServiceImpl
 			questionExisting = getPersistenceService().persist(checklistQuestion);
 		}
 
-		OSFCacheManager.getChecklistQuestionCache().removeAll();
+		OSFCacheManager.getChecklistQuestionCache().clear();
 		return questionExisting;
 	}
 

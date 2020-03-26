@@ -16,6 +16,9 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
@@ -29,6 +32,9 @@ import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
+import edu.usu.sdl.openstorefront.core.entity.AttributeType;
+import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
+import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 
 /**
  * Handling Application level caching
@@ -44,35 +50,46 @@ public class OSFCacheManager
 	public static final String ALLCODE_KEY = "ALLCODES";
 	public static CacheManager cacheManager;
 
-	private static Cache lookupCache;
-	private static Cache attributeCache;
-	private static Cache attributeTypeCache;
-	private static Cache attributeCodeAllCache;
-	private static Cache userAgentCache;
-	private static Cache componentCache;
-	private static Cache componentLookupCache;
-	private static Cache componentApprovalCache;
-	private static Cache componentDataRestrictionCache;
-	private static Cache componentTypeCache;
-	private static Cache componentTypeComponentCache;
-	private static Cache componentIconCache;
-	private static Cache applicationCache;
-	private static Cache contactCache;
-	private static Cache userSearchCache;
-	private static Cache searchCache;
-	private static Cache checklistQuestionCache;
-	private static Cache workPlanTypeCache;
+
+	private static Cache<String, Object> applicationCache;
+	private static Cache<String, List<AttributeCode>> attributeCache;
+	private static Cache<Integer, String> attributeCodeAllCache;
+	private static Cache<Integer, String> attributeTypeCache;
+	private static Cache<String, ChecklistQuestion> checklistQuestionCache;
+	private static Cache<String, String> componentApprovalCache;
+	private static Cache<Integer, String> componentCache;
+	private static Cache<Integer, String> componentDataRestrictionCache;
+	private static Cache<Integer, String> componentIconCache;
+	private static Cache<Integer, String> componentLookupCache;
+	private static Cache<Integer, String> componentTypeCache;
+	private static Cache<Integer, String> componentTypeComponentCache;
+	private static Cache<Integer, String> contactCache;
+	private static Cache<Integer, String> lookupCache;
+	private static Cache<Integer, String> searchCache;
+	private static Cache<Integer, String> userAgentCache;
+	private static Cache<Integer, String> userSearchCache;
+	private static Cache<Integer, String> workPlanTypeCache;
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
 	private static final ReentrantLock LOCK = new ReentrantLock();
 
-	private static Cache createCache(String name, int maxElementsInMemory, boolean overflowToDisk, boolean eternal, long timeToLiveSeconds, long timeToIdleSeconds) {
-		CacheConfiguration<Long, String> configuration =
-		CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class,
+	private static <K, V> Cache<K, V> createCache(Class<K> K, Class<V> V, String name, int maxElementsInMemory, boolean eternal, long timeToLiveSeconds, long timeToIdleSeconds) {
+		CacheConfiguration<K, V> configuration =
+		CacheConfigurationBuilder.newCacheConfigurationBuilder(K, V,
 				ResourcePoolsBuilder.heap(maxElementsInMemory))
 			.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(timeToLiveSeconds)))
 			.withExpiry(ExpiryPolicyBuilder.timeToIdleExpiration(Duration.ofSeconds(timeToIdleSeconds)))
+			.build();
+
+		return cacheManager.createCache(name, configuration);
+	}
+
+	private static <K, V> Cache<K, V> createCache(Class<K> K, Class<V> V, String name, int maxElementsInMemory, boolean eternal) {
+		CacheConfiguration<K, V> configuration =
+		CacheConfigurationBuilder.newCacheConfigurationBuilder(K, V,
+				ResourcePoolsBuilder.heap(maxElementsInMemory))
+			.withExpiry(ExpiryPolicyBuilder.noExpiration())
 			.build();
 
 		return cacheManager.createCache(name, configuration);
@@ -82,137 +99,52 @@ public class OSFCacheManager
 	{
 		LOCK.lock();
 		try {
-			lookupCache                   = createCache("lookupCache", 500, false, false, 600, 600);
-			attributeCache                = createCache("attributeCache", 30000, false, true, 0, 0);
-			attributeTypeCache            = createCache("attributeTypeCache", 5000, false, true, 0, 0);
-			attributeCodeAllCache         = createCache("attributeCodeAllCache", 1, false, true, 0, 0);
-			userAgentCache                = createCache("userAgentCache", 100, false, false, 7200, 7200);
-			componentCache                = createCache("componentCache", 200, false, false, 300, 300);
-			componentLookupCache          = createCache("componentLookupCache", 50000, false, false, 300, 300);
-			componentApprovalCache        = createCache("componentApprovalCache", 50000, false, false, 300, 300);
-			componentIconCache            = createCache("componentIconCache", 50000, false, false, 1800, 1800);
-			componentDataRestrictionCache = createCache("componentDataRestrictionCache", 50000, false, false, 1800, 1800);
-			componentTypeCache            = createCache("componentTypeCache", 1, false, false, 300, 300);
-			componentTypeComponentCache   = createCache("componentTypeComponentCache", 50000, false, false, 300, 300);
-			applicationCache              = createCache("applicationCache", 100, false, true, 0, 0);
-			contactCache                  = createCache("contactCache", 5000, false, false, 1800, 1800);
-			userSearchCache               = createCache("userSearchCache", 250, false, false, 1800, 1800);
-			searchCache                   = createCache("searchCache", 250, false, false, 1800, 1800);
-			checklistQuestionCache        = createCache("checklistQuestionCache", 1000, false, false, 300, 300);
-			workPlanTypeCache             = createCache("workPlanTypeCache", 1000, false, false, 7200, 7200);
+			// Eternal caches
+			applicationCache              = createCache(String.class, Object.class, "applicationCache", 100, true);
+			attributeCache                = createCache(String.class, (AttributeCode.class) List.class, "attributeCache", 30000, true);
+			attributeCodeAllCache         = createCache(Integer.class, String.class, "attributeCodeAllCache", 1, true);
+			attributeTypeCache            = createCache(Integer.class, String.class, "attributeTypeCache", 5000, true);
+
+			// Non-eternal caches
+			checklistQuestionCache        = createCache(String.class, ChecklistQuestion.class, "checklistQuestionCache", 1000, false, 300, 300);
+			componentApprovalCache        = createCache(String.class, String.class, "componentApprovalCache", 50000, false, 300, 300);
+			componentCache                = createCache(Integer.class, String.class, "componentCache", 200, false, 300, 300);
+			componentDataRestrictionCache = createCache(Integer.class, String.class, "componentDataRestrictionCache", 50000, false, 1800, 1800);
+			componentIconCache            = createCache(Integer.class, String.class, "componentIconCache", 50000, false, 1800, 1800);
+			componentLookupCache          = createCache(Integer.class, String.class, "componentLookupCache", 50000, false, 300, 300);
+			componentTypeCache            = createCache(Integer.class, String.class, "componentTypeCache", 1, false, 300, 300);
+			componentTypeComponentCache   = createCache(Integer.class, String.class, "componentTypeComponentCache", 50000, false, 300, 300);
+			contactCache                  = createCache(Integer.class, String.class, "contactCache", 5000, false, 1800, 1800);
+			lookupCache                   = createCache(Integer.class, String.class, "lookupCache", 500, false, 600, 600);
+			searchCache                   = createCache(Integer.class, String.class, "searchCache", 250, false, 1800, 1800);
+			userAgentCache                = createCache(Integer.class, String.class, "userAgentCache", 100, false, 7200, 7200);
+			userSearchCache               = createCache(Integer.class, String.class, "userSearchCache", 250, false, 1800, 1800);
+			workPlanTypeCache             = createCache(Integer.class, String.class, "workPlanTypeCache", 1000, false, 7200, 7200);
+
+
+			attributeCache = cacheManager.createCache("attributeCache", CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, AttributeCodeList.class,
+				ResourcePoolsBuilder.heap(30000))
+			.withExpiry(ExpiryPolicyBuilder.noExpiration())
+			.build());
 		} finally {
 			LOCK.unlock();
 		}
 
 	}
 
+	private class AttributeCodeList extends ArrayList<AttributeCode> {
+		public AttributeCodeList(final Collection<? extends AttributeCode> c){
+			super(c);
+		}
+	}
+
 	private static CacheManager initCacheManager() {
-		CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder() 
+		CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
 			.withCache("preConfigured",
-				CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class, ResourcePoolsBuilder.heap(10))) 
-			.build(); 
+				CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class, ResourcePoolsBuilder.heap(10)))
+			.build();
 		cacheManager.init();
 		return cacheManager;
-	}
-
-	public static CacheManager getCacheManager()
-	{
-		return cacheManager;
-	}
-
-	public static Cache getLookupCache()
-	{
-		return lookupCache;
-	}
-
-	public static Cache getAttributeCache()
-	{
-		return attributeCache;
-	}
-
-	public static Cache getAttributeTypeCache()
-	{
-		return attributeTypeCache;
-	}
-
-	public static Cache getUserAgentCache()
-	{
-		return userAgentCache;
-	}
-
-	public static Cache getComponentCache()
-	{
-		return componentCache;
-	}
-
-	public static Cache getComponentLookupCache()
-	{
-		return componentLookupCache;
-	}
-
-	public static Cache getAttributeCodeAllCache()
-	{
-		return attributeCodeAllCache;
-	}
-
-	public static void setAttributeCodeAllCache(Cache aAttributeCodeAllCache)
-	{
-		attributeCodeAllCache = aAttributeCodeAllCache;
-	}
-
-	public static Cache getComponentApprovalCache()
-	{
-		return componentApprovalCache;
-	}
-
-	public static Cache getComponentDataRestrictionCache()
-	{
-		return componentDataRestrictionCache;
-	}
-
-	public static Cache getApplicationCache()
-	{
-		return applicationCache;
-	}
-
-	public static Cache getComponentTypeCache()
-	{
-		return componentTypeCache;
-	}
-
-	public static Cache getContactCache()
-	{
-		return contactCache;
-	}
-
-	public static Cache getUserSearchCache()
-	{
-		return userSearchCache;
-	}
-
-	public static Cache getSearchCache()
-	{
-		return searchCache;
-	}
-
-	public static Cache getChecklistQuestionCache()
-	{
-		return checklistQuestionCache;
-	}
-
-	public static Cache getComponentIconCache()
-	{
-		return componentIconCache;
-	}
-
-	public static Cache getComponentTypeComponentCache()
-	{
-		return componentTypeComponentCache;
-	}
-
-	public static Cache getWorkPlanTypeCache()
-	{
-		return workPlanTypeCache;
 	}
 
 	@Override
@@ -238,6 +170,51 @@ public class OSFCacheManager
 	public static boolean isActive()
 	{
 		return started.get();
+	}
+
+	public static <K, V> boolean isEmpty(Cache<K, V> cache)
+	{
+		AtomicBoolean isCacheEmpty = new AtomicBoolean(true);
+		cache.forEach(a -> {if(a != null) isCacheEmpty.set(false);});
+		return isCacheEmpty.get();
+	}
+
+	public static Cache<String, ChecklistQuestion> getChecklistQuestionCache()
+	{
+		return checklistQuestionCache;
+	}
+
+	public static void setChecklistQuestionCache(Cache<String, ChecklistQuestion> checklistQuestionCache)
+	{
+		OSFCacheManager.checklistQuestionCache = checklistQuestionCache;
+	}
+
+	public static Cache<String, String> getComponentApprovalCache()
+	{
+		return componentApprovalCache;
+	}
+
+	public static void setComponentApprovalCache(Cache<String, String> componentApprovalCache)
+	{
+		OSFCacheManager.componentApprovalCache = componentApprovalCache;
+	}
+
+	public static Cache<String, AttributeType> getAttributeCache()
+	{
+		return attributeCache;
+	}
+
+	public static void setAttributeCache(Cache<String, AttributeType> attributeCache)
+	{
+		OSFCacheManager.attributeCache = attributeCache;
+	}
+
+	public static Cache<String, Object> getApplicationCache() {
+		return applicationCache;
+	}
+
+	public static void setApplicationCache(Cache<String, Object> applicationCache) {
+		OSFCacheManager.applicationCache = applicationCache;
 	}
 
 }

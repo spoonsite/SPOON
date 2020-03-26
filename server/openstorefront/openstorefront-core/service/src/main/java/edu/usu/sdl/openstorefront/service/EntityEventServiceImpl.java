@@ -42,7 +42,7 @@ public class EntityEventServiceImpl
 	@SuppressWarnings("unchecked")
 	public void registerEventListener(EntityEventRegistrationModel registrationModel)
 	{
-		Element element = OSFCacheManager.getApplicationCache().get(EVENT_LISTENER_KEY);
+		List<EntityEventRegistrationModel> element = OSFCacheManager.getApplicationCache().get(EVENT_LISTENER_KEY);
 		if (element == null) {
 			List<EntityEventRegistrationModel> listeners = new ArrayList<>();
 			element = new Element(EVENT_LISTENER_KEY, listeners);
