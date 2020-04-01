@@ -15,6 +15,7 @@
  */
 package edu.usu.sdl.openstorefront.core.view;
 
+import edu.usu.sdl.openstorefront.core.api.LookupService;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.api.ServiceProxyFactory;
 import edu.usu.sdl.openstorefront.core.entity.DataSensitivity;
@@ -25,6 +26,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
@@ -34,6 +37,7 @@ import org.jsoup.helper.StringUtil;
  */
 public abstract class StandardEntityView
 {
+	public static final Logger LOG = Logger.getLogger(StandardEntityView.class.getName());
 
 	private String securityMarkingType;
 	private String securityMarkingDescription;
@@ -59,7 +63,20 @@ public abstract class StandardEntityView
 			//Set to the highest classification
 			for (StandardEntity entity : entities) {
 				if (entity != null) {
-					SecurityMarkingType marking = service.getLookupService().getLookupEnity(SecurityMarkingType.class, entity.getSecurityMarkingType());
+					// Somewhere in this original line there is an occasional null pointer error. 
+//					SecurityMarkingType marking = service.getLookupService().getLookupEnity(SecurityMarkingType.class, entity.getSecurityMarkingType());
+					String entitySecurityMarking = entity.getSecurityMarkingType();
+					if (entitySecurityMarking == null) {
+						LOG.log(Level.WARNING, "getSecurityMarkingType was null for {0}", entity.toString());
+					}
+					LookupService lookup = service.getLookupService();
+					if (lookup == null) {
+						LOG.log(Level.WARNING, "getLookupService was null for {0}", entity.toString());
+					}
+					SecurityMarkingType marking = lookup.getLookupEnity(SecurityMarkingType.class, entitySecurityMarking);
+					if (marking == null) {
+						LOG.log(Level.WARNING, "getLookupEnity was null for {0}", entity.toString());
+					}
 					if (marking != null
 							&& marking.getSortOrder() != null
 							&& (securityMarkingRank == null || marking.getSortOrder() > securityMarkingRank)) {
