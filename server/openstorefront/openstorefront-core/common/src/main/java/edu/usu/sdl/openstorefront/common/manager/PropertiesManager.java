@@ -336,6 +336,7 @@ public class PropertiesManager
             String mongoSystemVar = System.getenv("MONGO_URL");
             if(mongoSystemVar != null){
                 defaults.put(KEY_MONGO_CONNECTION_URL, mongoSystemVar);
+                LOG.log(Level.INFO, "Updated Mongo connection url to: " + mongoSystemVar);
             }
 
             String propertiesFilename;
