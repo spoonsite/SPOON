@@ -3,6 +3,7 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
+const { VueLoaderPlugin } = require('vue-loader')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -18,12 +19,13 @@ const createLintingRule = () => ({
     emitWarning: !config.dev.showEslintErrorsInOverlay
   }
 })
-
+process.traceDeprecation = true
 module.exports = {
   context: path.resolve(__dirname, '../'),
-  entry: {
-    app: [ 'babel-polyfill', './src/main.js' ]
-  },
+  // entry: {
+  //   app: [ '@babel/plugin-transform-runtime', './src/main.js' ]
+  // },
+  entry: './src/main.js',
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
@@ -44,12 +46,17 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
+        type: 'javascript/auto',
         options: vueLoaderConfig
       },
       {
         test: /\.js$/,
         loader: 'babel-loader',
         include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
+        // exclude: /node_modules/,
+        // use: {
+        //   loader: 'babel-loader',
+        // }
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -74,13 +81,23 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
-      }
+      },
+      // {
+      //   test: /\.css$/,
+      //   use: [
+      //     'vue-style-loader',
+      //     'css-loader'
+      //   ]
+      // },
     ]
   },
+  plugins: [
+    new VueLoaderPlugin()
+  ],
   node: {
     // prevent webpack from injecting useless setImmediate polyfill because Vue
     // source contains it (although only uses it if it's native).
-    setImmediate: false,
+    // setImmediate: false,
     // prevent webpack from injecting mocks to Node native modules
     // that does not make sense for the client
     dgram: 'empty',
