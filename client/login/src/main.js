@@ -32,7 +32,6 @@ store.dispatch('getBranding', () => {
     duration: 5000
   });
 
-
   /* eslint-disable no-new */
   new Vue({
     el: '#app',

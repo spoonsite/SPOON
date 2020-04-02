@@ -56,7 +56,11 @@ export default {
           this.dialog = true;
           this.loading = false;
         })
-        .catch(error => console.error(error));
+        .catch(error => {
+          this.$toasted.error('There was an error submitting the request');
+          // eslint-disable-next-line no-console
+          console.error(error);
+        });
     }
   }
 };
