@@ -369,6 +369,16 @@ public class ElasticSearchManager
 				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(searchFilters.getSortOrder()) ? SortOrder.ASC
 						: SortOrder.DESC);
 
+		/**
+		 * Aggregations are a way to get info about the results of an elasticsearch query.
+		 *
+		 * Java API aggregations
+		 * https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-aggs.html
+		 *
+		 * Terms Aggregations
+		 * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html
+		 */
+
 		// Get all categories from search result
 		TermsAggregationBuilder categoryAggregationBuilder = AggregationBuilders
 				.terms("by_category")
@@ -390,12 +400,23 @@ public class ElasticSearchManager
 
 		String [] include = new String[]{"attributes"};
 
+		/**
+		 * Is used as a helper aggregations for the fetching of all the attributes
+		 *
+		 * Top Hits Aggregations
+		 * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-top-hits-aggregation.html
+		 */
 		TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders
 				.topHits("attribute")
 				.fetchSource(include, null)
 				.size(NUMBER_INNER_WINDOW_RETURN);
 
-		// Gets list of all attribute labels from search as well as all the whole attribute object
+		/**
+		 * Gets list of all attribute labels from search as well as all the whole attribute object
+		 *
+		 * Nested Aggregations
+		 * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-nested-aggregation.html
+		 */
 		NestedAggregationBuilder nestedAttributeLabelAggregationBuilder = AggregationBuilders
 				.nested("by_attribute_type", "attributes")
 				.subAggregation(topHitsAggregationBuilder);
@@ -1168,7 +1189,6 @@ public class ElasticSearchManager
 		checkSearchIndexCreation();
 		deleteAll();
 		updateElasticsearchSettings();
-		// addTagsAnalyzer();
 		updateMapping();
 		updateMappingAttributes();
 		saveAll();
