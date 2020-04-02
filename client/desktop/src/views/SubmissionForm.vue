@@ -875,16 +875,38 @@ export default {
      *      let tenMeters = 10
      *      let convertedToCentimeters = convertNumber(tenMeters, 1/100)
      */
-    convertNumber(value, conversionFactor) {
+    convertNumber(value, conversionFactor, baseUnit, currentUnit) {
       if (conversionFactor === 1) {
         return value
       }
       let numValue = Number(value)
       if (!isNaN(numValue)) {
-        numValue /= conversionFactor
+        if (baseUnit === '\u00B0' + 'C' || baseUnit === '\u00B0' + 'F' || baseUnit === 'K') {
+          numValue = this.convertTemperature(numValue, baseUnit, currentUnit)
+        } else {
+          numValue /= conversionFactor
+        }
         return String(numValue)
       } else {
         return value
+      }
+    },
+    convertTemperature(value, baseUnit, currentUnit) {
+      const kelvinUnit = 273.15
+      const conversionCF = 9 / 5
+      const differenceCF = 32
+      if (baseUnit === '\u00B0' + 'C' && currentUnit === 'K') {
+        return value - kelvinUnit
+      } else if (baseUnit === '\u00B0' + 'F' && currentUnit === 'K') {
+        return (value - 273.15) * conversionCF + differenceCF
+      } else if (baseUnit === '\u00B0' + 'F' && currentUnit === '\u00B0' + 'C') {
+        return value * conversionCF + differenceCF
+      } else if (baseUnit === 'K' && currentUnit === '\u00B0' + 'C') {
+        return value + 273.15
+      } else if (baseUnit === '\u00B0' + 'C' && currentUnit === '\u00B0' + 'F') {
+        return (value - differenceCF) * conversionCF
+      } else if (baseUnit === 'K' && currentUnit === '\u00B0' + 'F') {
+        return (value - differenceCF) * conversionCF + kelvinUnit
       }
     },
     /**
@@ -897,9 +919,13 @@ export default {
       allAttributes.forEach(el => {
         // get conversion factor
         let conversionFactor = 1
+        let baseUnit = ''
+        let currentUnit = ''
         el.attributeUnitList.forEach(unit => {
           if (unit.unit === el.selectedUnit) {
             conversionFactor = unit.conversionFactor
+            baseUnit = el.attributeUnit
+            currentUnit = el.selectedUnit
           }
         })
 
@@ -911,7 +937,7 @@ export default {
               componentAttributePk: {
                 userCreated: code.userCreated,
                 attributeType: el.attributeType,
-                attributeCode: this.convertNumber(codeValue, conversionFactor)
+                attributeCode: this.convertNumber(codeValue, conversionFactor, baseUnit, currentUnit)
               },
               preferredUnit: el.selectedUnit
             })
@@ -921,7 +947,7 @@ export default {
             componentAttributePk: {
               userCreated: el.userCreated,
               attributeType: el.attributeType,
-              attributeCode: this.convertNumber(el.selectedCodes, conversionFactor)
+              attributeCode: this.convertNumber(el.selectedCodes, conversionFactor, baseUnit, currentUnit)
             }
           })
         } else if (typeof el.selectedCodes === 'object' && el.selectedCodes && !Array.isArray(el.selectedCodes)) {
@@ -929,7 +955,7 @@ export default {
             componentAttributePk: {
               userCreated: el.userCreated,
               attributeType: el.attributeType,
-              attributeCode: this.convertNumber(el.selectedCodes.code, conversionFactor)
+              attributeCode: this.convertNumber(el.selectedCodes.code, conversionFactor, baseUnit, currentUnit)
             }
           })
         }
