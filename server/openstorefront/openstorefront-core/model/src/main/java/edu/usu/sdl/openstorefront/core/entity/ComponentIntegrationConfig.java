@@ -42,12 +42,6 @@ public class ComponentIntegrationConfig
 	@NotNull
 	private String integrationConfigId;
 
-	@NotNull
-	@ValidValueType(value = {}, lookupClass = IntegrationType.class)
-	@ConsumeField
-	@FK(IntegrationType.class)
-	private String integrationType;
-
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_GENERAL_TEXT)
 	@Sanitize(TextSanitizer.class)
 	@ConsumeField
@@ -105,16 +99,6 @@ public class ComponentIntegrationConfig
 	public void setIssueNumber(String issueNumber)
 	{
 		this.issueNumber = issueNumber;
-	}
-
-	public String getIntegrationType()
-	{
-		return integrationType;
-	}
-
-	public void setIntegrationType(String integrationType)
-	{
-		this.integrationType = integrationType;
 	}
 
 	public String getProjectType()

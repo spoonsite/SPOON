@@ -38,7 +38,6 @@ public abstract class BaseComponentServiceImpl
 	protected PersistenceService persistenceService;
 	protected CoreComponentServiceImpl core;
 	protected SubComponentServiceImpl sub;
-	protected IntegrationComponentServiceImpl integration;
 	protected ComponentTypeServiceImpl type;
 	protected FilterEngine filterEngine;
 
@@ -53,7 +52,6 @@ public abstract class BaseComponentServiceImpl
 	{
 		core = componentService.getCore();
 		sub = componentService.getSub();
-		integration = componentService.getIntegration();
 	}
 
 	protected void updateComponentLastActivity(String componentId)

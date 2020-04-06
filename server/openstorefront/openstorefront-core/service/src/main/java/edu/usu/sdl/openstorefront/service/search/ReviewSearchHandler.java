@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
 import edu.usu.sdl.openstorefront.core.model.search.SearchElement;
 import edu.usu.sdl.openstorefront.core.model.search.SearchOperation;
-import static edu.usu.sdl.openstorefront.core.model.search.SearchOperation.StringOperation.EQUALS;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.util.ArrayList;

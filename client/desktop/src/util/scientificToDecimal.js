@@ -4,7 +4,7 @@
  * @param {String} number
  * @returns {String} Number in decimal notation.
  */
-export function scientificToDecimal (number) {
+export function scientificToDecimal(number) {
   let numberHasSign = number.startsWith('-') || number.startsWith('+')
   let sign = numberHasSign ? number[0] : ''
   number = numberHasSign ? number.replace(sign, '') : number
@@ -36,7 +36,7 @@ export function scientificToDecimal (number) {
  * @param {String} inputNumber
  * @returns {String} The modified string if able to modify, otherwise return original inputNumber
  */
-export function crushNumericString (inputNumber) {
+export function crushNumericString(inputNumber) {
   // If inputNumber is not a number return.
   if (isNaN(inputNumber)) {
     if (typeof inputNumber === 'string' || inputNumber instanceof String) {

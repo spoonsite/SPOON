@@ -5,18 +5,16 @@
       label="Low"
       style="margin-right: 0.5em; width: 6em; display: inline-block;"
       v-model="min"
-      :rules="[ validNumber ]"
+      :rules="[validNumber]"
     ></v-text-field>
-    <span
-      style="margin-right: 0.5em;"
-    >
+    <span style="margin-right: 0.5em;">
       to
     </span>
     <v-text-field
       label="High"
       v-model="max"
       style="margin-right: 0.5em; width: 6em; display: inline-block;"
-      :rules="[ validNumber ]"
+      :rules="[validNumber]"
     ></v-text-field>
     <!-- <v-combobox
       :items="['kg', 'mg', 'μg', 'g', 'lbs', 'oz']"
@@ -31,14 +29,12 @@
 <script>
 export default {
   name: 'AttributeRange',
-  props: [],
   methods: {
-    validNumber (v) {
+    validNumber(v) {
       return !isNaN(v) || 'Must be a valid number'
     }
   },
-  watch: {},
-  data () {
+  data() {
     return {
       min: null,
       max: null
@@ -46,6 +42,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

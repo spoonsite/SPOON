@@ -5,7 +5,6 @@
  */
 package edu.usu.sdl.er2.model;
 
-import java.util.List;
 import org.simpleframework.xml.*;
 /**
  *
@@ -13,36 +12,29 @@ import org.simpleframework.xml.*;
  */
 @Root(strict=false)
 public class Relationships {
-    
-    @Element (name="Provides",required=false) 
+
+    @Element (name="Provides",required=false)
     public Provides provides;
-    
+
     @Element (name="ResponsibleParty", required=false)
     public Provides responsibleParty;
-    
+
     @Override
-    public String toString(){
-        
-        String provStr="";
-        if(provides!=null)
-        {
-           provStr+=provides.toString();
+    public String toString() {
+
+        String provStr = "";
+        if (provides != null) {
+            provStr += provides.toString();
         }
-        
-        
-        
-        String respParty="";
-        if(responsibleParty!=null)
-        {
-           respParty+=responsibleParty.toString();
+
+        String respParty = "";
+        if (responsibleParty != null) {
+            respParty += responsibleParty.toString();
         }
-        
-        
-        String retStr="{\n\tProvides:"+provStr+
-                      "\n\tResponsibleParty:"+respParty+
-                      "\n\t}";
+
+        String retStr = "{\n\tProvides:" + provStr + "\n\tResponsibleParty:" + respParty + "\n\t}";
         return retStr;
-        
+
     }
-    
+
 }

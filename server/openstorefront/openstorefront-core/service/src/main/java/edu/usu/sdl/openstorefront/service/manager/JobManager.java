@@ -18,15 +18,12 @@ package edu.usu.sdl.openstorefront.service.manager;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
-import edu.usu.sdl.openstorefront.core.entity.ComponentIntegration;
-import edu.usu.sdl.openstorefront.service.ServiceProxy;
 import edu.usu.sdl.openstorefront.service.io.ComponentImporter;
 import edu.usu.sdl.openstorefront.service.io.HighlightImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.job.BaseJob;
 import edu.usu.sdl.openstorefront.service.job.ComponentUpdateJob;
 import edu.usu.sdl.openstorefront.service.job.ImportJob;
-import edu.usu.sdl.openstorefront.service.job.IntegrationJob;
 import edu.usu.sdl.openstorefront.service.job.NotificationJob;
 import edu.usu.sdl.openstorefront.service.job.RecentChangeNotifyJob;
 import edu.usu.sdl.openstorefront.service.job.ScheduledReportCronJob;
@@ -48,10 +45,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang3.StringUtils;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import org.quartz.JobBuilder;
-import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -121,93 +116,10 @@ public class JobManager
 		addRecentChangeNotifyJob();
 		addScheduledReportJob();
 		addComponentUpdate();
-		addComponentIntegrationJobs();
 		addUserProfileSyncjob();
 		addImportJob();
 		addArchiveJob();
 		addSearchStatsJob();
-	}
-
-	private static void addComponentIntegrationJobs() throws SchedulerException
-	{
-		LOG.log(Level.INFO, "Adding Integration Jobs");
-
-		ServiceProxy serviceProxy = new ServiceProxy();
-		List<ComponentIntegration> integrations = serviceProxy.getComponentService().getComponentIntegrationModels(ComponentIntegration.ACTIVE_STATUS);
-		for (ComponentIntegration integration : integrations) {
-			addComponentIntegrationJob(integration);
-		}
-	}
-
-	private static void addComponentIntegrationJob(ComponentIntegration componentIntegration) throws SchedulerException
-	{
-		ServiceProxy serviceProxy = new ServiceProxy();
-		String jobName = "ComponentJob-" + componentIntegration.getComponentId();
-
-		JobKey jobKey = JobKey.jobKey(jobName, JOB_GROUP_SYSTEM);
-		if (scheduler.checkExists(jobKey)) {
-			LOG.log(Level.WARNING, MessageFormat.format("Job already Exist: {0} check data", jobName));
-		} else {
-			JobDetail job = JobBuilder.newJob(IntegrationJob.class)
-					.withIdentity("ComponentJob-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
-					.withDescription("Component Integration Job for " + serviceProxy.getComponentService().getComponentName(componentIntegration.getComponentId()))
-					.build();
-
-			job.getJobDataMap().put(IntegrationJob.COMPONENT_ID, componentIntegration.getComponentId());
-			String cron = componentIntegration.getRefreshRate();
-			if (cron == null) {
-				cron = serviceProxy.getSystemService().getGlobalIntegrationConfig().getJiraRefreshRate();
-			}
-			Trigger trigger = newTrigger()
-					.withIdentity("ComponentTrigger-" + componentIntegration.getComponentId(), JOB_GROUP_SYSTEM)
-					.startNow()
-					.withSchedule(cronSchedule(cron))
-					.build();
-
-			scheduler.scheduleJob(job, trigger);
-		}
-	}
-
-	/**
-	 * Add or Update job
-	 *
-	 * @param componentIntegration
-	 */
-	public static void updateComponentIntegrationJob(ComponentIntegration componentIntegration)
-	{
-		try {
-			removeComponentIntegrationJob(componentIntegration.getComponentId());
-			addComponentIntegrationJob(componentIntegration);
-		} catch (SchedulerException ex) {
-			throw new OpenStorefrontRuntimeException("Unable update Job: " + componentIntegration.getComponentId(), ex);
-		}
-	}
-
-	public static void removeComponentIntegrationJob(String componentId)
-	{
-		JobKey jobKey = JobKey.jobKey("ComponentJob-" + componentId, JOB_GROUP_SYSTEM);
-		try {
-			if (scheduler.checkExists(jobKey)) {
-				scheduler.deleteJob(jobKey);
-			}
-		} catch (SchedulerException ex) {
-			throw new OpenStorefrontRuntimeException("Unable remove Job.", ex);
-		}
-	}
-
-	public static void runComponentIntegrationNow(String componentId, String integrationConfigId)
-	{
-		JobKey jobKey = JobKey.jobKey("ComponentJob-" + componentId, JOB_GROUP_SYSTEM);
-		try {
-			JobDataMap jobDataMap = new JobDataMap();
-			jobDataMap.put(IntegrationJob.COMPONENT_ID, componentId);
-			if (StringUtils.isNotBlank(integrationConfigId)) {
-				jobDataMap.put(IntegrationJob.CONFIG_ID, integrationConfigId);
-			}
-			scheduler.triggerJob(jobKey, jobDataMap);
-		} catch (SchedulerException ex) {
-			throw new OpenStorefrontRuntimeException("Unable run Job.", ex);
-		}
 	}
 
 	public static void unscheduleSystemJob(String triggerName)

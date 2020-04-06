@@ -145,13 +145,6 @@
 				}
 			});			
 			dataMenu.push({
-				text: 'Integrations',
-				permission: ['ADMIN-INTEGRATION-PAGE'],
-				handler: function(){
-					actionLoadContent('Integrations');
-				}
-			});
-			dataMenu.push({
 				text: 'Imports',
 				permission: ['ADMIN-IMPORT-PAGE'],
 				handler: function(){

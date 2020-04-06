@@ -21,8 +21,6 @@ import org.atmosphere.socketio.SocketIOSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -34,7 +32,7 @@ public class XHRPollingTransport extends XHRTransport {
     private static final Logger logger = LoggerFactory.getLogger(XHRPollingTransport.class);
 
     public static final String TRANSPORT_NAME = "xhr-polling";
-    
+
     private final ReentrantLock lock = new ReentrantLock();
 
     public XHRPollingTransport(int bufferSize) {

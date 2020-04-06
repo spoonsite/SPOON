@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -39,10 +38,10 @@ import org.simpleframework.xml.core.Persister;
  * @author rfrazier
  */
 public class AerospaceXMLParser {
-    
+
     private static final Logger LOG = Logger.getLogger(Activator.class.getName());
     private Map<String, String> componentTypeMap;
-    
+
     AerospaceXMLParser() {
         try {
             componentTypeMap = getComponentTypeMap();
@@ -51,17 +50,15 @@ public class AerospaceXMLParser {
         }
     }
 
-    
+
     /**
      * reads the component type mapping CSV in the class resources and
      * returns a map of Aerospace product type to Storefront component type
      * @return
      * @throws FileNotFoundException
-     * @throws IOException 
+     * @throws IOException
      */
     public Map<String, String> getComponentTypeMap() throws FileNotFoundException, IOException {
-        Map<String, String> componentTypeMap = new HashMap<>();
-        
         Service service = ServiceProxyFactory.getServiceProxy();
 
         Reader in = new InputStreamReader(AerospaceXMLParser.class.getResourceAsStream("/componentTypeMapping.csv"));
@@ -81,7 +78,7 @@ public class AerospaceXMLParser {
         try(InputStream xmlin = in) {
             services = serializer.read(Services.class, xmlin);
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Unable to serialize: {0}", e.getMessage());// USER THE LOGGER 
+            LOG.log(Level.SEVERE, "Unable to serialize: {0}", e.getMessage());// USER THE LOGGER
         }
 
         return services;

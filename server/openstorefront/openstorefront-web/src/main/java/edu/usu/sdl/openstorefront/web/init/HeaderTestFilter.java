@@ -43,6 +43,7 @@ public class HeaderTestFilter
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
 	{
+		response.setCharacterEncoding("UTF-8");
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		MockOpenAmRequest mockOpenAmRequest = new MockOpenAmRequest(httpServletRequest);
 		chain.doFilter(mockOpenAmRequest, response);

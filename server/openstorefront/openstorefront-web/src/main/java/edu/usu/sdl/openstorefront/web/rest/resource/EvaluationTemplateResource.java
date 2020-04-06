@@ -26,7 +26,6 @@ import edu.usu.sdl.openstorefront.doc.security.LogicOperation;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import net.sourceforge.stripes.action.ErrorResolution;
 
 import java.net.URI;
 import java.util.List;

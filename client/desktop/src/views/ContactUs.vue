@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
     <v-layout my-5 mx-3>
-      <v-form class="centeralign" ref="form" v-model="valid" lazy-validation>
+      <v-form class="centeralign" ref="form" lazy-validation>
         <v-container grid-list-xl text-xs-left>
           <v-layout row wrap>
             <v-flex xs12 pt-0 pb-0>
@@ -24,7 +24,7 @@
               ></v-text-field>
             </v-flex>
 
-            <v-flex  xs12 md6 pt-0 pb-0>
+            <v-flex xs12 md6 pt-0 pb-0>
               <v-textarea
                 v-model="description"
                 :rules="descriptionRules"
@@ -35,28 +35,23 @@
               ></v-textarea>
             </v-flex>
 
-            <v-flex  xs12 md6 pt-0 pb-0>
+            <v-flex xs12 md6 pt-0 pb-0>
               <h2>Contact Information</h2>
               <p>
-                <strong>Name: </strong>{{this.$store.state.currentUser.firstName + this.$store.state.currentUser.lastName}}
+                <strong>Name: </strong
+                >{{ this.$store.state.currentUser.firstName + this.$store.state.currentUser.lastName }}
               </p>
-              <p>
-                <strong>Email: </strong>{{this.$store.state.currentUser.email}}
-              </p>
-              <p>
-                <strong>Phone: </strong>{{this.$store.state.currentUser.phone}}
-              </p>
-              <p>
-                <strong>Organization: </strong>{{this.$store.state.currentUser.organization}}
-              </p>
+              <p><strong>Email: </strong>{{ this.$store.state.currentUser.email }}</p>
+              <p><strong>Phone: </strong>{{ this.$store.state.currentUser.phone }}</p>
+              <p><strong>Organization: </strong>{{ this.$store.state.currentUser.organization }}</p>
             </v-flex>
 
             <v-flex xs12 pt-0 pb-0>
               <v-btn
                 block
-                color="accent"
+                color="success"
                 style="margin-bottom:2em;"
-                :disabled="!valid"
+                :disabled="valid"
                 @click="submit"
                 :loading="isLoading"
               >
@@ -64,12 +59,7 @@
               </v-btn>
             </v-flex>
             <v-flex xs12 pt-0 pb-0>
-              <v-btn
-                block
-                color="accent"
-                :disabled="!cancelable"
-                @click="cancel"
-              >
+              <v-btn block color="accent" :disabled="!cancelable" @click="cancel">
                 Clear
               </v-btn>
             </v-flex>
@@ -78,23 +68,28 @@
       </v-form>
     </v-layout>
 
-    <v-dialog v-model="confirmationDialog" max-width="300px">
-      <v-card title>
+    <v-dialog v-model="confirmationDialog" max-width="25em">
+      <v-card>
+        <ModalTitle title="Submitted Feedback" @close="confirmationDialog = false" />
         <v-card-text>Feedback has been submitted.</v-card-text>
-        <v-card-actions >
+        <v-card-actions>
+          <v-spacer />
           <v-btn @click="$router.push('/')">Return to Homepage</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-
   </div>
 </template>
 
 <script lang="js">
+import ModalTitle from '@/components/ModalTitle'
+
 export default {
   name: 'contact-page',
-  props: [],
-  mounted () {
+  components: {
+    ModalTitle
+  },
+  mounted() {
     if (this.$route.params.ticket) {
       this.ticket = this.$route.params.ticket
       this.description = 'Error Description: ' + this.ticket
@@ -103,10 +98,9 @@ export default {
   },
   data: () => ({
     ticket: '',
-    valid: true,
     confirmationDialog: false,
     isLoading: false,
-    contactType: undefined,
+    contactType: '',
     contactTypeRules: [
       v => !!v || 'Type is required'
     ],
@@ -116,19 +110,19 @@ export default {
       'Improvement',
       'New Feature'
     ],
-    subject: undefined,
+    subject: '',
     subjectRules: [
       v => !!v || 'Subject is required',
       v => (v && v.length <= 255) || 'Maximum length for this field is 255'
     ],
-    description: undefined,
+    description: '',
     descriptionRules: [
       v => !!v || 'Description is required',
       v => (v && v.length <= 4096) || 'Maximum length for this field is 4096'
     ]
   }),
   methods: {
-    submit () {
+    submit() {
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
         this.isLoading = true
@@ -149,21 +143,26 @@ export default {
             }
           })
           .then(response => {
-            this.$refs.form.reset()
+            this.cancel()
             this.confirmationDialog = true
             this.isLoading = false
           })
       }
     },
-    cancel () {
-      this.$refs.form.reset()
+    cancel() {
+      this.contactType = ''
+      this.subject = ''
+      this.description = ''
     }
   },
   computed: {
-    cancelable () {
-      return this.contactType !== undefined ||
-        this.subject !== undefined ||
-        this.description !== undefined
+    cancelable() {
+      return this.contactType !== '' ||
+        this.subject !== '' ||
+        this.description !== ''
+    },
+    valid() {
+      return !(this.contactType !== '' && this.subject !== '' && this.description !== '')
     }
   }
 }

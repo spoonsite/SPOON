@@ -125,6 +125,12 @@ public class ElasticSearchManager
 
 	private static final String DEFAULT_POOL_SIZE = "40";
 
+	private static final float TITLE_BOOST = 5.0f;
+	private static final float ORGANIZATION_BOOST = 3.0f;
+	private static final float TAG_BOOST = 2.0f;
+	private static final float ATTRIBUTE_BOOST = 1.0f;
+	private static final float DESCRIPTION_BOOST = 0.5f;
+
 	//TODO: Add back search all field as an option
 	private static final String ELASTICSEARCH_ALL_FIELDS = "_all";
 
@@ -236,7 +242,7 @@ public class ElasticSearchManager
 	}
 
 	/**
-	 * Check if the index exists, if it does not exist, create an index. 
+	 * Check if the index exists, if it does not exist, create an index.
 	 */
 	private void checkSearchIndexCreation()
 	{
@@ -318,10 +324,10 @@ public class ElasticSearchManager
 
 	/**
 	 * Parses the elasticsearch return object into a readable form
-	 * 
+	 *
 	 * @param searchQuery object holding the search query
 	 * @param filter to apply to the returned elasticsearch result
-	 * @return ComponentSearchWrapper 
+	 * @return ComponentSearchWrapper
 	 */
 	@Override
 	public ComponentSearchWrapper search(SearchQuery searchQuery, FilterQueryParams filter)
@@ -341,7 +347,7 @@ public class ElasticSearchManager
 
 	/**
 	 * Version 2 of index search, specifically for Vue frontend usage
-	 * 
+	 *
 	 * @param searchFilters all necessary information needed for search
 	 * @return string of search response
 	 */
@@ -379,7 +385,7 @@ public class ElasticSearchManager
 				.field("organization.keyword")
 				.size(MAX_SEARCH_RESULTS);
 
-		
+
 		String [] include = new String[]{"attributes"};
 
 		TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders
@@ -391,9 +397,10 @@ public class ElasticSearchManager
 		NestedAggregationBuilder nestedAttributeLabelAggregationBuilder = AggregationBuilders
 				.nested("by_attribute_type", "attributes")
 				.subAggregation(topHitsAggregationBuilder);
-			
+
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+				.trackScores(true)
 				.query(esQuery)
 				.from(0)
 				.from((searchFilters.getPage() -1) * searchFilters.getPageSize())
@@ -420,7 +427,7 @@ public class ElasticSearchManager
 	/**
 	 * Function for backwards compatibility to old version of search
 	 * for building the query for the search
-	 * 
+	 *
 	 * @param query the query string from search bar
 	 * @return a BoolQueryBuilder to create the search request from
 	 */
@@ -445,7 +452,7 @@ public class ElasticSearchManager
 
 	/**
 	 * Function to build query for search
-	 * 
+	 *
 	 * @param searchFilters all info necessary for creating the search request
 	 * @param searchOptions currently not used but will be used in a future implementation
 	 * @return a BoolQueryBuilder to create the search request from
@@ -549,43 +556,54 @@ public class ElasticSearchManager
 				actualQuery = queryString.toString();
 			}
 
+			// ****************** SEARCH KEYWORD ***************************
 			if (Convert.toBoolean(searchFilterOptions.getCanUseOrganizationsInSearch())) {
 				// Custom query for entry organization
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, properCaseQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
+				BoolQueryBuilder organizationQueryBuilder = QueryBuilders.boolQuery();
+
+				organizationQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allUpperQuery));
+				organizationQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, allLowerQuery));
+				organizationQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, properCaseQuery));
+				organizationQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_ORGANIZATION, actualQuery));
+
+				esQuery.should(organizationQueryBuilder.boost(ORGANIZATION_BOOST));
 			}
 
 			if (Convert.toBoolean(searchFilterOptions.getCanUseNameInSearch())) {
 				// Custom query for entry name
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+				BoolQueryBuilder titleQueryBuilder = QueryBuilders.boolQuery();
 
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+				titleQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
+				titleQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
+				titleQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
+				titleQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+				titleQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
+				titleQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
+				titleQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
+				titleQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+
+				esQuery.should(titleQueryBuilder.boost(TITLE_BOOST));
 			}
 
 			if (Convert.toBoolean(searchFilterOptions.getCanUseDescriptionInSearch())) {
 				// Custom query for description
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, actualQuery));
+				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_DESCRIPTION, actualQuery).boost(DESCRIPTION_BOOST));
 			}
 
 			if (Convert.toBoolean(searchFilterOptions.getCanUseTagsInSearch())) {
+				BoolQueryBuilder tagsQueryBuilder = QueryBuilders.boolQuery();
 				// Custom query for Tags
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
-				esQuery.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
+				tagsQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
+				tagsQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
+				tagsQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
+				tagsQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
 
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
-				esQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
+				tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allUpperQuery));
+				tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
+				tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
+				tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
+
+				esQuery.should(tagsQueryBuilder.boost(TAG_BOOST));
 			}
 
 			if (Convert.toBoolean(searchFilterOptions.getCanUseAttributesInSearch())) {
@@ -602,7 +620,7 @@ public class ElasticSearchManager
 				nestedAttributesQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, properCaseQuery));
 				nestedAttributesQuery.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_ATTRIBUTES, actualQuery));
 
-				esQuery.should(QueryBuilders.nestedQuery("attributes", nestedAttributesQuery, ScoreMode.Avg));
+				esQuery.should(QueryBuilders.nestedQuery("attributes", nestedAttributesQuery, ScoreMode.Avg).boost(ATTRIBUTE_BOOST));
 			}
 		}
 
@@ -630,6 +648,7 @@ public class ElasticSearchManager
 			}
 		}
 
+		// ****************** FILTERS ***************************
 		BoolQueryBuilder boolQueryBuilderOrganization = QueryBuilders.boolQuery();
 		if(searchFilters.getOrganization() != null && searchFilters.getOrganization() != ""){
 			boolQueryBuilderOrganization.must(QueryBuilders.matchPhraseQuery("organization", searchFilters.getOrganization()));
@@ -684,13 +703,13 @@ public class ElasticSearchManager
 		}
 
 		finalQuery.must(esQuery);
-		
+
 		return finalQuery;
-	} 
+	}
 
 	/**
 	 * doIndexSearch with no additionalFieldsToReturn
-	 * 
+	 *
 	 * @param query the string from user
 	 * @param FilterQueryParams any additional query filters
 	 * @return IndexSearchResult result from elasticsearch
@@ -703,7 +722,7 @@ public class ElasticSearchManager
 
 	/**
 	 * Function for basic search
-	 * 
+	 *
 	 * @param query the string from search bar
 	 * @param filter fields to filter on
 	 * @param additionalFieldsToReturn other fields to return from search
@@ -977,13 +996,13 @@ public class ElasticSearchManager
 
 		if(component.getApprovalState() == ApprovalStatus.APPROVED){
 			ComponentSearchView componentSearchView = ComponentSearchView.toView(component);
-			
+
 			try (ElasticSearchClient client = singleton.getClient()) {
 
 				UpdateRequest updateRequest = new UpdateRequest(INDEX, component.getComponentId());
 				updateRequest.doc(objectMapper.writeValueAsString(componentSearchView), XContentType.JSON);
 				updateResponse = client.getInstance().update(updateRequest, RequestOptions.DEFAULT);
-				
+
 			} catch(JsonProcessingException ex){
 				LOG.log(Level.SEVERE, null, ex);
 			} catch (IOException ex) {
@@ -1051,8 +1070,8 @@ public class ElasticSearchManager
 	}
 
 	/**
-	 * Delete a single item from the index using an id. 
-	 * 
+	 * Delete a single item from the index using an id.
+	 *
 	 * @param id: the unique identifier for the component
 	 */
 	@Override
@@ -1074,7 +1093,7 @@ public class ElasticSearchManager
 	}
 
 	/**
-	 * Delete then index and then recreate it. All information in the index is gone. 
+	 * Delete then index and then recreate it. All information in the index is gone.
 	 */
 	@Override
 	public void deleteAll()
@@ -1161,7 +1180,7 @@ public class ElasticSearchManager
 					LOG.log(Level.INFO, "Updated Mapping of " + field + " : " + Boolean.toString(putMappingResponse.isAcknowledged()));
 				} catch (IOException ex){
 					LOG.log(Level.SEVERE, null, ex);
-				} 
+				}
 			}
 
 		} catch (IOException ex) {
@@ -1201,7 +1220,7 @@ public class ElasticSearchManager
 	public void updateMappingAttributes(){
 		try (ElasticSearchClient client = singleton.getClient()) {
 
-				String source = 
+				String source =
 				"{\n" +
 				"  \"properties\": {\n" +
 				"    \"attributes\": {\n" +
@@ -1218,7 +1237,7 @@ public class ElasticSearchManager
 					LOG.log(Level.INFO, "Updated Mapping of attributes: " + Boolean.toString(putMappingResponse.isAcknowledged()));
 				} catch (IOException ex){
 					LOG.log(Level.SEVERE, null, ex);
-				} 
+				}
 			}
 	}
 
@@ -1246,9 +1265,9 @@ public class ElasticSearchManager
 	public SearchResponse getAll(){
 		SearchResponse searchResponse = new SearchResponse();
 		try (ElasticSearchClient client = singleton.getClient()) {
-			SearchRequest searchRequest = new SearchRequest(INDEX); 
-			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder(); 
-			searchSourceBuilder.query(QueryBuilders.matchAllQuery()); 
+			SearchRequest searchRequest = new SearchRequest(INDEX);
+			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+			searchSourceBuilder.query(QueryBuilders.matchAllQuery());
 			searchSourceBuilder.size(MAX_SEARCH_RESULTS);
 			searchRequest.source(searchSourceBuilder);
 
@@ -1268,11 +1287,11 @@ public class ElasticSearchManager
 
 			AcknowledgedResponse deleteIndexResponse = client.getInstance().indices().delete(request, RequestOptions.DEFAULT);
 			LOG.log(Level.INFO, deleteIndexResponse.toString());
-			
+
 		} catch (ElasticsearchException exception) {
 			LOG.log(Level.SEVERE, null, exception);
 		} catch (IOException ex){
 			LOG.log(Level.SEVERE, null, ex);
-		} 
+		}
 	}
 }

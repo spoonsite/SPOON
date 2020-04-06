@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.core.entity;
 
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.SystemTable;
-import static edu.usu.sdl.openstorefront.core.entity.LookupEntity.newLookup;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ import java.util.Map;
 public class ReportType
 		extends LookupEntity<ReportType>
 {
-	
+
 	public static final String ACTION_REPORT = "ACTION";
 	public static final String ENTRIES_BY_CAT_REPORT = "CATCOMP";
 	public static final String ENTRIES_BY_ORG_REPORT = "CMPORG";
@@ -58,10 +57,10 @@ public class ReportType
 	protected Map<String, LookupEntity> systemCodeMap()
 	{
 		Map<String, LookupEntity> codeMap = new HashMap<>();
-		
+
 		codeMap.put(ACTION_REPORT, newLookup(ReportType.class, ACTION_REPORT, "Action", "Report on items that need administrative attention."));
 		codeMap.put(ENTRIES_BY_CAT_REPORT, newLookup(ReportType.class, ENTRIES_BY_CAT_REPORT, "Entries by Category", "Reports on entries in a category."));
-		codeMap.put(ENTRIES_BY_ORG_REPORT, newLookup(ReportType.class, ENTRIES_BY_ORG_REPORT, "Entries by Organization", "Reports on entries that belong to an organization"));	
+		codeMap.put(ENTRIES_BY_ORG_REPORT, newLookup(ReportType.class, ENTRIES_BY_ORG_REPORT, "Entries by Organization", "Reports on entries that belong to an organization"));
 		codeMap.put(ENTRY_DETAIL_REPORT, newLookup(ReportType.class, ENTRY_DETAIL_REPORT, "Entry Detail", "Exports entry details"));
 		codeMap.put(ENTRY_LISTING_REPORT, newLookup(ReportType.class, ENTRY_LISTING_REPORT, "Entry Listing", "List approved entries in a summary"));
 		codeMap.put(ENTRY_REPORT, newLookup(ReportType.class, ENTRY_REPORT, "Entry", "Reports on entry statistic and usage."));
@@ -81,7 +80,7 @@ public class ReportType
 		((ReportType) codeMap.get(ENTRY_DETAIL_REPORT)).setRequiredPermission(SecurityPermission.RUN_ENTRY_DETAIL_REPORT);
 		((ReportType) codeMap.get(ENTRY_LISTING_REPORT)).setRequiredPermission(SecurityPermission.RUN_ENTRY_LISTING_REPORT);
 		((ReportType) codeMap.get(ENTRY_REPORT)).setRequiredPermission(SecurityPermission.RUN_ENTRY_REPORT);
-		((ReportType) codeMap.get(ENTRY_STATUS_REPORT)).setRequiredPermission(SecurityPermission.RUN_ENTRY_STATUS_REPORT);	
+		((ReportType) codeMap.get(ENTRY_STATUS_REPORT)).setRequiredPermission(SecurityPermission.RUN_ENTRY_STATUS_REPORT);
 		((ReportType) codeMap.get(EVAL_STATUS_REPORT)).setRequiredPermission(SecurityPermission.RUN_EVAL_STATUS_REPORT);
 		((ReportType) codeMap.get(LINK_VALIDATION_REPORT)).setRequiredPermission(SecurityPermission.RUN_LINK_VALIDATION_REPORT);
 		((ReportType) codeMap.get(SUBMISSIONS_REPORT)).setRequiredPermission(SecurityPermission.RUN_SUBMISSIONS_REPORT);

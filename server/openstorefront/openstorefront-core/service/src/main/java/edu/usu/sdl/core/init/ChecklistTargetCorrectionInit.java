@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.core.init;
 
-import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.entity.EvaluationChecklistResponse;
 import edu.usu.sdl.openstorefront.core.entity.ContentSection;
 import edu.usu.sdl.openstorefront.core.entity.ContentSubSection;
@@ -33,83 +32,83 @@ import java.util.logging.Logger;
 public class ChecklistTargetCorrectionInit
 		extends ApplyOnceInit
 {
-	
+
 	private static final Logger LOG = Logger.getLogger(ChecklistTargetCorrectionInit.class.getName());
-	
+
 	public ChecklistTargetCorrectionInit()
 	{
 		super("ChecklistTargetCorrection-Init");
 	}
-	
+
 	@Override
 	protected String internalApply()
 	{
 		int fixedElements = 0;
-		
+
 		// Checklist Responses
 		EvaluationChecklistResponse evaluationChecklistResponseExample = new EvaluationChecklistResponse();
 		List<EvaluationChecklistResponse> checklistResponses = evaluationChecklistResponseExample.findByExampleProxy();
 		for (EvaluationChecklistResponse checklistResponse : checklistResponses) {
 			if (checklistResponse.getResponse() != null) {
-				
+
 				LOG.log(Level.INFO, "Setting target=\"_blank\" on checklist response " + checklistResponse.getQuestionId());
-				
+
 				String eval = checklistResponse.getResponse();
 				Document doc = Jsoup.parse(eval);
 				doc.select("a").attr("target", "_blank");
 				String updatedResponse = doc.toString();
 				checklistResponse.setResponse(updatedResponse);
 				checklistResponse.save();
-				
+
 				fixedElements++;
 			}
 		}
-		
+
 		// Content Section
 		ContentSection contentSectionExample = new ContentSection();
 		List<ContentSection> contentSections = contentSectionExample.findByExampleProxy();
 		for (ContentSection contentSection : contentSections) {
 			if (contentSection.getContent() != null) {
-				
+
 				LOG.log(Level.INFO, "Setting target=\"_blank\" on content section");
 
-				
+
 				String content = contentSection.getContent();
 				Document doc = Jsoup.parse(content);
 				doc.select("a").attr("target", "_blank");
 				String updatedContent = doc.toString();
 				contentSection.setContent(updatedContent);
 				contentSection.save();
-				
+
 				fixedElements++;
 			}
 		}
-		
-		
+
+
 		// Content Sub Section
 		ContentSubSection subSectionExample = new ContentSubSection();
 		List<ContentSubSection> subSections = subSectionExample.findByExampleProxy();
 		for (ContentSubSection subSection : subSections) {
 			if (subSection.getContent() != null) {
-				
+
 				LOG.log(Level.INFO, "Setting target=\"_blank\" on content sub section");
-				
+
 				String content = subSection.getContent();
 				Document doc = Jsoup.parse(content);
 				doc.select("a").attr("target", "_blank");
 				String updatedContent = doc.toString();
 				subSection.setContent(updatedContent);
 				subSection.save();
-				
+
 				fixedElements++;
 			}
 		}
-		
-		
-		
+
+
+
 		return "Fixed elements: " + fixedElements;
 	}
-	
+
 	@Override
 	public int getPriority()
 	{

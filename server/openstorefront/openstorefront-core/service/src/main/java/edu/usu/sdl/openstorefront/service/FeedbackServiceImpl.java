@@ -15,7 +15,6 @@
  */
 package edu.usu.sdl.openstorefront.service;
 
-import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.api.FeedbackService;
@@ -25,10 +24,7 @@ import edu.usu.sdl.openstorefront.core.entity.FeedbackTicket;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.security.UserContext;
-import edu.usu.sdl.openstorefront.service.manager.JiraManager;
 import edu.usu.sdl.openstorefront.service.manager.MailManager;
-import edu.usu.sdl.openstorefront.service.manager.resource.JiraClient;
-import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -81,19 +77,6 @@ public class FeedbackServiceImpl
 
 		Branding branding = getBrandingService().getCurrentBrandingView();
 		switch (branding.getFeedbackHandler()) {
-			case FeedbackHandleType.JIRA:
-				try (JiraClient jiraClient = JiraManager.getClient()) {
-
-					LOG.log(Level.INFO, "Posting feedback to jira.");
-
-					BasicIssue issue = jiraClient.submitTicket(ticket);
-					if (issue != null) {
-						LOG.log(Level.INFO, MessageFormat.format("Jira Ticket: {0}", issue.getKey()));
-						ticket.setExternalId(issue.getKey());
-						ticket = getPersistenceService().persist(ticket);
-					}
-				}
-				break;
 			case FeedbackHandleType.EMAIL:
 
 				String emailAddress = PropertiesManager.getInstance().getValue(PropertiesManager.KEY_FEEDBACK_EMAIL);

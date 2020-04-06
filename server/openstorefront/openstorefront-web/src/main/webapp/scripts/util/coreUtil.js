@@ -1298,6 +1298,7 @@ var CoreUtil = {
 		if(isNaN(inputNumber)){
 			return inputNumber;
 		}
+		inputNumber = String(inputNumber);
 		// If it contains an E or e don't touch it and return.
 		if(inputNumber.indexOf('E') != -1){
 			inputNumber = CoreUtil.scientificToDecimal(inputNumber);

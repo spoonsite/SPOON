@@ -153,6 +153,7 @@ public abstract class BaseAction
 		} catch (ServletException | IOException ex) {
 			LOG.log(Level.SEVERE, "Unable to find page", ex);
 		}
+		responseWrapper.setCharacterEncoding("UTF-8");
 		String content = responseWrapper.toString();
 		return content;
 	}

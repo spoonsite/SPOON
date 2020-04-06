@@ -28,7 +28,12 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 /**
- *
+ * FYI, 'Architechure' is a concept of certain data having very special data restriction rules.
+ * No one understands it or knows what is exactly except the programmer who put it 
+ * in here.
+ * Since v2.10 all support for the Architecture thing has been completely 
+ * discontinued. If you are looking to clean stuff up, delete this file and
+ * all other files related to this concept.
  * @author dshurtleff
  */
 public class ArchitectureSearchHandler

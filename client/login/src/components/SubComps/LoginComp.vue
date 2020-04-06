@@ -91,7 +91,7 @@ export default {
       }
     },
     gotoPage () {
-      return this.$route.query.gotoPage;
+      return sessionStorage.getItem('gotoUrl');
     }
   },
   methods: {
@@ -129,6 +129,7 @@ export default {
           .then(response => {
             if (response.data.success) {
               if (this.gotoPage) {
+                sessionStorage.removeItem('gotoUrl');
                 window.location.href = this.gotoPage;
               } else {
                 window.location.href = response.data.message;

@@ -24,10 +24,8 @@ import edu.usu.sdl.openstorefront.core.entity.SecurityRolePermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
-import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStep;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlanStepRole;
-import edu.usu.sdl.openstorefront.core.entity.SecurityRole;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -348,6 +346,7 @@ public class SecurityUtil
 	@SuppressWarnings("UseSpecificCatch")
 	public static void logout(HttpServletRequest request, HttpServletResponse response)
 	{
+		response.setCharacterEncoding("UTF-8");
 		Subject currentUser = SecurityUtils.getSubject();
 		String userLoggedIn = SecurityUtil.getCurrentUserName();
 

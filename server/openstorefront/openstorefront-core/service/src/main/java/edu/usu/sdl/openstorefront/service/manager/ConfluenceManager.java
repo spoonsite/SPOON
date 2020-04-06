@@ -124,7 +124,7 @@ public class ConfluenceManager
 	@Override
 	public ConfluenceClient getClient()
 	{
-		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_JIRA_CONNECTION_WAIT_TIME, "60"));
+		int waitTimeSeconds = Convert.toInteger(PropertiesManager.getInstance().getValue(PropertiesManager.KEY_CONFLUENCE_CONNECTION_WAIT_TIME, "60"));
 		try {
 			ConfluenceClient client = clientPool.poll(waitTimeSeconds, TimeUnit.SECONDS);
 			if (client == null) {

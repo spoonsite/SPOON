@@ -15,11 +15,9 @@
  */
 package edu.usu.sdl.openstorefront.service.api;
 
-import com.atlassian.jira.rest.client.api.domain.Issue;
 import edu.usu.sdl.openstorefront.core.api.ServiceInterceptor;
 import edu.usu.sdl.openstorefront.core.api.TransactionInterceptor;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
-import edu.usu.sdl.openstorefront.core.entity.ComponentIntegrationConfig;
 import edu.usu.sdl.openstorefront.core.entity.ComponentTag;
 import edu.usu.sdl.openstorefront.core.model.ComponentDeleteOptions;
 import edu.usu.sdl.openstorefront.core.view.RequiredForComponent;
@@ -42,16 +40,6 @@ public interface ComponentServicePrivate
 
 	@ServiceInterceptor(TransactionInterceptor.class)
 	public void doDeactivateComponent(String componentId);
-
-	/**
-	 * This will handle all the mapping for the component attributes based on a
-	 * config and jira issue. Then this will sync index and last activity
-	 *
-	 * @param issue
-	 * @param integrationConfig
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void mapComponentAttributes(Issue issue, ComponentIntegrationConfig integrationConfig);
 
 	/**
 	 * This will process the queue and apply component updates. It shouldn't be

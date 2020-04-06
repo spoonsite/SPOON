@@ -19,7 +19,7 @@
     Created on : Feb 10, 2017, 12:02:13 PM
     Author     : dshurtleff
 --%>
-
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 	<div id="api-method-{id}" class="api-method">
 		<div class="api-method-header">
 			&nbsp;&nbsp;<span class="{restMethod}">{restMethod}</span> - <b>{path}</b>
