@@ -653,7 +653,6 @@ public class ElasticSearchManager
 				tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, allLowerQuery));
 				tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, properCaseQuery));
 				tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery));
-				// tagsQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_TAGS, actualQuery).analyzer("tags_analyzer"));
 
 				esQuery.should(tagsQueryBuilder.boost(TAG_BOOST));
 			}
@@ -1317,6 +1316,7 @@ public class ElasticSearchManager
 			}
 		}
 	}
+
 	/**
 	 * Updates the mapping of the index. Specifically for attributes, non-nested -> nested
 	 * https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html
