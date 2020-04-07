@@ -24,7 +24,7 @@ export default {
   mounted () {
     /* eslint-disable no-undef */
     // particleJS loaded from CDN, npm loading fails
-    const particles = false
+    const particles = true
     if (particles) {
       particlesJS('particle-js', {
         particles: {
