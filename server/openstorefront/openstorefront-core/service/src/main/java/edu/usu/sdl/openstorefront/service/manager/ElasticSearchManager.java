@@ -369,7 +369,7 @@ public class ElasticSearchManager
 				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(searchFilters.getSortOrder()) ? SortOrder.ASC
 						: SortOrder.DESC);
 
-		/**
+		/*
 		 * Aggregations are a way to get info about the results of an elasticsearch query.
 		 *
 		 * Java API aggregations
@@ -400,7 +400,7 @@ public class ElasticSearchManager
 
 		String [] include = new String[]{"attributes"};
 
-		/**
+		/*
 		 * Is used as a helper aggregations for the fetching of all the attributes
 		 *
 		 * Top Hits Aggregations
@@ -411,7 +411,7 @@ public class ElasticSearchManager
 				.fetchSource(include, null)
 				.size(NUMBER_INNER_WINDOW_RETURN);
 
-		/**
+		/*
 		 * Gets list of all attribute labels from search as well as all the whole attribute object
 		 *
 		 * Nested Aggregations
@@ -579,8 +579,9 @@ public class ElasticSearchManager
 				actualQuery = queryString.toString();
 			}
 
-			/**
-			 * ***************** SEARCH KEYWORD ***************************
+			/*
+			 * SEARCH KEYWORD
+			 *
 			 * RELEVANT LINKS:
 			 * Wildcard Queries
 			 * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html
