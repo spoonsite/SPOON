@@ -19,7 +19,8 @@ export default {
 </script>
 
 <style scoped>
-.space-between{
+.space-between {
+  word-wrap: normal;
   width: 100%;
   display: inline-flex;
   justify-content: space-between;

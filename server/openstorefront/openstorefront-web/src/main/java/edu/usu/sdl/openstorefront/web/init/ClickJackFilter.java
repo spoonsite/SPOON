@@ -51,6 +51,7 @@ public class ClickJackFilter
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
 	{
+		response.setCharacterEncoding("UTF-8");
 		HttpServletResponse res = (HttpServletResponse) response;
 		chain.doFilter(request, response);
 		res.addHeader("X-FRAME-OPTIONS", mode);

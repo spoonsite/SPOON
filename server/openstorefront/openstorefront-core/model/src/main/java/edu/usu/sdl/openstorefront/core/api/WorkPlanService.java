@@ -114,7 +114,9 @@ public interface WorkPlanService
 	public void nextStep(WorkPlanLink workPlanLink);
 
 	/**
-	 * Updated all worklinks to match sure the accurately reflects the data
+	 * Loops through all the components and checks that there is a WorkPlan Link in the current
+	 * active WorkPlan. If there is not, it will create one and place it in according to "Approval Status To Match"
+	 * step marker.
 	 */
 	void syncWorkPlanLinks();
 
@@ -127,9 +129,14 @@ public interface WorkPlanService
 	WorkPlan getWorkPlan(String workplanId);
 
 	/**
-	 * Sync work plan to the state of work plan
+	 * Finds the WorkPlan Step that has a "Approval State To Match" (i.e., "Pending", or "Approved")
+	 * that matches the component's Approval Status, then moves the WorkPlan Link of said component
+	 * into that step.
 	 *
-	 * @param componentId
+	 * Finds the last WorkPlan Step that matches, so if there is more than one step that is found
+	 * matching, the last occurring one is the one the WorkPlanLink is moved into.
+	 *
+	 * @param componentId The UUID of the component to update
 	 */
 	void updatedWorkPlanLinkToMatchState(String componentId);
 

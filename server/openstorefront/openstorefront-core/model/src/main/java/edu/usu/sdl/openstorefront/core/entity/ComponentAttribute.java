@@ -47,7 +47,7 @@ public class ComponentAttribute
 	private ComponentAttributePk componentAttributePk;
 
 	@ConsumeField
-	@APIDescription("Denotes whether this is publically viewable.")
+	@APIDescription("Denotes whether this is publicly viewable.")
 	private Boolean privateFlag;
 
 	@ConsumeField

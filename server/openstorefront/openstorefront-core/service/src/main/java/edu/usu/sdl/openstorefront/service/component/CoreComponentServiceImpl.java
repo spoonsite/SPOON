@@ -2377,6 +2377,18 @@ public class CoreComponentServiceImpl
 			component.setOwnerUser(newOwner);
 			component.populateBaseUpdateFields();
 			persistenceService.persist(component);
+			Component example = new Component();
+			example.setPendingChangeId(componentId);
+			List<Component> changeRequests = persistenceService.queryByExample(example);
+			if (changeRequests != null)
+			{
+				for (Component changeRequest : changeRequests)
+				{
+					changeRequest.setOwnerUser(newOwner);
+					changeRequest.populateBaseUpdateFields();
+					persistenceService.persist(changeRequest);
+				}
+			}
 		} else {
 			throw new OpenStorefrontRuntimeException("Unable to find component.", "Check id passed: " + componentId);
 		}

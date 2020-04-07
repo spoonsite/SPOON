@@ -19,6 +19,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.fasterxml.jackson.core.type.TypeReference;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.FileSystemManager;
+import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.model.TaskRequest;
@@ -631,7 +632,7 @@ public class UploadAction
 
 		// Check if the uploaded file is a zip file
 		Boolean isZip = (extension.equals("zip")
-				&& (mimeType.equals("application/x-zip-compressed") || mimeType.equals("application/zip") || 
+				&& (mimeType.equals("application/x-zip-compressed") || mimeType.equals("application/zip") ||
 				mimeType.equals("application/octet-stream") || mimeType.equals("multipart/x-zip")));
 
 		if (isZip) {
@@ -666,7 +667,7 @@ public class UploadAction
 				Email email = MailManager.newEmail();
 				email.setSubject("SpoonSite bulk Upload");
 				email.setText("There is a new bulk upload to be reviewed at " + filePath);
-				email.addRecipient("", "support@spoonsite.com", Message.RecipientType.TO);
+				email.addRecipient("", PropertiesManager.KEY_FEEDBACK_EMAIL, Message.RecipientType.TO);
 
 				MailManager.send(email, true);
 			}

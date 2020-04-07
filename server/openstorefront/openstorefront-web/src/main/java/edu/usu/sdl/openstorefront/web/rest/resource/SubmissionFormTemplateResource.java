@@ -270,7 +270,7 @@ public class SubmissionFormTemplateResource
 	}
 
 	@PUT
-	@APIDescription("Verifies Template")
+	@APIDescription("Verifies template with temporary submission - it deletes the submission after verification")
 	@RequireSecurity(SecurityPermission.ADMIN_SUBMISSION_FORM_TEMPLATE_UPDATE)
 	@Produces({MediaType.APPLICATION_JSON})
 	@Path("/{templateId}/verify/{userSubmissionId}")
@@ -290,6 +290,7 @@ public class SubmissionFormTemplateResource
 
 			if (userSubmission != null) {
 				VerifySubmissionTemplateResult result = service.getSubmissionFormService().verifySubmission(userSubmission);
+				service.getSubmissionFormService().deleteUserSubmission(userSubmission.getUserSubmissionId());
 				if (result.getValidationResult().valid()) {
 					return Response.ok().build();
 				} else {

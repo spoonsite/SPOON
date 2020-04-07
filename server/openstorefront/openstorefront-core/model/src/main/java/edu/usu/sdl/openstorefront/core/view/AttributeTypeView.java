@@ -131,7 +131,7 @@ public class AttributeTypeView
 					AttributeUnitView unitView = new AttributeUnitView(unit, BigDecimal.valueOf(factor.getEstimatedValue()));
 					conversionList.add(unitView);
 				} catch (IllegalArgumentException e) {
-					LOG.warning(e.toString());
+					LOG.warning("Attribute Type: " + attributeTypeView.attributeType + ", Error: " + e.toString());
 				}
 			}
 		}

@@ -1,7 +1,7 @@
 +++
 title = "Project Architecture"
 description = ""
-weight = 2
+weight = 3
 +++
 
 This guide describes the high-level design of the server and client architecture.

@@ -118,6 +118,7 @@ public class OrientDBManager
 		System.setProperty("ORIENTDB_ROOT_PASSWORD", propertiesManager.getValue(PropertiesManager.KEY_DB_AT));
 		server.setServerRootDirectory(home);
 		server.startup(fileSystemManager.getConfig(configFile));
+
 		server.activate();
 		return home;
 	}

@@ -56,6 +56,7 @@ public class SystemStatusFilter
 			chain.doFilter(request, response);
 		} else {
 			response.setContentType("text/html;charset=UTF-8");
+			response.setCharacterEncoding("UTF-8");
 			HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 			RequestDispatcher requestDispatcher = httpServletRequest.getRequestDispatcher("/WEB-INF/securepages/systemStandby.jsp");
 			requestDispatcher.include(request, response);

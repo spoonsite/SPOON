@@ -15,6 +15,32 @@
  */
 package edu.usu.sdl.openstorefront.web.rest.resource;
 
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.StringUtils;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
@@ -31,32 +57,19 @@ import edu.usu.sdl.openstorefront.core.entity.FileHistoryOption;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.StandardEntity;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmission;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.util.TranslateUtil;
+import edu.usu.sdl.openstorefront.core.view.ComponentSubmissionView;
 import edu.usu.sdl.openstorefront.core.view.ComponentView;
 import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.SubmissionView;
+import edu.usu.sdl.openstorefront.core.view.UserSubmissionPageView;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Component Submission
@@ -85,7 +98,6 @@ public class ComponentSubmissionResource
 			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
 
 			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
-
 			pullOldOwnedComponents(componentExample, components);
 
 			List<ComponentView> views = ComponentView.toViewList(components);
@@ -95,6 +107,58 @@ public class ComponentSubmissionResource
 			findUserSubmissionForView(submissionViews);
 
 			GenericEntity<List<SubmissionView>> entity = new GenericEntity<List<SubmissionView>>(submissionViews)
+			{
+			};
+			return sendSingleEntityResponse(entity);
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
+	}
+
+	@GET
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_READ)
+	@APIDescription("Get a list of components submission for the current user only. Requires login.<br>(Note: this is only the top level component object)")
+	@DataType(SubmissionView.class)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/user")
+	public Response getUserComponentsAndSubmissions()
+	{
+		if (SecurityUtil.isLoggedIn()) {
+			Component componentExample = new Component();
+			componentExample.setOwnerUser(SecurityUtil.getCurrentUserName());
+			componentExample.setActiveStatus(Component.ACTIVE_STATUS);
+
+			List<Component> components = service.getPersistenceService().queryByExample(componentExample);
+			pullOldOwnedComponents(componentExample, components);
+
+			List<ComponentView> views = ComponentView.toViewList(components);
+			
+			List<SubmissionView> submissionViews = flagSubmissionsWithEvaluations(views);
+			processPendingChanges(submissionViews);
+
+			WorkPlan workPlanExample = new WorkPlan();
+			workPlanExample.setActiveStatus(WorkPlan.ACTIVE_STATUS);
+
+			List<WorkPlan> workPlans = service.getPersistenceService().queryByExample(workPlanExample);
+
+			List<ComponentSubmissionView> componentSubmissionViews = new ArrayList<ComponentSubmissionView>();
+
+			for (SubmissionView view : submissionViews) {
+				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
+				workPlanLinkExample.setActiveStatus(WorkPlanLink.ACTIVE_STATUS);
+				workPlanLinkExample.setComponentId(view.getComponentId());
+				WorkPlanLink workPlanLink = service.getPersistenceService().queryOneByExample(workPlanLinkExample);
+
+				if (workPlanLink != null) {
+					componentSubmissionViews.add(new ComponentSubmissionView(view, workPlanLink.getWorkPlanId(), workPlanLink.getCurrentStepId()));
+				} else {
+					componentSubmissionViews.add(new ComponentSubmissionView(view, null, null));
+				}
+			}
+
+			UserSubmissionPageView userSubmissionPageView = new UserSubmissionPageView(componentSubmissionViews, workPlans);
+
+			GenericEntity<UserSubmissionPageView> entity = new GenericEntity<UserSubmissionPageView>(userSubmissionPageView)
 			{
 			};
 			return sendSingleEntityResponse(entity);
@@ -172,7 +236,7 @@ public class ComponentSubmissionResource
 			submissionView.setSubmissionTemplateId(userSubmission.getTemplateId());
 
 			submissionView.setCurrentDataOwner(userSubmission.getOwnerUsername());
-			if(userSubmission.getIsQueued() == false){
+			if (userSubmission.getIsQueued() == false) {
 				submissionView.setApprovalState(ApprovalStatus.NOT_SUBMITTED);
 			} else {
 				submissionView.setApprovalState(ApprovalStatus.QUEUED);
@@ -216,7 +280,93 @@ public class ComponentSubmissionResource
 		for (ComponentAttribute attribute : componentAll.getAttributes()) {
 			attribute.getComponentAttributePk().setComponentId(id);
 		}
-		return handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, false);
+		Response response = Response.status(Response.Status.NOT_FOUND).build();
+		try {
+			response = handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, false);
+		} catch (Exception e) {
+			// validation for required attributes throws an exception
+			RestErrorModel restErrorModel = new RestErrorModel();
+			restErrorModel.setSuccess(false);
+			restErrorModel.getErrors().put("error", e.getMessage());
+			response = sendSingleEntityResponse(restErrorModel);
+		}
+		return response;
+	}
+
+	@POST
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
+	@APIDescription("Attaches media to a Component Submission.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.MULTIPART_FORM_DATA})
+	@Path("/{componentId}/attachmedia")
+	public Response attachMedia(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@FormDataParam("file") InputStream uploadStream,
+			@FormDataParam("file") FormDataContentDisposition fileDisposition,
+			@FormDataParam("mimeType") String mimeType,
+			@FormDataParam("caption") String caption,
+			@FormDataParam("mediaTypeCode") String mediaTypeCode
+	)
+	{
+		Logger LOG = Logger.getLogger(UserSubmissionResource.class.getName());
+		String name = fileDisposition.getParameters().get("name");
+		String fileName = fileDisposition.getParameters().get("filename");
+		if (fileName != null) {
+			ComponentMedia componentMedia = new ComponentMedia();
+			componentMedia.setComponentMediaId(service.getPersistenceService().generateId());
+			componentMedia.populateBaseCreateFields();
+			componentMedia.setMediaTypeCode(mediaTypeCode);
+			componentMedia.setComponentId(componentId);
+			componentMedia.setCaption(caption);
+			componentMedia = service.getComponentService().saveMediaFile(componentMedia, uploadStream, mimeType, fileName);
+			
+			return sendSingleEntityResponse(componentMedia);
+		}
+		LOG.log(Level.FINE, "attached media " + name + " : " + fileName + " : " + caption + " for " + componentId);
+
+		RestErrorModel restErrorModel = new RestErrorModel();
+		restErrorModel.setSuccess(false);
+		restErrorModel.getErrors().put("error", "Unable to save media");
+		return sendSingleEntityResponse(restErrorModel);
+	}
+
+	@POST
+	@RequireSecurity(SecurityPermission.USER_SUBMISSIONS_CREATE)
+	@APIDescription("Attaches a resource file to a Component Submission.")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.MULTIPART_FORM_DATA})
+	@Path("/{componentId}/attachresource")
+	public Response attachResource(
+			@PathParam("componentId")
+			@RequiredParam String componentId,
+			@FormDataParam("file") InputStream uploadStream,
+			@FormDataParam("file") FormDataContentDisposition fileDisposition,
+			@FormDataParam("resourceType") String resourceType,
+			@FormDataParam("description") String description,
+			@FormDataParam("mimeType") String mimeType
+	)
+	{
+		Logger LOG = Logger.getLogger(UserSubmissionResource.class.getName());
+		String name = fileDisposition.getParameters().get("name");
+		String fileName = fileDisposition.getParameters().get("filename");
+		if (fileName != null) {
+			ComponentResource componentResource = new ComponentResource();
+			componentResource.setResourceId(service.getPersistenceService().generateId());
+			componentResource.populateBaseCreateFields();
+			componentResource.setResourceType(resourceType);
+			componentResource.setComponentId(componentId);
+			componentResource.setDescription(description);
+			componentResource = service.getComponentService().saveResourceFile(componentResource, uploadStream, mimeType, fileName);
+
+			return sendSingleEntityResponse(componentResource);
+		}
+		LOG.log(Level.FINE, "attached file resource " + name + " : " + fileName + " : " + description + " for " + componentId);
+
+		RestErrorModel restErrorModel = new RestErrorModel();
+		restErrorModel.setSuccess(false);
+		restErrorModel.getErrors().put("error", "Unable to save resource file");
+		return sendSingleEntityResponse(restErrorModel);
 	}
 
 	@PUT
@@ -236,7 +386,17 @@ public class ComponentSubmissionResource
 			for (ComponentAttribute attribute : componentAll.getAttributes()) {
 				attribute.getComponentAttributePk().setComponentId(componentAll.getComponent().getComponentId());
 			}
-			return handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, true);
+			Response response = Response.status(Response.Status.NOT_FOUND).build();
+			try {
+				response = handleSaveComponent(componentAll, ApprovalStatus.NOT_SUBMITTED, true);
+			} catch (Exception e) {
+				// validation for required attributes throws an exception
+				RestErrorModel restErrorModel = new RestErrorModel();
+				restErrorModel.setSuccess(false);
+				restErrorModel.getErrors().put("error", e.getMessage());
+				response = sendSingleEntityResponse(restErrorModel);
+			}
+			return response;
 		}
 		RestErrorModel restErrorModel = new RestErrorModel();
 		restErrorModel.setSuccess(false);
@@ -426,7 +586,7 @@ public class ComponentSubmissionResource
 					if (response == null) {
 						if (ApprovalStatus.APPROVED.equals(exstingComponent.getApprovalState()) == false) {
 
-							//Pull in existing media and resources (they may be saved seperately)
+							//Pull in existing media and resources (they may be saved separately)
 							ComponentMedia componentMediaExample = new ComponentMedia();
 							componentMediaExample.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
 							componentMediaExample.setComponentId(exstingComponent.getComponentId());
