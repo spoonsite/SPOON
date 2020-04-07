@@ -1118,9 +1118,9 @@ export default {
       searchSortOrder: 'DESC',
       searchSortField: '_score',
       searchSortFields: [
-        { text: 'Name', value: 'name' },
+        { text: 'Name', value: 'name.keyword' },
         { text: 'User Rating', value: 'averageRating' },
-        { text: 'Last Update', value: 'lastActivityDts' },
+        { text: 'Last Update', value: 'updateDts' },
         { text: 'Approval Date', value: 'approvedDts' },
         { text: 'Relevance', value: '_score' }
       ]
