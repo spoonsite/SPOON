@@ -876,12 +876,13 @@ export default {
      *      let convertedToCentimeters = convertNumber(tenMeters, 1/100)
      */
     convertNumber(value, conversionFactor, baseUnit, currentUnit) {
+      const degreeSymbol = '\u00B0'
       if (conversionFactor === 1) {
         return value
       }
       let numValue = Number(value)
       if (!isNaN(numValue)) {
-        if (baseUnit === '\u00B0' + 'C' || baseUnit === '\u00B0' + 'F' || baseUnit === 'K') {
+        if (baseUnit === degreeSymbol + 'C' || baseUnit === degreeSymbol + 'F' || baseUnit === 'K') {
           numValue = this.convertTemperature(numValue, baseUnit, currentUnit)
         } else {
           numValue /= conversionFactor
@@ -892,20 +893,21 @@ export default {
       }
     },
     convertTemperature(value, baseUnit, currentUnit) {
+      const degreeSymbol = '\u00B0'
       const kelvinUnit = 273.15
       const conversionCF = 9 / 5
       const differenceCF = 32
-      if (baseUnit === '\u00B0' + 'C' && currentUnit === 'K') {
+      if (baseUnit === degreeSymbol + 'C' && currentUnit === 'K') {
         return value - kelvinUnit
-      } else if (baseUnit === '\u00B0' + 'F' && currentUnit === 'K') {
+      } else if (baseUnit === degreeSymbol + 'F' && currentUnit === 'K') {
         return (value - 273.15) * conversionCF + differenceCF
-      } else if (baseUnit === '\u00B0' + 'F' && currentUnit === '\u00B0' + 'C') {
+      } else if (baseUnit === degreeSymbol + 'F' && currentUnit === degreeSymbol + 'C') {
         return value * conversionCF + differenceCF
-      } else if (baseUnit === 'K' && currentUnit === '\u00B0' + 'C') {
+      } else if (baseUnit === 'K' && currentUnit === degreeSymbol + 'C') {
         return value + 273.15
-      } else if (baseUnit === '\u00B0' + 'C' && currentUnit === '\u00B0' + 'F') {
+      } else if (baseUnit === degreeSymbol + 'C' && currentUnit === degreeSymbol + 'F') {
         return (value - differenceCF) * conversionCF
-      } else if (baseUnit === 'K' && currentUnit === '\u00B0' + 'F') {
+      } else if (baseUnit === 'K' && currentUnit === degreeSymbol + 'F') {
         return (value - differenceCF) * conversionCF + kelvinUnit
       }
     },
