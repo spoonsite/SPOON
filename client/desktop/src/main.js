@@ -90,7 +90,7 @@ store.dispatch('getAttributeMap')
 store.dispatch('getBranding', () => {
   Vue.use(Vuetify)
 
-  let vuetify = new Vuetify({
+  const vuetify = new Vuetify({
     theme: {
       themes: {
         light: {
