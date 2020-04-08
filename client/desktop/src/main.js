@@ -5,6 +5,7 @@ import store from '@/store'
 import scientificToDecimal from '@/util/scientificToDecimal'
 
 import Vuetify from 'vuetify/lib'
+import '@mdi/font/css/materialdesignicons.css'
 import format from 'date-fns/format'
 import VueTruncate from 'vue-truncate-filter'
 import axios from 'axios'
