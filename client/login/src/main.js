@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
+// import '@mdi/font/css/materialdesignicons.css'
 import Toasted from 'vue-toasted'
 // import 'babel-polyfill'
 import axios from 'axios'

@@ -2,7 +2,7 @@
   <div>
     <v-card class="elevation-5 my-4">
       <v-card-text>
-        <v-form v-model="valid"  ref="form" class="clearfix">
+        <v-form v-model="valid" ref="form" class="clearfix">
           <v-text-field
             prepend-icon="person"
             name="username"
@@ -16,7 +16,7 @@
           ></v-text-field>
           <router-link :to="{name: 'forgotUsername'}" class="forgot-link" tabindex=5>Forgot Username</router-link>
           <v-text-field
-            style="margin-top: 0 !important;"
+            style="margin-top: 0 !important; width: 100%;"
             prepend-icon="lock"
             name="password"
             label="Password"

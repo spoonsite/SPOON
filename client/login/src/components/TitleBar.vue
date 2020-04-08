@@ -2,7 +2,10 @@
   <div>
     <v-toolbar dense flat dark color="primary">
       <v-spacer></v-spacer>
-      <v-toolbar-title >{{CTitle}}</v-toolbar-title>
+      <router-link style="height: 100%;" to="/">
+        <img height="100%" src="../assets/SPOONlogohorz.png" alt="SPOON logo" />
+      </router-link>
+      <!-- <v-toolbar-title >{{CTitle}}</v-toolbar-title> -->
       <v-spacer></v-spacer>
       <v-btn icon @click="drawer = !drawer">
         <v-icon>fa fa-bars</v-icon>
@@ -39,7 +42,7 @@ export default {
     return {
       drawer: false,
       links: [
-        { link: '/', icon: 'home', name: 'Home' },
+        { link: '/', icon: 'sign-in-alt', name: 'Login' },
         { link: '/faq', icon: 'question', name: 'FAQ' },
         { link: '/contact-us', icon: 'comment', name: 'Contact Us' }
       ],

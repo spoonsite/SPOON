@@ -8,7 +8,6 @@
           @click="videoDialog = true"
           icon
           small
-          color="accent"
           style="position: relative; bottom: 1em; right: 0.5em;"
         ><v-icon style="font-size: 16px;">fas fa-question</v-icon></v-btn>
       </h2>
@@ -194,11 +193,11 @@
     </v-layout>
 
     <div class="button-wrapper mt-2">
-      <div class="btn1">
-        <v-btn block color="accent" :loading="signupLoading" :disabled="!valid" @click="register()"><v-icon class="custon-icon" light>check</v-icon>Signup</v-btn>
+      <div class="btn1 pb-2">
+        <v-btn block :loading="signupLoading" :disabled="!valid" @click="register()"><v-icon class="custon-icon" light>check</v-icon>Signup</v-btn>
       </div>
-      <div class="btn2">
-      <v-btn block color="accent" @click="cancel()"><v-icon light class="custom-icon">cancel</v-icon>Cancel</v-btn>
+      <div class="btn2 pb-2">
+      <v-btn block dark @click="cancel()"><v-icon light class="custom-icon">cancel</v-icon>Cancel</v-btn>
       </div>
     </div>
 
