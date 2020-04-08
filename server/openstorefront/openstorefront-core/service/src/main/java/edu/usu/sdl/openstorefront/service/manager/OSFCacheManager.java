@@ -35,6 +35,7 @@ import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
+import edu.usu.sdl.openstorefront.core.entity.Contact;
 
 /**
  * Handling Application level caching
@@ -63,7 +64,7 @@ public class OSFCacheManager
 	private static Cache<Integer, String> componentLookupCache;
 	private static Cache<Integer, String> componentTypeCache;
 	private static Cache<Integer, String> componentTypeComponentCache;
-	private static Cache<Integer, String> contactCache;
+	private static Cache<String, Contact> contactCache;
 	private static Cache<Integer, String> lookupCache;
 	private static Cache<Integer, String> searchCache;
 	private static Cache<Integer, String> userAgentCache;
@@ -114,7 +115,7 @@ public class OSFCacheManager
 			componentLookupCache          = createCache(Integer.class, String.class, "componentLookupCache", 50000, false, 300, 300);
 			componentTypeCache            = createCache(Integer.class, String.class, "componentTypeCache", 1, false, 300, 300);
 			componentTypeComponentCache   = createCache(Integer.class, String.class, "componentTypeComponentCache", 50000, false, 300, 300);
-			contactCache                  = createCache(Integer.class, String.class, "contactCache", 5000, false, 1800, 1800);
+			contactCache                  = createCache(String.class, Contact.class, "contactCache", 5000, false, 1800, 1800);
 			lookupCache                   = createCache(Integer.class, String.class, "lookupCache", 500, false, 600, 600);
 			searchCache                   = createCache(Integer.class, String.class, "searchCache", 250, false, 1800, 1800);
 			userAgentCache                = createCache(Integer.class, String.class, "userAgentCache", 100, false, 7200, 7200);
@@ -207,6 +208,26 @@ public class OSFCacheManager
 	public static void setAttributeCache(Cache<String, AttributeType> attributeCache)
 	{
 		OSFCacheManager.attributeCache = attributeCache;
+	}
+
+	public static Cache<Integer, String> getAttributeCodeAllCache()
+	{
+		return attributeCodeAllCache;
+	}
+
+	public static void setAttributeCodeAllCache(Cache<Integer, String> attributeCodeAllCache)
+	{
+		OSFCacheManager.attributeCodeAllCache = attributeCodeAllCache;
+	}
+
+	public static Cache<String, Contact> getContactCache()
+	{
+		return contactCache;
+	}
+
+	public static void setContactCache(Cache<String, Contact> contactCache)
+	{
+		OSFCacheManager.contactCache = contactCache;
 	}
 
 	public static Cache<String, Object> getApplicationCache() {
