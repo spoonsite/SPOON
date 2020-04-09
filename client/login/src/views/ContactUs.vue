@@ -180,7 +180,10 @@ export default {
             this.$refs.form.reset()
             this.confirmationDialog = true
           })
-          .catch(error => console.error(error))
+          .catch(error => {
+            console.error(error)
+            this.toasted.error('There was a problem sending your feedback.')
+          })
       }
     },
     cancel () {

@@ -141,7 +141,10 @@ export default {
             }
             this.response = response
           })
-          .catch(error => console.error(error))
+          .catch(error => {
+            console.error(error)
+            this.toasted.error('There was a problem logging in.')
+          })
       }
     }
   }

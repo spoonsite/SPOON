@@ -93,7 +93,10 @@ export default {
           this.dialog = true
           this.loading = false
         })
-        .catch(error => console.error(error))
+        .catch(error => {
+          console.error(error)
+          this.toasted.error('There was a problem reseting your password.')
+        })
     }
   }
 }
