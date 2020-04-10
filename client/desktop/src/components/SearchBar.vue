@@ -13,7 +13,6 @@
         type="text"
         placeholder="Keyword Search"
         @click="searchBarFocused"
-        append-outer-icon="mdi-close"
       />
       <v-icon v-if="value == ''" class="search-icon" @click="submitQuery()">mdi-magnify</v-icon>
       <v-icon v-if="value !== ''" class="search-icon" @click="$emit('input', ''), $emit('clear')">mdi-close</v-icon>
