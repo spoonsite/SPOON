@@ -35,7 +35,7 @@ module.exports = {
   // Sets where the client will look for the css, js files on the server
   publicPath: process.env.NODE_ENV === 'production' ? '/openstorefront/desktop' : '/',
   // Sets where the compiled Vue code (aka the 'dist' folder ) will be placed.
-  outputDir: '../../server/openstorefront/openstorefront-web/src/main/webapp/desktop',
+  outputDir: '../../server/openstorefront/openstorefront-web/src/main/webapp/login',
   // sets where assets (js,css) are placed after compilation relative to outputDir
   assetsDir: '',
   transpileDependencies: ['vuetify']
