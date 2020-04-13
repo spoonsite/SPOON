@@ -869,11 +869,15 @@ export default {
      *
      * @param {string} value - the number to be converted
      * @param {number} conversionFactor - the factor to be divided by
+     * @param {string} baseUnit - the unit of measurement being converted to
+     * @param {string} currentUnit - the unit of measurement currently used
      *
      * @example
      *
      *      let tenMeters = 10
-     *      let convertedToCentimeters = convertNumber(tenMeters, 1/100)
+     *      let meterUnit = 'm'
+     *      let centimeterUnit = 'cm'
+     *      let convertedToCentimeters = convertNumber(tenMeters, 1/100, meterUnit, centimeterUnit)
      */
     convertNumber(value, conversionFactor, baseUnit, currentUnit) {
       const degreeSymbol = '\u00B0'
@@ -892,6 +896,13 @@ export default {
         return value
       }
     },
+        /**
+     * Applies the unit conversion for temperature units
+     *
+     * @param {string} value - the number to be converted
+     * @param {string} baseUnit - the unit of measurement being converted to
+     * @param {string} currentUnit - the unit of measurement currently used
+     */
     convertTemperature(value, baseUnit, currentUnit) {
       const degreeSymbol = '\u00B0'
       const kelvinUnit = 273.15
