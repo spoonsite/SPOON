@@ -896,7 +896,7 @@ export default {
         return value
       }
     },
-        /**
+    /**
      * Applies the unit conversion for temperature units
      *
      * @param {string} value - the number to be converted
