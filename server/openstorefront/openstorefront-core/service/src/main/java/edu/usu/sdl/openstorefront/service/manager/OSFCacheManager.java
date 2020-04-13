@@ -68,7 +68,7 @@ public class OSFCacheManager
 	private static Cache<Integer, String> componentTypeCache;
 	private static Cache<Integer, String> componentTypeComponentCache;
 	private static Cache<String, Contact> contactCache;
-	private static Cache<Integer, String> lookupCache;
+	private static Cache<String, Object> lookupCache;
 	private static Cache<String, AdvanceSearchResult> searchCache;
 	private static Cache<String, ReadableUserAgent> userAgentCache;
 	private static Cache<String, Object> userSearchCache;
@@ -119,7 +119,7 @@ public class OSFCacheManager
 			componentTypeCache            = createCache(Integer.class, String.class, "componentTypeCache", 1, false, 300, 300);
 			componentTypeComponentCache   = createCache(Integer.class, String.class, "componentTypeComponentCache", 50000, false, 300, 300);
 			contactCache                  = createCache(String.class, Contact.class, "contactCache", 5000, false, 1800, 1800);
-			lookupCache                   = createCache(Integer.class, String.class, "lookupCache", 500, false, 600, 600);
+			lookupCache                   = createCache(String.class, Object.class, "lookupCache", 500, false, 600, 600);
 			searchCache                   = createCache(String.class, AdvanceSearchResult.class, "searchCache", 250, false, 1800, 1800);
 			userAgentCache                = createCache(String.class, ReadableUserAgent.class, "userAgentCache", 100, false, 7200, 7200);
 			userSearchCache               = createCache(String.class, Object.class, "userSearchCache", 250, false, 1800, 1800);
@@ -239,6 +239,14 @@ public class OSFCacheManager
 
 	public static void setApplicationCache(Cache<String, Object> applicationCache) {
 		OSFCacheManager.applicationCache = applicationCache;
+	}
+
+	public static Cache<String, Object> getLookupCache() {
+		return lookupCache;
+	}
+
+	public static void setLookupCache(Cache<String, Object> lookupCache) {
+		OSFCacheManager.lookupCache = lookupCache;
 	}
 
 	public static Cache<String, AdvanceSearchResult> getSearchCache() {

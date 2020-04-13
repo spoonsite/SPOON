@@ -38,7 +38,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -56,11 +55,11 @@ public class LookupServiceImpl
 	@Override
 	public <T extends LookupEntity> List<T> findLookup(Class<T> lookTableClass)
 	{
-		Element element = OSFCacheManager.getLookupCache().get(lookTableClass.getName());
+		Object element = OSFCacheManager.getLookupCache().get(lookTableClass.getName());
 		List<T> lookupList;
 		boolean updateCache = false;
 		if (element != null) {
-			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
+			Map<String, T> lookupCacheMap = (Map<String, T>) element;
 			if (lookupCacheMap != null) {
 				lookupList = new ArrayList<>(lookupCacheMap.values());
 			} else {
@@ -82,8 +81,7 @@ public class LookupServiceImpl
 					lookupCacheMap.put(lookup.getCode(), lookup);
 				}
 			}
-			Element cachedLookup = new Element(lookTableClass.getName(), lookupCacheMap);
-			OSFCacheManager.getLookupCache().put(cachedLookup);
+			OSFCacheManager.getLookupCache().put(lookTableClass.getName(), lookupCacheMap);
 		}
 		return lookupList;
 	}
@@ -124,7 +122,7 @@ public class LookupServiceImpl
 			lookupEntity.populateBaseCreateFields();
 			getPersistenceService().persist(lookupEntity);
 		}
-		OSFCacheManager.getLookupCache().remove((Object) lookupEntity.getClass().getName());
+		OSFCacheManager.getLookupCache().remove(lookupEntity.getClass().getName());
 	}
 
 	@Override
@@ -219,7 +217,7 @@ public class LookupServiceImpl
 			lookupEntity.setUpdateUser(SecurityUtil.getCurrentUserName());
 			getPersistenceService().persist(lookupEntity);
 
-			OSFCacheManager.getLookupCache().remove((Object) lookupEntity.getClass().getName());
+			OSFCacheManager.getLookupCache().remove(lookupEntity.getClass().getName());
 		}
 	}
 
@@ -228,17 +226,16 @@ public class LookupServiceImpl
 	{
 		T lookupEntity = null;
 		if (StringUtils.isNotBlank(code)) {
-			Element element = OSFCacheManager.getLookupCache().get(lookupClass.getName());
+			Object element = OSFCacheManager.getLookupCache().get(lookupClass.getName());
 			if (element == null) {
 				Map<String, T> lookupCacheMap = new HashMap<>();
 				List<T> lookupList = findLookup(lookupClass, LookupEntity.ACTIVE_STATUS);
 				for (T lookup : lookupList) {
 					lookupCacheMap.put(lookup.getCode(), lookup);
 				}
-				element = new Element(lookupClass.getName(), lookupCacheMap);
-				OSFCacheManager.getLookupCache().put(element);
+				OSFCacheManager.getLookupCache().put(lookupClass.getName(), lookupCacheMap);
 			}
-			Map<String, T> lookupCacheMap = (Map<String, T>) element.getObjectValue();
+			Map<String, T> lookupCacheMap = (Map<String, T>) element;
 			lookupEntity = lookupCacheMap.get(code);
 			if (lookupEntity == null) {
 				//cache miss
@@ -328,7 +325,7 @@ public class LookupServiceImpl
 			lookupEntityFound.setUpdateUser(SecurityUtil.getCurrentUserName());
 			getPersistenceService().persist(lookupEntityFound);
 
-			OSFCacheManager.getLookupCache().remove((Object) lookupEntityFound.getClass().getName());
+			OSFCacheManager.getLookupCache().remove(lookupEntityFound.getClass().getName());
 		}
 	}
 
