@@ -54,7 +54,7 @@ public class OSFCacheManager
 
 
 	private static Cache<String, Object> applicationCache;
-	private static Cache<String, List<AttributeCode>> attributeCache;
+	private static Cache<String, AttributeCodeList> attributeCache;
 	private static Cache<Integer, String> attributeCodeAllCache;
 	private static Cache<Integer, String> attributeTypeCache;
 	private static Cache<String, ChecklistQuestion> checklistQuestionCache;
@@ -69,7 +69,7 @@ public class OSFCacheManager
 	private static Cache<Integer, String> lookupCache;
 	private static Cache<Integer, String> searchCache;
 	private static Cache<Integer, String> userAgentCache;
-	private static Cache<Integer, String> userSearchCache;
+	private static Cache<String, Object> userSearchCache;
 	private static Cache<String, WorkPlan> workPlanTypeCache;
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
@@ -103,7 +103,7 @@ public class OSFCacheManager
 		try {
 			// Eternal caches
 			applicationCache              = createCache(String.class, Object.class, "applicationCache", 100, true);
-			attributeCache                = createCache(String.class, (AttributeCode.class) List.class, "attributeCache", 30000, true);
+			attributeCache                = createCache(String.class, AttributeCodeList.class, "attributeCache", 30000, true);
 			attributeCodeAllCache         = createCache(Integer.class, String.class, "attributeCodeAllCache", 1, true);
 			attributeTypeCache            = createCache(Integer.class, String.class, "attributeTypeCache", 5000, true);
 
@@ -120,25 +120,25 @@ public class OSFCacheManager
 			lookupCache                   = createCache(Integer.class, String.class, "lookupCache", 500, false, 600, 600);
 			searchCache                   = createCache(Integer.class, String.class, "searchCache", 250, false, 1800, 1800);
 			userAgentCache                = createCache(Integer.class, String.class, "userAgentCache", 100, false, 7200, 7200);
-			userSearchCache               = createCache(Integer.class, String.class, "userSearchCache", 250, false, 1800, 1800);
+			userSearchCache               = createCache(String.class, Object.class, "userSearchCache", 250, false, 1800, 1800);
 			workPlanTypeCache             = createCache(String.class, WorkPlan.class, "workPlanTypeCache", 1000, false, 7200, 7200);
 
 
-			attributeCache = cacheManager.createCache("attributeCache", CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, AttributeCodeList.class,
-				ResourcePoolsBuilder.heap(30000))
-			.withExpiry(ExpiryPolicyBuilder.noExpiration())
-			.build());
+			// attributeCache = cacheManager.createCache("attributeCache", CacheConfigurationBuilder
+			// .newCacheConfigurationBuilder(String.class, AttributeCodeList.class, ResourcePoolsBuilder.heap(30000))
+			// .withExpiry(ExpiryPolicyBuilder.noExpiration())
+			// .build());
 		} finally {
 			LOCK.unlock();
 		}
 
 	}
 
-	private class AttributeCodeList extends ArrayList<AttributeCode> {
-		public AttributeCodeList(final Collection<? extends AttributeCode> c){
-			super(c);
-		}
-	}
+	// private class AttributeCodeList extends ArrayList<AttributeCode> {
+	// 	public AttributeCodeList(final Collection<? extends AttributeCode> c){
+	// 		super(c);
+	// 	}
+	// }
 
 	private static CacheManager initCacheManager() {
 		CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
@@ -237,6 +237,14 @@ public class OSFCacheManager
 
 	public static void setApplicationCache(Cache<String, Object> applicationCache) {
 		OSFCacheManager.applicationCache = applicationCache;
+	}
+
+	public static Cache<String, Object> getUserSearchCache() {
+		return userSearchCache;
+	}
+
+	public static void setUserSearchCache(Cache<String, Object> userSearchCache) {
+		OSFCacheManager.userSearchCache = userSearchCache;
 	}
 
 	public static Cache<String, WorkPlan> getWorkPlanTypeCache() {

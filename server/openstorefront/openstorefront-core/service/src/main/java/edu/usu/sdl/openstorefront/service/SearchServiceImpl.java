@@ -603,18 +603,17 @@ public class SearchServiceImpl
 
 		// If the search options changed clear the cache
 		if (!existing.compare(searchOptions) || forceCacheClear) {
-			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
+			Object userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
 			if (userSearchElementResult != null) {
 				@SuppressWarnings("unchecked")
-				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
+				List<String> listOfKeys = (List<String>) userSearchElementResult;
 
 				if (listOfKeys != null) {
 					for (String key : listOfKeys) {
 						OSFCacheManager.getSearchCache().remove(key);
 					}
 				}
-				Element afterDeletedKeys = new Element(username, null);
-				OSFCacheManager.getUserSearchCache().put(afterDeletedKeys);
+				OSFCacheManager.getUserSearchCache().put(username, null);
 			}
 		}
 
