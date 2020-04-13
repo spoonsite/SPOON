@@ -143,7 +143,6 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
-import org.ehcache.Element;
 import net.sourceforge.stripes.util.ResolverUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -2480,9 +2479,8 @@ public class CoreComponentServiceImpl
 	public String resolveComponentIcon(String componentId)
 	{
 		String iconMediaId = null;
-		Element element = OSFCacheManager.getComponentIconCache().get(componentId);
-		if (element != null) {
-			String componentMediaId = (String) element.getObjectValue();
+		String componentMediaId = OSFCacheManager.getComponentIconCache().get(componentId);
+		if (componentMediaId != null) {
 			if (StringUtils.isNotBlank(componentMediaId)) {
 				iconMediaId = componentMediaId;
 			}
@@ -2494,8 +2492,7 @@ public class CoreComponentServiceImpl
 			List<ComponentMedia> allIconMedia = componentMediaExample.findByExample();
 			Set<String> mediaWithIcons = new HashSet<>();
 			for (ComponentMedia componentMedia : allIconMedia) {
-				Element newElement = new Element(componentMedia.getComponentId(), componentMedia.getComponentMediaId());
-				OSFCacheManager.getComponentIconCache().put(newElement);
+				OSFCacheManager.getComponentIconCache().put(componentMedia.getComponentId(), componentMedia.getComponentMediaId());
 				if (componentMedia.getComponentId().equals(componentId)) {
 					iconMediaId = componentMedia.getComponentMediaId();
 				}
@@ -2503,8 +2500,7 @@ public class CoreComponentServiceImpl
 			}
 			if (iconMediaId == null) {
 				//set all missing icon to blank to warm cache
-				Element newElement = new Element(componentId, "");
-				OSFCacheManager.getComponentIconCache().put(newElement);
+				OSFCacheManager.getComponentIconCache().put(componentId, "");
 			}
 
 			Component componentExample = new Component();
@@ -2512,8 +2508,7 @@ public class CoreComponentServiceImpl
 			for (Component component : components) {
 				String id = component.getComponentId();
 				if (!mediaWithIcons.contains(id)) {
-					Element newElement = new Element(id, "");
-					OSFCacheManager.getComponentIconCache().put(newElement);
+					OSFCacheManager.getComponentIconCache().put(id, "");
 				}
 			}
 
