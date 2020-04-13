@@ -37,6 +37,7 @@ import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import net.sf.uadetector.ReadableUserAgent;
 
 /**
  * Handling Application level caching
@@ -68,7 +69,7 @@ public class OSFCacheManager
 	private static Cache<String, Contact> contactCache;
 	private static Cache<Integer, String> lookupCache;
 	private static Cache<Integer, String> searchCache;
-	private static Cache<Integer, String> userAgentCache;
+	private static Cache<String, ReadableUserAgent> userAgentCache;
 	private static Cache<String, Object> userSearchCache;
 	private static Cache<String, WorkPlan> workPlanTypeCache;
 
@@ -119,7 +120,7 @@ public class OSFCacheManager
 			contactCache                  = createCache(String.class, Contact.class, "contactCache", 5000, false, 1800, 1800);
 			lookupCache                   = createCache(Integer.class, String.class, "lookupCache", 500, false, 600, 600);
 			searchCache                   = createCache(Integer.class, String.class, "searchCache", 250, false, 1800, 1800);
-			userAgentCache                = createCache(Integer.class, String.class, "userAgentCache", 100, false, 7200, 7200);
+			userAgentCache                = createCache(String.class, ReadableUserAgent.class, "userAgentCache", 100, false, 7200, 7200);
 			userSearchCache               = createCache(String.class, Object.class, "userSearchCache", 250, false, 1800, 1800);
 			workPlanTypeCache             = createCache(String.class, WorkPlan.class, "workPlanTypeCache", 1000, false, 7200, 7200);
 
@@ -237,6 +238,14 @@ public class OSFCacheManager
 
 	public static void setApplicationCache(Cache<String, Object> applicationCache) {
 		OSFCacheManager.applicationCache = applicationCache;
+	}
+
+	public static Cache<String, ReadableUserAgent> getUserAgentCache() {
+		return userAgentCache;
+	}
+
+	public static void setUserAgentCache(Cache<String, ReadableUserAgent> userAgentCache) {
+		OSFCacheManager.userAgentCache = userAgentCache;
 	}
 
 	public static Cache<String, Object> getUserSearchCache() {

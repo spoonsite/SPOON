@@ -17,7 +17,6 @@ package edu.usu.sdl.openstorefront.service.manager;
 
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.ehcache.Element;
 import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
 
@@ -53,14 +52,13 @@ public class UserAgentManager
 	public static ReadableUserAgent parse(String userAgentString)
 	{
 		ReadableUserAgent readableUserAgent;
-		Element result = OSFCacheManager.getUserAgentCache().get(userAgentString);
+		ReadableUserAgent result = OSFCacheManager.getUserAgentCache().get(userAgentString);
 		if (result == null) {
 
 			readableUserAgent = parser.parse(userAgentString);
-			Element element = new Element(userAgentString, readableUserAgent);
-			OSFCacheManager.getUserAgentCache().put(element);
+			OSFCacheManager.getUserAgentCache().put(userAgentString, readableUserAgent);
 		} else {
-			readableUserAgent = (ReadableUserAgent) result.getObjectValue();
+			readableUserAgent = result;
 		}
 		return readableUserAgent;
 	}
