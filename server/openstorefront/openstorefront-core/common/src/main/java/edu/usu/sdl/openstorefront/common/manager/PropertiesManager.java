@@ -330,6 +330,12 @@ public class PropertiesManager
             defaults.put(KEY_MAX_POST_SIZE, "1024"); // 1GB
             defaults.put(KEY_MONGO_CONNECTION_URL, "mongodb://localhost:27017");
 
+            String mongoSystemVar = System.getenv("MONGO_URL");
+            if(mongoSystemVar != null){
+                defaults.put(KEY_MONGO_CONNECTION_URL, mongoSystemVar);
+                LOG.log(Level.INFO, "Updated Mongo connection url to: " + mongoSystemVar);
+            }
+
             String propertiesFilename;
             try {
                 propertiesFilename = fileSystemManager.getConfig(getPropertiesFile()).getPath();
