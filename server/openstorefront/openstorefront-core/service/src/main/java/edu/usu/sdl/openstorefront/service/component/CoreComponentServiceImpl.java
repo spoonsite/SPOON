@@ -220,18 +220,15 @@ public class CoreComponentServiceImpl
 	public String getComponentName(String componentId)
 	{
 		String componentName = null;
-		Element element = OSFCacheManager.getComponentLookupCache().get(componentId);
-		if (element != null) {
-			componentName = (String) element.getObjectValue();
-		} else {
+		componentName = OSFCacheManager.getComponentLookupCache().get(componentId);
+		if (componentName == null) {
 			Component componentExample = new Component();
 			List<Component> components = componentExample.findByExampleProxy();
 			for (Component component : components) {
-				Element newElement = new Element(component.getComponentId(), component.getName());
 				if (component.getComponentId().equals(componentId)) {
 					componentName = component.getName();
 				}
-				OSFCacheManager.getComponentLookupCache().put(newElement);
+				OSFCacheManager.getComponentLookupCache().put(component.getComponentId(), component.getName());
 			}
 		}
 		return componentName;
