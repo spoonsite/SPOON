@@ -42,7 +42,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
@@ -64,18 +63,17 @@ public class ComponentTypeServiceImpl
 	public String getComponentTypeForComponent(String componentId)
 	{
 		String componentType = null;
-		Element element = OSFCacheManager.getComponentTypeComponentCache().get(componentId);
+		String element = OSFCacheManager.getComponentTypeComponentCache().get(componentId);
 		if (element != null) {
-			componentType = (String) element.getObjectValue();
+			componentType = element;
 		} else {
 
 			Component componentExample = new Component();
 			for (Component component : componentExample.findByExample()) {
-				Element newElement = new Element(component.getComponentId(), component.getComponentType());
 				if (component.getComponentId().equals(componentId)) {
 					componentType = component.getComponentType();
 				}
-				OSFCacheManager.getComponentTypeComponentCache().put(newElement);
+				OSFCacheManager.getComponentTypeComponentCache().put(component.getComponentId(), component.getComponentType());
 			}
 		}
 		return componentType;

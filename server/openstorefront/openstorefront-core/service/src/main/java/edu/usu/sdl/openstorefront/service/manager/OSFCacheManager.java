@@ -66,7 +66,7 @@ public class OSFCacheManager
 	private static Cache<Integer, String> componentIconCache;
 	private static Cache<Integer, String> componentLookupCache;
 	private static Cache<Integer, String> componentTypeCache;
-	private static Cache<Integer, String> componentTypeComponentCache;
+	private static Cache<String, String> componentTypeComponentCache;
 	private static Cache<String, Contact> contactCache;
 	private static Cache<String, Object> lookupCache;
 	private static Cache<String, AdvanceSearchResult> searchCache;
@@ -117,7 +117,7 @@ public class OSFCacheManager
 			componentIconCache            = createCache(Integer.class, String.class, "componentIconCache", 50000, false, 1800, 1800);
 			componentLookupCache          = createCache(Integer.class, String.class, "componentLookupCache", 50000, false, 300, 300);
 			componentTypeCache            = createCache(Integer.class, String.class, "componentTypeCache", 1, false, 300, 300);
-			componentTypeComponentCache   = createCache(Integer.class, String.class, "componentTypeComponentCache", 50000, false, 300, 300);
+			componentTypeComponentCache   = createCache(String.class, String.class, "componentTypeComponentCache", 50000, false, 300, 300);
 			contactCache                  = createCache(String.class, Contact.class, "contactCache", 5000, false, 1800, 1800);
 			lookupCache                   = createCache(String.class, Object.class, "lookupCache", 500, false, 600, 600);
 			searchCache                   = createCache(String.class, AdvanceSearchResult.class, "searchCache", 250, false, 1800, 1800);
@@ -239,6 +239,14 @@ public class OSFCacheManager
 
 	public static void setApplicationCache(Cache<String, Object> applicationCache) {
 		OSFCacheManager.applicationCache = applicationCache;
+	}
+
+	public static Cache<String, String> getComponentTypeComponentCache() {
+		return componentTypeComponentCache;
+	}
+
+	public static void setComponentTypeComponentCache(Cache<String, String> componentTypeComponentCache) {
+		OSFCacheManager.componentTypeComponentCache = componentTypeComponentCache;
 	}
 
 	public static Cache<String, Object> getLookupCache() {
