@@ -607,6 +607,10 @@ public class ElasticSearchManager
 			 * Most code blocks on the elasticsearch sites have a copy to curl button at the bottom
 			 * USE THEM.
 			 *
+			 * // TODO: simplify these blocks
+			 * 		Elasticsearch should be able to these cases implicitly, but we just need to test and make
+			 * 		sure that is correct.
+			 *
 			 */
 			if (Convert.toBoolean(searchFilterOptions.getCanUseOrganizationsInSearch())) {
 				// Custom query for entry organization
@@ -1008,7 +1012,7 @@ public class ElasticSearchManager
 				componentAttribute.setComponentId(component.getComponentId());
 				List<ComponentAttribute> componentAttributes = componentAttribute.findByExample();
 
-				// fetch all component attributes
+				// fetch all component tags
 				ComponentTag componentTag = new ComponentTag();
 				componentTag.setActiveStatus(ComponentAttribute.ACTIVE_STATUS);
 				componentTag.setComponentId(component.getComponentId());
