@@ -74,7 +74,6 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -177,10 +176,10 @@ public class ImportServiceImpl
 		FileFormat fileFormat = getLookupService().getLookupEnity(FileFormat.class, fileFormatCode);
 
 		if (fileFormat == null) {
-			Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+			Object element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 			if (element != null) {
 				@SuppressWarnings("unchecked")
-				List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element.getObjectValue();
+				List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element;
 				for (ExternalFormat pluginFormat : extraFileFormats) {
 					if (fileFormatCode.equals(pluginFormat.getFileFormat().getCode())) {
 						externalFormat = pluginFormat;
@@ -328,10 +327,10 @@ public class ImportServiceImpl
 			fileFormats = fileFormats.stream().filter(f -> f.getFileType().equals(fileType)).collect(Collectors.toList());
 		}
 		//also pull in fileformat and translate Class to path
-		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		Object element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
 			@SuppressWarnings("unchecked")
-			List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element.getObjectValue();
+			List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element;
 			for (ExternalFormat externalFormat : extraFileFormats) {
 				if (externalFormat.getFileFormat().getFileType().equals(fileType)) {
 					FileFormat translatedFileFormat = new FileFormat();
@@ -356,10 +355,10 @@ public class ImportServiceImpl
 		List<FileFormat> fileFormats = getLookupService().findLookup(FileFormat.class);
 
 		//also pull in fileformat and translate Class to path
-		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		Object element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
 			@SuppressWarnings("unchecked")
-			List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element.getObjectValue();
+			List<ExternalFormat> extraFileFormats = (List<ExternalFormat>) element;
 			for (ExternalFormat externalFormat : extraFileFormats) {
 				FileFormat translatedFileFormat = new FileFormat();
 				translatedFileFormat.setCode(externalFormat.getFileFormat().getCode());
@@ -563,27 +562,26 @@ public class ImportServiceImpl
 	@SuppressWarnings("unchecked")
 	public void registerFormat(FileFormat newFormat, Class parserClass)
 	{
-		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		List<ExternalFormat> element = (List<ExternalFormat>) OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element == null) {
 			List<ExternalFormat> fileFormats = new ArrayList<>();
-			element = new Element(FORMATS_KEY, fileFormats);
-			OSFCacheManager.getApplicationCache().put(element);
+			OSFCacheManager.getApplicationCache().put(FORMATS_KEY, fileFormats);
 		}
 		ExternalFormat externalFormat = new ExternalFormat();
 		externalFormat.setFileFormat(newFormat);
 		externalFormat.setParsingClass(parserClass);
-		((List<ExternalFormat>) element.getObjectValue()).add(externalFormat);
-
+		element.add(externalFormat);
+		OSFCacheManager.getApplicationCache().replace(FORMATS_KEY, element);
 		LOG.log(Level.FINE, MessageFormat.format("Registered new file format: {0}", newFormat.getDescription()));
 	}
 
 	@Override
 	public void unregisterFormat(String fullClassPath)
 	{
-		Element element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
+		Object element = OSFCacheManager.getApplicationCache().get(FORMATS_KEY);
 		if (element != null) {
 			@SuppressWarnings("unchecked")
-			List<ExternalFormat> fileFormats = (List<ExternalFormat>) element.getObjectValue();
+			List<ExternalFormat> fileFormats = (List<ExternalFormat>) element;
 			for (int i = fileFormats.size() - 1; i >= 0; i--) {
 				FileFormat fileFormat = fileFormats.get(i).getFileFormat();
 				if (fileFormat.getParserClass().equals(fullClassPath)) {
@@ -592,8 +590,7 @@ public class ImportServiceImpl
 				}
 			}
 
-			element = new Element(FORMATS_KEY, fileFormats);
-			OSFCacheManager.getApplicationCache().put(element);
+			OSFCacheManager.getApplicationCache().put(FORMATS_KEY, fileFormats);
 		} else {
 			LOG.log(Level.WARNING, "Unable to find and internal format list. No format to unregister.");
 		}

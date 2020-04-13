@@ -23,7 +23,6 @@ import edu.usu.sdl.openstorefront.core.model.BrandingModel;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import java.util.List;
 import java.util.Objects;
-import org.ehcache.Element;
 
 /**
  * Handle branding related items
@@ -42,10 +41,7 @@ public class BrandingServiceImpl
 	public Branding getCurrentBrandingView()
 	{
 		Branding branding = null;
-		Element element = OSFCacheManager.getApplicationCache().get(CURRENT_BRANDING);
-		if (element != null) {
-			branding = (Branding) element.getObjectValue();
-		}
+		branding = (Branding) OSFCacheManager.getApplicationCache().get(CURRENT_BRANDING);
 
 		if (branding == null) {
 
@@ -217,8 +213,7 @@ public class BrandingServiceImpl
 				}
 			}
 
-			element = new Element(CURRENT_BRANDING, branding);
-			OSFCacheManager.getApplicationCache().put(element);
+			OSFCacheManager.getApplicationCache().put(CURRENT_BRANDING, branding);
 		} else {
 			if (branding.getAllowSecurityMarkingsFlg() == null) {
 				branding.setAllowSecurityMarkingsFlg(Boolean.FALSE);
