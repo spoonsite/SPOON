@@ -36,6 +36,7 @@ import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
+import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 
 /**
  * Handling Application level caching
@@ -69,7 +70,7 @@ public class OSFCacheManager
 	private static Cache<Integer, String> searchCache;
 	private static Cache<Integer, String> userAgentCache;
 	private static Cache<Integer, String> userSearchCache;
-	private static Cache<Integer, String> workPlanTypeCache;
+	private static Cache<String, WorkPlan> workPlanTypeCache;
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
@@ -120,7 +121,7 @@ public class OSFCacheManager
 			searchCache                   = createCache(Integer.class, String.class, "searchCache", 250, false, 1800, 1800);
 			userAgentCache                = createCache(Integer.class, String.class, "userAgentCache", 100, false, 7200, 7200);
 			userSearchCache               = createCache(Integer.class, String.class, "userSearchCache", 250, false, 1800, 1800);
-			workPlanTypeCache             = createCache(Integer.class, String.class, "workPlanTypeCache", 1000, false, 7200, 7200);
+			workPlanTypeCache             = createCache(String.class, WorkPlan.class, "workPlanTypeCache", 1000, false, 7200, 7200);
 
 
 			attributeCache = cacheManager.createCache("attributeCache", CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, AttributeCodeList.class,
@@ -236,6 +237,14 @@ public class OSFCacheManager
 
 	public static void setApplicationCache(Cache<String, Object> applicationCache) {
 		OSFCacheManager.applicationCache = applicationCache;
+	}
+
+	public static Cache<String, WorkPlan> getWorkPlanTypeCache() {
+		return workPlanTypeCache;
+	}
+
+	public static void setWorkPlanTypeCache(Cache<String, WorkPlan> workPlanTypeCache) {
+		OSFCacheManager.workPlanTypeCache = workPlanTypeCache;
 	}
 
 }
