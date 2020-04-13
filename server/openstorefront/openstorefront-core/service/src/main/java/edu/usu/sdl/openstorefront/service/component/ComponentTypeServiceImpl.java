@@ -217,15 +217,14 @@ public class ComponentTypeServiceImpl
 	public List<ComponentType> getAllComponentTypes()
 	{
 		List<ComponentType> componentTypes;
-		Element element = OSFCacheManager.getComponentTypeCache().get(OSFCacheManager.ALLCODE_KEY);
+		Object element = OSFCacheManager.getComponentTypeCache().get(OSFCacheManager.ALLCODE_KEY);
 		if (element != null) {
-			componentTypes = (List<ComponentType>) element.getObjectValue();
+			componentTypes = (List<ComponentType>) element;
 		} else {
 			ComponentType componentType = new ComponentType();
 			componentTypes = componentType.findByExample();
 			fixOrphans(componentTypes);
-			element = new Element(OSFCacheManager.ALLCODE_KEY, componentTypes);
-			OSFCacheManager.getComponentTypeCache().put(element);
+			OSFCacheManager.getComponentTypeCache().put(OSFCacheManager.ALLCODE_KEY, componentTypes);
 		}
 
 		return componentTypes;
@@ -241,7 +240,7 @@ public class ComponentTypeServiceImpl
 			componentType.populateBaseCreateFields();
 			componentType = persistenceService.persist(componentType);
 		}
-		OSFCacheManager.getComponentTypeCache().removeAll();
+		OSFCacheManager.getComponentTypeCache().clear();
 
 		return componentType;
 	}
@@ -278,7 +277,7 @@ public class ComponentTypeServiceImpl
 				persistenceService.persist(componentTypeFound);
 			}
 			OSFCacheManager.getComponentCache().removeAll();
-			OSFCacheManager.getComponentTypeCache().removeAll();
+			OSFCacheManager.getComponentTypeCache().clear();
 		}
 	}
 
@@ -494,7 +493,7 @@ public class ComponentTypeServiceImpl
 			}
 
 			if (clearCache) {
-				OSFCacheManager.getComponentTypeCache().removeAll();
+				OSFCacheManager.getComponentTypeCache().clear();
 			}
 		}
 	}
@@ -548,7 +547,7 @@ public class ComponentTypeServiceImpl
 			}
 
 			if (clearCache) {
-				OSFCacheManager.getComponentTypeCache().removeAll();
+				OSFCacheManager.getComponentTypeCache().clear();
 			}
 		}
 	}
@@ -798,7 +797,7 @@ public class ComponentTypeServiceImpl
 			existing.populateBaseUpdateFields();
 			persistenceService.persist(existing);
 			existing = persistenceService.unwrapProxyObject(existing);
-			OSFCacheManager.getComponentTypeCache().removeAll();
+			OSFCacheManager.getComponentTypeCache().clear();
 		}
 		return existing;
 	}
