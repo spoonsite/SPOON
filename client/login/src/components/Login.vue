@@ -97,21 +97,6 @@ export default {
     }
   },
   methods: {
-    getCookie (cname) {
-      const name = `${cname}=`
-      const decodedCookie = decodeURIComponent(document.cookie)
-      const ca = decodedCookie.split(';')
-      for (var i = 0; i < ca.length; i++) {
-        var c = ca[i]
-        while (c.charAt(0) === ' ') {
-          c = c.substring(1)
-        }
-        if (c.indexOf(name) === 0) {
-          return c.substring(name.length, c.length)
-        }
-      }
-      return ''
-    },
     login () {
       if (this.$refs.form.validate()) {
         this.loading = true
@@ -120,14 +105,7 @@ export default {
         data.append('password', this.password)
         data.append('gotoPage', '')
 
-        const token = this.getCookie('X-Csrf-Token')
-        this.$http.post('/openstorefront/Login.action?Login',
-          data,
-          {
-            headers: {
-              'X-Csrf-Token': token
-            }
-          })
+        this.$http.post('/openstorefront/Login.action?Login', data)
           .then(response => {
             if (response.data.success) {
               if (this.gotoPage) {

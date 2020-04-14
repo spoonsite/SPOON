@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import Toasted from 'vue-toasted'
+import Cookies from 'js-cookie'
 import axios from 'axios'
 import App from './App.vue'
 import router from './router'
@@ -9,6 +10,23 @@ import store from './store'
 
 Vue.config.productionTip = false
 
+// Add CSRF Token on every request
+axios.interceptors.request.use(
+  function (config) {
+    const csrfToken = Cookies.get('X-Csrf-Token')
+    config.headers = {
+      'X-Requested-With': 'XMLHttpRequest',
+      withCredentials: true,
+      'Access-Control-Allow-Credentials': true,
+      'X-Csrf-Token': csrfToken
+    }
+    return config
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error)
+  }
+)
 Vue.prototype.$http = axios
 Vue.use(Toasted, {
   iconPack: 'fontawesome',
