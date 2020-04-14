@@ -1,12 +1,16 @@
 {
-  "name": "new-login",
+  "name": "spoon-login",
+  "description": "The login and registration pages for spoonsite.com",
+  "author": "support@spoonsite.com",
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "npm run serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
+    "test": "npm run test:unit && npm run test:e2e",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

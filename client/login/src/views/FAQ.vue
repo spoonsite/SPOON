@@ -29,7 +29,6 @@ export default {
       this.$http
         .get('/openstorefront/api/v1/resource/faq')
         .then(response => {
-          console.log(response.data)
           this.questions = response.data.filter(item => item.activeStatus === 'A')
         })
         .catch(e => this.errors.push(e))
