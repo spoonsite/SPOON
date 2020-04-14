@@ -1,7 +1,15 @@
 <template>
   <div id="app">
     <v-app>
-      <v-app-bar app color="primary" dark dense elevate-on-scroll :height="appBarHeight">
+      <v-system-bar app v-if="!hideSecurityBanner" :color="this.$store.state.branding.securityBannerBackgroundColor">
+        <v-spacer />
+        <div :style="securityBannerTextColor" class="font-weight-bold">
+          {{ $store.state.branding.securityBannerText }}
+        </div>
+        <v-spacer />
+      </v-system-bar>
+
+      <v-app-bar app clipped-left color="primary" dark dense elevate-on-scroll>
         <router-link style="height: 100%;" to="/">
           <img height="100%" src="./assets/SPOONlogohorz.png" alt="SPOON logo" />
         </router-link>
@@ -81,9 +89,6 @@
           </v-card>
         </v-menu>
       </v-app-bar>
-      <div :hidden="hideSecurityBanner" class="securityDiv" :style="securityBannerColors">
-        {{ $store.state.branding.securityBannerText }}
-      </div>
 
       <!-- Request Error Dialog -->
       <v-dialog v-model="errorDialog" max-width="75em">
@@ -136,9 +141,11 @@
       </v-dialog>-->
       <DisclaimerModal v-model="showDisclaimer" @close="showDisclaimer = false"></DisclaimerModal>
 
-      <main :style="hideSecurityBanner ? 'padding-top: 48px' : ''">
-        <router-view />
-      </main>
+      <v-content>
+        <v-container fluid class="pa-0">
+          <router-view />
+        </v-container>
+      </v-content>
     </v-app>
   </div>
 </template>
@@ -195,10 +202,8 @@ export default {
     filteredEndLinks() {
       return this.endLinks.filter(link => this.checkPermissions(link.permissions))
     },
-    securityBannerColors() {
-      return `background-color: ${this.$store.state.branding.securityBannerBackgroundColor};
-        color: ${this.$store.state.branding.securityBannerTextColor};
-      ${this.hideSecurityBanner ? '' : 'margin-top: 48px;'}`
+    securityBannerTextColor() {
+      return `color: ${this.$store.state.branding.securityBannerTextColor};`
     },
     accentBarColor() {
       return `background-color: ${this.$store.state.branding.vueAccentColor};`

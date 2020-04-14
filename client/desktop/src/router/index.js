@@ -11,6 +11,8 @@ import SubmissionForm from '@/views/SubmissionForm'
 import Submissions from '@/views/Submissions'
 import Questions from '@/views/Questions'
 import Reviews from '@/views/Reviews'
+import AdminBase from '@/views/admin/AdminBase'
+import Dashboard from '@/views/admin/Dashboard'
 
 Vue.use(VueRouter)
 
@@ -71,6 +73,11 @@ const routes = [
     path: '/reviews',
     name: 'Reviews',
     component: Reviews
+  },
+  {
+    path: '/admin',
+    component: AdminBase,
+    children: [{ path: '', name: 'AdminDashboard', component: Dashboard }]
   }
   // {
   //   path: '/about',
