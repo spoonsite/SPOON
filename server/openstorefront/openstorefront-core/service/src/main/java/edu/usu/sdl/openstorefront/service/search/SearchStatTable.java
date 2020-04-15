@@ -39,7 +39,6 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.ehcache.Cache;
-import org.ehcache.Element;
 
 /**
  *
