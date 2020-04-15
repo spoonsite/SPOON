@@ -16,9 +16,6 @@
 package edu.usu.sdl.openstorefront.service.manager;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
@@ -34,7 +31,6 @@ import org.ehcache.config.builders.ResourcePoolsBuilder;
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
 import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
-import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
@@ -176,6 +172,24 @@ public class OSFCacheManager
 	public static boolean isActive()
 	{
 		return started.get();
+	}
+
+	public static void cleanUp()
+	{
+		if(started.get()) {
+			cacheManager.close();
+			started.set(false);
+		} else {
+			cacheManager = initCacheManager();
+			started.set(true);
+			cacheManager.close();
+			started.set(false);
+		}
+	}
+	
+	public static void initializeStatic(){
+		cacheManager = initCacheManager();
+		started.set(true);
 	}
 
 	public static <K, V> boolean isEmpty(Cache<K, V> cache)

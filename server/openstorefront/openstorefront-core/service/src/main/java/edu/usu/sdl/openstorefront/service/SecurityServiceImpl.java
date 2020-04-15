@@ -105,7 +105,7 @@ public class SecurityServiceImpl
 		if (OSFCacheManager.isActive()) {
 			element = OSFCacheManager.getApplicationCache().get(CURRENT_SECURITY_POLICY);
 			if (element != null) {
-				securityPolicy = (SecurityPolicy) element.getObjectValue();
+				securityPolicy = (SecurityPolicy) element;
 			}
 
 			if (securityPolicy == null) {
