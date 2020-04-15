@@ -154,10 +154,10 @@ public class AttributeServiceImpl
 			attributeCodeExample.setAttributeCodePk(attributeCodePk);
 			attributeCodes = getPersistenceService().queryByExample(new QueryByExample<>(attributeCodeExample));
 		} else {
-			Element element;
+			Object element;
 			element = OSFCacheManager.getAttributeCache().get(type);
 			if (element != null) {
-				attributeCodes = (List<AttributeCode>) element.getObjectValue();
+				attributeCodes = (List<AttributeCode>) element;
 			} else {
 
 				AttributeCode attributeCodeExample = new AttributeCode();
@@ -167,8 +167,7 @@ public class AttributeServiceImpl
 				attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 
 				attributeCodes = getPersistenceService().queryByExample(new QueryByExample<>(attributeCodeExample));
-				element = new Element(type, attributeCodes);
-				OSFCacheManager.getAttributeCache().put(element);
+				OSFCacheManager.getAttributeCache().put(type, attributeCodes);
 			}
 		}
 		return attributeCodes;

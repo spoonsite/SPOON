@@ -58,7 +58,7 @@ public class OSFCacheManager
 
 
 	private static Cache<String, Object> applicationCache;
-	private static Cache<String, AttributeCodeList> attributeCache;
+	private static Cache<String, Object> attributeCache;
 	private static Cache<String, Object> attributeCodeAllCache;
 	private static Cache<String, AttributeType> attributeTypeCache;
 	private static Cache<String, ChecklistQuestion> checklistQuestionCache;
@@ -107,7 +107,7 @@ public class OSFCacheManager
 		try {
 			// Eternal caches
 			applicationCache              = createCache(String.class, Object.class, "applicationCache", 100, true);
-			attributeCache                = createCache(String.class, AttributeCodeList.class, "attributeCache", 30000, true);
+			attributeCache                = createCache(String.class, Object.class, "attributeCache", 30000, true);
 			attributeCodeAllCache         = createCache(String.class, Object.class, "attributeCodeAllCache", 1, true);
 			attributeTypeCache            = createCache(String.class, AttributeType.class, "attributeTypeCache", 5000, true);
 
@@ -205,12 +205,12 @@ public class OSFCacheManager
 		OSFCacheManager.componentApprovalCache = componentApprovalCache;
 	}
 
-	public static Cache<String, AttributeType> getAttributeCache()
+	public static Cache<String, Object> getAttributeCache()
 	{
 		return attributeCache;
 	}
 
-	public static void setAttributeCache(Cache<String, AttributeType> attributeCache)
+	public static void setAttributeCache(Cache<String, Object> attributeCache)
 	{
 		OSFCacheManager.attributeCache = attributeCache;
 	}
