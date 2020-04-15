@@ -276,7 +276,7 @@ public class ComponentTypeServiceImpl
 				componentTypeFound.populateBaseUpdateFields();
 				persistenceService.persist(componentTypeFound);
 			}
-			OSFCacheManager.getComponentCache().removeAll();
+			OSFCacheManager.getComponentCache().clear();
 			OSFCacheManager.getComponentTypeCache().clear();
 		}
 	}

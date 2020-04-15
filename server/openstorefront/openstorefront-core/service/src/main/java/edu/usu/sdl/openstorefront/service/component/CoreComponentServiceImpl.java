@@ -1349,10 +1349,8 @@ public class CoreComponentServiceImpl
 	{
 		ComponentAll componentAll = null;
 		if (StringUtils.isNotBlank(componentId)) {
-			Element element = OSFCacheManager.getComponentCache().get(componentId);
-			if (element != null) {
-				componentAll = (ComponentAll) element.getObjectValue();
-			} else {
+			ComponentAll element = OSFCacheManager.getComponentCache().get(componentId);
+			if (element == null) {
 				componentAll = new ComponentAll();
 
 				Component componentExample = new Component();
@@ -1407,8 +1405,7 @@ public class CoreComponentServiceImpl
 					}
 					componentAll.setReviews(allReviews);
 
-					element = new Element(componentId, componentAll);
-					OSFCacheManager.getComponentCache().put(element);
+					OSFCacheManager.getComponentCache().put(componentId, componentAll);
 				}
 			}
 		}
