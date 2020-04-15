@@ -106,13 +106,12 @@ public class AttributeServiceImpl
 	public List<AttributeCode> getAllAttributeCodes(String activeStatus)
 	{
 		List<AttributeCode> attributeCodes;
-		Element element = OSFCacheManager.getAttributeCodeAllCache().get(OSFCacheManager.ALLCODE_KEY);
+		Object element = OSFCacheManager.getAttributeCodeAllCache().get(OSFCacheManager.ALLCODE_KEY);
 		if (element != null) {
-			attributeCodes = (List<AttributeCode>) element.getObjectValue();
+			attributeCodes = (List<AttributeCode>) element;
 		} else {
 			attributeCodes = getPersistenceService().queryByExample(new AttributeCode());
-			element = new Element(OSFCacheManager.ALLCODE_KEY, attributeCodes);
-			OSFCacheManager.getAttributeCodeAllCache().put(element);
+			OSFCacheManager.getAttributeCodeAllCache().put(OSFCacheManager.ALLCODE_KEY, attributeCodes);
 
 			List<AttributeCode> activeCodesOnly = attributeCodes.stream()
 					.filter(code -> code.getActiveStatus().equals(AttributeCode.ACTIVE_STATUS))
@@ -1058,7 +1057,7 @@ public class AttributeServiceImpl
 	private void warmAttributeCaches(List<AttributeCode> attributeCodes)
 	{
 		if (attributeCodes == null) {
-			Element element = OSFCacheManager.getAttributeCodeAllCache().get(OSFCacheManager.ALLCODE_KEY);
+			Object element = OSFCacheManager.getAttributeCodeAllCache().get(OSFCacheManager.ALLCODE_KEY);
 			if (element == null) {
 				//warm caches (ignore return)
 				getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
@@ -1070,8 +1069,7 @@ public class AttributeServiceImpl
 					.collect(Collectors.groupingBy(AttributeCode::typeField));
 
 			for (String type : codeMap.keySet()) {
-				Element element = new Element();
-				OSFCacheManager.getAttributeCache().put(element);
+				OSFCacheManager.getAttributeCache().put(type, codeMap.get(type));
 			}
 
 			//populate the type cache
