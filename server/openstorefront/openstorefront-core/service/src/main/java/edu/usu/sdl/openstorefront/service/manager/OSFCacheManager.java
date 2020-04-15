@@ -37,6 +37,7 @@ import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCode;
 import edu.usu.sdl.openstorefront.core.entity.Contact;
 import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
+import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import net.sf.uadetector.ReadableUserAgent;
 
@@ -62,7 +63,7 @@ public class OSFCacheManager
 	private static Cache<String, ChecklistQuestion> checklistQuestionCache;
 	private static Cache<String, String> componentApprovalCache;
 	private static Cache<Integer, String> componentCache;
-	private static Cache<Integer, String> componentDataRestrictionCache;
+	private static Cache<String, ComponentSensitivityModel> componentDataRestrictionCache;
 	private static Cache<String, String> componentIconCache;
 	private static Cache<String, String> componentLookupCache;
 	private static Cache<String, Object> componentTypeCache;
@@ -113,7 +114,7 @@ public class OSFCacheManager
 			checklistQuestionCache        = createCache(String.class, ChecklistQuestion.class, "checklistQuestionCache", 1000, false, 300, 300);
 			componentApprovalCache        = createCache(String.class, String.class, "componentApprovalCache", 50000, false, 300, 300);
 			componentCache                = createCache(Integer.class, String.class, "componentCache", 200, false, 300, 300);
-			componentDataRestrictionCache = createCache(Integer.class, String.class, "componentDataRestrictionCache", 50000, false, 1800, 1800);
+			componentDataRestrictionCache = createCache(String.class, ComponentSensitivityModel.class, "componentDataRestrictionCache", 50000, false, 1800, 1800);
 			componentIconCache            = createCache(String.class, String.class, "componentIconCache", 50000, false, 1800, 1800);
 			componentLookupCache          = createCache(String.class, String.class, "componentLookupCache", 50000, false, 300, 300);
 			componentTypeCache            = createCache(String.class, Object.class, "componentTypeCache", 1, false, 300, 300);
@@ -239,6 +240,14 @@ public class OSFCacheManager
 
 	public static void setApplicationCache(Cache<String, Object> applicationCache) {
 		OSFCacheManager.applicationCache = applicationCache;
+	}
+
+	public static Cache<String, ComponentSensitivityModel> getComponentDataRestrictionCache() {
+		return componentDataRestrictionCache;
+	}
+
+	public static void setComponentDataRestrictionCache(Cache<String, ComponentSensitivityModel> componentDataRestrictionCache) {
+		OSFCacheManager.componentDataRestrictionCache = componentDataRestrictionCache;
 	}
 
 	public static Cache<String, String> getComponentIconCache() {

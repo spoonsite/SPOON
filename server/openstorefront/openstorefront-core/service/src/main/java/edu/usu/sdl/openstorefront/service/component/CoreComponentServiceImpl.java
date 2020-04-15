@@ -1760,21 +1760,17 @@ public class CoreComponentServiceImpl
 		ComponentSensitivityModel componentSensitivityModel = new ComponentSensitivityModel();
 		componentSensitivityModel.setComponentId(componentId);
 
-		Element element = OSFCacheManager.getComponentDataRestrictionCache().get(componentId);
-		if (element != null) {
-			componentSensitivityModel = (ComponentSensitivityModel) element.getObjectValue();
-		} else {
-
+		ComponentSensitivityModel element = OSFCacheManager.getComponentDataRestrictionCache().get(componentId);
+		if (element == null) {
 			Map<String, ComponentSensitivityModel> componentRestrictionMap = componentService.getRepoFactory().getComponentRepo().findComponentsWithDataRestrictions();
 			for (String componentIdKey : componentRestrictionMap.keySet()) {
-				Element newElement = new Element(componentIdKey, componentRestrictionMap.get(componentIdKey));
 				if (componentIdKey.equals(componentId)) {
 					componentSensitivityModel = componentRestrictionMap.get(componentIdKey);
 					componentSensitivityModel.setComponentId(componentSensitivityModel.getComponentId());
 					componentSensitivityModel.setDataSensitivity(componentSensitivityModel.getDataSensitivity());
 					componentSensitivityModel.setDataSource(componentSensitivityModel.getDataSource());
 				}
-				OSFCacheManager.getComponentDataRestrictionCache().put(newElement);
+				OSFCacheManager.getComponentDataRestrictionCache().put(componentIdKey, componentRestrictionMap.get(componentIdKey));
 			}
 
 			//add the missed cases
@@ -1783,8 +1779,7 @@ public class CoreComponentServiceImpl
 				String foundId = componentIdKey;
 				ComponentSensitivityModel cacheSensitivityModel = new ComponentSensitivityModel();
 				cacheSensitivityModel.setComponentId(foundId);
-				Element newElement = new Element(foundId, cacheSensitivityModel);
-				OSFCacheManager.getComponentDataRestrictionCache().put(newElement);
+				OSFCacheManager.getComponentDataRestrictionCache().put(foundId, cacheSensitivityModel);
 			}
 		}
 
