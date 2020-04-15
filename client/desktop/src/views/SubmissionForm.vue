@@ -120,8 +120,12 @@
       <!-- TODO: Fix the issue with multiple select -->
       <!-- TODO: Check into these more in regard to the flags on the attributes -->
       <fieldset class="fieldset mt-0 attribute-grid">
-        <legend class="title legend">Required Attributes*</legend>
-        <p v-if="attributes.required.length === 0">
+        <legend v-if="attributes.required.length === 0 && entryType" class="title legend">Required Attributes</legend>
+        <legend v-else class="title legend">Required Attributes*</legend>
+        <p v-if="attributes.required.length === 0 && entryType">
+          There are no required attributes for this Entry Type
+        </p>
+        <p v-else-if="attributes.required.length === 0">
           No required attributes, please select an entry type.
         </p>
         <div class="attribute" v-for="attribute in attributes.required" :key="attribute.attributeType">

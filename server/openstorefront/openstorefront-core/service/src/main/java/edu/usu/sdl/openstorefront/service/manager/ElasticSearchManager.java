@@ -62,7 +62,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
+import org.elasticsearch.action.admin.indices.close.CloseIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -367,6 +369,16 @@ public class ElasticSearchManager
 				.order(OpenStorefrontConstant.SORT_ASCENDING.equals(searchFilters.getSortOrder()) ? SortOrder.ASC
 						: SortOrder.DESC);
 
+		/*
+		 * Aggregations are a way to get info about the results of an elasticsearch query.
+		 *
+		 * Java API aggregations
+		 * https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-aggs.html
+		 *
+		 * Terms Aggregations
+		 * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html
+		 */
+
 		// Get all categories from search result
 		TermsAggregationBuilder categoryAggregationBuilder = AggregationBuilders
 				.terms("by_category")
@@ -388,12 +400,23 @@ public class ElasticSearchManager
 
 		String [] include = new String[]{"attributes"};
 
+		/*
+		 * Is used as a helper aggregations for the fetching of all the attributes
+		 *
+		 * Top Hits Aggregations
+		 * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-top-hits-aggregation.html
+		 */
 		TopHitsAggregationBuilder topHitsAggregationBuilder = AggregationBuilders
 				.topHits("attribute")
 				.fetchSource(include, null)
 				.size(NUMBER_INNER_WINDOW_RETURN);
 
-		// Gets list of all attribute labels from search as well as all the whole attribute object
+		/*
+		 * Gets list of all attribute labels from search as well as all the whole attribute object
+		 *
+		 * Nested Aggregations
+		 * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-nested-aggregation.html
+		 */
 		NestedAggregationBuilder nestedAttributeLabelAggregationBuilder = AggregationBuilders
 				.nested("by_attribute_type", "attributes")
 				.subAggregation(topHitsAggregationBuilder);
@@ -556,7 +579,35 @@ public class ElasticSearchManager
 				actualQuery = queryString.toString();
 			}
 
-			// ****************** SEARCH KEYWORD ***************************
+			/*
+			 * SEARCH KEYWORD
+			 *
+			 * RELEVANT LINKS:
+			 * Wildcard Queries
+			 * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html
+			 *
+			 * Match Phrase Queries
+			 * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase.html
+			 *
+			 * Bool Query Builders
+			 * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html
+			 *
+			 * Nested Queries
+			 * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-nested-query.html
+			 *
+			 * Term Query
+			 * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-term-query.html
+			 *
+			 * Filter Clauses
+			 * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html
+			 *
+			 * Some helpful hints:
+			 * When creating or editing a query, build out the query in a curl command and then turn it
+			 * into Java code. Iteration is faster and it is easier to see what is going on.
+			 * Most code blocks on the elasticsearch sites have a copy to curl button at the bottom
+			 * USE THEM.
+			 *
+			 */
 			if (Convert.toBoolean(searchFilterOptions.getCanUseOrganizationsInSearch())) {
 				// Custom query for entry organization
 				BoolQueryBuilder organizationQueryBuilder = QueryBuilders.boolQuery();
@@ -577,6 +628,7 @@ public class ElasticSearchManager
 				titleQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
 				titleQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
 				titleQueryBuilder.should(QueryBuilders.wildcardQuery(ComponentSearchView.FIELD_NAME, actualQuery));
+
 				titleQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allUpperQuery));
 				titleQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, allLowerQuery));
 				titleQueryBuilder.should(QueryBuilders.matchPhraseQuery(ComponentSearchView.FIELD_NAME, properCaseQuery));
@@ -675,31 +727,31 @@ public class ElasticSearchManager
 			}
 		}
 
+		BoolQueryBuilder finalQuery = QueryBuilders.boolQuery();
+
 		BoolQueryBuilder boolQueryBuilderTags = QueryBuilders.boolQuery();
 		if (searchFilters.getTags() != null) {
 			if (!searchFilters.getTags().isEmpty()) {
 				for (String tag : searchFilters.getTags()) {
-					boolQueryBuilderTags.should(QueryBuilders.matchPhraseQuery("tags.text", tag));
+					boolQueryBuilderTags.must(QueryBuilders.termQuery("tags.text.keyword", tag));
 				}
 			}
 		}
 
-		BoolQueryBuilder finalQuery = QueryBuilders.boolQuery();
-
 		if(boolQueryBuilderOrganization.hasClauses()){
-			finalQuery.must(boolQueryBuilderOrganization);
+			finalQuery.filter(boolQueryBuilderOrganization);
 		}
 
 		if(boolQueryBuilderComponentTypes.hasClauses()){
-			finalQuery.must(boolQueryBuilderComponentTypes);
+			finalQuery.filter(boolQueryBuilderComponentTypes);
 		}
 
 		if(boolQueryBuilderTags.hasClauses()){
-			finalQuery.must(boolQueryBuilderTags);
+			finalQuery.filter(boolQueryBuilderTags);
 		}
 
 		if(boolQueryBuilderAttributes.hasClauses()){
-			finalQuery.must(boolQueryBuilderAttributes);
+			finalQuery.filter(boolQueryBuilderAttributes);
 		}
 
 		finalQuery.must(esQuery);
@@ -930,6 +982,7 @@ public class ElasticSearchManager
 
 	/**
 	 * Index add a list of components to elasticsearch
+	 * https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-docs-bulk.html
 	 * @param components a list of components
 	 */
 	@Override
@@ -1093,7 +1146,8 @@ public class ElasticSearchManager
 	}
 
 	/**
-	 * Delete then index and then recreate it. All information in the index is gone.
+	 * Delete all content in index
+	 * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html
 	 */
 	@Override
 	public void deleteAll()
@@ -1103,7 +1157,7 @@ public class ElasticSearchManager
 			deleteByQueryRequest.setQuery(QueryBuilders.matchAllQuery());
 
 			BulkByScrollResponse response = client.getInstance().deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
-			LOG.log(Level.INFO, "Deletion of index: " + response.getStatus().toString());
+			LOG.log(Level.INFO, "Deletion of index(" + INDEX + ") Content: " + response.getStatus().toString());
 
 		} catch (ElasticsearchException e) {
 			LOG.log(Level.SEVERE, "Unable to connect to elasticsearch", e);
@@ -1142,6 +1196,8 @@ public class ElasticSearchManager
 
 	/**
 	 * Update the mapping of the index
+	 * REST API: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-put-mapping.html
+	 * Java API: https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-admin-indices.html
 	 */
 	private void updateMapping()
 	{
@@ -1151,7 +1207,8 @@ public class ElasticSearchManager
 
 			List<String> fieldsToUpdate = Arrays.asList(
 					ComponentSearchView.FIELD_NAME,
-					ComponentSearchView.FIELD_DESCRIPTION
+					ComponentSearchView.FIELD_DESCRIPTION,
+					ComponentSearchView.FIELD_TAGS
 			);
 
 			for (String field : fieldsToUpdate) {
@@ -1190,6 +1247,9 @@ public class ElasticSearchManager
 
 	/**
 	 * Updates the settings of the elasticsearch index
+	 * REST API: https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-update-settings.html
+	 * Java API: https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-admin-indices.html
+	 *
 	 * @return Boolean if settings were updated
 	*/
 	public Boolean updateElasticsearchSettings() {
@@ -1215,7 +1275,52 @@ public class ElasticSearchManager
 	}
 
 	/**
+	 * Creates a new analyzer for tags
+	 * https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-custom-analyzer.html
+	 */
+	public void addTagsAnalyzer() {
+		try (ElasticSearchClient client = singleton.getClient()) {
+			try {
+				CloseIndexRequest request = new CloseIndexRequest(INDEX);
+				AcknowledgedResponse closeIndexResponse = client.getInstance().indices().close(request, RequestOptions.DEFAULT);
+				LOG.log(Level.INFO, "Closed index (" + INDEX + "): " + Boolean.toString(closeIndexResponse.isAcknowledged()));
+			}  catch (IOException ex){
+				LOG.log(Level.SEVERE, null, ex);
+			}
+
+			String source =
+			"{\n" +
+			"  \"analysis\": {\n" +
+			"    \"analyzer\": {\n" +
+			"      \"tags_analyzer\": {\n" +
+			"        \"tokenizer\": \"standard\"\n" +
+			"      }\n" +
+			"    }\n" +
+			"  }\n" +
+			"}";
+
+			try{
+				UpdateSettingsRequest settingsRequest = new UpdateSettingsRequest(INDEX);
+				settingsRequest.settings(source, XContentType.JSON);
+
+				AcknowledgedResponse putSettingsResponse = client.getInstance().indices().putSettings(settingsRequest, RequestOptions.DEFAULT);
+				LOG.log(Level.INFO, "Updated analyzer for tags: " + Boolean.toString(putSettingsResponse.isAcknowledged()));
+			} catch (IOException ex){
+				LOG.log(Level.SEVERE, null, ex);
+			}
+			try {
+				OpenIndexRequest request = new OpenIndexRequest(INDEX);
+				AcknowledgedResponse openIndexResponse = client.getInstance().indices().open(request, RequestOptions.DEFAULT);
+				LOG.log(Level.INFO, "Opened index (" + INDEX + "): " + Boolean.toString(openIndexResponse.isAcknowledged()));
+			}  catch (IOException ex){
+				LOG.log(Level.SEVERE, null, ex);
+			}
+		}
+	}
+
+	/**
 	 * Updates the mapping of the index. Specifically for attributes, non-nested -> nested
+	 * https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html
 	 */
 	public void updateMappingAttributes(){
 		try (ElasticSearchClient client = singleton.getClient()) {
@@ -1260,6 +1365,7 @@ public class ElasticSearchManager
 
 	/**
 	 * Get every object in the index.
+	 * https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-all-query.html
 	 * @return SearchResponse object with all objects
 	 */
 	public SearchResponse getAll(){
@@ -1280,6 +1386,7 @@ public class ElasticSearchManager
 
 	/**
 	 * Delete the index
+	 * https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-delete-index.html
 	 */
 	public void deleteIndex(){
 		try (ElasticSearchClient client = singleton.getClient()) {
