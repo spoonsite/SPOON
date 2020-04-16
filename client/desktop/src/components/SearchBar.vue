@@ -188,7 +188,8 @@ export default {
 }
 .searchfield {
   display: inline-block;
-  width: 80%;
+  width: 74%; /* fallback for browsers without support for calc() */
+  width: calc(100% - 67px);
   padding-left: 0.7em;
 }
 .search-icon {
@@ -248,25 +249,11 @@ input:focus + .icon {
   border-top-right-radius: 0px;
   border-top-left-radius: 0px;
 }
-@media only screen and (max-width: 360px) {
+/* Mobile First design */
+@media only screen and (min-width: 360){
   .searchfield {
-    width: 200px;
-  }
-  .searchbar {
-    width: 230px;
-  }
-}
-@media only screen and (max-width: 415px) {
-  .searchfield {
-    width: 200px;
-  }
-}
-@media only screen and (max-width: 380px) {
-  .searchfield {
-    width: 200px;
-  }
-  .searchbar {
-    width: 220px;
+    width: 80%; /* fallback for browsers without support for calc() */
+    width: calc(100% - 67px);
   }
 }
 </style>
