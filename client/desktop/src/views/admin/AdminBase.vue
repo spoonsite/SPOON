@@ -6,6 +6,7 @@
       permanent
       app
       clipped
+      width="300"
       v-click-outside="outsideNavBar"
     >
       <v-list-item class="px-2">
@@ -55,18 +56,21 @@ export default {
           showChildren: false,
           children: [
             { title: 'Attributes', link: { name: 'AdminDashboard' }, permission: 'ADMIN-ATTRIBUTE-PAGE' },
-            { title: 'Contacts', link: { name: 'AdminDashboard' }, permission: 'ADMIN-CONTACTS-PAGE' },
             { title: 'Entries', link: { name: 'AdminDashboard' }, permission: 'ADMIN-ENTRIES-PAGE' },
             { title: 'Entry Types', link: { name: 'AdminDashboard' }, permission: 'ADMIN-ENTRYTYPE-PAGE' },
-            { title: 'Frequently Asked Questions', link: { name: 'AdminDashboard' }, permission: 'ADMIN-FAQ-PAGE' },
-            { title: 'Highlights', link: { name: 'AdminDashboard' }, permission: 'ADMIN-HIGHLIGHTS-PAGE' },
-            { title: 'Lookups', link: { name: 'AdminDashboard' }, permission: 'ADMIN-LOOKUPS-PAGE' },
+            { title: 'Tags', link: { name: 'AdminDashboard' }, permission: 'ADMIN-TAGS-PAGE' },
+            { title: 'Lookups', link: { name: 'AdminDashboard' }, permission: 'ADMIN-LOOKUPS-PAGE' }
+          ]
+        },
+        {
+          topLevel: 'Branding',
+          icon: 'mdi-tag',
+          showChildren: false,
+          children: [
+            { title: 'Branding', link: { name: 'AdminDashboard' }, permission: 'ADMIN-BRANDING-PAGE' },
             { title: 'Media', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SUPPORTMEDIA-PAGE' },
-            { title: 'Organizations', link: { name: 'AdminDashboard' }, permission: 'ADMIN-ORGANIZATION-PAGE' },
-            { title: 'Relationships', link: { name: 'AdminDashboard' }, permission: 'ADMIN-RELATIONSHIPS-PAGE' },
-            { title: 'User Data', link: { name: 'AdminDashboard' }, permission: 'ADMIN-ATTRIBUTE-PAGE' },
-            { title: 'Workplan Progress', link: { name: 'AdminDashboard' }, permission: 'WORKPLAN-PROGRESS-MANAGEMENT-PAGE' },
-            { title: 'Workplan Management', link: { name: 'AdminDashboard' }, permission: 'ADMIN-WORKPLAN-PAGE' }
+            { title: 'Highlights', link: { name: 'AdminDashboard' }, permission: 'ADMIN-HIGHLIGHTS-PAGE' },
+            { title: 'FAQ', link: { name: 'AdminDashboard' }, permission: 'ADMIN-FAQ-PAGE' }
           ]
         },
         {
@@ -77,11 +81,11 @@ export default {
             { title: 'Questions and Answers', link: { name: 'AdminDashboard' }, permission: 'ADMIN-QUESTIONS-PAGE' },
             { title: 'Reviews', link: { name: 'AdminDashboard' }, permission: 'ADMIN-REVIEWS-PAGE' },
             { title: 'Watches', link: { name: 'AdminDashboard' }, permission: 'ADMIN-WATCHES-PAGE' },
-            { title: 'Tags', link: { name: 'AdminDashboard' }, permission: 'ADMIN-TAGS-PAGE' },
-            { title: 'User Profiles', link: { name: 'AdminDashboard' }, permission: 'ADMIN-USERPROFILES-PAGE' },
-            { title: 'Security', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SECURTIY-PAGE' },
-            { title: 'Security Roles', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SECURITY-PAGE' },
+            { title: 'Permissions/Roles', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SECURITY-PAGE' },
+            { title: 'Organizations', link: { name: 'AdminDashboard' }, permission: 'ADMIN-ORGANIZATION-PAGE' },
             { title: 'Tracking', link: { name: 'AdminDashboard' }, permission: 'ADMIN-TRACKING-PAGE' },
+            { title: 'Contacts', link: { name: 'AdminDashboard' }, permission: 'ADMIN-CONTACTS-PAGE' },
+            { title: 'User Profiles', link: { name: 'AdminDashboard' }, permission: 'ADMIN-USERPROFILES-PAGE' },
             { title: 'User Management', link: { name: 'AdminDashboard' }, permission: 'ADMIN-USER-MANAGEMENT-PAGE' }
           ]
         },
@@ -90,15 +94,17 @@ export default {
           icon: 'mdi-console',
           showChildren: false,
           children: [
-            { title: 'Status', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-STATUS' },
+            { title: 'System Status', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-STATUS' },
             { title: 'Application State Properties', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-APP-PROP' },
-            { title: 'System Configuration Properties', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP-UPDATE' },
+            { title: 'System Configuration', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-CONFIG-PROP-UPDATE' },
             { title: 'Logs', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-LOGGING' },
             { title: 'Plugins', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-PLUGIN' },
             { title: 'Managers', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-MANAGERS' },
             { title: 'Cache', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-CACHE' },
-            { title: 'Search Control', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGMENT-SEARCH-CONTROL' },
-            { title: 'Recent Changes Email', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-RECENT-CHANGES' }
+            { title: 'Search Management', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGMENT-SEARCH-CONTROL' },
+            { title: 'Recent Changes Email', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-RECENT-CHANGES' },
+            { title: 'Jobs', link: { name: 'AdminDashboard' }, permission: 'ADMIN-JOBS-PAGE' },
+            { title: 'Error Tickets', link: { name: 'AdminDashboard' }, permission: 'ADMIN-SYSTEM-MANAGEMENT-ERROR-TICKET' }
           ]
         },
         {
@@ -107,11 +113,18 @@ export default {
           showChildren: false,
           children: [
             { title: 'Alerts', link: { name: 'AdminDashboard' }, permission: 'ADMIN-ALERTS-PAGE' },
-            { title: 'Branding', link: { name: 'AdminDashboard' }, permission: 'ADMIN-BRANDING-PAGE' },
             { title: 'Feedback', link: { name: 'AdminDashboard' }, permission: 'ADMIN-FEEDBACK-PAGE' },
-            { title: 'Jobs', link: { name: 'AdminDashboard' }, permission: 'ADMIN-JOBS-PAGE' },
             { title: 'Messages', link: { name: 'AdminDashboard' }, permission: 'ADMIN-MESSAGES-PAGE' },
             { title: 'Reports', link: { name: 'AdminDashboard' }, permission: 'REPORTS-PAGE' }
+          ]
+        },
+        {
+          topLevel: 'Workplan Management',
+          icon: 'mdi-folder',
+          showChildren: false,
+          children: [
+            { title: 'Workplan Progress', link: { name: 'AdminDashboard' }, permission: 'WORKPLAN-PROGRESS-MANAGEMENT-PAGE' },
+            { title: 'Workplan Management', link: { name: 'AdminDashboard' }, permission: 'ADMIN-WORKPLAN-PAGE' }
           ]
         }
       ],
