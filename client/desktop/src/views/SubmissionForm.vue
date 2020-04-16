@@ -916,7 +916,7 @@ export default {
       } else if (baseUnit === degreeSymbol + 'F' && currentUnit === degreeSymbol + 'C') {
         return value * conversionCF + differenceCF
       } else if (baseUnit === 'K' && currentUnit === degreeSymbol + 'C') {
-        return value + 273.15
+        return value + kelvinUnit
       } else if (baseUnit === degreeSymbol + 'C' && currentUnit === degreeSymbol + 'F') {
         return (value - differenceCF) * conversionFC
       } else if (baseUnit === 'K' && currentUnit === degreeSymbol + 'F') {
