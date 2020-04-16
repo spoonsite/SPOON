@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>edu.usu.sdl</groupId>
 		<artifactId>openstorefront</artifactId>
-		<version>2.12.2</version>
+		<version>${project.version}</version>
 	</parent>
 
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>selenium-tests</artifactId>
-	<version>2.12.2</version>
+	<version>${project.version}</version>
 	<packaging>jar</packaging>
 
 	<properties>
