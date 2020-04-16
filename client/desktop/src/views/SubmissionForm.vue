@@ -907,6 +907,7 @@ export default {
       const degreeSymbol = '\u00B0'
       const kelvinUnit = 273.15
       const conversionCF = 9 / 5
+      const conversionFC = 5 / 9
       const differenceCF = 32
       if (baseUnit === degreeSymbol + 'C' && currentUnit === 'K') {
         return value - kelvinUnit
@@ -917,9 +918,9 @@ export default {
       } else if (baseUnit === 'K' && currentUnit === degreeSymbol + 'C') {
         return value + 273.15
       } else if (baseUnit === degreeSymbol + 'C' && currentUnit === degreeSymbol + 'F') {
-        return (value - differenceCF) * conversionCF
+        return (value - differenceCF) * conversionFC
       } else if (baseUnit === 'K' && currentUnit === degreeSymbol + 'F') {
-        return (value - differenceCF) * conversionCF + kelvinUnit
+        return (value - differenceCF) * conversionFC + kelvinUnit
       }
     },
     /**
