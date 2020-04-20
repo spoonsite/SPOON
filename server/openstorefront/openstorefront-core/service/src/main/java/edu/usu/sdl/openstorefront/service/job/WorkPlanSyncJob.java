@@ -19,19 +19,27 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quartz.DisallowConcurrentExecution;
+import org.quartz.InterruptableJob;
 import org.quartz.JobExecutionContext;
+import org.quartz.UnableToInterruptJobException;
 
 /**
  * Sync Workplans with entities
+ * 
+ * <code>@see{WorkPlanServiceImpl.java#removeWorkPlan}</code> has a need to kill
+ * this job so that it does not interfere with it's operation. 
  *
  * @author dshurtleff
  */
 @DisallowConcurrentExecution
 public class WorkPlanSyncJob
 		extends BaseJob
+		implements InterruptableJob
 {
 
 	private static final Logger LOG = Logger.getLogger(WorkPlanSyncJob.class.getName());
+	
+	private volatile boolean interrupted = false;
 
 	@Override
 	protected void executeInternaljob(JobExecutionContext context)
@@ -41,11 +49,18 @@ public class WorkPlanSyncJob
 		long count = service.getPersistenceService().countByExample(workPlanExample);
 		if (count > 0) {
 			LOG.log(Level.FINER, "Starting WorkPlan Sync");
-			service.getWorkPlanService().syncWorkPlanLinks();
+			service.getWorkPlanService().syncWorkPlanLinks(interrupted);
 			LOG.log(Level.FINER, "Done WorkPlan Sync");
 		} else {
 			LOG.log(Level.FINE, "No WorkPlan Availble; Make sure defaults exist.");
 		}
+	}
+
+	@Override
+	public void interrupt() throws UnableToInterruptJobException
+	{
+		LOG.log(Level.FINE, "A WorkPlanSync Job has been interrupted and ordered to die! This may happen if someone deletes a WorkPlan while the Job is running");
+		interrupted = true;
 	}
 
 }

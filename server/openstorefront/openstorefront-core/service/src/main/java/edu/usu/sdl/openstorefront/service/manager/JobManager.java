@@ -32,8 +32,7 @@ import edu.usu.sdl.openstorefront.service.job.SystemArchiveJob;
 import edu.usu.sdl.openstorefront.service.job.SystemCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.TrackingCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.UpdateSearchStatsJob;
-import edu.usu.sdl.openstorefront.service.job.UserProfileSyncJob;
-import edu.usu.sdl.openstorefront.service.manager.model.AddJobModel;
+import edu.usu.sdl.openstorefront.service.job.UserProfileSyncJob;import edu.usu.sdl.openstorefront.service.manager.model.AddJobModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -491,6 +490,13 @@ public class JobManager
 		}
 	}
 
+	public static void interruptJob(String jobName, String group){
+		try {
+			scheduler.interrupt(JobKey.jobKey(jobName, group));
+		} catch (SchedulerException ex) {
+			throw new OpenStorefrontRuntimeException("Unable to interrupt job", "Make sure job exists", ex);
+		}
+	}
 	public static void pauseScheduler()
 	{
 		try {

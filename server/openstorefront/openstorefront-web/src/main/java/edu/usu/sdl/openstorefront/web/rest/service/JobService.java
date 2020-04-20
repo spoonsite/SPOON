@@ -53,7 +53,6 @@ import javax.ws.rs.core.Response;
 public class JobService
 		extends BaseResource
 {
-
 	@GET
 	@RequireSecurity(SecurityPermission.ADMIN_JOB_MANAGEMENT_READ)
 	@APIDescription("Retrieves all jobs in scheduler")

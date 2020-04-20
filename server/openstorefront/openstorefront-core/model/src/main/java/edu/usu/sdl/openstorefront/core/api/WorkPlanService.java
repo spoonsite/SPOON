@@ -117,8 +117,10 @@ public interface WorkPlanService
 	 * Loops through all the components and checks that there is a WorkPlan Link in the current
 	 * active WorkPlan. If there is not, it will create one and place it in according to "Approval Status To Match"
 	 * step marker.
+	 * 
+	 * @param interrupted a volatile(?) boolean blah blah add documenation
 	 */
-	void syncWorkPlanLinks();
+	void syncWorkPlanLinks(boolean interrupted);
 
 	/**
 	 * Retrieves a workplan and make sure it all sorted.

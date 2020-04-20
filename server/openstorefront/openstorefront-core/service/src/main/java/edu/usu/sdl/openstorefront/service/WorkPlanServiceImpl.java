@@ -42,6 +42,7 @@ import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanStepMigration;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.service.workplan.BaseWorkPlanStepAction;
 import java.util.ArrayList;
@@ -221,6 +222,8 @@ public class WorkPlanServiceImpl
 	@Override
 	public void removeWorkPlan(String workPlanId, WorkPlanRemoveMigration workPlanRemoveMigration)
 	{
+		// stop currently running WorkPlanSync Job so it doesn't interfer with deletion
+		JobManager.interruptJob("WorkPlanSync", job thingy);                    //////  <--------- hey Trent! figure out what the second param wants, feed it, then run it! if it works, its just some doc & cleanup afte rhta. don't forget to clean up Aaron's funky if statement. for my sanity.
 		WorkPlan workPlan = getPersistenceService().findById(WorkPlan.class, workPlanId);
 		if (workPlan != null) {
 
@@ -578,7 +581,7 @@ public class WorkPlanServiceImpl
 	}
 
 	@Override
-	public void syncWorkPlanLinks()
+	public void syncWorkPlanLinks(boolean interrupted)
 	{
 		//process all entries (x at time)
 		int maxResultsToProcess = 200;
@@ -600,6 +603,11 @@ public class WorkPlanServiceImpl
 			for (Component component : components) {
 				//critical loop
 				try {
+					// this check on a volatile boolean may vastly decrease performance, check on that?
+					// shuts off if there is a order to kill this thread
+					if(interrupted)
+						return;
+					
 					//ignore return. This function creates a new WorkPlanLink for the component if it doesn't exist in active WorkPlan
 					getWorkPlanForComponent(component.getComponentId());
 					synced++;
