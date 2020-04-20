@@ -93,7 +93,6 @@ public class OSFCacheManager
 				ResourcePoolsBuilder.heap(maxElementsInMemory))
 			.withExpiry(ExpiryPolicyBuilder.noExpiration())
 			.build();
-
 		return cacheManager.createCache(name, configuration);
 	}
 
@@ -141,11 +140,12 @@ public class OSFCacheManager
 	// }
 
 	private static CacheManager initCacheManager() {
-		CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
+		cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
 			.withCache("preConfigured",
 				CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class, ResourcePoolsBuilder.heap(10)))
 			.build();
 		cacheManager.init();
+		init();
 		return cacheManager;
 	}
 
@@ -177,11 +177,6 @@ public class OSFCacheManager
 	public static void cleanUp()
 	{
 		if(started.get()) {
-			cacheManager.close();
-			started.set(false);
-		} else {
-			cacheManager = initCacheManager();
-			started.set(true);
 			cacheManager.close();
 			started.set(false);
 		}
