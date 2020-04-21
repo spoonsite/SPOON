@@ -87,10 +87,10 @@ const routes = [
       { path: '', redirect: 'dashboard' },
       { path: 'dashboard', name: 'AdminDashboard', component: AdminDashboard },
       { path: 'attributes', name: 'AdminAttributes', component: AdminAttributes },
-      { path: 'tags', name: 'AdminTags', component: AdminTags },
-      { path: 'lookups', name: 'AdminLookups', component: AdminLookups },
       { path: 'entries', name: 'AdminEntries', component: AdminEntries },
-      { path: 'entrytypes', name: 'AdminEntryTypes', component: AdminEntryTypes }
+      { path: 'entrytypes', name: 'AdminEntryTypes', component: AdminEntryTypes },
+      { path: 'tags', name: 'AdminTags', component: AdminTags },
+      { path: 'lookups', name: 'AdminLookups', component: AdminLookups }
     ]
   }
   // {
