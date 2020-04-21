@@ -46,6 +46,12 @@
 <script lang="js">
 export default {
   name: 'AdminBase',
+  mounted() {
+    this.navBarLinks.forEach(e => {
+      e.children.filter(e => this.$store.state.permissionMap.includes(e.permission))
+    })
+    this.navBarLinks.filter(e => e.children.length > 0)
+  },
   data() {
     return {
       drawer: false,
@@ -55,11 +61,11 @@ export default {
           icon: 'mdi-database',
           showChildren: false,
           children: [
-            { title: 'Attributes', link: { name: 'AdminDashboard' }, permission: 'ADMIN-ATTRIBUTE-PAGE' },
-            { title: 'Entries', link: { name: 'AdminDashboard' }, permission: 'ADMIN-ENTRIES-PAGE' },
-            { title: 'Entry Types', link: { name: 'AdminDashboard' }, permission: 'ADMIN-ENTRYTYPE-PAGE' },
-            { title: 'Tags', link: { name: 'AdminDashboard' }, permission: 'ADMIN-TAGS-PAGE' },
-            { title: 'Lookups', link: { name: 'AdminDashboard' }, permission: 'ADMIN-LOOKUPS-PAGE' }
+            { title: 'Attributes', link: { name: 'AdminAttributes' }, permission: 'ADMIN-ATTRIBUTE-PAGE' },
+            { title: 'Entries', link: { name: 'AdminEntries' }, permission: 'ADMIN-ENTRIES-PAGE' },
+            { title: 'Entry Types', link: { name: 'AdminEntryTypes' }, permission: 'ADMIN-ENTRYTYPE-PAGE' },
+            { title: 'Tags', link: { name: 'AdminTags' }, permission: 'ADMIN-TAGS-PAGE' },
+            { title: 'Lookups', link: { name: 'AdminLookups' }, permission: 'ADMIN-LOOKUPS-PAGE' }
           ]
         },
         {
@@ -130,12 +136,6 @@ export default {
       ],
       mini: true
     }
-  },
-  mounted() {
-    this.navBarLinks.forEach(e => {
-      e.children.filter(e => this.$store.state.permissionMap.includes(e.permission))
-    })
-    this.navBarLinks.filter(e => e.children.length > 0)
   },
   methods: {
     toggleNavBar() {

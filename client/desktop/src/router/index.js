@@ -11,8 +11,14 @@ import SubmissionForm from '@/views/SubmissionForm'
 import Submissions from '@/views/Submissions'
 import Questions from '@/views/Questions'
 import Reviews from '@/views/Reviews'
+
 import AdminBase from '@/views/admin/AdminBase'
-import Dashboard from '@/views/admin/Dashboard'
+import AdminDashboard from '@/views/admin/Dashboard'
+import AdminAttributes from '@/views/admin/Attributes'
+import AdminTags from '@/views/admin/Tags'
+import AdminLookups from '@/views/admin/Lookups'
+import AdminEntries from '@/views/admin/Entries'
+import AdminEntryTypes from '@/views/admin/EntryTypes'
 
 Vue.use(VueRouter)
 
@@ -77,7 +83,15 @@ const routes = [
   {
     path: '/admin',
     component: AdminBase,
-    children: [{ path: '', name: 'AdminDashboard', component: Dashboard }]
+    children: [
+      { path: '', redirect: 'dashboard' },
+      { path: 'dashboard', name: 'AdminDashboard', component: AdminDashboard },
+      { path: 'attributes', name: 'AdminAttributes', component: AdminAttributes },
+      { path: 'tags', name: 'AdminTags', component: AdminTags },
+      { path: 'lookups', name: 'AdminLookups', component: AdminLookups },
+      { path: 'entries', name: 'AdminEntries', component: AdminEntries },
+      { path: 'entrytypes', name: 'AdminEntryTypes', component: AdminEntryTypes }
+    ]
   }
   // {
   //   path: '/about',
