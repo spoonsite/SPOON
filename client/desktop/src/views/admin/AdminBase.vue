@@ -27,7 +27,7 @@
           <template v-slot:activator>
             <v-list-item-title>{{ item.topLevel }}</v-list-item-title>
           </template>
-          <v-list-item v-for="child in item.children" :key="child.title" link :to="child.link" class="ml-6">
+          <v-list-item v-for="child in item.children" :key="child.title" link :to="child.link" class="pl-8">
             <v-list-item-icon>
               <v-icon>{{ child.icon }}</v-icon>
             </v-list-item-icon>
