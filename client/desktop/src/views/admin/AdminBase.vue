@@ -47,10 +47,10 @@
 export default {
   name: 'AdminBase',
   mounted() {
-    this.navBarLinks.forEach(e => {
-      e.children.filter(e => this.$store.state.permissionMap.includes(e.permission))
+    this.navBarLinks.forEach(link => {
+      link.children.filter(child => this.$store.state.permissionMap.includes(child.permission))
     })
-    this.navBarLinks.filter(e => e.children.length > 0)
+    this.navBarLinks.filter(link => link.children.length > 0)
   },
   data() {
     return {
