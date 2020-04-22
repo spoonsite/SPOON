@@ -1514,14 +1514,12 @@
 									var hasEmailTransmissionType = false;
 									var outputComponents = [];
 									Ext.Array.each(outputs, function(output){
-										switch (output.reportTransmissionType) {
-											case 'VIEW':
-												outputComponents.push(constructViewOutput(output));
-												break;
-											case 'EMAIL':
-												outputComponents.push(constructEmailOutput(output));
-												hasEmailTransmissionType = true;
-												break;
+										if (output.reportTransmissionType === 'EMAIL'){
+											outputComponents.push(constructEmailOutput(output));
+											hasEmailTransmissionType = true;
+										}
+										else {
+											outputComponents.push(constructViewOutput(output));
 										}
 									});
 
