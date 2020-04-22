@@ -27,6 +27,8 @@ import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.core.spi.service.StatisticsService;
+import org.ehcache.core.statistics.DefaultStatisticsService;
 
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
 import edu.usu.sdl.openstorefront.core.entity.AttributeType;
@@ -51,6 +53,10 @@ public class OSFCacheManager
 
 	public static final String ALLCODE_KEY = "ALLCODES";
 	public static CacheManager cacheManager;
+	public static StatisticsService statisticsService;
+	public static String[] cacheNames = { "applicationCache", "attributeCache", "attributeCodeAllCache", "attributeTypeCache", "checklistQuestionCache", 
+		"componentApprovalCache", "componentCache", "componentDataRestrictionCache", "componentIconCache", "componentLookupCache", "componentTypeCache", 
+		"componentTypeComponentCache", "contactCache", "lookupCache", "searchCache", "userAgentCache", "userSearchCache", "workPlanTypeCache" };
 
 
 	private static Cache<String, Object> applicationCache;
@@ -140,9 +146,11 @@ public class OSFCacheManager
 	// }
 
 	private static CacheManager initCacheManager() {
+		statisticsService = new DefaultStatisticsService();
 		cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
 			.withCache("preConfigured",
 				CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, String.class, ResourcePoolsBuilder.heap(10)))
+			.using(statisticsService)
 			.build();
 		cacheManager.init();
 		init();
@@ -192,6 +200,21 @@ public class OSFCacheManager
 		AtomicBoolean isCacheEmpty = new AtomicBoolean(true);
 		cache.forEach(a -> {if(a != null) isCacheEmpty.set(false);});
 		return isCacheEmpty.get();
+	}
+
+	public static StatisticsService getStatisticsService() 
+	{
+		return statisticsService;
+	}
+
+	public static String[] getCacheNames()
+	{
+		return cacheNames;
+	}
+
+	public static CacheManager getCacheManager()
+	{
+		return cacheManager;
 	}
 
 	public static Cache<String, ChecklistQuestion> getChecklistQuestionCache()
