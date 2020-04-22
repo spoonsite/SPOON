@@ -8,6 +8,7 @@ pipeline {
             steps {
                 sh 'mvn install -f "server/openstorefront/pom.xml"'
                 sh '''
+                    BRANCH_NAME=`echo $BRANCH_NAME | tr / _`
                     if [ "$(~/docker ps -a | grep $BRANCH_NAME)" ]
                     then
                         ~/docker rm -f $BRANCH_NAME
