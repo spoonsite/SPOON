@@ -69,7 +69,7 @@ export default {
           ]
         },
         {
-          topLevel: 'Branding',
+          topLevel: 'Site Branding',
           icon: 'mdi-tag',
           showChildren: false,
           children: [
