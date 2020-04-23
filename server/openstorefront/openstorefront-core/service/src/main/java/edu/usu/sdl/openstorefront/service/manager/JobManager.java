@@ -497,6 +497,7 @@ public class JobManager
 			throw new OpenStorefrontRuntimeException("Unable to interrupt job", "Make sure job exists", ex);
 		}
 	}
+	
 	public static void pauseScheduler()
 	{
 		try {
