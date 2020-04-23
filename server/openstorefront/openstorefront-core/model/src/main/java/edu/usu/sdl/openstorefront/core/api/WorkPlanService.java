@@ -20,6 +20,7 @@ import edu.usu.sdl.openstorefront.core.entity.WorkPlanLink;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanStepMigration;
+import edu.usu.sdl.openstorefront.service.job.WorkPlanSyncJob;
 import java.util.List;
 
 /**
@@ -118,9 +119,9 @@ public interface WorkPlanService
 	 * active WorkPlan. If there is not, it will create one and place it in according to "Approval Status To Match"
 	 * step marker.
 	 * 
-	 * @param interrupted a volatile(?) boolean blah blah add documenation
+	 * @param workPlanSyncJob reference to the workPlanSyncJob that calls this function.
 	 */
-	void syncWorkPlanLinks(boolean interrupted);
+	void syncWorkPlanLinks(WorkPlanSyncJob workPlanSyncJob);
 
 	/**
 	 * Retrieves a workplan and make sure it all sorted.

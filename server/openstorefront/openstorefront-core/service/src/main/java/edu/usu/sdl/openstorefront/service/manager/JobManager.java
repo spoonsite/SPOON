@@ -569,6 +569,28 @@ public class JobManager
 		}
 		return jobs;
 	}
+	
+	/**
+	 * Much more lightweight way to get the current status of a (running / not running) job.
+	 * Typical responses include:
+	 *	"NORMAL" - Job is not running but could be started
+	 *	"BLOCKED" - Job cannot be started, this could be because it is currently running.
+	 *	"PAUSED" - Job is suspended cannot be started
+	 * @param jobKey
+	 * @return can return null if unobtainable
+	 */
+	public static String getJobStatus(JobKey jobKey){
+		String status;
+		try{
+			List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+			//just grab the first trigger as we should only have one
+			Trigger trigger = triggers.get(0);
+			status = scheduler.getTriggerState(trigger.getKey()).toString();
+		} catch (SchedulerException ex){
+			throw new OpenStorefrontRuntimeException("Job status for Job requested that does not exist, or is faulty", ex);
+		}
+		return status;
+	}
 
 	public static void runDynamicJob(BaseJob baseJob)
 	{

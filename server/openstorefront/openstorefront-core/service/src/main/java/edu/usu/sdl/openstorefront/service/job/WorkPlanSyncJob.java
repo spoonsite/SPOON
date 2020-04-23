@@ -49,7 +49,7 @@ public class WorkPlanSyncJob
 		long count = service.getPersistenceService().countByExample(workPlanExample);
 		if (count > 0) {
 			LOG.log(Level.FINER, "Starting WorkPlan Sync");
-			service.getWorkPlanService().syncWorkPlanLinks(interrupted);
+			service.getWorkPlanService().syncWorkPlanLinks(this);
 			LOG.log(Level.FINER, "Done WorkPlan Sync");
 		} else {
 			LOG.log(Level.FINE, "No WorkPlan Availble; Make sure defaults exist.");
@@ -60,6 +60,14 @@ public class WorkPlanSyncJob
 	public void interrupt() throws UnableToInterruptJobException
 	{
 		LOG.log(Level.FINE, "A WorkPlanSync Job has been interrupted and ordered to die! This may happen if someone deletes a WorkPlan while the Job is running");
+		interrupted = true;
+	}
+	
+	public boolean getIsInterrupted(){
+		return interrupted;
+	}
+	
+	public void resetInterruption(){
 		interrupted = true;
 	}
 

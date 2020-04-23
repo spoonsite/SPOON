@@ -42,8 +42,10 @@ import edu.usu.sdl.openstorefront.core.model.WorkPlanModel;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanRemoveMigration;
 import edu.usu.sdl.openstorefront.core.model.WorkPlanStepMigration;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
+import edu.usu.sdl.openstorefront.service.job.WorkPlanSyncJob;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
+import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import edu.usu.sdl.openstorefront.service.workplan.BaseWorkPlanStepAction;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +55,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
+import org.quartz.JobKey;
 
 /**
  *
@@ -66,6 +71,8 @@ public class WorkPlanServiceImpl
 {
 
 	private static final Logger LOG = Logger.getLogger(WorkPlanServiceImpl.class.getName());
+	
+	private static final int TIME_WAIT_FOR_THREAD_DEATH = 500;
 
 	@Override
 	public WorkPlan saveWorkPlan(WorkPlan workPlan)
@@ -223,11 +230,27 @@ public class WorkPlanServiceImpl
 	public void removeWorkPlan(String workPlanId, WorkPlanRemoveMigration workPlanRemoveMigration)
 	{
 		// stop currently running WorkPlanSync Job so it doesn't interfer with deletion
-		JobManager.interruptJob("WorkPlanSync", job thingy);                    //////  <--------- hey Trent! figure out what the second param wants, feed it, then run it! if it works, its just some doc & cleanup afte rhta. don't forget to clean up Aaron's funky if statement. for my sanity.
+		JobManager.interruptJob("WorkPlanSync", "SYSTEM");                   //////  <--------- hey Trent! figure out what the second param wants, feed it, then run it! if it works, its just some doc & cleanup afte rhta. don't forget to clean up Aaron's funky if statement. for my sanity.
+		// Wait up to 1000 clock cycles for the WorkPlanSync Job to die
+
+		int counter = 0;
+		while( JobManager.getJobStatus(new JobKey("WorkPlanSyncJob","SYSTEM")).equals("BLOCKED") && counter < TIME_WAIT_FOR_THREAD_DEATH )
+			counter++; 
+
+		// fallback for failed Job interruption
+		if ( JobManager.getJobStatus(new JobKey("WorkPlanSyncJob","SYSTEM")).equals("BLOCKED") ){
+			throw new OpenStorefrontRuntimeException( "WorkPlanSyncJob failed to shut down", "Please wait before you try to delete a WorkPlan again, or pause the WorkPlanSync Job");
+		}
+		
 		WorkPlan workPlan = getPersistenceService().findById(WorkPlan.class, workPlanId);
 		if (workPlan != null) {
 
-			if (workPlanRemoveMigration != null) {
+			if (workPlanRemoveMigration != null && 
+			  	/*defend against faulty migrations submitted in error*/ 
+			  	workPlanRemoveMigration.getWorkPlanId() != null && 
+				!workPlanRemoveMigration.getStepMigrations().isEmpty()
+			) 
+			{
 				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 				workPlanLinkExample.setWorkPlanId(workPlan.getWorkPlanId());
 				List<WorkPlanLink> workPlanLinks = workPlanLinkExample.findByExampleProxy();
@@ -581,7 +604,7 @@ public class WorkPlanServiceImpl
 	}
 
 	@Override
-	public void syncWorkPlanLinks(boolean interrupted)
+	public void syncWorkPlanLinks(WorkPlanSyncJob workPlanSyncJob)
 	{
 		//process all entries (x at time)
 		int maxResultsToProcess = 200;
@@ -603,10 +626,11 @@ public class WorkPlanServiceImpl
 			for (Component component : components) {
 				//critical loop
 				try {
-					// this check on a volatile boolean may vastly decrease performance, check on that?
-					// shuts off if there is a order to kill this thread
-					if(interrupted)
+					// shuts off this function if there is a order to kill the thread it is running on
+					if(workPlanSyncJob.getIsInterrupted()){
+						workPlanSyncJob.resetInterruption(); // prevent permanent disabling of WorkPlanSyncJob
 						return;
+					}
 					
 					//ignore return. This function creates a new WorkPlanLink for the component if it doesn't exist in active WorkPlan
 					getWorkPlanForComponent(component.getComponentId());
