@@ -226,16 +226,15 @@ public class LookupServiceImpl
 	{
 		T lookupEntity = null;
 		if (StringUtils.isNotBlank(code)) {
-			Object element = OSFCacheManager.getLookupCache().get(lookupClass.getName());
-			if (element == null) {
-				Map<String, T> lookupCacheMap = new HashMap<>();
+			Map<String, T> lookupCacheMap = (Map<String, T> ) OSFCacheManager.getLookupCache().get(lookupClass.getName());
+			if (lookupCacheMap == null) {
+				lookupCacheMap = new HashMap<>();
 				List<T> lookupList = findLookup(lookupClass, LookupEntity.ACTIVE_STATUS);
 				for (T lookup : lookupList) {
 					lookupCacheMap.put(lookup.getCode(), lookup);
 				}
 				OSFCacheManager.getLookupCache().put(lookupClass.getName(), lookupCacheMap);
 			}
-			Map<String, T> lookupCacheMap = (Map<String, T>) element;
 			lookupEntity = lookupCacheMap.get(code);
 			if (lookupEntity == null) {
 				//cache miss

@@ -113,15 +113,15 @@ public class NotificationServiceImpl
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void registerNotificationListerner(NotificationEventListener notificationEventListerner)
+	public void registerNotificationListerner(NotificationEventListener notificationEventListener)
 	{
-		List<NotificationEventListener> element = (List<NotificationEventListener>) OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
-		if (element == null) {
-			List<NotificationEventListener> listeners = new ArrayList<>();
+		List<NotificationEventListener> listeners = (List<NotificationEventListener>) OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
+		if (listeners == null) {
+			listeners = new ArrayList<>();
 			OSFCacheManager.getApplicationCache().put(LISTENER_KEY, listeners);
 		}
-		element.add(notificationEventListerner);
-		OSFCacheManager.getApplicationCache().replace(LISTENER_KEY, element);
+		listeners.add(notificationEventListener);
+		OSFCacheManager.getApplicationCache().replace(LISTENER_KEY, listeners);
 	}
 
 	@Override
