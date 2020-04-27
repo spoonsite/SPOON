@@ -31,14 +31,6 @@ import org.ehcache.core.spi.service.StatisticsService;
 import org.ehcache.core.statistics.DefaultStatisticsService;
 
 import edu.usu.sdl.openstorefront.common.manager.Initializable;
-import edu.usu.sdl.openstorefront.core.entity.AttributeType;
-import edu.usu.sdl.openstorefront.core.entity.ChecklistQuestion;
-import edu.usu.sdl.openstorefront.core.entity.Contact;
-import edu.usu.sdl.openstorefront.core.entity.WorkPlan;
-import edu.usu.sdl.openstorefront.core.filter.ComponentSensitivityModel;
-import edu.usu.sdl.openstorefront.core.model.ComponentAll;
-import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
-import net.sf.uadetector.ReadableUserAgent;
 
 /**
  * Handling Application level caching
@@ -128,22 +120,11 @@ public class OSFCacheManager
 			userSearchCache               = createCache(String.class, Object.class, "userSearchCache", 250, false, 1800, 1800);
 			workPlanTypeCache             = createCache(String.class, Object.class, "workPlanTypeCache", 1000, false, 7200, 7200);
 
-
-			// attributeCache = cacheManager.createCache("attributeCache", CacheConfigurationBuilder
-			// .newCacheConfigurationBuilder(String.class, AttributeCodeList.class, ResourcePoolsBuilder.heap(30000))
-			// .withExpiry(ExpiryPolicyBuilder.noExpiration())
-			// .build());
 		} finally {
 			LOCK.unlock();
 		}
 
 	}
-
-	// private class AttributeCodeList extends ArrayList<AttributeCode> {
-	// 	public AttributeCodeList(final Collection<? extends AttributeCode> c){
-	// 		super(c);
-	// 	}
-	// }
 
 	private static CacheManager initCacheManager() {
 		statisticsService = new DefaultStatisticsService();
