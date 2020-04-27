@@ -46,10 +46,26 @@ public class OSFCacheManager
 	public static final String ALLCODE_KEY = "ALLCODES";
 	public static CacheManager cacheManager;
 	public static StatisticsService statisticsService;
-	public static String[] cacheNames = { "applicationCache", "attributeCache", "attributeCodeAllCache", "attributeTypeCache", "checklistQuestionCache", 
-		"componentApprovalCache", "componentCache", "componentDataRestrictionCache", "componentIconCache", "componentLookupCache", "componentTypeCache", 
-		"componentTypeComponentCache", "contactCache", "lookupCache", "searchCache", "userAgentCache", "userSearchCache", "workPlanTypeCache" };
-
+	public static String[] cacheNames = { 
+		"applicationCache", 
+		"attributeCache", 
+		"attributeCodeAllCache", 
+		"attributeTypeCache", 
+		"checklistQuestionCache", 
+		"componentApprovalCache", 
+		"componentCache", 
+		"componentDataRestrictionCache", 
+		"componentIconCache", 
+		"componentLookupCache", 
+		"componentTypeCache", 
+		"componentTypeComponentCache", 
+		"contactCache", 
+		"lookupCache", 
+		"searchCache", 
+		"userAgentCache", 
+		"userSearchCache", 
+		"workPlanTypeCache" 
+	};
 
 	private static Cache<String, Object> applicationCache;
 	private static Cache<String, Object> attributeCache;
