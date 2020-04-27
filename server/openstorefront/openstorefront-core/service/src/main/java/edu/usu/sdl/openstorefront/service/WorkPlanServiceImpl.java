@@ -701,7 +701,7 @@ public class WorkPlanServiceImpl
 		String defaultComponentPlanKey = "DEFAULT_COMPONENT_WP";
 
 		//check cache
-		WorkPlan element = OSFCacheManager.getWorkPlanTypeCache().get(componentType);
+		WorkPlan element = (WorkPlan) OSFCacheManager.getWorkPlanTypeCache().get(componentType);
 		if (element == null) {
 			WorkPlan workPlanExample = new WorkPlan();
 			workPlanExample.setActiveStatus(WorkPlan.ACTIVE_STATUS);
@@ -730,12 +730,12 @@ public class WorkPlanServiceImpl
 				}
 			}
 
-			workPlan = OSFCacheManager.getWorkPlanTypeCache().get(componentType);
+			workPlan = (WorkPlan) OSFCacheManager.getWorkPlanTypeCache().get(componentType);
 		}
 
 		//pull default
 		if (workPlan == null) {
-			workPlan = OSFCacheManager.getWorkPlanTypeCache().get(defaultComponentPlanKey);
+			workPlan = (WorkPlan) OSFCacheManager.getWorkPlanTypeCache().get(defaultComponentPlanKey);
 			if (workPlan == null) {
 				WorkPlan workPlanExample = new WorkPlan();
 				workPlanExample.setDefaultWorkPlan(Boolean.TRUE);

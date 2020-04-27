@@ -528,12 +528,12 @@ public class Application
 			CacheStatistics ehCacheStat = statisticsService.getCacheStatistics(cacheName);
 			cacheView.setHitCount(ehCacheStat.getCacheHits());
 
-			// Cache<String, Object> cache = OSFCacheManager.getCacheManager().getCache(cacheName, String.class, Object.class);
-			// int cacheKeyCount = 0;
-			// for (Cache.Entry entry : cache) {
-			// 	cacheKeyCount++;
-			// }
-			// cacheView.setRoughCount(cacheKeyCount);
+			 Cache<String, Object> cache = OSFCacheManager.getCacheManager().getCache(cacheName, String.class, Object.class);
+			 int cacheKeyCount = 0;
+			 for (Cache.Entry entry : cache) {
+			 	cacheKeyCount++;
+			 }
+			 cacheView.setRoughCount(cacheKeyCount);
 
 			long total = ehCacheStat.getCacheHits() + ehCacheStat.getCacheMisses();
 			if (total > 0) {

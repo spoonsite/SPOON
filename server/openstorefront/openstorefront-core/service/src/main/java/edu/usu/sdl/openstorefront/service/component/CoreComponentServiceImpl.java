@@ -219,7 +219,7 @@ public class CoreComponentServiceImpl
 	public String getComponentName(String componentId)
 	{
 		String componentName = null;
-		componentName = OSFCacheManager.getComponentLookupCache().get(componentId);
+		componentName = (String) OSFCacheManager.getComponentLookupCache().get(componentId);
 		if (componentName == null) {
 			Component componentExample = new Component();
 			List<Component> components = componentExample.findByExampleProxy();
@@ -1349,7 +1349,7 @@ public class CoreComponentServiceImpl
 	{
 		ComponentAll componentAll = null;
 		if (StringUtils.isNotBlank(componentId)) {
-			ComponentAll element = OSFCacheManager.getComponentCache().get(componentId);
+			ComponentAll element = (ComponentAll) OSFCacheManager.getComponentCache().get(componentId);
 			if (element == null) {
 				componentAll = new ComponentAll();
 
@@ -1725,7 +1725,7 @@ public class CoreComponentServiceImpl
 	public boolean checkComponentApproval(String componentId)
 	{
 		boolean approved = false;
-		String found = OSFCacheManager.getComponentApprovalCache().get(componentId);
+		String found = (String) OSFCacheManager.getComponentApprovalCache().get(componentId);
 		if (found != null) {
 			if (StringUtils.isNotBlank(found)) {
 				approved = true;
@@ -1757,7 +1757,7 @@ public class CoreComponentServiceImpl
 		ComponentSensitivityModel componentSensitivityModel = new ComponentSensitivityModel();
 		componentSensitivityModel.setComponentId(componentId);
 
-		ComponentSensitivityModel element = OSFCacheManager.getComponentDataRestrictionCache().get(componentId);
+		ComponentSensitivityModel element = (ComponentSensitivityModel) OSFCacheManager.getComponentDataRestrictionCache().get(componentId);
 		if (element == null) {
 			Map<String, ComponentSensitivityModel> componentRestrictionMap = componentService.getRepoFactory().getComponentRepo().findComponentsWithDataRestrictions();
 			for (String componentIdKey : componentRestrictionMap.keySet()) {
@@ -2471,7 +2471,7 @@ public class CoreComponentServiceImpl
 	public String resolveComponentIcon(String componentId)
 	{
 		String iconMediaId = null;
-		String componentMediaId = OSFCacheManager.getComponentIconCache().get(componentId);
+		String componentMediaId = (String) OSFCacheManager.getComponentIconCache().get(componentId);
 		if (componentMediaId != null) {
 			if (StringUtils.isNotBlank(componentMediaId)) {
 				iconMediaId = componentMediaId;

@@ -45,7 +45,7 @@ public class ContactServiceImpl
 	{
 		Contact contact = null;
 
-		contact = OSFCacheManager.getContactCache().get(contactId);
+		contact = (Contact) OSFCacheManager.getContactCache().get(contactId);
 		if (contact == null) {
 			contact = getPersistenceService().findById(Contact.class, contactId);
 

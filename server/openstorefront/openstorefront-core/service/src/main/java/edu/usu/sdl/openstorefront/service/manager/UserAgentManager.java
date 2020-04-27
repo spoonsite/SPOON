@@ -52,7 +52,7 @@ public class UserAgentManager
 	public static ReadableUserAgent parse(String userAgentString)
 	{
 		ReadableUserAgent readableUserAgent;
-		ReadableUserAgent result = OSFCacheManager.getUserAgentCache().get(userAgentString);
+		ReadableUserAgent result = (ReadableUserAgent) OSFCacheManager.getUserAgentCache().get(userAgentString);
 		if (result == null) {
 
 			readableUserAgent = parser.parse(userAgentString);

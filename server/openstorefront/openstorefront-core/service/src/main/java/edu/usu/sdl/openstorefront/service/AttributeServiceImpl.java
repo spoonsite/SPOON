@@ -679,7 +679,7 @@ public class AttributeServiceImpl
 	{
 		AttributeType attributeType = null;
 
-		attributeType = OSFCacheManager.getAttributeTypeCache().get(type);
+		attributeType = (AttributeType) OSFCacheManager.getAttributeTypeCache().get(type);
 		if (attributeType == null) {
 			AttributeType attributeTypeExample = new AttributeType();
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);

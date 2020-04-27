@@ -226,7 +226,7 @@ public class SearchServiceImpl
 
 		//each user may get different results depending on security roles
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
-			searchResult = OSFCacheManager.getSearchCache().get(searchModel.getUserSessionKey() + searchModel.searchKey());
+			searchResult = (AdvanceSearchResult) OSFCacheManager.getSearchCache().get(searchModel.getUserSessionKey() + searchModel.searchKey());
 			if (searchResult != null) {
 				return searchResult;
 			}

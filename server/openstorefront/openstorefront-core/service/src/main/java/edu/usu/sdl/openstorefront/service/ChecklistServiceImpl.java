@@ -50,7 +50,7 @@ public class ChecklistServiceImpl
 	{
 		Objects.requireNonNull(questionId);
 
-		ChecklistQuestion found = OSFCacheManager.getChecklistQuestionCache().get(questionId);
+		ChecklistQuestion found = (ChecklistQuestion) OSFCacheManager.getChecklistQuestionCache().get(questionId);
 		if (found != null) {
 			return found;
 		} else {

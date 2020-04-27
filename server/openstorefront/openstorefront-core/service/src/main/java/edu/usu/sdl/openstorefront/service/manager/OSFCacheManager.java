@@ -62,21 +62,21 @@ public class OSFCacheManager
 	private static Cache<String, Object> applicationCache;
 	private static Cache<String, Object> attributeCache;
 	private static Cache<String, Object> attributeCodeAllCache;
-	private static Cache<String, AttributeType> attributeTypeCache;
-	private static Cache<String, ChecklistQuestion> checklistQuestionCache;
-	private static Cache<String, String> componentApprovalCache;
-	private static Cache<String, ComponentAll> componentCache;
-	private static Cache<String, ComponentSensitivityModel> componentDataRestrictionCache;
-	private static Cache<String, String> componentIconCache;
-	private static Cache<String, String> componentLookupCache;
+	private static Cache<String, Object> attributeTypeCache;
+	private static Cache<String, Object> checklistQuestionCache;
+	private static Cache<String, Object> componentApprovalCache;
+	private static Cache<String, Object> componentCache;
+	private static Cache<String, Object> componentDataRestrictionCache;
+	private static Cache<String, Object> componentIconCache;
+	private static Cache<String, Object> componentLookupCache;
 	private static Cache<String, Object> componentTypeCache;
-	private static Cache<String, String> componentTypeComponentCache;
-	private static Cache<String, Contact> contactCache;
+	private static Cache<String, Object> componentTypeComponentCache;
+	private static Cache<String, Object> contactCache;
 	private static Cache<String, Object> lookupCache;
-	private static Cache<String, AdvanceSearchResult> searchCache;
-	private static Cache<String, ReadableUserAgent> userAgentCache;
+	private static Cache<String, Object> searchCache;
+	private static Cache<String, Object> userAgentCache;
 	private static Cache<String, Object> userSearchCache;
-	private static Cache<String, WorkPlan> workPlanTypeCache;
+	private static Cache<String, Object> workPlanTypeCache;
 
 	private static AtomicBoolean started = new AtomicBoolean(false);
 
@@ -110,23 +110,23 @@ public class OSFCacheManager
 			applicationCache              = createCache(String.class, Object.class, "applicationCache", 100, true);
 			attributeCache                = createCache(String.class, Object.class, "attributeCache", 30000, true);
 			attributeCodeAllCache         = createCache(String.class, Object.class, "attributeCodeAllCache", 1, true);
-			attributeTypeCache            = createCache(String.class, AttributeType.class, "attributeTypeCache", 5000, true);
+			attributeTypeCache            = createCache(String.class, Object.class, "attributeTypeCache", 5000, true);
 
 			// Non-eternal caches
-			checklistQuestionCache        = createCache(String.class, ChecklistQuestion.class, "checklistQuestionCache", 1000, false, 300, 300);
-			componentApprovalCache        = createCache(String.class, String.class, "componentApprovalCache", 50000, false, 300, 300);
-			componentCache                = createCache(String.class, ComponentAll.class, "componentCache", 200, false, 300, 300);
-			componentDataRestrictionCache = createCache(String.class, ComponentSensitivityModel.class, "componentDataRestrictionCache", 50000, false, 1800, 1800);
-			componentIconCache            = createCache(String.class, String.class, "componentIconCache", 50000, false, 1800, 1800);
-			componentLookupCache          = createCache(String.class, String.class, "componentLookupCache", 50000, false, 300, 300);
+			checklistQuestionCache        = createCache(String.class, Object.class, "checklistQuestionCache", 1000, false, 300, 300);
+			componentApprovalCache        = createCache(String.class, Object.class, "componentApprovalCache", 50000, false, 300, 300);
+			componentCache                = createCache(String.class, Object.class, "componentCache", 200, false, 300, 300);
+			componentDataRestrictionCache = createCache(String.class, Object.class, "componentDataRestrictionCache", 50000, false, 1800, 1800);
+			componentIconCache            = createCache(String.class, Object.class, "componentIconCache", 50000, false, 1800, 1800);
+			componentLookupCache          = createCache(String.class, Object.class, "componentLookupCache", 50000, false, 300, 300);
 			componentTypeCache            = createCache(String.class, Object.class, "componentTypeCache", 1, false, 300, 300);
-			componentTypeComponentCache   = createCache(String.class, String.class, "componentTypeComponentCache", 50000, false, 300, 300);
-			contactCache                  = createCache(String.class, Contact.class, "contactCache", 5000, false, 1800, 1800);
+			componentTypeComponentCache   = createCache(String.class, Object.class, "componentTypeComponentCache", 50000, false, 300, 300);
+			contactCache                  = createCache(String.class, Object.class, "contactCache", 5000, false, 1800, 1800);
 			lookupCache                   = createCache(String.class, Object.class, "lookupCache", 500, false, 600, 600);
-			searchCache                   = createCache(String.class, AdvanceSearchResult.class, "searchCache", 250, false, 1800, 1800);
-			userAgentCache                = createCache(String.class, ReadableUserAgent.class, "userAgentCache", 100, false, 7200, 7200);
+			searchCache                   = createCache(String.class, Object.class, "searchCache", 250, false, 1800, 1800);
+			userAgentCache                = createCache(String.class, Object.class, "userAgentCache", 100, false, 7200, 7200);
 			userSearchCache               = createCache(String.class, Object.class, "userSearchCache", 250, false, 1800, 1800);
-			workPlanTypeCache             = createCache(String.class, WorkPlan.class, "workPlanTypeCache", 1000, false, 7200, 7200);
+			workPlanTypeCache             = createCache(String.class, Object.class, "workPlanTypeCache", 1000, false, 7200, 7200);
 
 
 			// attributeCache = cacheManager.createCache("attributeCache", CacheConfigurationBuilder
@@ -217,24 +217,14 @@ public class OSFCacheManager
 		return cacheManager;
 	}
 
-	public static Cache<String, ChecklistQuestion> getChecklistQuestionCache()
+	public static Cache<String, Object> getChecklistQuestionCache()
 	{
 		return checklistQuestionCache;
 	}
 
-	public static void setChecklistQuestionCache(Cache<String, ChecklistQuestion> checklistQuestionCache)
-	{
-		OSFCacheManager.checklistQuestionCache = checklistQuestionCache;
-	}
-
-	public static Cache<String, String> getComponentApprovalCache()
+	public static Cache<String, Object> getComponentApprovalCache()
 	{
 		return componentApprovalCache;
-	}
-
-	public static void setComponentApprovalCache(Cache<String, String> componentApprovalCache)
-	{
-		OSFCacheManager.componentApprovalCache = componentApprovalCache;
 	}
 
 	public static Cache<String, Object> getAttributeCache()
@@ -242,19 +232,9 @@ public class OSFCacheManager
 		return attributeCache;
 	}
 
-	public static void setAttributeCache(Cache<String, Object> attributeCache)
-	{
-		OSFCacheManager.attributeCache = attributeCache;
-	}
-
-	public static Cache<String, AttributeType> getAttributeTypeCache()
+	public static Cache<String, Object> getAttributeTypeCache()
 	{
 		return attributeTypeCache;
-	}
-
-	public static void setAttributeTypeCache(Cache<String, AttributeType> attributeTypeCache)
-	{
-		OSFCacheManager.attributeTypeCache = attributeTypeCache;
 	}
 
 	public static Cache<String, Object> getAttributeCodeAllCache()
@@ -262,115 +242,56 @@ public class OSFCacheManager
 		return attributeCodeAllCache;
 	}
 
-	public static void setAttributeCodeAllCache(Cache<String, Object> attributeCodeAllCache)
-	{
-		OSFCacheManager.attributeCodeAllCache = attributeCodeAllCache;
-	}
-
-	public static Cache<String, Contact> getContactCache()
+	public static Cache<String, Object> getContactCache()
 	{
 		return contactCache;
-	}
-
-	public static void setContactCache(Cache<String, Contact> contactCache)
-	{
-		OSFCacheManager.contactCache = contactCache;
 	}
 
 	public static Cache<String, Object> getApplicationCache() {
 		return applicationCache;
 	}
 
-	public static void setApplicationCache(Cache<String, Object> applicationCache) {
-		OSFCacheManager.applicationCache = applicationCache;
-	}
-
-	public static Cache<String, ComponentAll> getComponentCache() {
+	public static Cache<String, Object> getComponentCache() {
 		return componentCache;
 	}
 
-	public static void setComponentCache(Cache<String, ComponentAll> componentCache) {
-		OSFCacheManager.componentCache = componentCache;
-	}
-
-	public static Cache<String, ComponentSensitivityModel> getComponentDataRestrictionCache() {
+	public static Cache<String, Object> getComponentDataRestrictionCache() {
 		return componentDataRestrictionCache;
 	}
 
-	public static void setComponentDataRestrictionCache(Cache<String, ComponentSensitivityModel> componentDataRestrictionCache) {
-		OSFCacheManager.componentDataRestrictionCache = componentDataRestrictionCache;
-	}
-
-	public static Cache<String, String> getComponentIconCache() {
+	public static Cache<String, Object> getComponentIconCache() {
 		return componentIconCache;
 	}
 
-	public static void setComponentIconCache(Cache<String, String> componentIconCache) {
-		OSFCacheManager.componentIconCache = componentIconCache;
-	}
-
-	public static Cache<String, String> getComponentLookupCache() {
+	public static Cache<String, Object> getComponentLookupCache() {
 		return componentLookupCache;
-	}
-
-	public static void setComponentLookupCache(Cache<String, String> componentLookupCache) {
-		OSFCacheManager.componentLookupCache = componentLookupCache;
 	}
 
 	public static Cache<String, Object> getComponentTypeCache() {
 		return componentTypeCache;
 	}
 
-	public static void setComponentTypeCache(Cache<String, Object> componentTypeCache) {
-		OSFCacheManager.componentTypeCache = componentTypeCache;
-	}
-
-	public static Cache<String, String> getComponentTypeComponentCache() {
+	public static Cache<String, Object> getComponentTypeComponentCache() {
 		return componentTypeComponentCache;
-	}
-
-	public static void setComponentTypeComponentCache(Cache<String, String> componentTypeComponentCache) {
-		OSFCacheManager.componentTypeComponentCache = componentTypeComponentCache;
 	}
 
 	public static Cache<String, Object> getLookupCache() {
 		return lookupCache;
 	}
 
-	public static void setLookupCache(Cache<String, Object> lookupCache) {
-		OSFCacheManager.lookupCache = lookupCache;
-	}
-
-	public static Cache<String, AdvanceSearchResult> getSearchCache() {
+	public static Cache<String, Object> getSearchCache() {
 		return searchCache;
 	}
 
-	public static void setSearchCache(Cache<String, AdvanceSearchResult> searchCache) {
-		OSFCacheManager.searchCache = searchCache;
-	}
-
-	public static Cache<String, ReadableUserAgent> getUserAgentCache() {
+	public static Cache<String, Object> getUserAgentCache() {
 		return userAgentCache;
-	}
-
-	public static void setUserAgentCache(Cache<String, ReadableUserAgent> userAgentCache) {
-		OSFCacheManager.userAgentCache = userAgentCache;
 	}
 
 	public static Cache<String, Object> getUserSearchCache() {
 		return userSearchCache;
 	}
 
-	public static void setUserSearchCache(Cache<String, Object> userSearchCache) {
-		OSFCacheManager.userSearchCache = userSearchCache;
-	}
-
-	public static Cache<String, WorkPlan> getWorkPlanTypeCache() {
+	public static Cache<String, Object> getWorkPlanTypeCache() {
 		return workPlanTypeCache;
 	}
-
-	public static void setWorkPlanTypeCache(Cache<String, WorkPlan> workPlanTypeCache) {
-		OSFCacheManager.workPlanTypeCache = workPlanTypeCache;
-	}
-
 }

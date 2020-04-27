@@ -63,7 +63,7 @@ public class ComponentTypeServiceImpl
 	public String getComponentTypeForComponent(String componentId)
 	{
 		String componentType = null;
-		String element = OSFCacheManager.getComponentTypeComponentCache().get(componentId);
+		String element = (String) OSFCacheManager.getComponentTypeComponentCache().get(componentId);
 		if (element != null) {
 			componentType = element;
 		} else {
