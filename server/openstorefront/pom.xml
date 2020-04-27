@@ -4,11 +4,10 @@
 
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront</artifactId>
-	<version>${project.version}</version>
+	<version>2.12.2</version>
 	<packaging>pom</packaging>
 
 	<properties>
-		<project.version>2.12.2</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>di2e-github</sonar.organization>
