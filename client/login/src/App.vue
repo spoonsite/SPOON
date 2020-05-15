@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-app>
-      <title-bar-comp :CTitle="title" :CSubtitle="subTitle"/>
+      <title-bar :CTitle="title" :CSubtitle="subTitle"/>
       <router-view/>
       <div id="particle-js"></div>
       <v-footer color="primary" dark height="auto">
@@ -14,17 +14,17 @@
 </template>
 
 <script>
-import TitleBarComp from './components/SubComps/TitleBarComp';
+import TitleBar from '@/components/TitleBar'
 
 export default {
   name: 'App',
   components: {
-    TitleBarComp
+    TitleBar
   },
   mounted () {
     /* eslint-disable no-undef */
     // particleJS loaded from CDN, npm loading fails
-    let particles = true;
+    const particles = true
     if (particles) {
       particlesJS('particle-js', {
         particles: {
@@ -80,18 +80,18 @@ export default {
           }
         },
         retina_detect: true
-      });
+      })
     }
   },
   computed: {
     title () {
-      return this.$store.state.branding.applicationName;
+      return this.$store.state.branding.applicationName
     },
     subTitle () {
-      return this.$store.state.branding.landingPageBanner;
+      return this.$store.state.branding.landingPageBanner
     }
   }
-};
+}
 </script>
 
 <style>
@@ -122,7 +122,6 @@ canvas {
   width: 100%;
   height: 100%;
   background-color: #fafafa;
-  background-image: url("");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% 50%;

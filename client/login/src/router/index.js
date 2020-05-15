@@ -1,50 +1,55 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import LoginPage from '@/components/LoginPage';
-import ForgotUserPage from '@/components/ForgotUserPage';
-import ForgotPasswordPage from '@/components/ForgotPasswordPage';
-import RegistrationPage from '@/components/RegistrationPage';
-import ContactUsPage from '@/components/ContactUsPage';
-import FAQPage from '@/components/FAQPage';
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+// import Home from '../views/Home.vue'
 
-Vue.use(Router);
+import LoginPage from '@/views/Login'
+import ForgotUserPage from '@/views/ForgotUser'
+import ForgotPasswordPage from '@/views/ForgotPassword'
+import RegistrationPage from '@/views/Registration'
+import ContactUsPage from '@/views/ContactUs'
+import FAQPage from '@/views/FAQ'
 
-export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'loginPage',
-      component: LoginPage
-    },
-    {
-      path: '/forgot-username',
-      name: 'forgotUsername',
-      component: ForgotUserPage
-    },
-    {
-      path: '/forgot-password',
-      name: 'forgotPassword',
-      component: ForgotPasswordPage
-    },
-    {
-      path: '/registration',
-      name: 'registration',
-      component: RegistrationPage
-    },
-    {
-      path: '/contact-us',
-      name: 'contactUs',
-      component: ContactUsPage
-    },
-    {
-      path: '/faq',
-      name: 'faq',
-      component: FAQPage
-    },
-    {
-      path: '*',
-      redirect: '/' // Page not found
-    }
-  ]
+Vue.use(VueRouter)
 
-});
+const routes = [
+  {
+    path: '/',
+    name: 'loginPage',
+    component: LoginPage
+  },
+  {
+    path: '/forgot-username',
+    name: 'forgotUsername',
+    component: ForgotUserPage
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgotPassword',
+    component: ForgotPasswordPage
+  },
+  {
+    path: '/registration',
+    name: 'registration',
+    component: RegistrationPage
+  },
+  {
+    path: '/contact-us',
+    name: 'contactUs',
+    component: ContactUsPage
+  },
+  {
+    path: '/faq',
+    name: 'faq',
+    component: FAQPage
+  },
+  {
+    path: '*',
+    redirect: '/' // Page not found
+  }
+]
+
+const router = new VueRouter({
+  routes
+})
+
+export default router
