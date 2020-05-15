@@ -49,7 +49,7 @@ public class OrientPersistenceServiceTest
 	@Test
 	public void testPersistNestedObjects()
 	{
-		OSFCacheManager.init();
+		OSFCacheManager.initializeStatic();
 
 		//Arrange
 		System.out.println("persist - NestedObjects");

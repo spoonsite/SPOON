@@ -67,8 +67,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
-
-import net.sf.ehcache.Element;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
@@ -101,13 +99,13 @@ public class SecurityServiceImpl
 	{
 		SecurityPolicy securityPolicy = null;
 
-		Element element;
+		Object element;
 
 		//Note: this is used in filter that may be running when system is not completely started.
 		if (OSFCacheManager.isActive()) {
 			element = OSFCacheManager.getApplicationCache().get(CURRENT_SECURITY_POLICY);
 			if (element != null) {
-				securityPolicy = (SecurityPolicy) element.getObjectValue();
+				securityPolicy = (SecurityPolicy) element;
 			}
 
 			if (securityPolicy == null) {
@@ -120,8 +118,7 @@ public class SecurityServiceImpl
 					securityPolicy = updateSecurityPolicy(securityPolicy);
 				}
 
-				element = new Element(CURRENT_SECURITY_POLICY, securityPolicy);
-				OSFCacheManager.getApplicationCache().put(element);
+				OSFCacheManager.getApplicationCache().put(CURRENT_SECURITY_POLICY, securityPolicy);
 			}
 		} else {
 			securityPolicy = getDefaultPolicy();

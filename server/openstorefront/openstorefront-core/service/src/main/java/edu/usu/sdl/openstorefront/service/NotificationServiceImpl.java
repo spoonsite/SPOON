@@ -47,7 +47,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.mail.Message;
-import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.codemonkey.simplejavamail.email.Email;
 
@@ -114,15 +113,15 @@ public class NotificationServiceImpl
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void registerNotificationListerner(NotificationEventListener notificationEventListerner)
+	public void registerNotificationListerner(NotificationEventListener notificationEventListener)
 	{
-		Element element = OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
-		if (element == null) {
-			List<NotificationEventListener> listeners = new ArrayList<>();
-			element = new Element(LISTENER_KEY, listeners);
-			OSFCacheManager.getApplicationCache().put(element);
+		List<NotificationEventListener> listeners = (List<NotificationEventListener>) OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
+		if (listeners == null) {
+			listeners = new ArrayList<>();
+			OSFCacheManager.getApplicationCache().put(LISTENER_KEY, listeners);
 		}
-		((List<NotificationEventListener>) element.getObjectValue()).add(notificationEventListerner);
+		listeners.add(notificationEventListener);
+		OSFCacheManager.getApplicationCache().replace(LISTENER_KEY, listeners);
 	}
 
 	@Override
@@ -132,10 +131,10 @@ public class NotificationServiceImpl
 		notificationEvent.populateBaseCreateFields();
 		notificationEvent = getPersistenceService().persist(notificationEvent);
 
-		Element element = OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
+		Object element = OSFCacheManager.getApplicationCache().get(LISTENER_KEY);
 		if (element != null) {
 			@SuppressWarnings("unchecked")
-			List<NotificationEventListener> listerners = (List<NotificationEventListener>) element.getObjectValue();
+			List<NotificationEventListener> listerners = (List<NotificationEventListener>) element;
 			for (NotificationEventListener listerner : listerners) {
 				listerner.processEvent(getPersistenceService().deattachAll(notificationEvent));
 			}

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -46,15 +45,12 @@ public class ContactServiceImpl
 	{
 		Contact contact = null;
 
-		Element element = OSFCacheManager.getContactCache().get(contactId);
-		if (element != null) {
-			contact = (Contact) element.getObjectValue();
-		} else {
+		contact = (Contact) OSFCacheManager.getContactCache().get(contactId);
+		if (contact == null) {
 			contact = getPersistenceService().findById(Contact.class, contactId);
 
 			if (contact != null) {
-				element = new Element(contactId, contact);
-				OSFCacheManager.getContactCache().put(element);
+				OSFCacheManager.getContactCache().put(contactId, contact);
 			}
 		}
 

@@ -143,7 +143,6 @@ import net.java.truevfs.access.TFileWriter;
 import net.java.truevfs.access.TPath;
 import net.java.truevfs.access.TVFS;
 import net.java.truevfs.kernel.spec.FsSyncException;
-import net.sf.ehcache.Element;
 import net.sourceforge.stripes.util.ResolverUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -220,18 +219,15 @@ public class CoreComponentServiceImpl
 	public String getComponentName(String componentId)
 	{
 		String componentName = null;
-		Element element = OSFCacheManager.getComponentLookupCache().get(componentId);
-		if (element != null) {
-			componentName = (String) element.getObjectValue();
-		} else {
+		componentName = (String) OSFCacheManager.getComponentLookupCache().get(componentId);
+		if (componentName == null) {
 			Component componentExample = new Component();
 			List<Component> components = componentExample.findByExampleProxy();
 			for (Component component : components) {
-				Element newElement = new Element(component.getComponentId(), component.getName());
 				if (component.getComponentId().equals(componentId)) {
 					componentName = component.getName();
 				}
-				OSFCacheManager.getComponentLookupCache().put(newElement);
+				OSFCacheManager.getComponentLookupCache().put(component.getComponentId(), component.getName());
 			}
 		}
 		return componentName;
@@ -1353,10 +1349,8 @@ public class CoreComponentServiceImpl
 	{
 		ComponentAll componentAll = null;
 		if (StringUtils.isNotBlank(componentId)) {
-			Element element = OSFCacheManager.getComponentCache().get(componentId);
-			if (element != null) {
-				componentAll = (ComponentAll) element.getObjectValue();
-			} else {
+			ComponentAll element = (ComponentAll) OSFCacheManager.getComponentCache().get(componentId);
+			if (element == null) {
 				componentAll = new ComponentAll();
 
 				Component componentExample = new Component();
@@ -1411,8 +1405,7 @@ public class CoreComponentServiceImpl
 					}
 					componentAll.setReviews(allReviews);
 
-					element = new Element(componentId, componentAll);
-					OSFCacheManager.getComponentCache().put(element);
+					OSFCacheManager.getComponentCache().put(componentId, componentAll);
 				}
 			}
 		}
@@ -1732,14 +1725,13 @@ public class CoreComponentServiceImpl
 	public boolean checkComponentApproval(String componentId)
 	{
 		boolean approved = false;
-		Element element = OSFCacheManager.getComponentApprovalCache().get(componentId);
-		if (element != null) {
-			String approvalState = (String) element.getObjectValue();
-			if (StringUtils.isNotBlank(approvalState)) {
+		String found = (String) OSFCacheManager.getComponentApprovalCache().get(componentId);
+		if (found != null) {
+			if (StringUtils.isNotBlank(found)) {
 				approved = true;
 			}
 		} else {
-			if (OSFCacheManager.getComponentApprovalCache().getKeysWithExpiryCheck().isEmpty()) {
+			if (OSFCacheManager.isEmpty(OSFCacheManager.getComponentApprovalCache())) {
 
 				Component componentExample = new Component();
 				componentExample.setActiveStatus(Component.ACTIVE_STATUS);
@@ -1747,14 +1739,13 @@ public class CoreComponentServiceImpl
 				List<Component> components = componentExample.findByExampleProxy();
 
 				for (Component component : components) {
-					Element newElement = new Element(component.getComponentId(), component.getApprovalState());
 					if (component.getComponentId().equals(componentId)) {
 						String approvalState = component.getApprovalState();
 						if (StringUtils.isNotBlank(approvalState)) {
 							approved = true;
 						}
 					}
-					OSFCacheManager.getComponentApprovalCache().put(newElement);
+					OSFCacheManager.getComponentApprovalCache().put(component.getComponentId(), component.getApprovalState());
 				}
 			}
 		}
@@ -1766,21 +1757,17 @@ public class CoreComponentServiceImpl
 		ComponentSensitivityModel componentSensitivityModel = new ComponentSensitivityModel();
 		componentSensitivityModel.setComponentId(componentId);
 
-		Element element = OSFCacheManager.getComponentDataRestrictionCache().get(componentId);
-		if (element != null) {
-			componentSensitivityModel = (ComponentSensitivityModel) element.getObjectValue();
-		} else {
-
+		ComponentSensitivityModel element = (ComponentSensitivityModel) OSFCacheManager.getComponentDataRestrictionCache().get(componentId);
+		if (element == null) {
 			Map<String, ComponentSensitivityModel> componentRestrictionMap = componentService.getRepoFactory().getComponentRepo().findComponentsWithDataRestrictions();
 			for (String componentIdKey : componentRestrictionMap.keySet()) {
-				Element newElement = new Element(componentIdKey, componentRestrictionMap.get(componentIdKey));
 				if (componentIdKey.equals(componentId)) {
 					componentSensitivityModel = componentRestrictionMap.get(componentIdKey);
 					componentSensitivityModel.setComponentId(componentSensitivityModel.getComponentId());
 					componentSensitivityModel.setDataSensitivity(componentSensitivityModel.getDataSensitivity());
 					componentSensitivityModel.setDataSource(componentSensitivityModel.getDataSource());
 				}
-				OSFCacheManager.getComponentDataRestrictionCache().put(newElement);
+				OSFCacheManager.getComponentDataRestrictionCache().put(componentIdKey, componentRestrictionMap.get(componentIdKey));
 			}
 
 			//add the missed cases
@@ -1789,8 +1776,7 @@ public class CoreComponentServiceImpl
 				String foundId = componentIdKey;
 				ComponentSensitivityModel cacheSensitivityModel = new ComponentSensitivityModel();
 				cacheSensitivityModel.setComponentId(foundId);
-				Element newElement = new Element(foundId, cacheSensitivityModel);
-				OSFCacheManager.getComponentDataRestrictionCache().put(newElement);
+				OSFCacheManager.getComponentDataRestrictionCache().put(foundId, cacheSensitivityModel);
 			}
 		}
 
@@ -2485,9 +2471,8 @@ public class CoreComponentServiceImpl
 	public String resolveComponentIcon(String componentId)
 	{
 		String iconMediaId = null;
-		Element element = OSFCacheManager.getComponentIconCache().get(componentId);
-		if (element != null) {
-			String componentMediaId = (String) element.getObjectValue();
+		String componentMediaId = (String) OSFCacheManager.getComponentIconCache().get(componentId);
+		if (componentMediaId != null) {
 			if (StringUtils.isNotBlank(componentMediaId)) {
 				iconMediaId = componentMediaId;
 			}
@@ -2499,8 +2484,7 @@ public class CoreComponentServiceImpl
 			List<ComponentMedia> allIconMedia = componentMediaExample.findByExample();
 			Set<String> mediaWithIcons = new HashSet<>();
 			for (ComponentMedia componentMedia : allIconMedia) {
-				Element newElement = new Element(componentMedia.getComponentId(), componentMedia.getComponentMediaId());
-				OSFCacheManager.getComponentIconCache().put(newElement);
+				OSFCacheManager.getComponentIconCache().put(componentMedia.getComponentId(), componentMedia.getComponentMediaId());
 				if (componentMedia.getComponentId().equals(componentId)) {
 					iconMediaId = componentMedia.getComponentMediaId();
 				}
@@ -2508,8 +2492,7 @@ public class CoreComponentServiceImpl
 			}
 			if (iconMediaId == null) {
 				//set all missing icon to blank to warm cache
-				Element newElement = new Element(componentId, "");
-				OSFCacheManager.getComponentIconCache().put(newElement);
+				OSFCacheManager.getComponentIconCache().put(componentId, "");
 			}
 
 			Component componentExample = new Component();
@@ -2517,8 +2500,7 @@ public class CoreComponentServiceImpl
 			for (Component component : components) {
 				String id = component.getComponentId();
 				if (!mediaWithIcons.contains(id)) {
-					Element newElement = new Element(id, "");
-					OSFCacheManager.getComponentIconCache().put(newElement);
+					OSFCacheManager.getComponentIconCache().put(id, "");
 				}
 			}
 
