@@ -767,8 +767,7 @@ public class ComponentRESTClient
 
 	public ComponentIntegration saveIntegration(String componentId, ComponentIntegration integration)
 	{
-		APIResponse response = client.httpPost(basePath + "/" + componentId + "/integration", integration, null);
-		return response.getResponse(ComponentIntegration.class);
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	public Response saveIntegrationConfig(String componentId, ComponentIntegrationConfig integrationConfig)

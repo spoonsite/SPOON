@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,10 +25,10 @@ Ext.define('OSF.component.ImportWindow', {
 	modal: true,
 	width: '50%',
 	height: '70%',
-	layout: 'fit',	
+	layout: 'fit',
 	y: 100,
 	fileTypeReadyOnly: true,
-	fileTypeValue: 'COMPONENT',	
+	fileTypeValue: 'COMPONENT',
 	initComponent: function () {
 		this.callParent();
 
@@ -51,23 +51,23 @@ Ext.define('OSF.component.ImportWindow', {
 								var uploadForm = this.up('form');
 								var data = uploadForm.getValues();
 								var selectedFormat = uploadForm.getComponent('fileFormatCB').getSelection();
-								//check 
+								//check
 								if (selectedFormat.get('supportsDataMap') && !data.dataMappingId) {
-									uploadForm.getComponent('fileFormatCB').markInvalid('A Data Mapping is required for this format.');									
+									uploadForm.getComponent('fileFormatCB').markInvalid('A Data Mapping is required for this format.');
 									Ext.Msg.show({
 										title:'Validation',
 										message: 'A Data Mapping is required for this format.',
 										buttons: Ext.Msg.OK,
 										icon: Ext.Msg.ERROR,
-										fn: function(btn) {        
+										fn: function(btn) {
 										}
-									});	
+									});
 								} else {
 									uploadForm.submit({
 										submitEmptyText: false,
 										url: 'Upload.action?ImportData',
 										success: function(form, action) {
-											Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');	
+											Ext.toast('File has been queued for processing.', 'Upload Successfully', 'br');
 											if (importWindow.uploadSuccess) {
 												importWindow.uploadSuccess(form, action);
 											}
@@ -154,7 +154,7 @@ Ext.define('OSF.component.ImportWindow', {
 						autoLoad: false
 					}
 				}),
-				Ext.create('OSF.component.DataSourceComboBox', {			
+				Ext.create('OSF.component.DataSourceComboBox', {
 					name: 'dataSource',
 					hideOnNoData: true,
 					width: '100%'
@@ -205,11 +205,6 @@ Ext.define('OSF.component.ImportWindow', {
 									xtype: 'checkboxfield',
 									name: 'componentUploadOptions.uploadTags',
 									boxLabel: 'Upload Tags'
-								},
-								{
-									xtype: 'checkboxfield',
-									name: 'componentUploadOptions.uploadIntegration',
-									boxLabel: 'Upload Integration'
 								},
 								{
 									xtype: 'checkboxfield',

@@ -913,9 +913,6 @@
 							valid = false;
 						} else {
 							Ext.Array.each(outputs, function(output){
-								//if (output.reportTransmissionType == 'CONFLUENCE') {
-									//TODO: May need to check parent
-								//}
 
 								if (output.reportTransmissionOption.emailAddressRaw &&
 									output.reportTransmissionOption.emailAddressRaw !== '') {
@@ -1510,96 +1507,6 @@
 									return panel;
 								};
 
-								var constructConfluenceOutput = function(reportOutput) {
-									var panel = {
-										xtype: 'panel',
-										title: 'Confluence',
-										width: '100%',
-										border: 1,
-										closable: true,
-										layout: 'anchor',
-										bodyStyle: 'padding: 10px;',
-										items: [
-											{
-												xtype: 'combobox',
-												name: 'reportFormat',
-												labelAlign: 'top',
-												fieldLabel: 'Choose Report Format<span class="field-required" />',
-												width: '100%',
-												maxLength: 50,
-												value: reportOutput.reportTransmissionOption.reportFormat,
-												store: {
-													autoLoad: true,
-													proxy: {
-														type: 'ajax',
-														url: 'api/v1/resource/reports/' + reportType + '/' + reportOutput.reportTransmissionType + '/formats',
-													}
-												},
-												displayField: 'description',
-												valueField: 'code',
-												editable: false,
-												allowBlank: false,
-												listeners: {
-													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.reportFormat = newValue;
-													}
-												}
-											},
-											{
-												xtype: 'textfield',
-												name: 'confluenceSpace',
-												labelAlign: 'top',
-												fieldLabel: 'Space Key<span class="field-required" /> <i class="fa fa-lg fa-question-circle"  data-qtip="Confluence Space Key as show Space Tools Overview" ></i>',
-												width: '100%',
-												allowBlank: false,
-												maxLength: 255,
-												value: reportOutput.reportTransmissionOption.confluenceSpace,
-												listeners: {
-													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.confluenceSpace = newValue;
-													}
-												}
-											},
-											{
-												xtype: 'textfield',
-												name: 'confluencePage',
-												labelAlign: 'top',
-												fieldLabel: 'Page Title <span class="field-required" />',
-												width: '100%',
-												allowBlank: false,
-												maxLength: 255,
-												value: reportOutput.reportTransmissionOption.confluencePage,
-												listeners: {
-													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.confluencePage = newValue;
-													}
-												}
-											},
-											{
-												xtype: 'textfield',
-												name: 'confluenceParentPageId',
-												labelAlign: 'top',
-												fieldLabel: 'Parent Page Title',
-												width: '100%',
-												allowBlank: true,
-												maxLength: 255,
-												value: reportOutput.reportTransmissionOption.confluenceParentPageId,
-												listeners: {
-													change: function(field, newValue, oldValue, opts) {
-														reportOutput.reportTransmissionOption.confluenceParentPageId = newValue;
-													}
-												}
-											}
-										],
-										listeners: {
-											close: function(p, opts) {
-												removeOutputAction(reportOutput);
-											}
-										}
-									}
-									return panel;
-								};
-
 								var addBtn;
 								var updateDisplay = function() {
 									reportOutputPanel.removeAll();
@@ -1607,17 +1514,12 @@
 									var hasEmailTransmissionType = false;
 									var outputComponents = [];
 									Ext.Array.each(outputs, function(output){
-										switch (output.reportTransmissionType) {
-											case 'VIEW':
-												outputComponents.push(constructViewOutput(output));
-												break;
-											case 'EMAIL':
-												outputComponents.push(constructEmailOutput(output));
-												hasEmailTransmissionType = true;
-												break;
-											case 'CONFLUENCE':
-												outputComponents.push(constructConfluenceOutput(output));
-												break;
+										if (output.reportTransmissionType === 'EMAIL'){
+											outputComponents.push(constructEmailOutput(output));
+											hasEmailTransmissionType = true;
+										}
+										else {
+											outputComponents.push(constructViewOutput(output));
 										}
 									});
 
