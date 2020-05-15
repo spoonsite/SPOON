@@ -873,22 +873,58 @@ export default {
      *
      * @param {string} value - the number to be converted
      * @param {number} conversionFactor - the factor to be divided by
+     * @param {string} baseUnit - the unit of measurement being converted to
+     * @param {string} currentUnit - the unit of measurement currently used
      *
      * @example
      *
      *      let tenMeters = 10
-     *      let convertedToCentimeters = convertNumber(tenMeters, 1/100)
+     *      let meterUnit = 'm'
+     *      let centimeterUnit = 'cm'
+     *      let convertedToCentimeters = convertNumber(tenMeters, 1/100, meterUnit, centimeterUnit)
      */
-    convertNumber(value, conversionFactor) {
+    convertNumber(value, conversionFactor, baseUnit, currentUnit) {
+      const degreeSymbol = '\u00B0'
       if (conversionFactor === 1) {
         return value
       }
       let numValue = Number(value)
       if (!isNaN(numValue)) {
-        numValue /= conversionFactor
+        if (baseUnit === degreeSymbol + 'C' || baseUnit === degreeSymbol + 'F' || baseUnit === 'K') {
+          numValue = this.convertTemperature(numValue, baseUnit, currentUnit)
+        } else {
+          numValue /= conversionFactor
+        }
         return String(numValue)
       } else {
         return value
+      }
+    },
+    /**
+     * Applies the unit conversion for temperature units
+     *
+     * @param {string} value - the number to be converted
+     * @param {string} baseUnit - the unit of measurement being converted to
+     * @param {string} currentUnit - the unit of measurement currently used
+     */
+    convertTemperature(value, baseUnit, currentUnit) {
+      const degreeSymbol = '\u00B0'
+      const kelvinUnit = 273.15
+      const conversionCF = 9 / 5
+      const conversionFC = 5 / 9
+      const differenceCF = 32
+      if (baseUnit === degreeSymbol + 'C' && currentUnit === 'K') {
+        return value - kelvinUnit
+      } else if (baseUnit === degreeSymbol + 'F' && currentUnit === 'K') {
+        return (value - kelvinUnit) * conversionCF + differenceCF
+      } else if (baseUnit === degreeSymbol + 'F' && currentUnit === degreeSymbol + 'C') {
+        return value * conversionCF + differenceCF
+      } else if (baseUnit === 'K' && currentUnit === degreeSymbol + 'C') {
+        return value + kelvinUnit
+      } else if (baseUnit === degreeSymbol + 'C' && currentUnit === degreeSymbol + 'F') {
+        return (value - differenceCF) * conversionFC
+      } else if (baseUnit === 'K' && currentUnit === degreeSymbol + 'F') {
+        return (value - differenceCF) * conversionFC + kelvinUnit
       }
     },
     /**
@@ -901,9 +937,13 @@ export default {
       allAttributes.forEach(el => {
         // get conversion factor
         let conversionFactor = 1
+        let baseUnit = ''
+        let currentUnit = ''
         el.attributeUnitList.forEach(unit => {
           if (unit.unit === el.selectedUnit) {
             conversionFactor = unit.conversionFactor
+            baseUnit = el.attributeUnit
+            currentUnit = el.selectedUnit
           }
         })
 
@@ -915,7 +955,7 @@ export default {
               componentAttributePk: {
                 userCreated: code.userCreated,
                 attributeType: el.attributeType,
-                attributeCode: this.convertNumber(codeValue, conversionFactor)
+                attributeCode: this.convertNumber(codeValue, conversionFactor, baseUnit, currentUnit)
               },
               preferredUnit: el.selectedUnit
             })
@@ -925,7 +965,7 @@ export default {
             componentAttributePk: {
               userCreated: el.userCreated,
               attributeType: el.attributeType,
-              attributeCode: this.convertNumber(el.selectedCodes, conversionFactor)
+              attributeCode: this.convertNumber(el.selectedCodes, conversionFactor, baseUnit, currentUnit)
             }
           })
         } else if (typeof el.selectedCodes === 'object' && el.selectedCodes && !Array.isArray(el.selectedCodes)) {
@@ -933,7 +973,7 @@ export default {
             componentAttributePk: {
               userCreated: el.userCreated,
               attributeType: el.attributeType,
-              attributeCode: this.convertNumber(el.selectedCodes.code, conversionFactor)
+              attributeCode: this.convertNumber(el.selectedCodes.code, conversionFactor, baseUnit, currentUnit)
             }
           })
         }
