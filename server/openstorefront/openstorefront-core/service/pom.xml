@@ -5,12 +5,12 @@
 	<parent>
 		<artifactId>openstorefront-core</artifactId>
 		<groupId>edu.usu.sdl</groupId>
-		<version>${project.version}</version>
+		<version>2.12.2</version>
 	</parent>
 
 	<groupId>edu.usu.sdl</groupId>
 	<artifactId>openstorefront-core-service</artifactId>
-	<version>${project.version}</version>
+	<version>2.12.2</version>
 	<packaging>bundle</packaging>
 	<name>openstorefront-core-service</name>
 
