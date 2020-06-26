@@ -572,7 +572,7 @@ public class JobManager
 	}
 	
 	/**
-	 * Much more lightweight way to get the current status of a (running / not running) job.
+	 * A lightweight way to get the current status of a (running / not running) job.
 	 * Typical responses include:
 	 *	"NORMAL" - Job is not running but could be started
 	 *	"BLOCKED" - Job cannot be started, this could be because it is currently running.
