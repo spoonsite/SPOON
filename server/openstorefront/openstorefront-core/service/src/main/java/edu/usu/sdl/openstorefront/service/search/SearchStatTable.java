@@ -38,8 +38,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
+import org.ehcache.Cache;
 
 /**
  *
@@ -70,10 +69,10 @@ public class SearchStatTable
 	public SearchStatTable()
 	{
 		// pull hashMaps from the cache
-		Cache appCache = OSFCacheManager.getApplicationCache();
-		Element element = appCache.get(CACHE_KEY);
+		Cache<String, Object> appCache = OSFCacheManager.getApplicationCache();
+		Object element = appCache.get(CACHE_KEY);
 		if (element != null) {
-			SearchStatTable cachedTable = (SearchStatTable) element.getObjectValue();
+			SearchStatTable cachedTable = (SearchStatTable) element;
 			
 			// Return cached info unless data has changed
 			// Attribute Types 
@@ -117,13 +116,13 @@ public class SearchStatTable
 
 	public SearchStatTable getTable()
 	{
-		Cache appCache = OSFCacheManager.getApplicationCache();
-		Element element = appCache.get(CACHE_KEY);
+		Cache<String, Object> appCache = OSFCacheManager.getApplicationCache();
+		Object element = appCache.get(CACHE_KEY);
 		if (element == null) {
 			index();
 			element = appCache.get(CACHE_KEY); // refetch after the index
 		}
-		return (SearchStatTable) element.getObjectValue();
+		return (SearchStatTable) element;
 	}
 
 	/**
@@ -198,10 +197,9 @@ public class SearchStatTable
 		}
 
 		if (changed) {
-			Element element = new Element(CACHE_KEY, this);
-			Cache appCache = OSFCacheManager.getApplicationCache();
+			Cache<String, Object> appCache = OSFCacheManager.getApplicationCache();
 			appCache.remove(CACHE_KEY);
-			OSFCacheManager.getApplicationCache().put(element);
+			OSFCacheManager.getApplicationCache().put(CACHE_KEY, this);
 		}
 	}
 

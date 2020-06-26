@@ -96,7 +96,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Message;
 import javax.servlet.http.HttpServletRequest;
-import net.sf.ehcache.Element;
 import net.sf.uadetector.ReadableUserAgent;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -178,7 +177,7 @@ public class UserServiceImpl
 	{
 		List<LookupModel> profiles = new ArrayList<>();
 
-		Element element = OSFCacheManager.getApplicationCache().get(ALL_ACTIVE_USERS_CACHE_KEY);
+		List<LookupModel> element = (List<LookupModel>) OSFCacheManager.getApplicationCache().get(ALL_ACTIVE_USERS_CACHE_KEY);
 		if (element == null) {
 			// get all active user profiles
 			UserProfile example = new UserProfile();
@@ -197,10 +196,9 @@ public class UserServiceImpl
 				profiles.add(lookupModel);
 			}
 
-			element = new Element(ALL_ACTIVE_USERS_CACHE_KEY, profiles);
-			OSFCacheManager.getApplicationCache().put(element);
+			OSFCacheManager.getApplicationCache().put(ALL_ACTIVE_USERS_CACHE_KEY, profiles);
 		} else {
-			profiles = (List<LookupModel>) element.getObjectValue();
+			profiles = (List<LookupModel>) element;
 		}
 		//return copy (so the list can be modified; however the elements are still shared...just FYI)
 		return new ArrayList<>(profiles);

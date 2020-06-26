@@ -1,5 +1,5 @@
 <%--
-/* 
+/*
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,9 +22,9 @@
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
-		<stripes:layout-render name="../../../../layout/adminheader.jsp">		
-		</stripes:layout-render>		
-		
+		<stripes:layout-render name="../../../../layout/adminheader.jsp">
+		</stripes:layout-render>
+
 		<script type="text/javascript">
 			/* global Ext, CoreUtil */
 			Ext.onReady(function () {
@@ -43,17 +43,17 @@
 							name: 'nextFiredTime',
 							type: 'date',
 							dateFormat: 'c'
-						}						
+						}
 					],
 					proxy: {
 						type: 'ajax',
 						url: 'api/v1/service/jobs'
-					}					
+					}
 				});
 
 				jobStore.filterBy(function(record) {
 						return record.data.jobName.indexOf('ComponentJob');
-				});				
+				});
 
 				var jobGrid = Ext.create('Ext.grid.Panel', {
 					title: 'Jobs',
@@ -73,12 +73,12 @@
 							flex: 1
 						},
 						{
-							text: 'Description', 
+							text: 'Description',
 							dataIndex: 'description',
 							flex: 4
 						},
 						{
-							text: 'Status', 
+							text: 'Status',
 							dataIndex: 'status',
 							flex: 1,
 							renderer: function(value, metadata, record) {
@@ -90,7 +90,7 @@
 							}
 						},
 						{
-							text: 'Previous Scheduled Fire Time', 
+							text: 'Previous Scheduled Fire Time',
 							dataIndex: 'perviousFiredTime',
 							flex: 2,
 							xtype: 'datecolumn',
@@ -104,7 +104,7 @@
 							format: 'm/d/y H:i:s'
 						},
 						{
-							text: 'Job Data', 
+							text: 'Job Data',
 							dataIndex: 'jobData',
 							flex: 6,
 							cellWrap: true
@@ -126,7 +126,7 @@
 										jobStore.load();
 									}
 								},
-								{ 
+								{
 									xtype: 'tbseparator',
 									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION']
 								},
@@ -172,52 +172,8 @@
 										executeJob(record);
 									}
 								},
-								{ 
-									xtype: 'tbfill'
-								},
-								{ 
-									xtype: 'label',
-									text: 'Show Integration Jobs:',
-									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION'],
-									style: {
-										fontWeight: 'bold'
-									}
-								},
 								{
-									xtype: 'segmentedbutton',
-									scale: 'medium',
-									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION'],
-									items: [  
-										{
-											enableToggle: true,
-											scale: 'medium',
-											toggleGroup: 'intJobs',
-											id: 'jobGrid-showIntegrationBox',
-											text: 'Yes',
-											name: 'showIntegration',
-											handler: function () {
-												jobStore.clearFilter();
-											}
-										},
-										{
-											enableToggle: true,
-											scale: 'medium',
-											toggleGroup: 'intJobs',
-											id: 'jobGrid-noshowIntegrationBox',
-											text: 'No',
-											pressed: true,
-											name: 'showIntegration',
-											handler: function () {
-												jobStore.filterBy(function(record) {
-													return record.data.jobName.indexOf('ComponentJob');
-												});
-											}
-										}
-									]
-								},
-								{ 
-									xtype: 'tbseparator',
-									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-ACTION']
+									xtype: 'tbfill'
 								},
 								{
 									xtype: 'label',
@@ -287,7 +243,7 @@
 							type:	'date',
 							dateFormat: 'c'
 						},
-						{	
+						{
 							name: 'completedDts',
 							type:	'date',
 							dateFormat: 'c'
@@ -296,8 +252,8 @@
 							name: 'expireDts',
 							type:	'date',
 							dateFormat: 'c'
-						}						
-					],					
+						}
+					],
 					proxy: {
 						id: 'taskStoreProxy',
 						type: 'ajax',
@@ -306,13 +262,13 @@
 							type: 'json',
 							rootProperty: 'tasks'
 						}
-					},					
+					},
 					listeners: {
 						load: function(store, records, successful, opts) {
 							var data = Ext.decode(opts.getResponse().responseText);
 							var dataArray = [];
 							dataArray.push(data);
-							taskStatsStore.loadData(dataArray);		
+							taskStatsStore.loadData(dataArray);
 						}
 					}
 				});
@@ -340,9 +296,9 @@
 							renderer: function(value, meta, record) {
 								if (value === 'FAILED') {
 									meta.tdCls = 'alert-danger';
-								} else if (value === 'WORKING') {									
+								} else if (value === 'WORKING') {
 									meta.tdCls = 'alert-warning';
-								} else if (value === 'QUEUED') {	
+								} else if (value === 'QUEUED') {
 									meta.tdCls = 'alert-info';
 								} else if (value === 'DONE') {
 									meta.tdCls = 'alert-success';
@@ -368,7 +324,7 @@
 						},
 						{
 							text: 'Expiration Date',
-							dataIndex: 'expireDts',							
+							dataIndex: 'expireDts',
 							flex: 1,
 							xtype: 'datecolumn',
 							format: 'm/d/y H:i:s'
@@ -408,13 +364,13 @@
 									id: 'taskGrid-refresh',
 									iconCls: 'fa fa-2x fa-refresh icon-button-color-refresh icon-vertical-correction',
 									handler: function () {
-										taskStore.load();									
+										taskStore.load();
 									}
 								},
 								{
-									xtype: 'tbfill'									
+									xtype: 'tbfill'
 								},
-								
+
 								{
 									text: 'Stop Task',
 									tooltip: 'Attempts to cancel the task',
@@ -425,12 +381,12 @@
 									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-READ'],
 									handler: function() {
 										actionCancelTask(Ext.getCmp('taskGrid').getSelection()[0]);
-									}									
+									}
 								},
 								{
 									xtype: 'tbseparator',
 									requiredPermissions: ['ADMIN-JOB-MANAGEMENT-DELETE'],
-								},								
+								},
 								{
 									text: 'Delete',
 									tooltip: 'Delete the task',
@@ -453,17 +409,17 @@
 							if (Ext.getCmp('taskGrid').getSelectionModel().hasSelection()) {
 								Ext.getCmp('taskGrid-tools-delete').disable();
 								Ext.getCmp('taskGrid-tools-cancel').disable();
-								
-								if(records[0].get('status') === 'DONE' || 
+
+								if(records[0].get('status') === 'DONE' ||
 									records[0].get('status') === 'FAILED' ||
 									records[0].get('status') === 'CANCELLED') {
 									Ext.getCmp('taskGrid-tools-delete').enable();
-								}	
-								if(records[0].get('status') === 'QUEUED' || 
+								}
+								if(records[0].get('status') === 'QUEUED' ||
 									records[0].get('status') === 'WORKING') {
 									Ext.getCmp('taskGrid-tools-cancel').enable();
 								}
-								
+
 							} else {
 								Ext.getCmp('taskGrid-tools-delete').disable();
 								Ext.getCmp('taskGrid-tools-cancel').disable();
@@ -495,11 +451,11 @@
 									Ext.MessageBox.alert('Failed to delete',
 									'Error: Could not delete task: "' + record.data.taskName + '"');
 								}
-							});	
+							});
 						}
 					});
 				};
-				
+
 				var actionCancelTask = function actionDeleteTask(record) {
 					var title = 'Cancel Task';
 					var msg = 'Are you sure you want to cancel "' + record.data.taskName + '"?';
@@ -523,10 +479,10 @@
 									Ext.MessageBox.alert('Failed to Cancel',
 									'Error: Could not cancel task: "' + record.data.taskName + '"');
 								}
-							});	
+							});
 						}
 					});
-				};				
+				};
 
 				var jobsMainPanel = Ext.create('Ext.tab.Panel', {
 					title: 'Manage Jobs &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Control and view scheduled jobs and background tasks."></i>',
@@ -559,7 +515,7 @@
 						failure: function (response, opts) {
 							Ext.MessageBox.alert( "Error: Could not " + what + ' job scheduler');
 						}
-					});	
+					});
 				};
 
 				var pauseJob = function pauseJob(record) {
@@ -577,8 +533,8 @@
 						failure: function (response, opts) {
 							Ext.MessageBox.alert('Error','Could not pause ' + record.data.jobName);
 						}
-					});	
-					
+					});
+
 				};
 
 				var resumeJob = function resumeJob(record) {
@@ -596,7 +552,7 @@
 						failure: function (response, opts) {
 							Ext.MessageBox.alert('Error','Could not resume ' + record.data.jobName);
 						}
-					});	
+					});
 				};
 
 				var executeJob = function executeJob(record) {
@@ -614,7 +570,7 @@
 						failure: function (response, opts) {
 							Ext.MessageBox.alert('Error','Could not execute ' + record.data.jobName);
 						}
-					});	
+					});
 				};
 
 				var updateSchedulerStatus = function updateSchedulerStatus() {
@@ -640,9 +596,9 @@
 						failure: function (response, opts) {
 							Ext.MessageBox.alert('Error', 'Unable to update system scheduler status.');
 						}
-					});		
+					});
 				};
-				
+
 				updateSchedulerStatus();
 
 

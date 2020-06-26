@@ -1,5 +1,5 @@
-<%-- 
-/* 
+<%--
+/*
  * Copyright 2016 Space Dynamics Laboratory - Utah State University Research Foundation.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,13 +27,13 @@
 <stripes:layout-render name="../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
 
-		<stripes:layout-render name="../../../layout/${actionBean.headerPage}">		
-		</stripes:layout-render>			
+		<stripes:layout-render name="../../../layout/${actionBean.headerPage}">
+		</stripes:layout-render>
 
-		<link rel="stylesheet" href="css/evaluations.css">	
-		
-		<script src="scripts/component/evaluationForm.js?v=${appVersion}" type="text/javascript"></script>	
-		
+		<link rel="stylesheet" href="css/evaluations.css">
+
+		<script src="scripts/component/evaluationForm.js?v=${appVersion}" type="text/javascript"></script>
+
         <script type="text/javascript">
 			/* global Ext, CoreUtil */
 
@@ -43,16 +43,16 @@
 					autoLoad: false,
 					remoteSort: true,
 					fields: [
-						{ 
-							name: 'createDts', 
+						{
+							name: 'createDts',
 							type: 'date',
-							dateFormat: 'c'							
+							dateFormat: 'c'
 						},
-						{ 
+						{
 							name: 'updateDts',
 							type: 'date',
-							dateFormat: 'c'				
-						}							
+							dateFormat: 'c'
+						}
 					],
 					proxy: CoreUtil.pagingProxy({
 						type: 'ajax',
@@ -62,7 +62,7 @@
 							rootProperty: 'data',
 							totalProperty: 'totalNumber'
 						}
-					}),										
+					}),
 					listeners: {
 						beforeLoad: function(store, operation, eOpts){
 							store.getProxy().extraParams = {
@@ -71,21 +71,21 @@
 								'workflowStatus': Ext.getCmp('filterWorkflowStatus').getValue()
 							};
 						}
-					}						
+					}
 				});
-					
-				var evaluationGrid = Ext.create('Ext.grid.Panel', {					
+
+				var evaluationGrid = Ext.create('Ext.grid.Panel', {
 					id: 'evaluationGrid',
-					title: 'Evaluation &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Allows editing evaluations for entries" ></i>',										
+					title: 'Evaluation &nbsp; <i class="fa fa-lg fa-question-circle"  data-qtip="Allows editing evaluations for entries" ></i>',
 					columnLines: true,
 					store: evalGridStore,
 					columns: [
 						{ text: 'Entry Name', dataIndex: 'componentName', width: 250},
-						{ text: 'Version', dataIndex: 'version', align: 'center', flex: 1 },	
+						{ text: 'Version', dataIndex: 'version', align: 'center', flex: 1 },
 						{ text: 'Published', dataIndex: 'published', align: 'center', flex: 1,
 							renderer: CoreUtil.renderer.booleanRenderer
 						},
-						{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', flex: 1 },					
+						{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', flex: 1 },
 						{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', flex: 1},
 						{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', flex: 1,
 							renderer: function(value, meta, record) {
@@ -101,22 +101,10 @@
 
 								return record.get('workflowStatusDescription');
 							}
-						},					
+						},
 						{ text: 'Create User', dataIndex: 'createUser', flex: 1, hidden: true  },
 						{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  flex: 1 },
-						{ text: 'Update User', dataIndex: 'updateUser', flex: 1 },
-						{ text: 'Integration Management', dataIndex: 'issueNumber', flex: 1, sortable: false,
-							renderer: function(value, meta, record) { 
-								if(value)
-								{
-									return "<a target='_blank' href='" + record.get("integrationUrl") + "'>" + value + "</a>";
-								}
-								else
-								{
-									return "";
-								}
-							}
-						}
+						{ text: 'Update User', dataIndex: 'updateUser', flex: 1 }
 					],
 					listeners: {
 						selectionchange: function(selModel, selected, opts) {
@@ -125,17 +113,17 @@
 
 							if (evalGrid.getSelectionModel().getCount() === 1) {
 								Ext.getCmp('lookupGrid-tools-preview').setDisabled(false);
-								tools.getComponent('edit').setDisabled(false);	
+								tools.getComponent('edit').setDisabled(false);
 							} else {
 								Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 							}
 
 							if(selected.length > 0){
 								if(!selected[0].data.published){
-									tools.getComponent('assignUser').setDisabled(false);							
+									tools.getComponent('assignUser').setDisabled(false);
 									tools.getComponent('edit').setText('Edit');
 									tools.getComponent('edit').setIconCls('fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit');
-								} 
+								}
 								else {
 									tools.getComponent('assignUser').setDisabled(true);
 									tools.getComponent('edit').setText('Details');
@@ -147,7 +135,7 @@
 								tools.getComponent('assignUser').setDisabled(true);
 							}
 						}
-					},						
+					},
 					dockedItems: [,
 						{
 							xtype: 'pagingtoolbar',
@@ -157,7 +145,7 @@
 						},
 						{
 							xtype: 'toolbar',
-							dock: 'top',	 
+							dock: 'top',
 							items: [
 								{
 									xtype: 'UserSingleSelectComboBox',
@@ -170,19 +158,19 @@
 									typeAhead: true,
 									editable: true,
 									forceSelection: true,
-									anyMatch: true,	
+									anyMatch: true,
 									store: {
 										autoLoad: true,
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/userprofiles/lookup'
 										}
-									},									
+									},
 									listeners: {
 										change: function(filter, newValue, oldValue, opts){
 											actionRefresh();
 										}
-									}										
+									}
 								},
 								{
 									xtype: 'combobox',
@@ -190,13 +178,13 @@
 									name: 'assignedGroup',
 									fieldLabel: 'Assign to Group',
 									displayField: 'description',
-									valueField: 'code',								
+									valueField: 'code',
 									emptyText: 'All',
 									labelAlign: 'top',
 									width: 250,
 									editable: false,
 									forceSelection: true,
-									store: {									
+									store: {
 										autoLoad: true,
 										proxy: {
 											type: 'ajax',
@@ -215,18 +203,18 @@
 										change: function(filter, newValue, oldValue, opts){
 											actionRefresh();
 										}
-									}									
-								},								
+									}
+								},
 								Ext.create('OSF.component.StandardComboBox', {
 									id: 'filterWorkflowStatus',
-									name: 'workflowStatus',								
+									name: 'workflowStatus',
 									margin: '0 0 5 0',
 									matchFieldWidth: false,
 									editable: false,
 									typeAhead: false,
 									emptyText: 'All',
-									minWidth: 200,	
-									fieldLabel: 'Workflow Status',								
+									minWidth: 200,
+									fieldLabel: 'Workflow Status',
 									storeConfig: {
 										url: 'api/v1/resource/lookuptypes/WorkflowStatus',
 										addRecords: [
@@ -240,7 +228,7 @@
 										change: function(filter, newValue, oldValue, opts){
 											actionRefresh();
 										}
-									}			
+									}
 								})
 							]
 						},
@@ -285,35 +273,35 @@
 									handler: function(){
 										var record = evaluationGrid.getSelection()[0];
 										actionEdit(record);
-									}									
+									}
 								},
 								{
 									xtype: 'tbseparator',
 									requiredPermissions: ['USER-EVALUATIONS-ASSIGN-USER']
-								},	
+								},
 								{
 									text: 'Assign User',
 									itemId: 'assignUser',
-									disabled: true,									
+									disabled: true,
 									iconCls: 'fa fa-2x fa-user icon-button-color-default',
 									scale: 'medium',
 									requiredPermissions: ['USER-EVALUATIONS-ASSIGN-USER'],
 									handler: function(){
 										var record = evaluationGrid.getSelection()[0];
 										actionAssignUser(record);
-									}									
-								}								
+									}
+								}
 							]
 						}
 					]
 				});
-				
+
 				addComponentToMainViewPort(evaluationGrid);
-				
+
 				var actionRefresh = function() {
 					evaluationGrid.getStore().load();
 				};
-				
+
 				var actionEdit = function(record) {
 					evaluationGrid.setLoading('Checking evaluation entry...');
 					Ext.Ajax.request({
@@ -328,19 +316,19 @@
 								isPublishedEvaluation: record.data.published
 							});
 							evalformWin.show();
-							
+
 							var evaluation = Ext.decode(response.responseText);
 							evalformWin.loadEval(record, function(){
 								actionRefresh();
 							});
-							
+
 							if (evaluation.componentId !== record.get('componentId')) {
 								actionRefresh();
-							}														
+							}
 						}
-					});						
+					});
 				};
-				
+
 				var actionAssignUser = function(record) {
 					var assignWin = Ext.create('Ext.window.Window', {
 						title: 'Assign User',
@@ -348,7 +336,7 @@
 						closeAction: 'destroy',
 						modal: true,
 						width: 400,
-						height: 200,					
+						height: 200,
 						layout: 'fit',
 						items: [
 							{
@@ -362,7 +350,7 @@
 										name: 'assignedUser',
 										fieldLabel: 'Assign to User',
 										displayField: 'description',
-										valueField: 'code',					
+										valueField: 'code',
 										queryMode: 'remote',
 										emptyText: 'Unassigned',
 										labelAlign: 'top',
@@ -371,7 +359,7 @@
 										editable: true,
 										forceSelection: true,
 										hideTrigger: true,
-										store: {									
+										store: {
 											autoLoad: true,
 											proxy: {
 												type: 'ajax',
@@ -384,7 +372,7 @@
 														description: 'Unassigned'
 													});
 												}
-											}									
+											}
 										}
 									}
 								],
@@ -412,7 +400,7 @@
 														data: data,
 														success: function(action, opts) {
 															actionRefresh();
-															assignWin.close();														
+															assignWin.close();
 														}
 													});
 												}
@@ -425,7 +413,7 @@
 												iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 												handler: function(){
 													assignWin.close();
-												}											
+												}
 											}
 										]
 									}
@@ -433,17 +421,17 @@
 							}
 						]
 					});
-					assignWin.show();	
-					
-					assignWin.queryById('form').loadRecord(record);		
-					
-				};				
-				
+					assignWin.show();
+
+					assignWin.queryById('form').loadRecord(record);
+
+				};
+
 				CoreService.userservice.getCurrentUser().then(function(user){
 					Ext.getCmp('filterAssignedUser').setValue(user.username);
 					//actionRefresh();
 				});
-				
+
 				var previewContents = Ext.create('OSF.ux.IFrame', {
 					src: ''
 				});
@@ -524,10 +512,10 @@
 					previewComponentWin.show();
 					previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + componentId + '&evalId=' + evalId);
 				};
-				
+
 			});
 
         </script>
 
     </stripes:layout-component>
-</stripes:layout-render>		
+</stripes:layout-render>

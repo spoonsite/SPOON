@@ -84,22 +84,6 @@ public class ReportOutput
 							validationResult.getRuleResults().add(ruleResult);
 						}
 						break;
-					case ReportTransmissionType.CONFLUENCE:
-						if (StringUtils.isBlank(reportTransmissionOption.getConfluenceSpace())) {
-							RuleResult ruleResult = new RuleResult();
-							ruleResult.setEntityClassName(ReportTransmissionOption.class.getSimpleName());
-							ruleResult.setFieldName("confluenceSpace");
-							ruleResult.setMessage("Confluence Requires Space name");
-							validationResult.getRuleResults().add(ruleResult);
-						}
-						if (StringUtils.isBlank(reportTransmissionOption.getConfluencePage())) {
-							RuleResult ruleResult = new RuleResult();
-							ruleResult.setEntityClassName(ReportTransmissionOption.class.getSimpleName());
-							ruleResult.setFieldName("confluencePage");
-							ruleResult.setMessage("Confluence Requires Page name");
-							validationResult.getRuleResults().add(ruleResult);
-						}
-						break;
 				}
 			}
 

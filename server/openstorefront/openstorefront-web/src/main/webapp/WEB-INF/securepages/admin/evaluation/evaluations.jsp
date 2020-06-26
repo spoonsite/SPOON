@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : evaluations
     Created on : Oct 11, 2016, 2:28:31 PM
     Author     : dshurtleff
@@ -7,19 +7,19 @@
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld" %>
 <stripes:layout-render name="../../../../layout/toplevelLayout.jsp">
     <stripes:layout-component name="contents">
-	
-	<stripes:layout-render name="../../../../layout/adminheader.jsp">		
-	</stripes:layout-render>	
 
-	<link rel="stylesheet" href="css/evaluations.css">	
-		
-	<script src="scripts/component/evaluationForm.js?v=${appVersion}" type="text/javascript"></script>	
-		
+	<stripes:layout-render name="../../../../layout/adminheader.jsp">
+	</stripes:layout-render>
+
+	<link rel="stylesheet" href="css/evaluations.css">
+
+	<script src="scripts/component/evaluationForm.js?v=${appVersion}" type="text/javascript"></script>
+
 	<script type="text/javascript">
 		/* global Ext, CoreUtil */
-		Ext.onReady(function(){	
-			
-		
+		Ext.onReady(function(){
+
+
 			var createEvaluationWin = Ext.create('Ext.window.Window', {
 				title: 'Create Evaluation',
 				iconCls: 'fa fa-lg fa-plus icon-small-vertical-correction',
@@ -44,7 +44,7 @@
 										handler: function(){
 											var form = this.up('form');
 											var data = form.getValues();
-											
+
 											CoreUtil.submitForm({
 												url: 'api/v1/resource/evaluations',
 												method: 'POST',
@@ -56,7 +56,7 @@
 													createEvaluationWin.close();
 												}
 											});
-											
+
 										}
 									},
 									{
@@ -67,7 +67,7 @@
 										iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 										handler: function(){
 											createEvaluationWin.close();
-										}										
+										}
 									}
 								]
 							}
@@ -75,49 +75,49 @@
 						layout: 'anchor',
 						defaults: {
 							labelAlign: 'top',
-							labelSeparator: '',							
+							labelSeparator: '',
 							width: '100%'
 						},
-						items: [							
+						items: [
 							{
 								xtype: 'combobox',
 								fieldLabel: 'Entry <span class="field-required" />',
 								name: 'componentId',
 								displayField: 'description',
-								valueField: 'code',								
+								valueField: 'code',
 								emptyText: 'Select an entry',
 								allowBlank: false,
 								forceSelection: true,
-								store: {									
+								store: {
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
 										url: 'api/v1/resource/components/lookup?approvalState=ALL'
 									}
-								}						
+								}
 							},
 							{
 								xtype: 'combobox',
 								fieldLabel: 'Evaluation Template <span class="field-required" />',
 								name: 'templateId',
 								displayField: 'description',
-								valueField: 'templateId',								
-								emptyText: 'Select a Template',								
+								valueField: 'templateId',
+								emptyText: 'Select a Template',
 								allowBlank: false,
 								typeAhead: false,
 								editable: false,
-								store: {									
+								store: {
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
 										url: 'api/v1/resource/evaluationtemplates'
 									}
-								}						
-							},							
+								}
+							},
 							{
 								xtype: 'textfield',
 								fieldLabel: 'Version <span class="field-required" />',
-								name: 'version',								
+								name: 'version',
 								allowBlank: false,
 								maxLength: 255
 							},
@@ -125,9 +125,9 @@
 								xtype: 'combo',
 								itemId: 'workflowStatus',
 								name: 'workflowStatus',
-								allowBlank: false,															
+								allowBlank: false,
 								editable: false,
-								typeAhead: false,	
+								typeAhead: false,
 								valueField: 'code',
 								displayField: 'description',
 								fieldLabel: 'Status <span class="field-required" />',
@@ -140,26 +140,26 @@
 										url: 'api/v1/resource/lookuptypes/WorkflowStatus'
 									},
 									listeners: {
-										load: function(store, records) {											
-											if (records && records.length > 0) {												
+										load: function(store, records) {
+											if (records && records.length > 0) {
 												var field = createEvaluationWin.getComponent('form').getComponent('workflowStatus');
 												field.setValue(records[0].get('code'));
 											}
-										}										
+										}
 									}
 								}
-							},							
+							},
 							{
 								xtype: 'combobox',
 								name: 'assignedGroup',
 								fieldLabel: 'Assign to Group',
 								displayField: 'description',
-								valueField: 'code',								
+								valueField: 'code',
 								emptyText: 'Unassigned',
 								forceSelection: true,
 								editable: false,
 								requiredPermissions: ['USER-EVALUATIONS-ASSIGN-USER'],
-								store: {									
+								store: {
 									autoLoad: true,
 									proxy: {
 										type: 'ajax',
@@ -173,7 +173,7 @@
 											});
 										}
 									}
-								}									
+								}
 							},
 							{
 								xtype: 'combobox',
@@ -194,7 +194,7 @@
 									proxy: {
 										type: 'ajax',
 										url: 'api/v1/resource/userprofiles/lookup'
-									},									
+									},
 									listeners: {
 										load: function(store, records, opts) {
 											store.add({
@@ -202,8 +202,8 @@
 												description: 'Unassigned'
 											});
 										}
-									}									
-								}								
+									}
+								}
 							},
 							{
 								xtype: 'checkbox',
@@ -211,24 +211,24 @@
 								boxLabel: 'Allow Adding Sections',
 								requiredPermissions: ['ADMIN-EVALUATION-ALLOW-NEW-SECTIONS']
 							},
-/*							
+/*
 							{
 								xtype: 'checkbox',
 								name: 'allowNewSubSections',
 								boxLabel: 'Allow Adding Sub Sections'
 							},
-*/							
+*/
 							{
 								xtype: 'checkbox',
 								name: 'allowQuestionManagement',
 								boxLabel: 'Allow Question Management',
 								requiredPermissions: ['ADMIN-EVALUATION-ALLOW-QUESTION-MANAGEMENT']
-							}							
+							}
 						]
 					}
 				]
-			});			
-			
+			});
+
 			var evaluationGrid = Ext.create('Ext.grid.Panel', {
 				id: 'evaluationGrid',
 				title: 'Manage Evaluation <i class="fa fa-question-circle"  data-qtip="Evaluations allow for creating detailed consumer report for an entry."></i>',
@@ -243,18 +243,18 @@
 							property: 'componentName',
 							direction: 'ASC'
 						})
-					],						
+					],
 					fields: [
-						{ 
-							name: 'createDts', 
+						{
+							name: 'createDts',
 							type: 'date',
-							dateFormat: 'c'							
+							dateFormat: 'c'
 						},
-						{ 
+						{
 							name: 'updateDts',
 							type: 'date',
-							dateFormat: 'c'				
-						}							
+							dateFormat: 'c'
+						}
 					],
 					proxy: CoreUtil.pagingProxy({
 						type: 'ajax',
@@ -264,7 +264,7 @@
 							rootProperty: 'data',
 							totalProperty: 'totalNumber'
 						}
-					}),										
+					}),
 					listeners: {
 						beforeLoad: function(store, operation, eOpts){
 							store.getProxy().extraParams = {
@@ -286,8 +286,8 @@
 					},
 					{ text: 'Allow Question Management', dataIndex: 'allowQuestionManagement', align: 'center', flex: 1, hidden: true,
 						renderer: CoreUtil.renderer.booleanRenderer
-					},					
-					{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', flex: 1 },					
+					},
+					{ text: 'Assigned Group', dataIndex: 'assignedGroup', align: 'center', flex: 1 },
 					{ text: 'Assigned User', dataIndex: 'assignedUser', align: 'center', flex: 1},
 					{ text: 'Status', dataIndex: 'workflowStatus', align: 'center', flex: 1,
 						renderer: function(value, meta, record) {
@@ -300,31 +300,19 @@
 							} else if (value === 'HOLD') {
 								meta.tdCls = 'alert-danager';
 							}
-							
+
 							return record.get('workflowStatusDescription');
 						}
-					},					
+					},
 					{ text: 'Create User', dataIndex: 'createUser', flex: 1, hidden: true  },
 					{ text: 'Last Summary Published Date', dataIndex: 'lastSummaryApprovedDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  flex: 1, align: 'center' },
 					{ text: 'Update Date', dataIndex: 'updateDts', xtype: 'datecolumn', format:'m/d/y H:i:s',  flex: 1, hidden: true },
-					{ text: 'Update User', dataIndex: 'updateUser', flex: 1, hidden: true  },
-					{ text: 'Integration Management', dataIndex: 'issueNumber', flex: 1, sortable: false,
-						renderer: function(value, meta, record) { 
-							if(value)
-							{
-								return "<a target='_blank' href='" + record.get("integrationUrl") + "'>" + value + "</a>";
-							}
-							else
-							{
-								return "";
-							}
-						}
-					}
+					{ text: 'Update User', dataIndex: 'updateUser', flex: 1, hidden: true  }
 				],
 				listeners: {
 					itemdblclick: function(grid, record, item, index, e, opts){
 						addEditEvaluation(record);
-					},						
+					},
 					selectionchange: function(selModel, selected, opts) {
 						var tools = Ext.getCmp('evaluationGrid').getComponent('tools');
 						var evalGrid = Ext.getCmp('evaluationGrid');
@@ -335,16 +323,16 @@
 							Ext.getCmp('lookupGrid-tools-preview').setDisabled(true);
 						}
 
-						if (selected.length > 0) {	
+						if (selected.length > 0) {
 							tools.getComponent('action').setDisabled(false);
-							tools.getComponent('edit').setDisabled(false);	
-							tools.getComponent('togglestatus').setDisabled(false);							
-						} else {							
+							tools.getComponent('edit').setDisabled(false);
+							tools.getComponent('togglestatus').setDisabled(false);
+						} else {
 							tools.getComponent('action').setDisabled(true);
-							tools.getComponent('edit').setDisabled(true);														
+							tools.getComponent('edit').setDisabled(true);
 							tools.getComponent('togglestatus').setDisabled(true);
 						}
-						
+
 						if (selected.length > 0 && selected[0].get('published')) {
 							Ext.getCmp('publish').setDisabled(true);
 							Ext.getCmp('unpublish').setDisabled(false);
@@ -359,21 +347,21 @@
 							tools.getComponent('edit').setIconCls('fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit');
 						}
 					}
-				},				
+				},
 				dockedItems: [
 					{
 						xtype: 'toolbar',
-						dock: 'top',						
+						dock: 'top',
 						items: [
 							Ext.create('OSF.component.StandardComboBox', {
-								id: 'filterActiveStatus',									
+								id: 'filterActiveStatus',
 								emptyText: 'Active',
 								value: 'A',
 								fieldLabel: 'Active Status',
-								name: 'activeStatus',									
+								name: 'activeStatus',
 								typeAhead: false,
 								editable: false,
-								width: 200,							
+								width: 200,
 								listeners: {
 									change: function(filter, newValue, oldValue, opts){
 										actionRefresh();
@@ -385,7 +373,7 @@
 											'code',
 											'description'
 										],
-										data: [												
+										data: [
 											{
 												code: 'A',
 												description: 'Active'
@@ -400,14 +388,14 @@
 							}),
 							Ext.create('OSF.component.StandardComboBox', {
 								id: 'filterWorkflowStatus',
-								name: 'workflowStatus',								
+								name: 'workflowStatus',
 								margin: '0 0 5 0',
 								matchFieldWidth: false,
 								editable: false,
 								typeAhead: false,
 								emptyText: 'All',
-								minWidth: 200,	
-								fieldLabel: 'Workflow Status',								
+								minWidth: 200,
+								fieldLabel: 'Workflow Status',
 								storeConfig: {
 									url: 'api/v1/resource/lookuptypes/WorkflowStatus',
 									addRecords: [
@@ -421,7 +409,7 @@
 									change: function(filter, newValue, oldValue, opts){
 										actionRefresh();
 									}
-								}			
+								}
 							}),
 							{
 								xtype: 'textfield',
@@ -430,9 +418,9 @@
 								name: 'name',
 								emptyText: 'Filter By Name',
 								labelAlign: 'top',
-								labelSeparator: '',	
+								labelSeparator: '',
 								margin: '20 0 0 20',
-								minWidth: 200,	
+								minWidth: 200,
 								listeners: {
 									change: {
 										fn: function(field, newValue, oldValue, opts) {
@@ -443,7 +431,7 @@
 								}
 							}
 						]
-					},					
+					},
 					{
 						dock: 'top',
 						itemId: 'tools',
@@ -470,7 +458,7 @@
 								handler: function(){
 									addEditEvaluation();
 								}
-							},							
+							},
 							{
 								text: 'Edit',
 								iconCls: 'fa fa-2x fa-edit icon-button-color-edit icon-vertical-correction-edit',
@@ -505,7 +493,7 @@
 								text: 'Toggle Status',
 								iconCls: 'fa fa-2x fa-power-off icon-button-color-default',
 								itemId: 'togglestatus',
-								disabled: true,									
+								disabled: true,
 								scale: 'medium',
 								requiredPermissions: ['USER-EVALUATIONS-UPDATE'],
 								handler: function(){
@@ -516,7 +504,7 @@
 							{
 								text: 'Action',
 								itemId: 'action',
-								disabled: true,									
+								disabled: true,
 								scale: 'medium',
 								menu: [
 									{
@@ -527,7 +515,7 @@
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											publish(record);
-										}										
+										}
 									},
 									{
 										text: 'Unpublish',
@@ -537,25 +525,25 @@
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											unpublish(record);
-										}										
+										}
 									},
 									{
 										xtype: 'menuseparator',
 										requiredPermissions: ['ADMIN-EVALUATION-TOGGLE-PUBLISH'],
-									},									
+									},
 									{
-										text: 'Copy',										
+										text: 'Copy',
 										iconCls: 'fa fa-lg fa-clone icon-button-color-default icon-small-vertical-correction',
 										requiredPermissions: ['ADMIN-EVALUATION-MANAGEMENT-CREATE'],
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											copy(record);
-										}										
+										}
 									},
 									{
 										xtype: 'menuseparator',
 										requiredPermissions: ['ADMIN-EVALUATION-MANAGEMENT-CREATE'],
-									},									
+									},
 									{
 										text: 'Assign Group',
 										iconCls: 'fa fa-lg fa-users icon-button-color-default icon-small-vertical-correction',
@@ -563,8 +551,8 @@
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAssignGroup(record);
-										}										
-									},	
+										}
+									},
 									{
 										text: 'Assign User',
 										iconCls: 'fa fa-lg fa-user icon-button-color-default icon-small-vertical-correction',
@@ -572,7 +560,7 @@
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAssignUser(record);
-										}										
+										}
 									},
 									{
 										text: 'Toggle Allow New Sections',
@@ -581,8 +569,8 @@
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAllowNewSections(record);
-										}										
-									},	
+										}
+									},
 									{
 										text: 'Toggle Allow Question Management',
 										iconCls: 'fa fa-lg fa-power-off icon-button-color-default icon-small-vertical-correction',
@@ -590,8 +578,8 @@
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionAllowQuestionManagement(record);
-										}										
-									},									
+										}
+									},
 									{
 										xtype: 'menuseparator',
 										requiredPermissions: ['ADMIN-EVALUATION-MANAGEMENT-DELETE']
@@ -604,10 +592,10 @@
 										handler: function(){
 											var record = Ext.getCmp('evaluationGrid').getSelectionModel().getSelection()[0];
 											actionDelete(record);
-										}										
-									}									
+										}
+									}
 								]
-							}								
+							}
 						]
 					},
 					{
@@ -616,17 +604,17 @@
 						store: 'evaluationGridStore',
 						displayInfo: true
 					}
-				]				
+				]
 			});
-			
-			addComponentToMainViewPort(evaluationGrid);	
-			
+
+			addComponentToMainViewPort(evaluationGrid);
+
 			var actionRefresh = function(){
 				evaluationGrid.getStore().reload();
 			};
-			
+
 			var addEditEvaluation = function(record){
-				
+
 				if (record) {
 					evaluationGrid.setLoading('Checking evaluation entry...');
 					Ext.Ajax.request({
@@ -636,33 +624,33 @@
 							evaluationGrid.setLoading(false);
 						},
 						success: function(response, opts) {
-							
+
 							var evalformWin = Ext.create('OSF.component.EvaluationFormWindow', {
 								title: 'Evaluation Form - ' + record.get('componentName'),
 								isPublishedEvaluation: record.data.published
 							});
 							evalformWin.show();
-							
+
 							var evaluation = Ext.decode(response.responseText);
 							record.set('componentId', evaluation.componentId);
 							evalformWin.loadEval(record, function(){
 								actionRefresh();
 							});
-							
+
 							if (evaluation.componentId !== record.get('componentId')) {
 								actionRefresh();
-							}														
+							}
 						}
-					});					
+					});
 				} else {
 					createEvaluationWin.show();
 					createEvaluationWin.getComponent('form').getComponent('workflowStatus').getStore().load();
 					createEvaluationWin.getComponent('form').reset();
 				}
 			};
-			
+
 			var actionAssignGroup = function(record) {
-				
+
 				var assignWin = Ext.create('Ext.window.Window', {
 					title: 'Assign Group',
 					iconCls: 'fa fa-users',
@@ -683,13 +671,13 @@
 									name: 'assignedGroup',
 									fieldLabel: 'Assign to Group',
 									displayField: 'description',
-									valueField: 'code',								
+									valueField: 'code',
 									emptyText: 'Unassigned',
 									labelAlign: 'top',
 									width: '100%',
 									editable: false,
-									forceSelection: true,									
-									store: {									
+									forceSelection: true,
+									store: {
 										autoLoad: true,
 										proxy: {
 											type: 'ajax',
@@ -704,7 +692,7 @@
 											}
 										}
 									}
-								}	
+								}
 							],
 							dockedItems: [
 								{
@@ -718,11 +706,11 @@
 											handler: function() {
 												var form = this.up('form');
 												var formData = form.getValues();
-												
+
 												var data = record.data;
-												
+
 												data = Ext.apply(data, formData);
-												
+
 												CoreUtil.submitForm({
 													url: 'api/v1/resource/evaluations/' + data.evaluationId,
 													method: 'PUT',
@@ -730,7 +718,7 @@
 													data: data,
 													success: function(action, opts) {
 														actionRefresh();
-														assignWin.close();														
+														assignWin.close();
 													}
 												});
 											}
@@ -743,7 +731,7 @@
 											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function(){
 												assignWin.close();
-											}											
+											}
 										}
 									]
 								}
@@ -752,9 +740,9 @@
 					]
 				});
 				assignWin.show();
-				
+
 				assignWin.queryById('form').loadRecord(record);
-				
+
 			};
 
 			var actionAssignUser = function(record) {
@@ -765,7 +753,7 @@
 					closeAction: 'destroy',
 					modal: true,
 					width: 400,
-					height: 200,					
+					height: 200,
 					layout: 'fit',
 					items: [
 						{
@@ -780,7 +768,7 @@
 									fieldLabel: 'Assign to User',
 									queryMode: 'remote',
 									displayField: 'description',
-									valueField: 'code',								
+									valueField: 'code',
 									emptyText: 'Unassigned',
 									labelAlign: 'top',
 									width: '100%',
@@ -789,12 +777,12 @@
 									forceSelection: true,
 									anyMatch: true,
 									hideTrigger: true,
-									store: {									
+									store: {
 										autoLoad: true,
 										proxy: {
 											type: 'ajax',
 											url: 'api/v1/resource/userprofiles/lookup'
-										},										
+										},
 										listeners: {
 											load: function(store, records, opts) {
 												store.add({
@@ -802,7 +790,7 @@
 													description: 'Unassigned'
 												});
 											}
-										}									
+										}
 									}
 								}
 							],
@@ -818,11 +806,11 @@
 											handler: function() {
 												var form = this.up('form');
 												var formData = form.getValues();
-												
+
 												var data = record.data;
-												
+
 												data = Ext.apply(data, formData);
-												
+
 												CoreUtil.submitForm({
 													url: 'api/v1/resource/evaluations/' + data.evaluationId,
 													method: 'PUT',
@@ -830,7 +818,7 @@
 													data: data,
 													success: function(action, opts) {
 														actionRefresh();
-														assignWin.close();														
+														assignWin.close();
 													}
 												});
 											}
@@ -843,7 +831,7 @@
 											iconCls: 'fa fa-lg fa-close icon-button-color-warning',
 											handler: function(){
 												assignWin.close();
-											}											
+											}
 										}
 									]
 								}
@@ -852,11 +840,11 @@
 					]
 				});
 				assignWin.show();
-				
-				assignWin.queryById('form').loadRecord(record);		
-		
+
+				assignWin.queryById('form').loadRecord(record);
+
 			};
-			
+
 			var actionAllowNewSections = function(record) {
 				evaluationGrid.setLoading('Updating evaluation...');
 				Ext.Ajax.request({
@@ -870,7 +858,7 @@
 					}
 				});
 			};
-			
+
 			var actionAllowQuestionManagement = function(record) {
 				evaluationGrid.setLoading('Updating evaluation...');
 				Ext.Ajax.request({
@@ -883,7 +871,7 @@
 						actionRefresh();
 					}
 				});
-			};			
+			};
 
 			var copy = function(record) {
 				evaluationGrid.setLoading('Copying...');
@@ -896,7 +884,7 @@
 					success: function(response, opts){
 						actionRefresh();
 					}
-				});	
+				});
 			};
 
 			var publish = function(record, successAction){
@@ -920,12 +908,12 @@
 										successAction(record);
 									}
 								}
-							});	
-						} 
+							});
+						}
 					}
-				});				
+				});
 			};
-			
+
 			var publishSummary = function(record, successAction) {
 				Ext.Msg.show({
 					title:'Publish Summary only?',
@@ -947,10 +935,10 @@
 										successAction(record);
 									}
 								}
-							});	
-						} 
+							});
+						}
 					}
-				});		
+				});
 			};
 
 			var unpublish = function(record){
@@ -971,10 +959,10 @@
 								success: function(response, opts){
 									actionRefresh();
 								}
-							});	
-						} 
+							});
+						}
 					}
-				});				
+				});
 			};
 
 			var actionToggleStatus = function(record) {
@@ -987,19 +975,19 @@
 				if (currentStatus === 'A') {
 					method = 'DELETE';
 					urlEnd = '';
-				}					
+				}
 				Ext.Ajax.request({
 					url: 'api/v1/resource/evaluations/' + evaluationId + urlEnd,
 					method: method,
 					callback: function(){
 						Ext.getCmp('evaluationGrid').setLoading(false);
 					},
-					success: function(response, opts){						
+					success: function(response, opts){
 						actionRefresh();
 					}
-				});				
-			};	
-			
+				});
+			};
+
 			var actionDelete = function(record) {
 				Ext.Msg.show({
 					title:'Delete Evaluation?',
@@ -1019,11 +1007,11 @@
 								success: function(response, opts){
 									actionRefresh();
 								}
-							});	
-						} 
+							});
+						}
 					}
-				});					
-			};	
+				});
+			};
 
 			var previewContents = Ext.create('OSF.ux.IFrame', {
 				src: ''
@@ -1062,16 +1050,16 @@
 								iconCls: 'fa fa-lg fa-book icon-button-color-save icon-small-vertical-correction',
 								requiredPermissions: ['ADMIN-EVALUATION-TOGGLE-PUBLISH'],
 								handler: function() {
-									var record = Ext.getCmp('evaluationGrid').getSelection()[0];									
+									var record = Ext.getCmp('evaluationGrid').getSelection()[0];
 									publish(record, function(){
-										Ext.toast('Sucessfully published evalaution'); 
+										Ext.toast('Sucessfully published evalaution');
 										record.set({
 											published: true
 										});
 										actionPreviewComponent(record.get('componentId'), record.get('evaluationId'), record);
 									});
 								}
-							},							
+							},
 							{
 								text: 'Publish Summary Only',
 								id: 'publishSummaryBtn',
@@ -1080,10 +1068,10 @@
 								handler: function() {
 									var record = Ext.getCmp('evaluationGrid').getSelection()[0];
 									publishSummary(record, function(){
-										Ext.toast('Sucessfully published summary'); 
+										Ext.toast('Sucessfully published summary');
 										actionPreviewComponent(record.get('componentId'), record.get('evaluationId'), record);
 									});
-								}									
+								}
 							},
 							{
 								xtype: 'tbfill'
@@ -1094,7 +1082,7 @@
 								tpl: '<tpl if="published"><span class="alert-success">&nbsp;Published&nbsp;</span> </tpl>Last change: <b>{[Ext.util.Format.date(values.lastChangeDate)]}</b> Percent Complete: <b>{[Ext.util.Format.percent(values.progessPercent/100)]}</b>'
 							}
 						]
-					},					
+					},
 					{
 						xtype: 'toolbar',
 						dock: 'bottom',
@@ -1147,34 +1135,34 @@
 			var actionPreviewComponent = function(componentId, evalId, record){
 				previewComponentWin.show();
 				previewContents.load('view.jsp?fullPage=true&embedded=true&hideSecurityBanner=true&id=' + componentId + '&evalId=' + evalId);
-				
+
 				if (record.get('published')) {
-					previewComponentWin.setTitle('Preview - Published');					
+					previewComponentWin.setTitle('Preview - Published');
 					Ext.getCmp('publishFullEvalBtn').hide();
-					Ext.getCmp('publishSummaryBtn').hide();					
+					Ext.getCmp('publishSummaryBtn').hide();
 				} else {
 					previewComponentWin.setTitle('Preview');
 					Ext.getCmp('publishFullEvalBtn').show();
 					Ext.getCmp('publishSummaryBtn').show();
 				}
-				
+
 				Ext.Ajax.request({
 					url: 'api/v1/resource/evaluations/' + evalId + '/info',
 					success: function(response, opts) {
 						var data = Ext.decode(response.responseText);
-						
+
 						if (record.get('published')) {
 							data.published = true;
-						} 
-						
+						}
+
 						previewComponentWin.queryById('evalInfoStatus').update(data);
 					}
 				});
-				
+
 			};
 		});
-		
+
 	</script>
 
     </stripes:layout-component>
-</stripes:layout-render>	
+</stripes:layout-render>

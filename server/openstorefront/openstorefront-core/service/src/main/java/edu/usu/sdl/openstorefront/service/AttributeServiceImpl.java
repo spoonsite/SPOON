@@ -87,7 +87,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import net.sf.ehcache.Element;
+import org.ehcache.Cache;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -106,13 +106,12 @@ public class AttributeServiceImpl
 	public List<AttributeCode> getAllAttributeCodes(String activeStatus)
 	{
 		List<AttributeCode> attributeCodes;
-		Element element = OSFCacheManager.getAttributeCodeAllCache().get(OSFCacheManager.ALLCODE_KEY);
+		Object element = OSFCacheManager.getAttributeCodeAllCache().get(OSFCacheManager.ALLCODE_KEY);
 		if (element != null) {
-			attributeCodes = (List<AttributeCode>) element.getObjectValue();
+			attributeCodes = (List<AttributeCode>) element;
 		} else {
 			attributeCodes = getPersistenceService().queryByExample(new AttributeCode());
-			element = new Element(OSFCacheManager.ALLCODE_KEY, attributeCodes);
-			OSFCacheManager.getAttributeCodeAllCache().put(element);
+			OSFCacheManager.getAttributeCodeAllCache().put(OSFCacheManager.ALLCODE_KEY, attributeCodes);
 
 			List<AttributeCode> activeCodesOnly = attributeCodes.stream()
 					.filter(code -> code.getActiveStatus().equals(AttributeCode.ACTIVE_STATUS))
@@ -155,10 +154,10 @@ public class AttributeServiceImpl
 			attributeCodeExample.setAttributeCodePk(attributeCodePk);
 			attributeCodes = getPersistenceService().queryByExample(new QueryByExample<>(attributeCodeExample));
 		} else {
-			Element element;
+			Object element;
 			element = OSFCacheManager.getAttributeCache().get(type);
 			if (element != null) {
-				attributeCodes = (List<AttributeCode>) element.getObjectValue();
+				attributeCodes = (List<AttributeCode>) element;
 			} else {
 
 				AttributeCode attributeCodeExample = new AttributeCode();
@@ -168,8 +167,7 @@ public class AttributeServiceImpl
 				attributeCodeExample.setActiveStatus(AttributeCode.ACTIVE_STATUS);
 
 				attributeCodes = getPersistenceService().queryByExample(new QueryByExample<>(attributeCodeExample));
-				element = new Element(type, attributeCodes);
-				OSFCacheManager.getAttributeCache().put(element);
+				OSFCacheManager.getAttributeCache().put(type, attributeCodes);
 			}
 		}
 		return attributeCodes;
@@ -232,7 +230,7 @@ public class AttributeServiceImpl
 	{
 		OSFCacheManager.getAttributeCache().remove(attributeType);
 		OSFCacheManager.getAttributeTypeCache().remove(attributeType);
-		OSFCacheManager.getAttributeCodeAllCache().removeAll();
+		OSFCacheManager.getAttributeCodeAllCache().clear();
 	}
 
 	@Override
@@ -652,9 +650,9 @@ public class AttributeServiceImpl
 			}
 		}
 		//Clear cache
-		OSFCacheManager.getAttributeTypeCache().removeAll();
-		OSFCacheManager.getAttributeCache().removeAll();
-		OSFCacheManager.getAttributeCodeAllCache().removeAll();
+		OSFCacheManager.getAttributeTypeCache().clear();
+		OSFCacheManager.getAttributeCache().clear();
+		OSFCacheManager.getAttributeCodeAllCache().clear();
 
 		getSearchService().saveAll();
 		return syncResult;
@@ -681,10 +679,8 @@ public class AttributeServiceImpl
 	{
 		AttributeType attributeType = null;
 
-		Element element = OSFCacheManager.getAttributeTypeCache().get(type);
-		if (element != null) {
-			attributeType = (AttributeType) element.getObjectValue();
-		} else {
+		attributeType = (AttributeType) OSFCacheManager.getAttributeTypeCache().get(type);
+		if (attributeType == null) {
 			AttributeType attributeTypeExample = new AttributeType();
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 			List<AttributeType> attributeTypes = getPersistenceService().queryByExample(new QueryByExample<>(attributeTypeExample));
@@ -692,8 +688,7 @@ public class AttributeServiceImpl
 				if (attributeTypeCheck.getAttributeType().equals(type)) {
 					attributeType = attributeTypeCheck;
 				}
-				element = new Element(attributeTypeCheck.getAttributeType(), attributeTypeCheck);
-				OSFCacheManager.getAttributeTypeCache().put(element);
+				OSFCacheManager.getAttributeTypeCache().put(attributeTypeCheck.getAttributeType(), attributeTypeCheck);
 			}
 		}
 
@@ -1061,7 +1056,7 @@ public class AttributeServiceImpl
 	private void warmAttributeCaches(List<AttributeCode> attributeCodes)
 	{
 		if (attributeCodes == null) {
-			Element element = OSFCacheManager.getAttributeCodeAllCache().get(OSFCacheManager.ALLCODE_KEY);
+			Object element = OSFCacheManager.getAttributeCodeAllCache().get(OSFCacheManager.ALLCODE_KEY);
 			if (element == null) {
 				//warm caches (ignore return)
 				getAllAttributeCodes(AttributeCode.ACTIVE_STATUS);
@@ -1073,8 +1068,7 @@ public class AttributeServiceImpl
 					.collect(Collectors.groupingBy(AttributeCode::typeField));
 
 			for (String type : codeMap.keySet()) {
-				Element element = new Element(type, codeMap.get(type));
-				OSFCacheManager.getAttributeCache().put(element);
+				OSFCacheManager.getAttributeCache().put(type, codeMap.get(type));
 			}
 
 			//populate the type cache
@@ -1082,8 +1076,7 @@ public class AttributeServiceImpl
 			attributeTypeExample.setActiveStatus(AttributeType.ACTIVE_STATUS);
 			List<AttributeType> attributeTypes = getPersistenceService().queryByExample(new QueryByExample<>(attributeTypeExample));
 			for (AttributeType attributeTypeCheck : attributeTypes) {
-				Element element = new Element(attributeTypeCheck.getAttributeType(), attributeTypeCheck);
-				OSFCacheManager.getAttributeTypeCache().put(element);
+				OSFCacheManager.getAttributeTypeCache().put(attributeTypeCheck.getAttributeType(), attributeTypeCheck);
 			}
 
 		}

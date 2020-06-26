@@ -75,7 +75,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
-import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
@@ -115,7 +114,7 @@ public class SearchServiceImpl
 	{
 		if (!components.isEmpty()) {
 			SearchServerManager.getInstance().getSearchServer().index(components);
-			OSFCacheManager.getSearchCache().removeAll();
+			OSFCacheManager.getSearchCache().clear();
 		}
 	}
 
@@ -194,28 +193,28 @@ public class SearchServiceImpl
 	public void deleteById(String id)
 	{
 		SearchServerManager.getInstance().getSearchServer().deleteById(id);
-		OSFCacheManager.getSearchCache().removeAll();
+		OSFCacheManager.getSearchCache().clear();
 	}
 
 	@Override
 	public void deleteAll()
 	{
 		SearchServerManager.getInstance().getSearchServer().deleteAll();
-		OSFCacheManager.getSearchCache().removeAll();
+		OSFCacheManager.getSearchCache().clear();
 	}
 
 	@Override
 	public void saveAll()
 	{
 		SearchServerManager.getInstance().getSearchServer().saveAll();
-		OSFCacheManager.getSearchCache().removeAll();
+		OSFCacheManager.getSearchCache().clear();
 	}
 
 	@Override
 	public void resetIndexer()
 	{
 		SearchServerManager.getInstance().getSearchServer().resetIndexer();
-		OSFCacheManager.getSearchCache().removeAll();
+		OSFCacheManager.getSearchCache().clear();
 	}
 
 	@Override
@@ -227,9 +226,8 @@ public class SearchServiceImpl
 
 		//each user may get different results depending on security roles
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
-			Element element = OSFCacheManager.getSearchCache().get(searchModel.getUserSessionKey() + searchModel.searchKey());
-			if (element != null) {
-				searchResult = (AdvanceSearchResult) element.getObjectValue();
+			searchResult = (AdvanceSearchResult) OSFCacheManager.getSearchCache().get(searchModel.getUserSessionKey() + searchModel.searchKey());
+			if (searchResult != null) {
 				return searchResult;
 			}
 		}
@@ -419,8 +417,7 @@ public class SearchServiceImpl
 		searchResult.setValidationResult(validationResultMain);
 
 		if (StringUtils.isNotBlank(searchModel.getUserSessionKey())) {
-			Element element = new Element(searchModel.getUserSessionKey() + searchModel.searchKey(), searchResult);
-			OSFCacheManager.getSearchCache().put(element);
+			OSFCacheManager.getSearchCache().put(searchModel.getUserSessionKey() + searchModel.searchKey(), searchResult);
 		}
 		return searchResult;
 	}
@@ -529,7 +526,7 @@ public class SearchServiceImpl
 	public SearchOptions saveGlobalSearchOptions(SearchOptions searchOptions)
 	{
 
-		OSFCacheManager.getSearchCache().removeAll();
+		OSFCacheManager.getSearchCache().clear();
 
 		SearchOptions searchOptionsExample = new SearchOptions();
 		searchOptionsExample.setGlobalFlag(Boolean.TRUE);
@@ -603,18 +600,17 @@ public class SearchServiceImpl
 
 		// If the search options changed clear the cache
 		if (!existing.compare(searchOptions) || forceCacheClear) {
-			Element userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
+			Object userSearchElementResult = OSFCacheManager.getUserSearchCache().get(username);
 			if (userSearchElementResult != null) {
 				@SuppressWarnings("unchecked")
-				List<String> listOfKeys = (List<String>) userSearchElementResult.getObjectValue();
+				List<String> listOfKeys = (List<String>) userSearchElementResult;
 
 				if (listOfKeys != null) {
 					for (String key : listOfKeys) {
 						OSFCacheManager.getSearchCache().remove(key);
 					}
 				}
-				Element afterDeletedKeys = new Element(username, null);
-				OSFCacheManager.getUserSearchCache().put(afterDeletedKeys);
+				OSFCacheManager.getUserSearchCache().put(username, null);
 			}
 		}
 
@@ -634,7 +630,7 @@ public class SearchServiceImpl
 	{
 		if (!componentAlls.isEmpty()) {
 			SearchServerManager.getInstance().getSearchServer().indexFullComponents(componentAlls);
-			OSFCacheManager.getSearchCache().removeAll();
+			OSFCacheManager.getSearchCache().clear();
 		}
 	}
 }

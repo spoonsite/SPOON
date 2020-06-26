@@ -27,7 +27,6 @@
 
 		<script src="scripts/component/importWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/messageWindow.js?v=${appVersion}" type="text/javascript"></script>
-		<script src="scripts/component/integrationConfigWindow.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/submissionPanel.js?v=${appVersion}" type="text/javascript"></script>
 		<script src="scripts/component/entryChangeRequestWindow.js?v=${appVersion}" type="text/javascript"></script>
 
@@ -840,11 +839,6 @@
 									xtype: 'checkbox',
 									boxLabel: 'Tags',
 									name: 'restoreTags'
-								},
-								{
-									xtype: 'checkbox',
-									boxLabel: 'Integration',
-									name: 'restoreIntegration'
 								}
 							]
 						}
@@ -1615,8 +1609,7 @@
 						}},
 						{name: 'numberOfPendingChanges', mapping: function(data){
 							return data.component.numberOfPendingChanges;
-						}},
-						'integrationManagement'
+						}}
 					],
 					proxy: CoreUtil.pagingProxy({
 						url: 'api/v1/resource/components/filterable',

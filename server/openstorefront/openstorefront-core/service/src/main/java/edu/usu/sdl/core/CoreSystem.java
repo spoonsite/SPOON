@@ -30,7 +30,6 @@ import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.io.DefaultTemplateImporter;
 import edu.usu.sdl.openstorefront.service.io.LookupImporter;
 import edu.usu.sdl.openstorefront.service.manager.AsyncTaskManager;
-import edu.usu.sdl.openstorefront.service.manager.ConfluenceManager;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.DBManager;
 import edu.usu.sdl.openstorefront.service.manager.JobManager;
@@ -85,7 +84,6 @@ public class CoreSystem
 			DBManager.getInstance(),
 			SearchServerManager.getInstance(),
 			new OSFCacheManager(),
-			new ConfluenceManager(),
 			new LookupImporter(),
 			new MailManager(),
 			new JobManager(),

@@ -63,15 +63,6 @@ public class ReportTransmissionOption
 	private Boolean postToEmailBody;
 
 	@ConsumeField
-	private String confluenceSpace;
-
-	@ConsumeField
-	private String confluencePage;
-
-	@ConsumeField
-	private String confluenceParentPageId;
-
-	@ConsumeField
 	private Boolean reportNotify;
 
 	@Version
@@ -120,36 +111,6 @@ public class ReportTransmissionOption
 	public void setPostToEmailBody(Boolean postToEmailBody)
 	{
 		this.postToEmailBody = postToEmailBody;
-	}
-
-	public String getConfluenceSpace()
-	{
-		return confluenceSpace;
-	}
-
-	public void setConfluenceSpace(String confluenceSpace)
-	{
-		this.confluenceSpace = confluenceSpace;
-	}
-
-	public String getConfluencePage()
-	{
-		return confluencePage;
-	}
-
-	public void setConfluencePage(String confluencePage)
-	{
-		this.confluencePage = confluencePage;
-	}
-
-	public String getConfluenceParentPageId()
-	{
-		return confluenceParentPageId;
-	}
-
-	public void setConfluenceParentPageId(String confluenceParentPageId)
-	{
-		this.confluenceParentPageId = confluenceParentPageId;
 	}
 
 	public String getStorageVersion()

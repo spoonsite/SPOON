@@ -77,11 +77,11 @@ public abstract class BaseComponentServiceImpl
 
 		OSFCacheManager.getComponentCache().remove(componentId);
 		OSFCacheManager.getComponentLookupCache().remove(componentId);
-		OSFCacheManager.getComponentApprovalCache().removeAll();
+		OSFCacheManager.getComponentApprovalCache().clear();
 		OSFCacheManager.getComponentDataRestrictionCache().remove(componentId);
 		OSFCacheManager.getComponentIconCache().remove(componentId);
 		OSFCacheManager.getComponentTypeComponentCache().remove(componentId);
-		OSFCacheManager.getSearchCache().removeAll();
+		OSFCacheManager.getSearchCache().clear();
 	}
 
 	protected void handleUserDataAlert(Object data)

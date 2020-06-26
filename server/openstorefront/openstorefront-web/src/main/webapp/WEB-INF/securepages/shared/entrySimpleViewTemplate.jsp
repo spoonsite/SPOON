@@ -24,7 +24,7 @@ limitations under the License.
 	.quickView-tableheader {
 		background-color: lightgrey;
 	}
-	.quickView-tableall {    
+	.quickView-tableall {
 		border: 1px solid #ddd;
 		text-align: left;
 	}
@@ -36,7 +36,7 @@ limitations under the License.
 
 	.quickView-table-padding {
 		padding: 15px;
-	}	
+	}
 </style>
 
 <tpl if="name">
@@ -62,24 +62,24 @@ limitations under the License.
 	<tpl if="attributes && attributes.length &gt; 0">
 		<section>
 			<h3 class="quickView">Attributes</h3>
-			<table class="quickView-table" border="1">				
+			<table class="quickView-table" border="1">
 				<tpl for="attributes">
 					<tr>
 						<td class="quickView-tableall"><b>{typeDescription}</b>
 							<tpl if="privateFlag"> <span class="private-badge">private</span></tpl>
-						</td>						
+						</td>
 						<td class="quickView-tableall"><b>{codeDescription}</b>
 							<tpl if="comment"><hr>Comment: {comment}</tpl>
-						</td>						
-					</tr>			
+						</td>
+					</tr>
 				</tpl>
 			</table>
-		</section>		
+		</section>
 	</tpl>
-	<tpl if="contacts && contacts.length &gt; 0">	
+	<tpl if="contacts && contacts.length &gt; 0">
 		<section>
 			<h3 class="quickView">Contacts</h3>
-			<table class="quickView-table" border="1">	
+			<table class="quickView-table" border="1">
 				<tr>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Position</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Organization</th>
@@ -96,55 +96,55 @@ limitations under the License.
 						<td class="quickView-tableall">{lastName}</td>
 						<td class="quickView-tableall">{email}</td>
 						<td class="quickView-tableall">{phone}</td>
-					</tr>			
+					</tr>
 				</tpl>
-			</table>	
+			</table>
 		</section>
 	</tpl>
 	<tpl if="dependencies && dependencies.length &gt; 0">
 		<section>
 			<h3 class="quickView">Dependencies</h3>
-			<table class="quickView-table" border="1">	
+			<table class="quickView-table" border="1">
 				<tr>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Name</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Version</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Reference Link</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Comment</th>
-				</tr>		
+				</tr>
 				<tpl for="dependencies">
 					<tr>
 						<td class="quickView-tableall">{dependencyName}</td>
 						<td class="quickView-tableall">{version}</td>
 						<td class="quickView-tableall">{dependancyReferenceLink}</td>
 						<td class="quickView-tableall">{comment}</td>
-					</tr>			
+					</tr>
 				</tpl>
-			</table>	
-		</section>		
+			</table>
+		</section>
 	</tpl>
 	<tpl if="relationships && relationships.length &gt; 0">
 		<section>
 			<h3 class="quickView">Relationships</h3>
-			<table class="quickView-table" border="1">	
+			<table class="quickView-table" border="1">
 				<tr>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Owner Entry</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Type</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Related Entry</th>
-				</tr>		
+				</tr>
 				<tpl for="relationships">
 					<tr>
 						<td class="quickView-tableall">{ownerComponentName}</td>
 						<td class="quickView-tableall">{relationshipType}</td>
 						<td class="quickView-tableall">{targetComponentName}</td>
-					</tr>			
+					</tr>
 				</tpl>
-			</table>	
-		</section>	
+			</table>
+		</section>
 	</tpl>
 	<tpl if="componentMedia && componentMedia.length &gt; 0">
 		<section>
 			<h3 class="quickView">Media</h3>
-			<table class="quickView-table" border="1">	
+			<table class="quickView-table" border="1">
 				<tr>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Type</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Mime Type</th>
@@ -152,7 +152,7 @@ limitations under the License.
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Filename</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Caption</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Media</th>
-				</tr>		
+				</tr>
 				<tpl for="componentMedia">
 					<tr>
 						<td class="quickView-tableall">{contentType}</td>
@@ -168,15 +168,15 @@ limitations under the License.
 						<a href='{link}'>Download</a>
 					</tpl>
 					</td>
-					</tr>			
+					</tr>
 				</tpl>
-			</table>	
-		</section>		
+			</table>
+		</section>
 	</tpl>
 	<tpl if="resources && resources.length &gt; 0">
 		<section>
 			<h3 class="quickView">Resources</h3>
-			<table class="quickView-table" border="1" >	
+			<table class="quickView-table" border="1" >
 				<tr>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Type</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Mime Type</th>
@@ -185,7 +185,7 @@ limitations under the License.
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Filename</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Description</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Restricted</th>
-				</tr>		
+				</tr>
 				<tpl for="resources">
 					<tr>
 						<td class="quickView-tableall">{resourceTypeDesc}</td>
@@ -195,68 +195,63 @@ limitations under the License.
 						<td class="quickView-tableall">{originalFileName}</td>
 						<td class="quickView-tableall">{description}</td>
 						<td class="quickView-tableall">{restricted}</td>
-					</tr>			
+					</tr>
 				</tpl>
-			</table>	
-		</section>		
+			</table>
+		</section>
 	</tpl>
-	<!--
-	<section>
-		<h3 class="quickView">Integration</h3>
-	</section>
-	-->
 	<tpl if="evaluation.evaluationSections && evaluation.evaluationSections.length &gt; 0">
 		<section>
 			<h3 class="quickView">Evaluation Information</h3>
-			<table class="quickView-table" border="1" >	
+			<table class="quickView-table" border="1" >
 				<tr>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Name</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Score</th>
-				</tr>		
-				<tpl for="evaluation.evaluationSections">			
+				</tr>
+				<tpl for="evaluation.evaluationSections">
 					<tr>
 						<td class="quickView-tableall">{name}</td>
 						<td class="quickView-tableall" style="text-align: center;">{actualScore}</td>
 					</tr>
 				</tpl>
-			</table>		
+			</table>
 		</section>
-	</tpl>	
+	</tpl>
 	<tpl if="metadata && metadata.length &gt; 0">
 		<section>
-			<h3 class="quickView">Metadata</h3>			
-			<table class="quickView-table" border="1">								
+			<h3 class="quickView">Metadata</h3>
+			<table class="quickView-table" border="1">
 				<tpl for="metadata">
 					<tr>
 						<td class="quickView-tableall"><b>{label}</b></td>
 						<td class="quickView-tableall">{value}</td>
-					</tr>			
+					</tr>
 				</tpl>
-			</table>	
-		</section>		
+			</table>
+		</section>
 	</tpl>
 	<tpl if="tags && tags.length &gt; 0">
 		<section>
 			<h3 class="quickView">Tags</h3>
-			<ul border="1">				
+			<ul border="1">
 				<tpl for="tags">
 					<li>
 						{text}
-					</li>			
+					</li>
 				</tpl>
-			</ul>	
-		</section>		
+			</ul>
+		</section>
 	</tpl>
 	<tpl if="reviews && reviews.length &gt; 0">
 		<section>
 			<h3 class="quickView">User Reviews</h3>
-			<table class="quickView-table" border="1" >	
+			<table class="quickView-table" border="1" >
 				<tr>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">User Name</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Organization</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Review</th>
-				</tr>		
-				<tpl for="reviews">			
+				</tr>
+				<tpl for="reviews">
 					<tr>
 						<td class="quickView-tableall">{username}</td>
 						<td class="quickView-tableall">{organization}</td>
@@ -284,19 +279,19 @@ limitations under the License.
 					</td>
 					</tr>
 				</tpl>
-			</table>	
-		</section>		
+			</table>
+		</section>
 	</tpl>
 	<tpl if="questions && questions.length &gt; 0">
 		<section>
 			<h3 class="quickView">User Questions</h3>
-			<table class="quickView-table" border="1" >	
+			<table class="quickView-table" border="1" >
 				<tr>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">User Name</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Organization</th>
 					<th class="quickView-tableheader quickView-tableall quickView-table-padding">Question</th>
-				</tr>		
-				<tpl for="questions">			
+				</tr>
+				<tpl for="questions">
 					<tr>
 						<td class="quickView-tableall">{username}</td>
 						<td class="quickView-tableall">{organization}</td>
@@ -312,12 +307,12 @@ limitations under the License.
 								- <span class="alert-warning"><i class="fa fa-warning"></i> Answer pending admin approval before being made public.</span>
 							</tpl>
 							</li>
-						</tpl>	
+						</tpl>
 					</ul>
 					</td>
 					</tr>
 				</tpl>
-			</table>	
+			</table>
 		</section>
 	</tpl>
 </tpl>

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.ehcache.Element;
 
 /**
  *
@@ -42,29 +41,29 @@ public class EntityEventServiceImpl
 	@SuppressWarnings("unchecked")
 	public void registerEventListener(EntityEventRegistrationModel registrationModel)
 	{
-		Element element = OSFCacheManager.getApplicationCache().get(EVENT_LISTENER_KEY);
-		if (element == null) {
-			List<EntityEventRegistrationModel> listeners = new ArrayList<>();
-			element = new Element(EVENT_LISTENER_KEY, listeners);
-			OSFCacheManager.getApplicationCache().put(element);
+		List<EntityEventRegistrationModel> listeners = (List<EntityEventRegistrationModel>) OSFCacheManager.getApplicationCache().get(EVENT_LISTENER_KEY);
+		if (listeners == null) {
+			listeners = new ArrayList<>();
+			OSFCacheManager.getApplicationCache().put(EVENT_LISTENER_KEY, listeners);
 		}
-		((List<EntityEventRegistrationModel>) element.getObjectValue()).add(registrationModel);
+		listeners.add(registrationModel);
+		OSFCacheManager.getApplicationCache().replace(EVENT_LISTENER_KEY, listeners);
 		LOG.log(Level.INFO, () -> "Registered Event Listener: " + registrationModel.getName() + " Id: " + registrationModel.getRegistrationId());
 	}
 
 	@Override
 	public void unregisterEventListener(String registrationId)
 	{
-		Element element = OSFCacheManager.getApplicationCache().get(EVENT_LISTENER_KEY);
+		Object element = OSFCacheManager.getApplicationCache().get(EVENT_LISTENER_KEY);
 		if (element != null) {
 
 			@SuppressWarnings("unchecked")
-			List<EntityEventRegistrationModel> listerners = (List<EntityEventRegistrationModel>) element.getObjectValue();
-			listerners.removeIf((listenerModel) -> {
+			List<EntityEventRegistrationModel> listeners = (List<EntityEventRegistrationModel>) element;
+			listeners.removeIf((listenerModel) -> {
 				return listenerModel.getRegistrationId().equals(registrationId);
 			});
 
-			OSFCacheManager.getApplicationCache().put(element);
+			OSFCacheManager.getApplicationCache().replace(EVENT_LISTENER_KEY, listeners);
 			LOG.log(Level.INFO, () -> "Un Register Event Listener: " + registrationId);
 		}
 	}
@@ -74,12 +73,12 @@ public class EntityEventServiceImpl
 	{
 		//NO-OP if null
 		if (entityEventModel != null) {
-			Element element = OSFCacheManager.getApplicationCache().get(EVENT_LISTENER_KEY);
+			Object element = OSFCacheManager.getApplicationCache().get(EVENT_LISTENER_KEY);
 			if (element != null) {
 
 				@SuppressWarnings("unchecked")
-				List<EntityEventRegistrationModel> listerners = (List<EntityEventRegistrationModel>) element.getObjectValue();
-				listerners.forEach((listenerModel) -> {
+				List<EntityEventRegistrationModel> listeners = (List<EntityEventRegistrationModel>) element;
+				listeners.forEach((listenerModel) -> {
 					try {
 						if (LOG.isLoggable(Level.FINEST)) {
 							LOG.log(Level.FINEST, () -> "Process Event: " + entityEventModel + " Handler: " + listenerModel.getName());

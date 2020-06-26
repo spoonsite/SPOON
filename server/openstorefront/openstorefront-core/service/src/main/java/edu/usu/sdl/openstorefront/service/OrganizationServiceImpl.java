@@ -151,9 +151,9 @@ public class OrganizationServiceImpl
 
 	private void clearOrganizationCaches()
 	{
-		OSFCacheManager.getContactCache().removeAll();
-		OSFCacheManager.getComponentCache().removeAll();
-		OSFCacheManager.getSearchCache().removeAll();
+		OSFCacheManager.getContactCache().clear();
+		OSFCacheManager.getComponentCache().clear();
+		OSFCacheManager.getSearchCache().clear();
 	}
 
 	@Override

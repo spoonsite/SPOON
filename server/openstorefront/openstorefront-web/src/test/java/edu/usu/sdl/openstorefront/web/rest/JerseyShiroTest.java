@@ -173,7 +173,7 @@ public abstract class JerseyShiroTest extends JerseyTest
 		 */
 		ServiceProxy.Test.setPersistenceServiceToTest();
 		OsgiManager.getInstance().initialize();
-		OSFCacheManager.init();
+		OSFCacheManager.initializeStatic();
 	}
 
 	@Before

@@ -55,9 +55,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 import org.quartz.JobKey;
 
@@ -734,10 +731,8 @@ public class WorkPlanServiceImpl
 		String defaultComponentPlanKey = "DEFAULT_COMPONENT_WP";
 
 		//check cache
-		Element element = OSFCacheManager.getWorkPlanTypeCache().get(componentType);
-		if (element != null) {
-			workPlan = (WorkPlan) element.getObjectValue(); // returns null
-		} else {
+		WorkPlan element = (WorkPlan) OSFCacheManager.getWorkPlanTypeCache().get(componentType);
+		if (element == null) {
 			WorkPlan workPlanExample = new WorkPlan();
 			workPlanExample.setActiveStatus(WorkPlan.ACTIVE_STATUS);
 			List<WorkPlan> workPlanAll = workPlanExample.findByExample();
@@ -746,8 +741,7 @@ public class WorkPlanServiceImpl
 				if (workPlanItem.getComponentTypes() != null) {
 					for (WorkPlanComponentType workPlanComponentType : workPlanItem.getComponentTypes()) {
 
-						Element cacheElement = new Element(workPlanComponentType.getComponentType(), workPlanItem);
-						OSFCacheManager.getWorkPlanTypeCache().put(cacheElement);
+						OSFCacheManager.getWorkPlanTypeCache().put(workPlanComponentType.getComponentType(), workPlanItem);
 
 						if (workPlanItem.getAppliesToChildComponentTypes()) {
 							ComponentTypeOptions componentTypeOptions = new ComponentTypeOptions();
@@ -759,33 +753,26 @@ public class WorkPlanServiceImpl
 
 							List<String> children = nestedModel.findComponentTypeChildren();
 							for (String childType : children) {
-								cacheElement = new Element(childType, workPlanItem);
-								OSFCacheManager.getWorkPlanTypeCache().put(cacheElement);
+								OSFCacheManager.getWorkPlanTypeCache().put(childType, workPlanItem);
 							}
 						}
 					}
 				}
 			}
 
-			element = OSFCacheManager.getWorkPlanTypeCache().get(componentType);
-			if (element != null) {
-				workPlan = (WorkPlan) element.getObjectValue();
-			}
+			workPlan = (WorkPlan) OSFCacheManager.getWorkPlanTypeCache().get(componentType);
 		}
 
 		//pull default
 		if (workPlan == null) {
-			Element defaultElement = OSFCacheManager.getWorkPlanTypeCache().get(defaultComponentPlanKey);
-			if (defaultElement != null) {
-				workPlan = (WorkPlan) defaultElement.getObjectValue();
-			} else {
+			workPlan = (WorkPlan) OSFCacheManager.getWorkPlanTypeCache().get(defaultComponentPlanKey);
+			if (workPlan == null) {
 				WorkPlan workPlanExample = new WorkPlan();
 				workPlanExample.setDefaultWorkPlan(Boolean.TRUE);
 				workPlanExample.setWorkPlanType(WorkPlanType.COMPONENT);
 				workPlan = workPlanExample.find();
 
-				defaultElement = new Element(defaultComponentPlanKey, workPlan);
-				OSFCacheManager.getWorkPlanTypeCache().put(defaultElement);
+				OSFCacheManager.getWorkPlanTypeCache().put(defaultComponentPlanKey, workPlan);
 			}
 		}
 		return workPlan;
@@ -793,7 +780,7 @@ public class WorkPlanServiceImpl
 
 	private void clearCache()
 	{
-		OSFCacheManager.getWorkPlanTypeCache().removeAll();
+		OSFCacheManager.getWorkPlanTypeCache().clear();
 	}
 
 	@Override

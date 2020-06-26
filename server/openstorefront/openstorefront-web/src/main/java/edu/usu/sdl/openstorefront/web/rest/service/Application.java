@@ -87,9 +87,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import net.sf.ehcache.Cache;
+import org.ehcache.Cache;
 import net.sourceforge.stripes.util.bean.BeanUtil;
 import org.apache.commons.lang.StringUtils;
+import org.ehcache.core.spi.service.StatisticsService;
+import org.ehcache.core.statistics.CacheStatistics;
 
 /**
  * Application related services
@@ -519,21 +521,27 @@ public class Application
 	public Response getCaches()
 	{
 		List<CacheView> cacheViews = new ArrayList<>();
-		for (String cacheName : OSFCacheManager.getCacheManager().getCacheNames()) {
+		StatisticsService statisticsService = OSFCacheManager.getStatisticsService();
+		for (String cacheName : OSFCacheManager.getCacheNames()) {
 			CacheView cacheView = new CacheView();
 			cacheView.setName(cacheName);
+			CacheStatistics ehCacheStat = statisticsService.getCacheStatistics(cacheName);
+			cacheView.setHitCount(ehCacheStat.getCacheHits());
 
-			Cache cache = OSFCacheManager.getCacheManager().getCache(cacheName);
-			cacheView.setHitCount(cache.getStatistics().cacheHitCount());
-			cacheView.setRoughCount(cache.getKeysNoDuplicateCheck().size());
+			 Cache<String, Object> cache = OSFCacheManager.getCacheManager().getCache(cacheName, String.class, Object.class);
+			 int cacheKeyCount = 0;
+			 for (Cache.Entry entry : cache) {
+			 	cacheKeyCount++;
+			 }
+			 cacheView.setRoughCount(cacheKeyCount);
 
-			long total = cache.getStatistics().cacheHitCount() + cache.getStatistics().cacheMissCount();
+			long total = ehCacheStat.getCacheHits() + ehCacheStat.getCacheMisses();
 			if (total > 0) {
-				cacheView.setHitRatio((double) cache.getStatistics().cacheHitCount() / (double) total);
+				cacheView.setHitRatio((double) ehCacheStat.getCacheHits() / (double) total);
 			} else {
 				cacheView.setHitRatio(0);
 			}
-			cacheView.setMissCount(cache.getStatistics().cacheMissCount());
+			cacheView.setMissCount(ehCacheStat.getCacheMisses());
 			cacheViews.add(cacheView);
 		}
 
@@ -551,9 +559,9 @@ public class Application
 			@PathParam("name") String cacheName
 	)
 	{
-		Cache cache = OSFCacheManager.getCacheManager().getCache(cacheName);
+		Cache<String, Object> cache = OSFCacheManager.getCacheManager().getCache(cacheName, String.class, Object.class);
 		if (cache != null) {
-			cache.removeAll();
+			cache.clear();
 			return Response.ok().build();
 		}
 

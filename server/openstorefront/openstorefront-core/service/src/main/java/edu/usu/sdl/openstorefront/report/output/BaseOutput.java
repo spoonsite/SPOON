@@ -61,9 +61,6 @@ public abstract class BaseOutput
 			case ReportTransmissionType.EMAIL:
 				output = new EmailOutput(reportOutput, report, reportGenerator, userContext);
 				break;
-			case ReportTransmissionType.CONFLUENCE:
-				output = new ConfluenceOutput(reportOutput, report, reportGenerator, userContext);
-				break;
 			default:
 				throw new OpenStorefrontRuntimeException("Output Type not supported", "Add Support to BaseOutput");
 		}

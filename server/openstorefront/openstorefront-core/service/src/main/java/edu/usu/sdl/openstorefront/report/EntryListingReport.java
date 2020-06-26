@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.report;
 import edu.usu.sdl.openstorefront.common.exception.OpenStorefrontRuntimeException;
 import edu.usu.sdl.openstorefront.common.manager.PropertiesManager;
 import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
-import edu.usu.sdl.openstorefront.common.util.StringProcessor;
 import edu.usu.sdl.openstorefront.core.api.Service;
 import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.Component;
@@ -36,7 +35,6 @@ import edu.usu.sdl.openstorefront.report.model.EntryListingReportLineModel;
 import edu.usu.sdl.openstorefront.report.model.EntryListingReportModel;
 import edu.usu.sdl.openstorefront.report.output.ReportWriter;
 import edu.usu.sdl.openstorefront.service.manager.ReportManager;
-import edu.usu.sdl.openstorefront.service.manager.resource.ConfluenceClient;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -180,17 +178,17 @@ public class EntryListingReport
 
 	/**
 	 * Loads information from the component object into LineModel object.
-	 *  
+	 *
 	 * @param component
 	 * @param viewLinkBase
-	 * is the first half of a url that is intended to help create a url link 
-	 * in the LineModel to a webpage about the component in question. 
-	 * 
+	 * is the first half of a url that is intended to help create a url link
+	 * in the LineModel to a webpage about the component in question.
+	 *
 	 * @param evalMap
 	 * maps Component ID's to lists of Evaluation objects. It is a list of every
-	 * single component on SPOON site that has an evaluation on it, paired with every 
-	 * active evaluation assigned to that component-ID. 
-	 * 
+	 * single component on SPOON site that has an evaluation on it, paired with every
+	 * active evaluation assigned to that component-ID.
+	 *
 	 * @return EntryListingReportLineModel
 	 */
 	private EntryListingReportLineModel componentToLineModel(Component component, String viewLinkBase, Map<String, List<Evaluation>> evalMap)
@@ -200,24 +198,11 @@ public class EntryListingReport
 		lineModel.setComponentId(component.getComponentId());
 		lineModel.setViewLink(viewLinkBase + component.getComponentId());
 
-		String entryType = ConfluenceClient.confluenceEscapeCharater(
-				service.getComponentService().getComponentTypeParentsString(component.getComponentType(), true)
-		);
-		lineModel.setEntryType(entryType);
-
 		// Set time/date properties
 		lineModel.setLastSubmitDts(component.getSubmittedDts());
 		lineModel.setLastUpdatedDts(component.getLastActivityDts());
 		lineModel.setlastVendorUpdateApprovedDate(component.getApprovedDts());
 
-		String name = ConfluenceClient.confluenceEscapeCharater(component.getName());
-		lineModel.setName(name);
-
-		String description = StringProcessor.ellipseString(StringProcessor.stripHtml(component.getDescription()), MAX_DESCRIPTION_SIZE);
-		description = StringProcessor.stripeExtendedChars(description);
-		description = ConfluenceClient.confluenceEscapeCharater(description);
-
-		lineModel.setShortDescription(description);
 		lineModel.setEvaluationStatus("");
 
 		List<Evaluation> evals = evalMap.get(component.getComponentId());
@@ -259,10 +244,8 @@ public class EntryListingReport
 
 		ReportTransmissionType view = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.VIEW);
 		ReportTransmissionType email = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.EMAIL);
-		ReportTransmissionType confluence = service.getLookupService().getLookupEnity(ReportTransmissionType.class, ReportTransmissionType.CONFLUENCE);
 		transmissionTypes.add(view);
 		transmissionTypes.add(email);
-		transmissionTypes.add(confluence);
 
 		return transmissionTypes;
 	}
@@ -288,11 +271,6 @@ public class EntryListingReport
 				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.PDF);
 				formats.add(format);
 				break;
-
-			case ReportTransmissionType.CONFLUENCE:
-				format = service.getLookupService().getLookupEnity(ReportFormat.class, ReportFormat.HTML);
-				formats.add(format);
-				break;
 		}
 
 		return formats;
@@ -315,9 +293,6 @@ public class EntryListingReport
 		viewFormat = outputKey(ReportTransmissionType.EMAIL, ReportFormat.PDF);
 		writerMap.put(viewFormat, (ReportWriter<EntryListingReportModel>) this::writePdf);
 
-		viewFormat = outputKey(ReportTransmissionType.CONFLUENCE, ReportFormat.HTML);
-		writerMap.put(viewFormat, (ReportWriter<EntryListingReportModel>) this::writeConfluenceHtml);
-
 		return writerMap;
 	}
 
@@ -325,13 +300,6 @@ public class EntryListingReport
 	{
 		HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
 		String renderedTemplate = createHtml(reportModel, "entryListing.ftl");
-		htmlGenerator.addLine(renderedTemplate);
-	}
-
-	private void writeConfluenceHtml(BaseGenerator generator, EntryListingReportModel reportModel)
-	{
-		HtmlGenerator htmlGenerator = (HtmlGenerator) generator;
-		String renderedTemplate = createHtml(reportModel, "entryListingConfluence.ftl");
 		htmlGenerator.addLine(renderedTemplate);
 	}
 
@@ -344,14 +312,14 @@ public class EntryListingReport
 
 	/**
 	 * This exists for modularity, it generates the actual report the user sees in HTMl code string. All the other 'write-' functions above-
-	 * writeHtml, writeConfluenceHtml, writePdf - they all take the HTML document string this generates and then go the extra step of converting
-	 * html into pdf/confluence/etc... 
+	 * writeHtml, writePdf - they all take the HTML document string this generates and then go the extra step of converting
+	 * html into pdf/etc...
 	 * @param reportModel
 	 * @param templateFile
 	 * Path to the .ftl file that contains the actual HTML layout of the report
-	 * 
+	 *
 	 * @return String renderedTemplate
-	 * of HTML that is used for the actual report the user sees. 
+	 * of HTML that is used for the actual report the user sees.
 	 */
 	private String createHtml(EntryListingReportModel reportModel, String templateFile)
 	{

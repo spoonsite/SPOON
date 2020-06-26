@@ -42,7 +42,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import net.sf.ehcache.Element;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 
@@ -64,18 +63,17 @@ public class ComponentTypeServiceImpl
 	public String getComponentTypeForComponent(String componentId)
 	{
 		String componentType = null;
-		Element element = OSFCacheManager.getComponentTypeComponentCache().get(componentId);
+		String element = (String) OSFCacheManager.getComponentTypeComponentCache().get(componentId);
 		if (element != null) {
-			componentType = (String) element.getObjectValue();
+			componentType = element;
 		} else {
 
 			Component componentExample = new Component();
 			for (Component component : componentExample.findByExample()) {
-				Element newElement = new Element(component.getComponentId(), component.getComponentType());
 				if (component.getComponentId().equals(componentId)) {
 					componentType = component.getComponentType();
 				}
-				OSFCacheManager.getComponentTypeComponentCache().put(newElement);
+				OSFCacheManager.getComponentTypeComponentCache().put(component.getComponentId(), component.getComponentType());
 			}
 		}
 		return componentType;
@@ -219,15 +217,14 @@ public class ComponentTypeServiceImpl
 	public List<ComponentType> getAllComponentTypes()
 	{
 		List<ComponentType> componentTypes;
-		Element element = OSFCacheManager.getComponentTypeCache().get(OSFCacheManager.ALLCODE_KEY);
+		Object element = OSFCacheManager.getComponentTypeCache().get(OSFCacheManager.ALLCODE_KEY);
 		if (element != null) {
-			componentTypes = (List<ComponentType>) element.getObjectValue();
+			componentTypes = (List<ComponentType>) element;
 		} else {
 			ComponentType componentType = new ComponentType();
 			componentTypes = componentType.findByExample();
 			fixOrphans(componentTypes);
-			element = new Element(OSFCacheManager.ALLCODE_KEY, componentTypes);
-			OSFCacheManager.getComponentTypeCache().put(element);
+			OSFCacheManager.getComponentTypeCache().put(OSFCacheManager.ALLCODE_KEY, componentTypes);
 		}
 
 		return componentTypes;
@@ -243,7 +240,7 @@ public class ComponentTypeServiceImpl
 			componentType.populateBaseCreateFields();
 			componentType = persistenceService.persist(componentType);
 		}
-		OSFCacheManager.getComponentTypeCache().removeAll();
+		OSFCacheManager.getComponentTypeCache().clear();
 
 		return componentType;
 	}
@@ -279,8 +276,8 @@ public class ComponentTypeServiceImpl
 				componentTypeFound.populateBaseUpdateFields();
 				persistenceService.persist(componentTypeFound);
 			}
-			OSFCacheManager.getComponentCache().removeAll();
-			OSFCacheManager.getComponentTypeCache().removeAll();
+			OSFCacheManager.getComponentCache().clear();
+			OSFCacheManager.getComponentTypeCache().clear();
 		}
 	}
 
@@ -496,7 +493,7 @@ public class ComponentTypeServiceImpl
 			}
 
 			if (clearCache) {
-				OSFCacheManager.getComponentTypeCache().removeAll();
+				OSFCacheManager.getComponentTypeCache().clear();
 			}
 		}
 	}
@@ -550,7 +547,7 @@ public class ComponentTypeServiceImpl
 			}
 
 			if (clearCache) {
-				OSFCacheManager.getComponentTypeCache().removeAll();
+				OSFCacheManager.getComponentTypeCache().clear();
 			}
 		}
 	}
@@ -800,7 +797,7 @@ public class ComponentTypeServiceImpl
 			existing.populateBaseUpdateFields();
 			persistenceService.persist(existing);
 			existing = persistenceService.unwrapProxyObject(existing);
-			OSFCacheManager.getComponentTypeCache().removeAll();
+			OSFCacheManager.getComponentTypeCache().clear();
 		}
 		return existing;
 	}
