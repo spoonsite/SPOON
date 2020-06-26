@@ -232,7 +232,9 @@ public class WorkPlanServiceImpl
 
 		int counter = 0;
 		while( JobManager.getJobStatus(new JobKey("WorkPlanSyncJob","SYSTEM")).equals("BLOCKED") && counter < TIME_WAIT_FOR_THREAD_DEATH )
-			counter++; 
+			{
+               counter++;
+          }
 
 		// fallback for failed Job interruption
 		if ( JobManager.getJobStatus(new JobKey("WorkPlanSyncJob","SYSTEM")).equals("BLOCKED") ){
