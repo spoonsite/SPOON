@@ -32,7 +32,8 @@ import edu.usu.sdl.openstorefront.service.job.SystemArchiveJob;
 import edu.usu.sdl.openstorefront.service.job.SystemCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.TrackingCleanupJob;
 import edu.usu.sdl.openstorefront.service.job.UpdateSearchStatsJob;
-import edu.usu.sdl.openstorefront.service.job.UserProfileSyncJob;import edu.usu.sdl.openstorefront.service.manager.model.AddJobModel;
+import edu.usu.sdl.openstorefront.service.job.UserProfileSyncJob;
+import edu.usu.sdl.openstorefront.service.manager.model.AddJobModel;
 import edu.usu.sdl.openstorefront.service.manager.model.JobModel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -498,7 +499,7 @@ public class JobManager
 			throw new OpenStorefrontRuntimeException("Unable to interrupt job", "Make sure job exists", ex);
 		}
 	}
-	
+
 	public static void pauseScheduler()
 	{
 		try {
@@ -571,7 +572,7 @@ public class JobManager
 		}
 		return jobs;
 	}
-	
+
 	/**
 	 * A lightweight way to get the current status of a (running / not running) job.
 	 * Typical responses include:
@@ -580,9 +581,9 @@ public class JobManager
 	 *	"BLOCKED" - Job cannot be started, this could be because it is currently running.
 	 *				Because most of the logic associated with any job resides in files outside
 	 *				of the Job file, this status is more likely to be reported while a job
-	 *				is running than the "RUNNING" status. To the scheduler it appears as 
-	 *				though the extraneous logic is preventing the execution of the job when
-	 *				in fact the extraneous logic IS the job. 
+	 *				is running than the "RUNNING" status. To the scheduler it appears as
+	 *				though the outside-of-file logic is preventing the execution of the job when
+	 *				in fact the extraneous logic IS the job.
 	 *	"PAUSED" - Job is suspended cannot be started
 	 * @param jobKey
 	 * @return can return null if unobtainable

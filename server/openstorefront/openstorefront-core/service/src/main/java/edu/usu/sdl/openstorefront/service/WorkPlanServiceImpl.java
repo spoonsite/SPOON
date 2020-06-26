@@ -231,11 +231,14 @@ public class WorkPlanServiceImpl
 
 		// Wait for the WorkPlanSync Job to die
 		long startTime = System.currentTimeMillis();
-		while(WorkPlanSyncJobIsBlocked() && System.currentTimeMillis() - startTime < MILLISEC_TIME_WAIT_FOR_THREAD_DEATH);
+		while(WorkPlanSyncJobIsBlocked() && System.currentTimeMillis() - startTime > MILLISEC_TIME_WAIT_FOR_THREAD_DEATH);
 
 		// fallback for failed Job interruption
 		if ( WorkPlanSyncJobIsBlocked() ){
 			throw new OpenStorefrontRuntimeException( "WorkPlanSyncJob failed to shut down", "Please wait before you try to delete a WorkPlan again, or pause the WorkPlanSync Job");
+		} else {
+			LOG.log(Level.INFO, "In process of removing a workplan, the WorkPlanSyncJob was ordered to die (if it was running). System paused for approx "
+					+ (System.currentTimeMillis() - startTime) + " milliseconds");
 		}
 
 		WorkPlan workPlan = getPersistenceService().findById(WorkPlan.class, workPlanId);
