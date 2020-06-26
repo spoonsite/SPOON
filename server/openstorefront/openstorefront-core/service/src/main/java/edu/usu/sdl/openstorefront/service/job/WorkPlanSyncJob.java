@@ -25,9 +25,9 @@ import org.quartz.UnableToInterruptJobException;
 
 /**
  * Sync Workplans with entities
- * 
+ *
  * <code>@see{WorkPlanServiceImpl.java#removeWorkPlan}</code> has a need to kill
- * this job so that it does not interfere with it's operation. 
+ * this job so that it does not interfere with it's operation.
  *
  * @author dshurtleff
  */
@@ -38,7 +38,7 @@ public class WorkPlanSyncJob
 {
 
 	private static final Logger LOG = Logger.getLogger(WorkPlanSyncJob.class.getName());
-	
+
 	private volatile boolean interrupted = false;
 
 	@Override
@@ -48,6 +48,11 @@ public class WorkPlanSyncJob
 		WorkPlan workPlanExample = new WorkPlan();
 		long count = service.getPersistenceService().countByExample(workPlanExample);
 		if (count > 0) {
+			// If a workplan was removed since the last time the job was run, it would have
+			// set the Interruped boolean to true. To prevent the removal of a workplan from
+			// causing the job to skip the next time it goes, we will reset it before
+			// beginning.
+			this.resetInterruption();
 			LOG.log(Level.FINER, "Starting WorkPlan Sync");
 			service.getWorkPlanService().syncWorkPlanLinks(this);
 			LOG.log(Level.FINER, "Done WorkPlan Sync");
@@ -62,13 +67,13 @@ public class WorkPlanSyncJob
 		LOG.log(Level.FINE, "A WorkPlanSync Job has been interrupted and ordered to die! This may happen if someone deletes a WorkPlan while the Job is running");
 		interrupted = true;
 	}
-	
+
 	public boolean getIsInterrupted(){
 		return interrupted;
 	}
-	
+
 	public void resetInterruption(){
-		interrupted = true;
+		interrupted = false;
 	}
 
 }

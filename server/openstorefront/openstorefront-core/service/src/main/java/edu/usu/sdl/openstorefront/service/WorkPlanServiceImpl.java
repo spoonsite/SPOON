@@ -68,8 +68,8 @@ public class WorkPlanServiceImpl
 {
 
 	private static final Logger LOG = Logger.getLogger(WorkPlanServiceImpl.class.getName());
-	
-	private static final int TIME_WAIT_FOR_THREAD_DEATH = 500;
+
+	private static final int MILLISEC_TIME_WAIT_FOR_THREAD_DEATH = 500;
 
 	@Override
 	public WorkPlan saveWorkPlan(WorkPlan workPlan)
@@ -226,29 +226,26 @@ public class WorkPlanServiceImpl
 	@Override
 	public void removeWorkPlan(String workPlanId, WorkPlanRemoveMigration workPlanRemoveMigration)
 	{
-		// stop currently running WorkPlanSync Job so it doesn't interfer with deletion
-		JobManager.interruptJob("WorkPlanSync", "SYSTEM");                   //////  <--------- hey Trent! figure out what the second param wants, feed it, then run it! if it works, its just some doc & cleanup afte rhta. don't forget to clean up Aaron's funky if statement. for my sanity.
-		// Wait up to 1000 clock cycles for the WorkPlanSync Job to die
+		// stop currently running WorkPlanSync Job so it doesn't interfere with deletion
+		JobManager.interruptJob("WorkPlanSync", "SYSTEM");
 
-		int counter = 0;
-		while( JobManager.getJobStatus(new JobKey("WorkPlanSyncJob","SYSTEM")).equals("BLOCKED") && counter < TIME_WAIT_FOR_THREAD_DEATH )
-			{
-               counter++;
-          }
+		// Wait for the WorkPlanSync Job to die
+		long startTime = System.currentTimeMillis();
+		while(WorkPlanSyncJobIsBlocked() && System.currentTimeMillis() - startTime < MILLISEC_TIME_WAIT_FOR_THREAD_DEATH);
 
 		// fallback for failed Job interruption
-		if ( JobManager.getJobStatus(new JobKey("WorkPlanSyncJob","SYSTEM")).equals("BLOCKED") ){
+		if ( WorkPlanSyncJobIsBlocked() ){
 			throw new OpenStorefrontRuntimeException( "WorkPlanSyncJob failed to shut down", "Please wait before you try to delete a WorkPlan again, or pause the WorkPlanSync Job");
 		}
-		
+
 		WorkPlan workPlan = getPersistenceService().findById(WorkPlan.class, workPlanId);
 		if (workPlan != null) {
 
-			if (workPlanRemoveMigration != null && 
-			  	/*defend against faulty migrations submitted in error*/ 
-			  	workPlanRemoveMigration.getWorkPlanId() != null && 
+			if (workPlanRemoveMigration != null &&
+			  	/*defend against faulty migrations submitted in error*/
+			  	workPlanRemoveMigration.getWorkPlanId() != null &&
 				!workPlanRemoveMigration.getStepMigrations().isEmpty()
-			) 
+			)
 			{
 				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 				workPlanLinkExample.setWorkPlanId(workPlan.getWorkPlanId());
@@ -256,9 +253,6 @@ public class WorkPlanServiceImpl
 
 				for (WorkPlanLink workPlanLink : workPlanLinks) {
 					workPlanLink.setWorkPlanId(workPlanRemoveMigration.getWorkPlanId());
-					if (workPlanLink.getWorkPlanId() == null) {
-						continue;
-					}
 					Map<String, String> stepConvertMap = workPlanRemoveMigration.getStepMigrations()
 							.stream()
 							.collect(Collectors.toMap(WorkPlanStepMigration::getFromStepId, WorkPlanStepMigration::getToStepId));
@@ -274,15 +268,23 @@ public class WorkPlanServiceImpl
 				}
 			}
 
-			//remove links
-			WorkPlanLink workplanLink = new WorkPlanLink();
-			workplanLink.setWorkPlanId(workPlan.getWorkPlanId());
-			getPersistenceService().deleteByExample(workplanLink);
+			// remove links. If there was a migration plan found, then the
+			// following code will end up finding nothing to delete.
+			// Later runs of the WorkPlanSync job will reinitialize these
+			// deleted workPlanLinks into their new home WorkPlan.
+			WorkPlanLink workplanLinkExample = new WorkPlanLink();
+			workplanLinkExample.setWorkPlanId(workPlan.getWorkPlanId());
+			getPersistenceService().deleteByExample(workplanLinkExample);
 
 			getPersistenceService().delete(workPlan);
 
 			clearCache();
 		}
+	}
+
+	private WorkPlanSyncJobIsBlocked(){
+		String status = JobManager.getJobStatus(new JobKey("WorkPlanSyncJob","SYSTEM"));
+		return status.equals("BLOCKED") || status.equals("RUNNING");
 	}
 
 	@Override
@@ -630,7 +632,7 @@ public class WorkPlanServiceImpl
 						workPlanSyncJob.resetInterruption(); // prevent permanent disabling of WorkPlanSyncJob
 						return;
 					}
-					
+
 					//ignore return. This function creates a new WorkPlanLink for the component if it doesn't exist in active WorkPlan
 					getWorkPlanForComponent(component.getComponentId());
 					synced++;

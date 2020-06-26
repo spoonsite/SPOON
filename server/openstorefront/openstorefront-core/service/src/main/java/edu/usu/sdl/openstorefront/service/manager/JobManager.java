@@ -492,6 +492,7 @@ public class JobManager
 
 	public static void interruptJob(String jobName, String group){
 		try {
+			// will have no effect if job not running
 			scheduler.interrupt(JobKey.jobKey(jobName, group));
 		} catch (SchedulerException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to interrupt job", "Make sure job exists", ex);
@@ -575,7 +576,13 @@ public class JobManager
 	 * A lightweight way to get the current status of a (running / not running) job.
 	 * Typical responses include:
 	 *	"NORMAL" - Job is not running but could be started
+	 *  "RUNNING" - Job code is executing
 	 *	"BLOCKED" - Job cannot be started, this could be because it is currently running.
+	 *				Because most of the logic associated with any job resides in files outside
+	 *				of the Job file, this status is more likely to be reported while a job
+	 *				is running than the "RUNNING" status. To the scheduler it appears as 
+	 *				though the extraneous logic is preventing the execution of the job when
+	 *				in fact the extraneous logic IS the job. 
 	 *	"PAUSED" - Job is suspended cannot be started
 	 * @param jobKey
 	 * @return can return null if unobtainable
@@ -588,7 +595,7 @@ public class JobManager
 			Trigger trigger = triggers.get(0);
 			status = scheduler.getTriggerState(trigger.getKey()).toString();
 		} catch (SchedulerException ex){
-			throw new OpenStorefrontRuntimeException("Job status for Job requested that does not exist, or is faulty", ex);
+			throw new OpenStorefrontRuntimeException("Job status for Job requested(jobkey: "+jobKey+") that does not exist, or is faulty", ex);
 		}
 		return status;
 	}
