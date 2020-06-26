@@ -285,7 +285,7 @@ public class WorkPlanServiceImpl
 		}
 	}
 
-	private WorkPlanSyncJobIsBlocked(){
+	private boolean WorkPlanSyncJobIsBlocked(){
 		String status = JobManager.getJobStatus(new JobKey("WorkPlanSyncJob","SYSTEM"));
 		return status.equals("BLOCKED") || status.equals("RUNNING");
 	}
