@@ -38,7 +38,6 @@
               color="secondary"
               style="margin-bottom:1em;"
               @click="login"
-              :disabled="!valid"
               :loading="loading"
               tabindex=3
             >

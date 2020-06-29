@@ -171,8 +171,7 @@
           v-on:submit.prevent
         >
           <v-btn
-            color="accent"
-            :disabled="!verificationValid"
+            color="primary"
             :loading="verificationLoading"
             style="margin-bottom:2em;"
             @click="register('POST')"
@@ -194,7 +193,13 @@
 
     <div class="button-wrapper mt-2">
       <div class="btn1 pb-2">
-        <v-btn block :loading="signupLoading" :disabled="!valid" @click="register()"><v-icon class="custon-icon" light>check</v-icon>Signup</v-btn>
+        <v-btn
+          block
+          :loading="signupLoading"
+          @click="register()"
+        >
+          <v-icon class="custon-icon" light>check</v-icon>Signup
+        </v-btn>
       </div>
       <div class="btn2 pb-2">
       <v-btn block dark @click="cancel()"><v-icon light class="custom-icon">cancel</v-icon>Cancel</v-btn>
