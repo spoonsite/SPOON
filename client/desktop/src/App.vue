@@ -71,7 +71,7 @@
                 <v-list-item-title>Disclaimer</v-list-item-title>
               </v-list-item>
               <v-divider></v-divider>
-              <v-list-item class="menu-item" @click="logout()">
+              <v-list-item class="menu-item" href="/openstorefront/Login.action?Logout">
                 <v-list-item-action>
                   <v-icon>fas fa-sign-out-alt</v-icon>
                 </v-list-item-action>
@@ -308,18 +308,6 @@ export default {
     }
   },
   methods: {
-    logout() {
-      this.loggingOut = true
-      this.$http
-        .get('/openstorefront/Login.action?Logout')
-        .then(response => {
-          window.location.href = 'openstorefront'
-        })
-        .catch(error => {
-          this.$toasted.error('There was an error logging out')
-          console.error(error)
-        })
-    },
     parseJSON(obj) {
       safeParse(obj, function(err, json) {
         if (err) {
