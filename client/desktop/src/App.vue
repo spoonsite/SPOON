@@ -172,8 +172,14 @@ export default {
         return response
       },
       error => {
-        this.currentError = error.response
-        this.errorDialog = true
+        const status = error.response.status
+        if (status === 401 || status === 403 || status === 405) {
+          sessionStorage.setItem('gotoUrl', window.location.href)
+          window.location.href = 'openstorefront'
+        } else {
+          this.currentError = error.response
+          this.errorDialog = true
+        }
         return Promise.reject(error)
       }
     )
