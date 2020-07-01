@@ -376,14 +376,6 @@ export default {
       }
     }
   },
-  computed: {
-    valid () {
-      return this.credentials.valid && this.userInformation.valid && this.verification.valid
-    },
-    verificationValid () {
-      return this.credentials.valid && this.userInformation.valid
-    }
-  },
   watch: {
     videoDialog (newState, oldState) {
       if (!newState) {
