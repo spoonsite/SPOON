@@ -163,7 +163,7 @@
 								processGoto = true;
 							}
 						} else {
-							out.print("Make sure you are login and have the correct permissions.");	
+							out.print("Make sure you are logged in and have the correct permissions.");	
 						}
 					}
 				
