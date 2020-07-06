@@ -15,13 +15,13 @@ See [Server Code Standard](/dev/server-code-standard), and [Front-end Code Stand
     - Windows: [https://github.com/ojdkbuild/ojdkbuild](https://github.com/ojdkbuild/ojdkbuild)
     - Linux: `sudo apt install openjdk-8-jdk`
 
-1. Install Netbeans 8.2 Java EE version from [https://netbeans.org/downloads/8.2/](https://netbeans.org/downloads/8.2/)
+1. Install the latest Netbeans version from [https://netbeans.apache.org/download/](https://netbeans.apache.org/download/)
     - Run the installer, and during install don't check either server box (glassfish or tomcat)
     - Point Netbeans to the Openjdk 8 installation path
-        - Windows: `C:\Program Files\ojdkbuild\java-1.8.0-openjdk-1.8.0.222-2`
+        - Windows: `C:\Program Files\ojdkbuild\java-1.8.0-openjdk-1.8.0.252-2`
         - Linux: `/usr/lib/jvm/java-8-openjdk-amd64/`
 
-1. Download Tomcat 7.0.96 binaries from [https://tomcat.apache.org/download-70.cgi](https://tomcat.apache.org/download-70.cgi)
+1. Download Tomcat 7 binaries from [https://tomcat.apache.org/download-70.cgi](https://tomcat.apache.org/download-70.cgi)
     - Unpack Tomcat
 
 1. Download Elasticsearch 7.2.1 from [https://www.elastic.co/downloads/past-releases/elasticsearch-7-2-1](https://www.elastic.co/downloads/past-releases/elasticsearch-7-2-1)
@@ -30,7 +30,7 @@ See [Server Code Standard](/dev/server-code-standard), and [Front-end Code Stand
         - It is a .bat file for Windows
         - For Linux is is a shell file
     - Set the `JAVA_HOME` environment variable at the top of the elasticsearch executable
-        - Windows: `set JAVA_HOME=C:\Program Files\ojdkbuild\java-1.8.0-openjdk-1.8.0.222-2`
+        - Windows: `set JAVA_HOME=C:\Program Files\ojdkbuild\java-1.8.0-openjdk-1.8.0.252-2`
         - Linux: `JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64`
     - Start Elasticsearch by double-clicking the file that was just modified
 
@@ -41,16 +41,21 @@ See [Server Code Standard](/dev/server-code-standard), and [Front-end Code Stand
     - If you are using git: `git clone https://github.com/spoonsite/SPOON.git`
 
 1. Start and configure Netbeans
-    - Netbeans > tools > options > Java > Maven > Maven Home > "Point to maven folder downloaded from above" > apply > OK
-    - Netbeans > services > servers > add server > Apache Tomcat or TomEE > next > "Point to downloaded tomcat" > "Set user name and password = 1" > finish
-    - Netbeans > services > "just created server" > properties > Platform > VM Options > `-Xms8G -Dapplication.datadir=E:/SPOON_PROJECT_DATA`
-    - Netbeans > File > open project > "cloned project" > Open Project > spoon_Directory=>server_Directory=>openstorefront > Open Required Projects > Open Project
+    - Netbeans > tools > options > Java > Maven > Maven Home > "Point to maven folder downloaded from above or use bundled if version 3.6" > Apply > OK
+    - Netbeans > tools > options > Java > Maven > Dependencies > select "Every Project Open" for each dropdown > Apply > OK
+    - Netbeans > tools > servers > add server > Apache Tomcat or TomEE > next > "Point to downloaded tomcat" > "Set user name and password" > finish
+    - Netbeans > tools > "just created server" > Platform > VM Options > `-Xms8G -Dapplication.datadir=/empty/directory/for/data`
+    - Netbeans > File > open project > "cloned project" > Open Project > highlight `spoon_Directory/server/openstorefront` > select "Open Required Projects" > Open Project
     - Resolve Problems > "Resolve each problem until all green." > Close
 
 1. Clean the project in Netbeans
     - Clean the top-level openstorefront project (right-click and select clean)
     - Build with dependencies (right-click and select build with dependencies, NOTE: this may take a long time as it has to download many packages)
-    - Run the openstorefront-web project (right-click and select run)
+
+1. Run the project
+    - Start mongo server (See MongoSetupGuide for help with MongoDB setup)
+    - Start Elasticsearch
+    - Run the openstorefront-web project in NetBeans (right-click and select run)
 
 1. Open a web browser to `localhost:8080/openstorefront`
     - Login as an admin
