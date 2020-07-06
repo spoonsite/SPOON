@@ -5,7 +5,7 @@ weight = 2
 markup="mmark"
 +++
 
-This guide describes how to setup MongoDB in a docker container for development.
+This guide describes how to setup MongoDB in a docker container or install locally for development.
 <!--more-->
 
 ## Method #1: Build a Docker Container with a Dockerfile
@@ -43,7 +43,7 @@ db.use.mongo=true
 mongo.database=storefront
 ```
 
-Now that you have performed all the above steps, you just need to shutdown your tomcat server and restart it along with elasticsearch. After a few minutes your spoonsite instance should be up and running along all the data found in the aforementioned directory.
+Now that you have performed all the above steps, you just need to shutdown your tomcat server and restart it along with elasticsearch. After a few minutes your spoonsite instance should be up and running along with all the data found in the aforementioned directory.
 
 ## Method #2: Mount the mongod.conf file into the container
 
@@ -83,16 +83,36 @@ Further a Mongo inspector tool is nice to have, the following have been tested a
 
 Finally, should you want for more documentation see https://docs.docker.com/samples/library/mongo/
 
+
+## Method #3: MongoDB installed to local machine
+   - Install mongo to your local machine: https://docs.mongodb.com/manual/installation/
+   - Ensure the mongodb server is running; Default configuration will run on port 27017
+   - OPTIONAL: connect MongoDBCompass to the server for visualizing the database with `mongodb:\\127.0.0.1:27017`
+   - Windows: To open a mongo shell, run `\Mongo_install_path\Server\<version>\bin\mongo`
+      - Check that the server is successfully connected
+      - The database has been created if the following command shows 'openstorefront' as non-zero:
+         ```sh
+         show dbs
+         ```
+
 ## Restore data to the database
 
 You should have a backup of the database.
 
+### Windows
+```sh
+mkdir \location\for\backup-dir
+cd \Mongo_install_path\Server\<version>\bin\
+.\mongodump.exe --db storefron --out \path\to\backup-dir\"backup name"
+```
+
+### Linux/Unix
 ```sh
 mkdir mongo-backup
 mongodump --db storefront --out mongo-backup/`date +"%m-%d-%y"`
 ```
 
-And then put that data inside the running docker container.
+And then put that data inside the running docker container (or restore locally).
 
 ```sh
 # copy the backup to the container
