@@ -2411,7 +2411,7 @@
 									addSubTab('OSF.form.Dependencies', 'Dependencies', 'Manage Dependencies');
 								}
 								if (type.dataEntryEvaluationInformation) {
-									addSubTab('OSF.form.OldEvaluationSummary', 'Evaluation Summary', 'This is Deprecatied');
+									addSubTab('OSF.form.OldEvaluationSummary', 'Evaluation Summary', 'This is Deprecated');
 								}
 								if (type.dataEntryReviews) {
 									addSubTab('OSF.form.EntryReviews', 'Reviews', 'User reviews');
