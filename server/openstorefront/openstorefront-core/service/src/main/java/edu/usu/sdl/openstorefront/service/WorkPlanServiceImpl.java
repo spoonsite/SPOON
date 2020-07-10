@@ -62,6 +62,9 @@ public class WorkPlanServiceImpl
 		extends ServiceProxy
 		implements WorkPlanService
 {
+	// homemade mutex for case of deleting workplans while WorkPlanSyncJob is running.
+	// may need to be volatile as different threads will be influencing value simutaneously
+	private volatile boolean runningJobMustDie = false;
 
 	private static final Logger LOG = Logger.getLogger(WorkPlanServiceImpl.class.getName());
 
@@ -220,19 +223,25 @@ public class WorkPlanServiceImpl
 	@Override
 	public void removeWorkPlan(String workPlanId, WorkPlanRemoveMigration workPlanRemoveMigration)
 	{
+		// stop currently running WorkPlanSync Job (if there is one) so it doesn't interfere with deletion
+		runningJobMustDie = true;
+		
 		WorkPlan workPlan = getPersistenceService().findById(WorkPlan.class, workPlanId);
 		if (workPlan != null) {
 
-			if (workPlanRemoveMigration != null) {
+			if (workPlanRemoveMigration != null &&
+			  	/*defend against faulty migrations submitted in error*/
+			  	workPlanRemoveMigration.getWorkPlanId() != null &&
+				!workPlanRemoveMigration.getStepMigrations().isEmpty()
+			)
+			{
 				WorkPlanLink workPlanLinkExample = new WorkPlanLink();
 				workPlanLinkExample.setWorkPlanId(workPlan.getWorkPlanId());
 				List<WorkPlanLink> workPlanLinks = workPlanLinkExample.findByExampleProxy();
 
 				for (WorkPlanLink workPlanLink : workPlanLinks) {
 					workPlanLink.setWorkPlanId(workPlanRemoveMigration.getWorkPlanId());
-					if (workPlanLink.getWorkPlanId() == null) {
-						continue;
-					}
+
 					Map<String, String> stepConvertMap = workPlanRemoveMigration.getStepMigrations()
 							.stream()
 							.collect(Collectors.toMap(WorkPlanStepMigration::getFromStepId, WorkPlanStepMigration::getToStepId));
@@ -579,6 +588,9 @@ public class WorkPlanServiceImpl
 	@Override
 	public void syncWorkPlanLinks()
 	{
+		// only catch 
+		runningJobMustDie = false;
+		
 		//process all entries (x at time)
 		int maxResultsToProcess = 200;
 
@@ -599,6 +611,20 @@ public class WorkPlanServiceImpl
 			for (Component component : components) {
 				//critical loop
 				try {
+					
+					// Die if commanded to whilst still in process of syncing workPlanLinks
+					if(runningJobMustDie){
+						NotificationEvent notificationEvent = new NotificationEvent();
+						notificationEvent.setEventType(NotificationEventType.REPORT);
+//						notificationEvent.setUsername(workPlanLink.getCurrentUserAssigned());
+						notificationEvent.setMessage("General Note: Work Plan Sync Job was interrupted. ");
+//						notificationEvent.setEntityName();
+//						notificationEvent.setEntityId(workPlanLink.getWorkPlanLinkId());
+						getNotificationService().postEvent(notificationEvent);
+
+						return;
+					}
+					
 					//ignore return. This function creates a new WorkPlanLink for the component if it doesn't exist in active WorkPlan
 					getWorkPlanForComponent(component.getComponentId());
 					synced++;
