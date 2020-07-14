@@ -6,6 +6,15 @@ weight = 9999
 
 For more information, please see [GitHub](https://github.com/spoonsite/SPOON/releases).
 
+## Release Notes for v2.12.2
+
+This is another patch release. The changes are mostly code cleanup. The user shouldn't notice any changes in behavior or in the UI.
+
+- remove Confluence integration
+- fix log out redirect
+- update ehCache to latest version (v3 had large breaking changes)
+- update login area to latest Vue and Vuetify
+
 ## Release Notes for v2.12.1
 
 This is a patch release to fix bugs with the new submission form. There were a lot of issues with the attributes and tags.
