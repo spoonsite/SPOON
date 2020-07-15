@@ -30,6 +30,10 @@ import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+
+import java.io.File;
+import java.util.Scanner;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -248,7 +252,7 @@ public class UserResource
 
 			try {
 				SecurityUtils.getSecurityManager().authenticate(usernamePasswordToken);
-
+				weakPasswordCheck(userCredential.getPassword());	//If fails, logs a different error from authentication, should also prevent password reset
 				service.getSecurityService().adminResetPassword(SecurityUtil.getCurrentUserName(), userCredential.getPassword().toCharArray());
 				return Response.ok().build();
 
@@ -258,6 +262,15 @@ public class UserResource
 				RuleResult result = new RuleResult();
 				result.setFieldName(UserCredential.FIELD_EXISTING_PASSWORD);
 				result.setMessage("Existing password is invalid");
+				validationResult.getRuleResults().add(result);
+			}
+			//catch block for weakPassCheck() failure
+			catch (Exception e){
+				LOG.log(Level.FINE, "New Password is too common", e);
+
+				RuleResult result = new RuleResult();
+				result.setFieldName(UserCredential.FIELD_EXISTING_PASSWORD);	//Needs to be to the New Pass field if possible
+				result.setMessage(e.getMessage());
 				validationResult.getRuleResults().add(result);
 			}
 		}
@@ -275,6 +288,32 @@ public class UserResource
 	{
 		service.getSecurityService().deleteUser(username.toLowerCase());
 		return Response.noContent().build();
+	}
+
+	/**
+	 * Test new password against a list of known bad passwords
+	 *
+	 * @param password
+	 * @throws Exception
+	 */
+	private boolean weakPasswordCheck(String password) throws Exception
+	{
+		try {
+			File weakList = new File("passwords_modified.txt");
+			Scanner scanner = new Scanner(weakList);
+			//OPTIONAL: add test if password contains a weak word, or weak word + [num+sym] or [sym+num] combo (i.e. Password1!)
+			while (scanner.hasNextLine()){
+				if (password.equals(scanner.nextLine())) {
+					throw new Exception("Password is too common");
+				}
+			}
+			scanner.close();
+		}
+		catch (FileNotFoundException e) {
+			System.out.println("error occured");
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 }
