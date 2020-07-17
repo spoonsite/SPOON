@@ -24,7 +24,7 @@
             :rules="passwordRules"
             :error-messages="passwordError"
             v-model="password"
-            v-on:keyup.enter="login"
+            v-on:keyup.enter="debounceLogin"
             tabindex=2
           ></v-text-field>
           <router-link :to="{name: 'forgotPassword'}" class="forgot-link" tabindex=6>Forgot Password</router-link>
@@ -37,7 +37,7 @@
               block
               color="secondary"
               style="margin-bottom:1em;"
-              @click="login"
+              @click="debounceLogin"
               :loading="loading"
               tabindex=3
             >
@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 export default {
   name: 'login',
   data: () => ({
@@ -123,7 +124,10 @@ export default {
             this.toasted.error('There was a problem logging in.')
           })
       }
-    }
+    },
+    debounceLogin: _.debounce(function () {
+      this.login()
+    }, 700)
   }
 }
 </script>
