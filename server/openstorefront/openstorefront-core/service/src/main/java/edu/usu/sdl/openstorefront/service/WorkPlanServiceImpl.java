@@ -616,10 +616,7 @@ public class WorkPlanServiceImpl
 					if(runningJobMustDie){
 						NotificationEvent notificationEvent = new NotificationEvent();
 						notificationEvent.setEventType(NotificationEventType.REPORT);
-//						notificationEvent.setUsername(workPlanLink.getCurrentUserAssigned());
 						notificationEvent.setMessage("General Note: Work Plan Sync Job was interrupted. ");
-//						notificationEvent.setEntityName();
-//						notificationEvent.setEntityId(workPlanLink.getWorkPlanLinkId());
 						getNotificationService().postEvent(notificationEvent);
 
 						return;
