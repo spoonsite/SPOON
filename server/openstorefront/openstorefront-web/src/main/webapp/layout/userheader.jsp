@@ -199,7 +199,7 @@
 									margin: '0 10 0 0',
 									requiredPermissions: ['USER-SUBMISSIONS-PAGE'],
 									handler: function(){
-										actionLoadContent('Submissions');
+										window.location.href = '/openstorefront/#/submissions';
 									}									
 								},
 								{							
