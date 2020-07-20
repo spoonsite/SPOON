@@ -2393,7 +2393,7 @@
 						Ext.Array.each(allComponentTypes, function(type){
 							if (type.componentType === componentType) {
 								if (type.dataEntryAttributes) {
-									addSubTab('OSF.form.Attributes', 'Attributes', 'Manage Attributes');
+									addSubTab('OSF.form.Attributes', 'Optional Attributes', 'Manage Attributes');
 								}
 								if (type.dataEntryRelationships) {
 									addSubTab('OSF.form.Relationships', 'Relationships', 'Manage Relationships');
@@ -2411,7 +2411,7 @@
 									addSubTab('OSF.form.Dependencies', 'Dependencies', 'Manage Dependencies');
 								}
 								if (type.dataEntryEvaluationInformation) {
-									addSubTab('OSF.form.OldEvaluationSummary', 'Evaluation Summary', 'This is Deprecatied');
+									addSubTab('OSF.form.OldEvaluationSummary', 'Evaluation Summary', 'This is Deprecated');
 								}
 								if (type.dataEntryReviews) {
 									addSubTab('OSF.form.EntryReviews', 'Reviews', 'User reviews');
