@@ -27,6 +27,7 @@ public class UserCredential
 
 	@SuppressWarnings("squid:S2068")
 	public static final String FIELD_EXISTING_PASSWORD = "existingPassword";
+	public static final String FIELD_NEW_PASSWORD = "newPassword";
 
 	@ConsumeField
 	@NotNull
