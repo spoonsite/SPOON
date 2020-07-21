@@ -249,7 +249,7 @@ public class UserResource
 
 			try {
 				SecurityUtils.getSecurityManager().authenticate(usernamePasswordToken);
-				weakPasswordCheck(userCredential.getPassword());	//If fails, logs a general Exception, preventing password set
+				WeakPasswordResource.weakPasswordCheck(userCredential.getPassword(), true);	//If fails, throws a general Exception, preventing password set
 				service.getSecurityService().adminResetPassword(SecurityUtil.getCurrentUserName(), userCredential.getPassword().toCharArray());
 				return Response.ok().build();
 
@@ -283,43 +283,6 @@ public class UserResource
 	{
 		service.getSecurityService().deleteUser(username.toLowerCase());
 		return Response.noContent().build();
-	}
-
-	/**
-	 * Test new password against a list of known bad passwords
-	 *
-	 * @param password
-	 * @throws Exception
-	 */
-	private boolean weakPasswordCheck(String password) throws Exception
-	{
-		final String PASSWORDS_PATH = "/weakPasswords.txt";
-		InputStream input = null;
-		try {
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			input = classLoader.getResourceAsStream(PASSWORDS_PATH);
-			StringBuilder word = new StringBuilder();
-			while (input.available() != 0) {
-				char next = (char)input.read();
-				if (next == ('\n')) {
-					//compare to password
-					if (word.toString().equals(password)) {
-						throw new Exception("The new password is too weak");	//This exception has to be caught by the caller function
-					}
-					word = new StringBuilder();
-				}
-				else {
-					word.append(next);
-				}
-			}
-			//TODO: add test if password contains weak word + [num+sym] or [sym+num] combo (i.e. Password1! or Password!1); easily guessed
-		}
-		catch (NullPointerException e) {
-			System.out.println("error occured");
-			System.out.flush();
-			e.printStackTrace();
-		}
-		return true;
 	}
 
 }
