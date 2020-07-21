@@ -8,6 +8,7 @@ import java.io.InputStream;
  */
 public class WeakPasswordResource {
     public static final String PASSWORDS_PATH = "/weakPasswords.txt";
+    private static final int BASE_WORD_LENGTH = 6;
     
     /**
 	 * Test new password against a list of known bad passwords
@@ -19,31 +20,36 @@ public class WeakPasswordResource {
 	 */
     public static boolean weakPasswordCheck(String password, boolean needsException) throws Exception
 	{
-		// final String PASSWORDS_PATH = "/weakPasswords.txt";
 		InputStream input = null;
 		try {
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			input = classLoader.getResourceAsStream(PASSWORDS_PATH);
 			StringBuilder word = new StringBuilder();
 			while (input.available() != 0) {
-				char next = (char)input.read();
-				if (next == ('\n')) {
-					//compare to password
-					if (word.toString().equals(password)) {
+                char next = (char)input.read();
+                //Check agaist word if eol, word where next char is a number or symbol in position greater than minimum probable word length
+				if (next == ('\n') || ((Character.isDigit(next) || !Character.isLetterOrDigit(next)) && !(word.length() < BASE_WORD_LENGTH))){
+                    String testing = word.toString().toLowerCase();
+                    //checks against weak words, regardless of ending or casing in new User password
+                    password = password.toLowerCase();
+                    String sub1 = password.substring(0, password.length()-1);
+                    String sub2 = sub1.substring(0, sub1.length()-1);
+                    String sub3 = sub2.substring(0, sub2.length()-1);   //substring match for basewords of 5 letters
+                    if (testing.equals(sub1) || testing.equals(sub2) || testing.equals(sub3) || testing.equals(password)) {
                         if (needsException) {
-                            throw new Exception("The new password is too weak");	//This exception has to be caught by the caller function
+                            throw new Exception("The new password is too weak");	//This exception has to be caught by some methods to work with existing logic
                         }
                         else {
                             return false;
                         }
-					}
-					word = new StringBuilder();
+                    }
+                    else if (next == '\n') word = new StringBuilder();
+                    else word.append(next);
 				}
 				else {
 					word.append(next);
 				}
 			}
-			//TODO: add test if password contains weak word + [num+sym] or [sym+num] combo (i.e. Password1! or Password!1); easily guessed
 		}
 		catch (NullPointerException e) {
 			System.out.println("Error occured");
