@@ -34,6 +34,8 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.List;
+
+import javax.security.auth.message.callback.PasswordValidationCallback;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BeanParam;
@@ -184,25 +186,29 @@ public class UserRegistrationResource
 		if (validationResult.valid()) {
 			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration, true));
 		}
-
+		
+		boolean passwordValid = false;
 		try {
-			if (validationResult.valid() && WeakPasswordResource.weakPasswordCheck(userRegistration.getPassword(), true)) {
-				UserRegistration savedRegistration = new UserRegistration();
-				savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
-				savedRegistration = savedRegistration.find();
-				// the verification code should not be sent back to new users creating an acount
-				savedRegistration.setVerificationCode("");
-				
-				return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
-			} else {
-				return Response.ok(validationResult.toRestError()).build();
+			passwordValid = WeakPasswordResource.weakPasswordCheck(userRegistration.getPassword(), false);
+		} catch (Exception e) {}
+
+		if (validationResult.valid() && passwordValid) {
+			UserRegistration savedRegistration = new UserRegistration();
+			savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
+			savedRegistration = savedRegistration.find();
+			// the verification code should not be sent back to new users creating an acount
+			savedRegistration.setVerificationCode("");
+			
+			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
+		} else {
+			if (!passwordValid) {
+				RestErrorModel restError = new RestErrorModel();
+				restError.getErrors().put("password", "This password is weak, use a stronger password");
+				return Response.ok(restError).build();
 			}
-		} catch (Exception e) {
-			RestErrorModel restError = new RestErrorModel();
-			restError.getErrors().put("password", "This password is weak, use a stronger password");
-			return Response.ok(restError).build();
-		}
- 	}
+			return Response.ok(validationResult.toRestError()).build();
+		 }
+	}
 
 	@PUT
 	@APIDescription("Creates a user from an existing Registration")
