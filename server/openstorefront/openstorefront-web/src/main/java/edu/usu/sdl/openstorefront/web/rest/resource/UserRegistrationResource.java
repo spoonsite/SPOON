@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.UserRegistrationView;
 import edu.usu.sdl.openstorefront.core.view.UserRegistrationWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -184,18 +185,24 @@ public class UserRegistrationResource
 			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration, true));
 		}
 
-		if (validationResult.valid()) {
-			UserRegistration savedRegistration = new UserRegistration();
-			savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
-			savedRegistration = savedRegistration.find();
-			// the verification code should not be sent back to new users creating an acount
-			savedRegistration.setVerificationCode("");
-			
-			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
-		} else {
-			return Response.ok(validationResult.toRestError()).build();
+		try {
+			if (validationResult.valid() && WeakPasswordResource.weakPasswordCheck(userRegistration.getPassword(), true)) {
+				UserRegistration savedRegistration = new UserRegistration();
+				savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
+				savedRegistration = savedRegistration.find();
+				// the verification code should not be sent back to new users creating an acount
+				savedRegistration.setVerificationCode("");
+				
+				return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
+			} else {
+				return Response.ok(validationResult.toRestError()).build();
+			}
+		} catch (Exception e) {
+			RestErrorModel restError = new RestErrorModel();
+			restError.getErrors().put("password", "This password is weak, use a stronger password");
+			return Response.ok(restError).build();
 		}
-	}
+ 	}
 
 	@PUT
 	@APIDescription("Creates a user from an existing Registration")
