@@ -197,7 +197,7 @@ public class UserRegistrationResource
 			savedRegistration.setVerificationCode("");
 			
 			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
-		} else if {
+		} else if (!passwordValid) {
 			RestErrorModel restError = new RestErrorModel();
 			restError.getErrors().put("password", "This password is too weak, use a stronger password");
 			return Response.ok(restError).build();
