@@ -187,10 +187,7 @@ public class UserRegistrationResource
 			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration, true));
 		}
 		
-		boolean passwordValid = false;
-		try {
-			passwordValid = WeakPasswordResource.weakPasswordCheck(userRegistration.getPassword(), false);
-		} catch (Exception e) {}
+		boolean passwordValid = WeakPasswordResource.weakPasswordCheck(userRegistration.getPassword());
 
 		if (validationResult.valid() && passwordValid) {
 			UserRegistration savedRegistration = new UserRegistration();
@@ -203,7 +200,7 @@ public class UserRegistrationResource
 		} else {
 			if (!passwordValid) {
 				RestErrorModel restError = new RestErrorModel();
-				restError.getErrors().put("password", "This password is weak, use a stronger password");
+				restError.getErrors().put("password", "This password is too weak, use a stronger password");
 				return Response.ok(restError).build();
 			}
 			return Response.ok(validationResult.toRestError()).build();
