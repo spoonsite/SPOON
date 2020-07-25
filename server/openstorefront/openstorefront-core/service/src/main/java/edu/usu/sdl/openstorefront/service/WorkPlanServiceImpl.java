@@ -588,7 +588,7 @@ public class WorkPlanServiceImpl
 	@Override
 	public void syncWorkPlanLinks()
 	{
-		// only catch 
+		// only catch "interrupts" thrown in the middle of running Job, therefore initalize as false
 		runningJobMustDie = false;
 		
 		//process all entries (x at time)
@@ -616,7 +616,7 @@ public class WorkPlanServiceImpl
 					if(runningJobMustDie){
 						NotificationEvent notificationEvent = new NotificationEvent();
 						notificationEvent.setEventType(NotificationEventType.REPORT);
-						notificationEvent.setMessage("General Note: Work Plan Sync Job was interrupted. ");
+						notificationEvent.setMessage("General Note: Work Plan Sync Job was interrupted. This may be because a part was edited & saved, or a WorkPlan deleted. The WorkPlanSync Job should run again later as normal. ");
 						getNotificationService().postEvent(notificationEvent);
 
 						return;
