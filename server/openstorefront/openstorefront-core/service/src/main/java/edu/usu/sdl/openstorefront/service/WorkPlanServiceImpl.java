@@ -443,7 +443,7 @@ public class WorkPlanServiceImpl
 	{
 		Objects.requireNonNull(workPlanLink);
 		Objects.requireNonNull(workPlanStepId);
-
+		
 		if (workPlanLink.getUserSubmissionId() != null) {
 			LOG.log(Level.WARNING, "Moving steps on User Submission link is not allowed");
 			return workPlanLink;
@@ -616,7 +616,7 @@ public class WorkPlanServiceImpl
 					if(runningJobMustDie){
 						NotificationEvent notificationEvent = new NotificationEvent();
 						notificationEvent.setEventType(NotificationEventType.REPORT);
-						notificationEvent.setMessage("General Note: Work Plan Sync Job was interrupted. This may be because a part was edited & saved, or a WorkPlan deleted. The WorkPlanSync Job should run again later as normal. ");
+						notificationEvent.setMessage("General Note: Work Plan Sync Job was interrupted. This is because a WorkPlan was deleted while it was running. The WorkPlanSync Job should run again later as normal. ");
 						getNotificationService().postEvent(notificationEvent);
 
 						return;
