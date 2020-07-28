@@ -90,12 +90,17 @@ export default {
           confirmPassword: this.password2
         })
         .then(response => {
-          this.dialog = true
-          this.loading = false
+          if (response.status === 204) {
+            this.$toasted.error('The new password is too weak, use a stronger password')
+            this.loading = false
+          } else {
+            this.dialog = true
+            this.loading = false
+          }
         })
         .catch(error => {
           console.error(error)
-          this.toasted.error('There was a problem reseting your password.')
+          this.$toasted.error('There was a problem resetting your password.')
         })
     }
   }

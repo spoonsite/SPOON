@@ -148,13 +148,10 @@ public class SecurityService
 		UserSecurity userSecurity = new UserSecurity();
 		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.find();
-		if (userSecurity != null) {
-			if (!WeakPasswordResource.weakPasswordCheck(userCredential.getPassword())) {
-				//Return message to password line
-				RestErrorModel restError = new RestErrorModel();
-				restError.getErrors().put("password1", "The new password is too weak, use a stronger password");
-				return Response.ok(restError).build();
-			}
+		//check password strength first so valid/active usernames cannot be probed
+		if (!WeakPasswordResource.weakPasswordCheck(userCredential.getPassword())) {
+			return Response.noContent().build();	// Return a 204 response, check response on front-end to throw 'weak password' notification
+		} else if (userSecurity != null) {
 			service.getSecurityService().resetPasswordUser(username.toLowerCase(), userCredential.getPassword().toCharArray());
 			//Approve code will be sent via email. Don't send back to requester.
 			return Response.ok().build();
