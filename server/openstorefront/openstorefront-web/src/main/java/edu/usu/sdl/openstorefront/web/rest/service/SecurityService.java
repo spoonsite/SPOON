@@ -28,6 +28,7 @@ import edu.usu.sdl.openstorefront.core.view.UserCredential;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.web.rest.resource.BaseResource;
+import edu.usu.sdl.openstorefront.web.rest.resource.WeakPasswordResource;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -148,12 +149,18 @@ public class SecurityService
 		userSecurity.setUsername(username.toLowerCase());
 		userSecurity = userSecurity.find();
 		if (userSecurity != null) {
+			if (!WeakPasswordResource.weakPasswordCheck(userCredential.getPassword())) {
+				//Return message to password line
+				RestErrorModel restError = new RestErrorModel();
+				restError.getErrors().put("password1", "The new password is too weak, use a stronger password");
+				return Response.ok(restError).build();
+			}
 			service.getSecurityService().resetPasswordUser(username.toLowerCase(), userCredential.getPassword().toCharArray());
 			//Approve code will be sent via email. Don't send back to requester.
 			return Response.ok().build();
 		}
 
-		//Don't indicted if they that they haven't hit a user
+		//Don't indicate if they haven't hit a user
 		return Response.ok().build();
 	}
 

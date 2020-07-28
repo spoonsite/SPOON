@@ -13,11 +13,10 @@ public class WeakPasswordResource {
     
     /**
 	 * Test new password against a list of known bad passwords
-     * Throws an error if the API logic requires, or returns boolean otherwise
+     * Returns boolean
 	 *
 	 * @param password
-     * @param needsException
-	 * @throws Exception
+	 * @return boolean
 	 */
     public static boolean weakPasswordCheck(String password)
 	{
