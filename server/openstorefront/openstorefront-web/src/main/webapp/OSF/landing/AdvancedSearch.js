@@ -90,18 +90,6 @@ Ext.define('OSF.landing.AdvancedSearchView', {
 					handler: function () {
 						this.up('window').advanceSearch.previewResults();
 					}
-				},
-				{
-					xtype: 'tbfill'
-				},
-				{
-					text: 'Save Search',
-					scale: 'medium',
-					iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction',
-					width: '150px',
-					handler: function () {
-						this.up('window').advanceSearch.saveSearch();
-					}
 				}
 			]
 		}

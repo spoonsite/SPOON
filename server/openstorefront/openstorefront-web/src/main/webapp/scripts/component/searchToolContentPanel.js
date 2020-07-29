@@ -324,9 +324,6 @@ Ext.define('OSF.component.SearchToolWindow', {
 		var advanceSearch = Ext.create('OSF.component.AdvancedSearchPanel', {
 			title: 'Advanced',
 			iconCls: 'fa fa-lg fa-search-plus icon-small-vertical-correction',
-			saveHook: function (response, opts) {
-				savedSearches.getStore().reload();
-			},
 			dockedItems: [
 				{
 					xtype: 'toolbar',
@@ -365,30 +362,12 @@ Ext.define('OSF.component.SearchToolWindow', {
 							handler: function () {
 								this.up('panel').previewResults();
 							}
-						},
-						{
-							xtype: 'tbfill'
-						},
-						{
-							text: 'Save Search',
-							scale: 'medium',
-							iconCls: 'fa fa-2x fa-save icon-button-color-save icon-vertical-correction',
-							width: '150px',
-							handler: function () {
-								this.up('panel').saveSearch();
-							}
 						}
 					]
 				}
 			]
 		});
 
-		var savedSearches = Ext.create('OSF.landing.SavedSearchPanel', {
-			searchCallback: function() {
-				var win = this.up('window');
-				win.close();
-			}
-		});
 
 		//
 		//  tabPanel
@@ -418,7 +397,6 @@ Ext.define('OSF.component.SearchToolWindow', {
 		}
 
 		searchToolPanels.push(advanceSearch);
-		searchToolPanels.push(savedSearches);
 
 		var tabPanel = Ext.create('Ext.tab.Panel', {
 			items: searchToolPanels
