@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
-import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.ResultAttributeStat;
@@ -455,27 +454,11 @@ public class SearchServiceImpl
 	@Override
 	public void inactivateSearch(String searchId)
 	{
-		toggleStatusOnSearch(searchId, SystemSearch.INACTIVE_STATUS);
-	}
-
-	private void toggleStatusOnSearch(String searchId, String newStatus)
-	{
-		Objects.requireNonNull(searchId);
-
-		SystemSearch existing = getPersistenceService().findById(SystemSearch.class, searchId);
-		if (existing != null) {
-			existing.setActiveStatus(newStatus);
-			existing.populateBaseUpdateFields();
-			getPersistenceService().persist(existing);
-		} else {
-			throw new OpenStorefrontRuntimeException("Search not found", "Check Id: " + searchId);
-		}
 	}
 
 	@Override
 	public void activateSearch(String searchId)
 	{
-		toggleStatusOnSearch(searchId, SystemSearch.ACTIVE_STATUS);
 	}
 
 	@Override
