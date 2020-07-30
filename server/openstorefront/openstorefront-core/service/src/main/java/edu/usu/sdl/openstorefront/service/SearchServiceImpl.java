@@ -74,9 +74,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.helper.StringUtil;
 
 /**
  * Handles Searching the data set and sync the indexes
@@ -88,9 +86,6 @@ public class SearchServiceImpl
 		extends ServiceProxy
 		implements SearchService, SearchServicePrivate
 {
-
-	private static final Logger LOG = Logger.getLogger(SearchServiceImpl.class.getName());
-
 	private static final String SPECIAL_ARCH_SEARCH_CODE = "0";
 	private static final int MAX_SEARCH_DESCRIPTION = 500;
 
@@ -455,25 +450,6 @@ public class SearchServiceImpl
 	public List<SearchSuggestion> searchSuggestions(String query, int maxResult, String componentType)
 	{
 		return SearchServerManager.getInstance().getSearchServer().searchSuggestions(query, maxResult, componentType);
-	}
-
-	@Override
-	public SystemSearch saveSearch(SystemSearch systemSearch)
-	{
-		Objects.requireNonNull(systemSearch);
-
-		SystemSearch existing = getPersistenceService().findById(SystemSearch.class, systemSearch.getSearchId());
-		if (existing != null) {
-			existing.updateFields(systemSearch);
-			systemSearch = getPersistenceService().persist(existing);
-		} else {
-			if (StringUtil.isBlank(systemSearch.getSearchId())) {
-				systemSearch.setSearchId(getPersistenceService().generateId());
-			}
-			systemSearch.populateBaseCreateFields();
-			systemSearch = getPersistenceService().persist(systemSearch);
-		}
-		return systemSearch;
 	}
 
 	@Override

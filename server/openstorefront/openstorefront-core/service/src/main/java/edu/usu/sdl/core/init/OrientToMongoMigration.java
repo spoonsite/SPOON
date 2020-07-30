@@ -40,7 +40,6 @@ import edu.usu.sdl.openstorefront.core.entity.SystemArchive;
 import edu.usu.sdl.openstorefront.core.entity.SystemArchiveError;
 import edu.usu.sdl.openstorefront.core.entity.TemplateBlock;
 import edu.usu.sdl.openstorefront.core.entity.TemporaryMedia;
-import edu.usu.sdl.openstorefront.core.entity.UserSavedSearch;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionComment;
 import edu.usu.sdl.openstorefront.core.entity.UserSubmissionMedia;
 import edu.usu.sdl.openstorefront.service.MongoPersistenceServiceImpl;
@@ -260,7 +259,6 @@ public class OrientToMongoMigration
 				"UserProfile",
 				"UserRegistration",
 				"UserRole",
-				UserSavedSearch.class.getSimpleName(),
 				"UserSecurity",
 				UserSubmissionComment.class.getSimpleName(),
 				"UserSubmission",
