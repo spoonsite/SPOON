@@ -55,9 +55,6 @@ public class SystemSearch
 	{
 		super.updateFields(entity);
 
-		SystemSearch userSaveSearch = (SystemSearch) entity;
-		this.setSearchName(userSaveSearch.getSearchName());
-		this.setSearchRequest(userSaveSearch.getSearchRequest());
 	}
 
 	public String getSearchName()

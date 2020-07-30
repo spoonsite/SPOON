@@ -64,7 +64,6 @@
 			Ext.require('OSF.widget.EntryStats');
 			Ext.require('OSF.widget.ApprovalRequests');
 			Ext.require('OSF.widget.Submissions');
-			Ext.require('OSF.widget.SavedSearch');
 			Ext.require('OSF.widget.Feedback');
 			Ext.require('OSF.widget.Reports');
 			Ext.require('OSF.widget.Questions');
@@ -206,29 +205,6 @@
 						refresh: function(widget) {
 							widget.refresh();
 						}						
-					},
-					{
-						name: 'Saved Search',
-						code: 'SAVEDSEARCH',
-						description: 'Shows the results of a saved search',
-						iconCls: 'fa fa-lg fa-search',
-						jsClass: 'OSF.widget.SavedSearch',						
-						height: 400,
-						permissions: ['DASHBOARD-WIDGET-SAVED-SEARCH'],
-						adminOnly: false,
-						allowMultiples: true,
-						refresh: function(widget) {
-							widget.refresh();
-						},
-						save: function(widget) {
-							return widget.saveConfig();
-						},
-						restore: function(widget, config) {							
-							widget.restoreConfig(config);
-						},						
-						configChange: function() {
-							saveDashboard();
-						}
 					},
 					{
 						name: 'Outstanding Feedback',
