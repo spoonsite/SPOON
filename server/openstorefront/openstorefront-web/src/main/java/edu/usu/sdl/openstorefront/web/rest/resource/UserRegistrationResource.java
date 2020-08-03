@@ -24,6 +24,7 @@ import edu.usu.sdl.openstorefront.core.api.query.SpecialOperatorModel;
 import edu.usu.sdl.openstorefront.core.entity.SecurityPermission;
 import edu.usu.sdl.openstorefront.core.entity.UserRegistration;
 import edu.usu.sdl.openstorefront.core.view.FilterQueryParams;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
 import edu.usu.sdl.openstorefront.core.view.UserRegistrationView;
 import edu.usu.sdl.openstorefront.core.view.UserRegistrationWrapper;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
@@ -33,6 +34,8 @@ import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.List;
+
+import javax.security.auth.message.callback.PasswordValidationCallback;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BeanParam;
@@ -183,8 +186,10 @@ public class UserRegistrationResource
 		if (validationResult.valid()) {
 			validationResult.merge(service.getSecurityService().processNewRegistration(userRegistration, true));
 		}
+		
+		boolean passwordValid = WeakPasswordResource.weakPasswordCheck(userRegistration.getPassword());
 
-		if (validationResult.valid()) {
+		if (validationResult.valid() && passwordValid) {
 			UserRegistration savedRegistration = new UserRegistration();
 			savedRegistration.setRegistrationId(userRegistration.getRegistrationId());
 			savedRegistration = savedRegistration.find();
@@ -192,9 +197,13 @@ public class UserRegistrationResource
 			savedRegistration.setVerificationCode("");
 			
 			return Response.created(URI.create("v1/resource/userregistrations/" + savedRegistration.getRegistrationId())).entity(savedRegistration).build();
-		} else {
+		} else if (!passwordValid) {
+			RestErrorModel restError = new RestErrorModel();
+			restError.getErrors().put("password", "This password is too weak, use a stronger password");
+			return Response.ok(restError).build();
+		 } else {
 			return Response.ok(validationResult.toRestError()).build();
-		}
+		 }
 	}
 
 	@PUT
