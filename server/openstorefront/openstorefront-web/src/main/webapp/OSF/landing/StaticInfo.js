@@ -239,7 +239,7 @@ Ext.define('OSF.landing.StaticInfo', {
 				};
 				
 				CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-				window.location.href = 'searchResults.jsp?showcomponent=' + dataItem.componentId;	
+				window.location.href = '/openstorefront/#/search?q=' + dataItem.name;	
 			} else {
 				//show read more window
 				var articleWindow = Ext.create('Ext.window.Window', {

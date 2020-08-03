@@ -87,7 +87,7 @@ Ext.define('OSF.landing.TagCloudView', {
 			};
 
 			CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-			window.location.href = 'searchResults.jsp';
+			window.location.href = '/openstorefront/#/search';
 		};
 
 

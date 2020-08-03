@@ -108,8 +108,8 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 							iconCls: 'fa fa-2x fa-search',
 							scale: 'medium',
 							handler: function () {
-								var url = "/openstorefront/searchResults.jsp?savedSearchId=";
-								url += this.up('window').searchId;
+								var url = "/openstorefront/#/search?q=";
+								url += this.up('window').name;
 								if (top) {
 									top.window.location.href = url;
 								} else {
