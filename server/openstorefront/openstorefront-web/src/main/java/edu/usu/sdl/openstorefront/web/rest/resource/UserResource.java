@@ -30,6 +30,8 @@ import edu.usu.sdl.openstorefront.validation.RuleResult;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.core.view.RestErrorModel;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -248,7 +250,11 @@ public class UserResource
 
 			try {
 				SecurityUtils.getSecurityManager().authenticate(usernamePasswordToken);
-
+				if (!WeakPasswordResource.weakPasswordCheck(userCredential.getPassword())) {	//If fails check, return a response, preventing password set
+					RestErrorModel restError = new RestErrorModel();
+					restError.getErrors().put("newPassword", "The new password is too weak, use a stronger password");
+					return Response.ok(restError).build();
+				}
 				service.getSecurityService().adminResetPassword(SecurityUtil.getCurrentUserName(), userCredential.getPassword().toCharArray());
 				return Response.ok().build();
 
