@@ -94,6 +94,9 @@ public class SecurityServiceImpl
 
 	private static final String CURRENT_SECURITY_POLICY = "CURRENTSECURITYPOLICY";
 
+	private HashMap<String, Long> emailRates = new HashMap<String, Long>();
+	private static final int RATE_LIMIT_MILLIS = 60000;	// 60 seconds
+
 	@Override
 	public SecurityPolicy getSecurityPolicy()
 	{
@@ -955,6 +958,34 @@ public class SecurityServiceImpl
 			userContext.getRoles().add(guestRole);
 		}
 		return userContext;
+	}
+
+	/**
+	 * Checks the rate at which emails can be sent from the unauthenticated API's for forgot username or password to the same email
+	 * 
+	 * @param email The email to check rate
+	 * @return Boolean representing if email has been recently sent to the address
+	 */
+
+	public Boolean emailRecentlySent(String email) {
+		long timeNow = System.currentTimeMillis();
+		if (this.emailRates.containsKey(email)) {
+			long time_since_last = timeNow - emailRates.get(email);
+			if ( time_since_last < RATE_LIMIT_MILLIS) {
+				this.emailRates.put(email, timeNow);		// Update when last email attempt was made; Resets delay on premature attempt
+				return true;
+			}
+		}
+
+		//CLEAN: remove all old emails outside of Rate Limit
+		for (String key : this.emailRates.keySet()) {
+			if (timeNow - this.emailRates.get(key) > RATE_LIMIT_MILLIS) {
+				this.emailRates.remove(key);
+			}
+		}
+
+		this.emailRates.put(email, System.currentTimeMillis());
+		return false;
 	}
 
 }
