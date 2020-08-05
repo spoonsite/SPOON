@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
-import edu.usu.sdl.openstorefront.core.entity.UserSavedSearch;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
 import edu.usu.sdl.openstorefront.core.model.AdminMessage;
@@ -258,23 +257,6 @@ public interface UserService
 	 * @param userManager
 	 */
 	public void syncUserProfilesWithUserManagement(ExternalUserManager userManager);
-
-	/**
-	 * Saves a user Search
-	 *
-	 * @param userSavedSearch
-	 * @return the saved search record
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public UserSavedSearch saveUserSearch(UserSavedSearch userSavedSearch);
-
-	/**
-	 * Removes saved search
-	 *
-	 * @param userSearchId
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public void deleteUserSearch(String userSearchId);
 
 	/**
 	 * Get a dashboard for a user. If the user doesn't have a dashboard it

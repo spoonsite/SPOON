@@ -178,13 +178,6 @@
 				handler: function(){
 					actionLoadContent('Relationships');
 				}				
-			});			
-			dataMenu.push({
-				text: 'Searches',
-				permission: ['ADMIN-SEARCHES-PAGE'],
-				handler: function(){
-					actionLoadContent('Searches');
-				}				
 			});	
 			dataMenu.push({
 				text: 'User Data',

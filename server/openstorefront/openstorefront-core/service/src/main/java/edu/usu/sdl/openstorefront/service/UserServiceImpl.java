@@ -43,7 +43,6 @@ import edu.usu.sdl.openstorefront.core.entity.UserDashboard;
 import edu.usu.sdl.openstorefront.core.entity.UserMessage;
 import edu.usu.sdl.openstorefront.core.entity.UserMessageType;
 import edu.usu.sdl.openstorefront.core.entity.UserProfile;
-import edu.usu.sdl.openstorefront.core.entity.UserSavedSearch;
 import edu.usu.sdl.openstorefront.core.entity.UserTracking;
 import edu.usu.sdl.openstorefront.core.entity.UserTypeCode;
 import edu.usu.sdl.openstorefront.core.entity.UserWatch;
@@ -1060,31 +1059,6 @@ public class UserServiceImpl
 					}
 				}
 			}
-		}
-	}
-
-	@Override
-	public UserSavedSearch saveUserSearch(UserSavedSearch userSavedSearch)
-	{
-		UserSavedSearch existing = getPersistenceService().findById(UserSavedSearch.class, userSavedSearch.getUserSearchId());
-		if (existing != null) {
-			existing.updateFields(userSavedSearch);
-			existing = getPersistenceService().persist(existing);
-		} else {
-			userSavedSearch.setUserSearchId(getPersistenceService().generateId());
-			userSavedSearch.populateBaseCreateFields();
-			existing = getPersistenceService().persist(userSavedSearch);
-		}
-
-		return existing;
-	}
-
-	@Override
-	public void deleteUserSearch(String userSearchId)
-	{
-		UserSavedSearch existing = getPersistenceService().findById(UserSavedSearch.class, userSearchId);
-		if (existing != null) {
-			getPersistenceService().delete(existing);
 		}
 	}
 

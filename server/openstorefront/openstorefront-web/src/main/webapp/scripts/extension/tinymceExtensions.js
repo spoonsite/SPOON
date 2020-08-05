@@ -17,104 +17,6 @@
  */
 /* global Ext, CoreService, top, CoreUtil */
 
-Ext.define('OSF.component.SavedSearchLinkInsertWindow', {
-	extend: 'Ext.window.Window',
-	alias: 'osf.widget.SavedSearchLinkInsertWindow',
-	layout: 'fit',
-	id: 'linkToSaveSearchWindow',
-	title: 'Insert Link to Saved Search',
-	closeMode: 'destroy',
-	alwaysOnTop: true,
-	modal: true,
-	width: '40%',
-	height: '50%',
-
-	initComponent: function () {
-		this.callParent();
-
-		var savedSearchLinkInsertWindow = this;
-
-		savedSearchLinkInsertWindow.store = Ext.create('Ext.data.Store', {
-			autoLoad: true,
-			proxy: {
-				type: 'ajax',
-				url: 'api/v1/resource/systemsearches',
-				reader: {
-					type: 'json',
-					rootProperty: 'data',
-					totalProperty: 'totalNumber'
-				}
-			}
-		});
-
-		savedSearchLinkInsertWindow.grid = Ext.create('Ext.grid.Panel', {
-			columnLines: true,
-			columns: [
-				{text: 'Name', dataIndex: 'searchName', flex: 2},
-				{
-					text: 'Last Updated',
-					dataIndex: 'updateDts',
-					flex: 1,
-					xtype: 'datecolumn',
-					format: 'm/d/y H:i:s'
-				}
-			],
-			store: savedSearchLinkInsertWindow.store,
-			listeners: {
-				selectionchange: function (grid, record, eOpts) {
-					if (savedSearchLinkInsertWindow.grid.getSelectionModel().hasSelection()) {
-						var tools = savedSearchLinkInsertWindow.grid.getComponent('tools');
-						tools.getComponent('insert').enable();
-					}
-				}
-			},
-			dockedItems: [
-				{
-					xtype: 'toolbar',
-					itemId: 'tools',
-					dock: 'bottom',
-					items: [
-						{
-							text: 'Insert Link',
-							itemId: 'insert',
-							id: 'insertLinkBtn',
-							iconCls: 'fa fa-lg fa-link icon-button-color-default',
-							disabled: true,
-							handler: function (button) {
-								var window = button.up('window');
-								var editor = window.editor;
-								var record = savedSearchLinkInsertWindow.grid.getSelection()[0];
-								var link = '<a href="/openstorefront/searchResults.jsp?savedSearchId=';
-								link += record.getData().searchId;
-								link += '">';
-								link += record.getData().searchName;
-								link += '</a>';
-								editor.execCommand('mceInsertContent', false, link);
-								window.close();
-							}
-						},
-						{
-							xtype: 'tbfill'
-						},
-						{
-							text: 'Cancel',
-							iconCls: 'fa fa-lg fa-times icon-button-color-warning',
-							handler: function (button) {
-								var window = button.up('window');
-								window.close();
-							}
-						}
-					]
-				}
-			]
-		});
-		savedSearchLinkInsertWindow.add(savedSearchLinkInsertWindow.grid);
-	}
-
-
-
-});
-
 Ext.define('OSF.component.SearchPopupResultsWindow', {
 	extend: 'Ext.window.Window',
 	alias: 'osf.widget.SearchPopupResultsWindow',
@@ -206,8 +108,8 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 							iconCls: 'fa fa-2x fa-search',
 							scale: 'medium',
 							handler: function () {
-								var url = "/openstorefront/searchResults.jsp?savedSearchId=";
-								url += this.up('window').searchId;
+								var url = "/openstorefront/#/search?q=";
+								url += this.up('window').name;
 								if (top) {
 									top.window.location.href = url;
 								} else {
@@ -220,56 +122,6 @@ Ext.define('OSF.component.SearchPopupResultsWindow', {
 			]
 		});
 		resultsWindow.add(resultsWindow.searchResultsGrid);
-
-
-		resultsWindow.showResults = function (savedSearchId) {
-			this.searchId = savedSearchId;
-
-			resultsWindow.show();
-
-			var url = 'api/v1/resource/systemsearches/';
-			url += savedSearchId;
-			Ext.Ajax.request({
-				url: url,
-				method: 'GET',
-				success: function (response, opts) {
-					var responseObj = Ext.decode(response.responseText);
-					var searchRequest = Ext.decode(responseObj.searchRequest);
-
-					searchRequest.query = {
-						searchElements: searchRequest.searchElements
-					};
-					resultsWindow.searchResultsGrid.getStore().getProxy().buildRequest = function buildRequest(operation) {
-						var initialParams = Ext.apply({
-							paging: true,
-							sortField: operation.getSorters()[0].getProperty(),
-							sortOrder: operation.getSorters()[0].getDirection(),
-							offset: operation.getStart(),
-							max: operation.getLimit()
-						}, operation.getParams());
-						params = Ext.applyIf(initialParams, resultsWindow.searchResultsGrid.getStore().getProxy().getExtraParams() || {});
-
-						var request = new Ext.data.Request({
-							url: 'api/v1/service/search/advance',
-							params: params,
-							operation: operation,
-							action: operation.getAction(),
-							jsonData: Ext.util.JSON.encode(searchRequest.query)
-						});
-						operation.setRequest(request);
-
-						return request;
-					};
-					resultsWindow.searchResultsGrid.getStore().loadPage(1);
-				},
-				failure: function (response, opts) {
-					Ext.MessageBox.alert("Not found", "The saved search you requested was not found.", function () { });
-				}
-			});
-
-
-
-		};
 	}
 
 });

@@ -55,42 +55,6 @@ Ext.define('OSF.component.template.Description', {
 
 	initComponent: function () {
 		this.callParent();
-	},
-
-	updateHandler: function (entry) {
-		// Ext escape does not properly escape Apostrophes for display on an html page 
-		// so we need to replace \' with the proper html escape of &apos;
-		entry.description = Ext.util.Format.escape(entry.description).replace(/\n/g, '').replace(/\r/g, '').replace(/\\'/g, '&apos;');
-
-		// Perform client-side processing of the description, consisting of two things:
-		// Add the onclick handler for saved search links.
-		// Set target=_blank for all links.
-		var dom = Ext.dom.Helper.createDom("<div><div>");
-		dom.innerHTML = entry.description;
-		var element = Ext.dom.Element.get(dom);
-		var links = element.query('a', false);
-		if (links && links.length > 0) {
-
-			// Set targets
-			Ext.Array.each(links, function (item) {
-				if (item.getAttribute && item.getAttribute('href')) {
-					item.set({ target: '_blank' });
-				}
-			});
-
-			// Set up onclick handlers for saved search links
-			Ext.Array.each(links, function (item) {
-				if (item.getAttribute('href') && item.getAttribute('href').indexOf('searchResults.jsp') !== -1) {
-					var searchId = item.getAttribute('href').substr(item.getAttribute('href').indexOf('savedSearchId='), item.getAttribute('href').length);
-					searchId = searchId.replace('savedSearchId=', '');
-					item.set({ 'onclick': "CoreUtil.showSavedSearchWindow('" + searchId + "'); return false;" });
-				}
-			});
-		}
-		entry.description = dom.innerHTML;
-
-		entry.showDescriptionHeader = this.showDescriptionHeader;
-		return entry;
 	}
 
 });

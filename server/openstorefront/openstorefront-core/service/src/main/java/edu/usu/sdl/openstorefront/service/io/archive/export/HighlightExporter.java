@@ -60,7 +60,6 @@ public class HighlightExporter
 	{
 		List<BaseExporter> exporters = new ArrayList<>();
 		exporters.add(new GeneralMediaExporter());
-		exporters.add(new SavedSearchExporter());
 		exporters.add(this);
 		return exporters;
 	}

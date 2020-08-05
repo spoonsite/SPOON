@@ -65,7 +65,6 @@ public class AdminToolAction
 		pageMap.put("Messages", new PageModel("/WEB-INF/securepages/admin/application/messages.jsp", new String[]{SecurityPermission.ADMIN_MESSAGES_PAGE}));
 		pageMap.put("Entry-Template", new PageModel("/WEB-INF/securepages/admin/data/entryTemplate.jsp", new String[]{SecurityPermission.ADMIN_ENTRYTEMPLATES_PAGE}));
 		pageMap.put("Partial-Submissions", new PageModel("/WEB-INF/securepages/admin/data/submission/partialSubmissions.jsp", new String[]{SecurityPermission.ADMIN_PARTIAL_SUBMISSIONS_PAGE}));
-		pageMap.put("Searches", new PageModel("/WEB-INF/securepages/admin/data/searches.jsp", new String[]{SecurityPermission.ADMIN_SEARCHES_PAGE}));
 		pageMap.put("Feedback", new PageModel("/WEB-INF/securepages/admin/application/feedback.jsp", new String[]{SecurityPermission.ADMIN_FEEDBACK_PAGE}));
 		pageMap.put("Relationships", new PageModel("/WEB-INF/securepages/admin/data/relationships.jsp", new String[]{SecurityPermission.ADMIN_RELATIONSHIPS_PAGE}));
 		pageMap.put("System-Archives", new PageModel("/WEB-INF/securepages/admin/application/systemArchive.jsp", new String[]{SecurityPermission.ADMIN_SYSTEM_ARCHIVES_PAGE}));

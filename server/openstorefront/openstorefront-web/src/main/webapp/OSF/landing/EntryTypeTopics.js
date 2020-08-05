@@ -102,7 +102,7 @@ Ext.define('OSF.landing.EntryTypeTopics', {
 
                                     CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
 
-                                    window.location.href = 'searchResults.jsp';
+                                    window.location.href = '/openstorefront/#/search';
                                 }
                             }
                         }).getStore().loadData(decodedResponse.children);
