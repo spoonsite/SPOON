@@ -94,9 +94,6 @@ public class SecurityServiceImpl
 
 	private static final String CURRENT_SECURITY_POLICY = "CURRENTSECURITYPOLICY";
 
-	private HashMap<String, Long> emailRates = new HashMap<String, Long>();
-	private static final int RATE_LIMIT_MILLIS = 60000;	// 60 seconds
-
 	@Override
 	public SecurityPolicy getSecurityPolicy()
 	{
@@ -912,13 +909,15 @@ public class SecurityServiceImpl
 		userProfileExample.setEmail(emailAddress);
 
 		List<UserProfile> userProfiles = userProfileExample.findByExample();
-		for (UserProfile userProfile : userProfiles) {
-			if (username == null) {
-				username = "<b>" + userProfile.getUsername() + "</b>"
-						+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
-			} else {
-				username += "<br> " + "<b>" + userProfile.getUsername() + "</b>"
-						+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
+		if (!userProfiles.isEmpty() && !emailRecentlySent(userProfiles.get(0))) {
+			for (UserProfile userProfile : userProfiles) {
+				if (username == null) {
+					username = "<b>" + userProfile.getUsername() + "</b>"
+							+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
+				} else {
+					username += "<br> " + "<b>" + userProfile.getUsername() + "</b>"
+							+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
+				}
 			}
 		}
 
@@ -967,24 +966,17 @@ public class SecurityServiceImpl
 	 * @return Boolean representing if email has been recently sent to the address
 	 */
 
-	public Boolean emailRecentlySent(String email) {
-		long timeNow = System.currentTimeMillis();
-		if (this.emailRates.containsKey(email)) {
-			long time_since_last = timeNow - emailRates.get(email);
+	public Boolean emailRecentlySent(UserProfile userProfile) {
+		final int RATE_LIMIT_MILLIS = 60000; // 60 second rate limit
+		if (userProfile.getLastEmailTime() != null) {
+			long time_since_last = System.currentTimeMillis() - userProfile.getLastEmailTime();
 			if ( time_since_last < RATE_LIMIT_MILLIS) {
-				this.emailRates.put(email, timeNow);		// Update when last email attempt was made; Resets delay on premature attempt
+				userProfile.setLastEmailTime();	// Resets delay on premature attempt
 				return true;
 			}
 		}
-
-		//CLEAN: remove all old emails outside of Rate Limit
-		for (String key : this.emailRates.keySet()) {
-			if (timeNow - this.emailRates.get(key) > RATE_LIMIT_MILLIS) {
-				this.emailRates.remove(key);
-			}
-		}
-
-		this.emailRates.put(email, System.currentTimeMillis());
+		
+		userProfile.setLastEmailTime();
 		return false;
 	}
 

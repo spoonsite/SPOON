@@ -114,6 +114,9 @@ public class UserProfile
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	private String searchResultView;
 
+	@APIDescription("This value is used to limit email send rates for users")
+	private Long lastEmailTime;
+
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
 	public UserProfile()
 	{
@@ -274,6 +277,14 @@ public class UserProfile
 	public void setPositionTitle(String positionTitle)
 	{
 		this.positionTitle = positionTitle;
+	}
+
+	public Long getLastEmailTime() {
+		return lastEmailTime;
+	}
+
+	public void setLastEmailTime() {
+		this.lastEmailTime = System.currentTimeMillis();
 	}
 
 }
