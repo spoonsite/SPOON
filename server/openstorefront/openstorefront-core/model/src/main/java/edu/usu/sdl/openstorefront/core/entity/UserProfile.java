@@ -114,7 +114,8 @@ public class UserProfile
 	@Size(min = 0, max = OpenStorefrontConstant.FIELD_SIZE_4K)
 	private String searchResultView;
 
-	@APIDescription("This value is used to limit email send rates for users")
+	@ConsumeField
+	@APIDescription("This value is used to limit email send rates for users, stored as epoch time")
 	private Long lastEmailTime;
 
 	@SuppressWarnings({"squid:S2637", "squid:S1186"})
@@ -283,8 +284,8 @@ public class UserProfile
 		return lastEmailTime;
 	}
 
-	public void setLastEmailTime() {
-		this.lastEmailTime = System.currentTimeMillis();
+	public void setLastEmailTime(Long time) {
+		this.lastEmailTime = time;
 	}
 
 }

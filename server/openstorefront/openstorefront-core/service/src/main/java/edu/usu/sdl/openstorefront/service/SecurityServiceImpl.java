@@ -355,6 +355,7 @@ public class SecurityServiceImpl
 				userProfile.setUserTypeCode(UserTypeCode.END_USER);
 			}
 			userProfile.setNotifyOfNew(Boolean.FALSE);
+			userProfile.setLastEmailTime(System.currentTimeMillis());
 			UserProfile savedUserProfile = getUserService().saveUserProfile(userProfile);
 
 			userRegistration.setUserProfileId(savedUserProfile.getInternalGuid());
@@ -909,7 +910,7 @@ public class SecurityServiceImpl
 		userProfileExample.setEmail(emailAddress);
 
 		List<UserProfile> userProfiles = userProfileExample.findByExample();
-		if (!userProfiles.isEmpty() && !emailRecentlySent(userProfiles.get(0))) {
+		if (!userProfiles.isEmpty() && !emailRecentlySent(userProfiles)) {			
 			for (UserProfile userProfile : userProfiles) {
 				if (username == null) {
 					username = "<b>" + userProfile.getUsername() + "</b>"
@@ -965,19 +966,34 @@ public class SecurityServiceImpl
 	 * @param email The email to check rate
 	 * @return Boolean representing if email has been recently sent to the address
 	 */
-
-	public Boolean emailRecentlySent(UserProfile userProfile) {
-		final int RATE_LIMIT_MILLIS = 60000; // 60 second rate limit
+	public Boolean emailRecentlySent(List<UserProfile> userProfiles) {
+		final int RATE_LIMIT_MILLIS = 30000; // 30 second rate limit
+		UserProfile userProfile = userProfiles.get(0);
 		if (userProfile.getLastEmailTime() != null) {
 			long time_since_last = System.currentTimeMillis() - userProfile.getLastEmailTime();
 			if ( time_since_last < RATE_LIMIT_MILLIS) {
-				userProfile.setLastEmailTime();	// Resets delay on premature attempt
+				// userProfile.setLastEmailTime(System.currentTimeMillis());	// Resets delay on premature attempt
+				updateEmailTimeAllProfiles(userProfiles);
+				// ServiceProxy.getProxy().getUserService().saveUserProfile(userProfile);
 				return true;
 			}
 		}
 		
-		userProfile.setLastEmailTime();
+		// userProfile.setLastEmailTime(System.currentTimeMillis());
+		updateEmailTimeAllProfiles(userProfiles);
+		// ServiceProxy.getProxy().getUserService().saveUserProfile(userProfile);
 		return false;
+	}
+
+	/**
+	 * Updates the lastEmailTime for all profiles associated with an email
+	 */
+	private List<UserProfile> updateEmailTimeAllProfiles(List<UserProfile> userProfiles) {
+		for (UserProfile profile : userProfiles) {
+			profile.setLastEmailTime(System.currentTimeMillis());
+			ServiceProxy.getProxy().getUserService().saveUserProfile(profile);
+		}
+		return userProfiles;
 	}
 
 }
