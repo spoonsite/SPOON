@@ -25,7 +25,6 @@ import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttribute;
 import edu.usu.sdl.openstorefront.core.entity.ComponentAttributePk;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
-import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.ResultAttributeStat;
@@ -74,9 +73,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.helper.StringUtil;
 
 /**
  * Handles Searching the data set and sync the indexes
@@ -88,9 +85,6 @@ public class SearchServiceImpl
 		extends ServiceProxy
 		implements SearchService, SearchServicePrivate
 {
-
-	private static final Logger LOG = Logger.getLogger(SearchServiceImpl.class.getName());
-
 	private static final String SPECIAL_ARCH_SEARCH_CODE = "0";
 	private static final int MAX_SEARCH_DESCRIPTION = 500;
 
@@ -458,48 +452,13 @@ public class SearchServiceImpl
 	}
 
 	@Override
-	public SystemSearch saveSearch(SystemSearch systemSearch)
-	{
-		Objects.requireNonNull(systemSearch);
-
-		SystemSearch existing = getPersistenceService().findById(SystemSearch.class, systemSearch.getSearchId());
-		if (existing != null) {
-			existing.updateFields(systemSearch);
-			systemSearch = getPersistenceService().persist(existing);
-		} else {
-			if (StringUtil.isBlank(systemSearch.getSearchId())) {
-				systemSearch.setSearchId(getPersistenceService().generateId());
-			}
-			systemSearch.populateBaseCreateFields();
-			systemSearch = getPersistenceService().persist(systemSearch);
-		}
-		return systemSearch;
-	}
-
-	@Override
 	public void inactivateSearch(String searchId)
 	{
-		toggleStatusOnSearch(searchId, SystemSearch.INACTIVE_STATUS);
-	}
-
-	private void toggleStatusOnSearch(String searchId, String newStatus)
-	{
-		Objects.requireNonNull(searchId);
-
-		SystemSearch existing = getPersistenceService().findById(SystemSearch.class, searchId);
-		if (existing != null) {
-			existing.setActiveStatus(newStatus);
-			existing.populateBaseUpdateFields();
-			getPersistenceService().persist(existing);
-		} else {
-			throw new OpenStorefrontRuntimeException("Search not found", "Check Id: " + searchId);
-		}
 	}
 
 	@Override
 	public void activateSearch(String searchId)
 	{
-		toggleStatusOnSearch(searchId, SystemSearch.ACTIVE_STATUS);
 	}
 
 	@Override

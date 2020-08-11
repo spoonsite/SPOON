@@ -48,11 +48,6 @@ limitations under the License.
 	<tpl if="releaseDate">
 		<p><b>Release Date:</b> {releaseDate}</p>
 	</tpl>
-	<div class="breadcrumbs">
-		<tpl for="parents" between="&nbsp; &gt; &nbsp;">
-			<a target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch('{componentType}')" href="searchResults.jsp"></a>{label}</a>
-		</tpl>
-	</div>
 	<br>
 	<b>Description</b>
 	<hr>

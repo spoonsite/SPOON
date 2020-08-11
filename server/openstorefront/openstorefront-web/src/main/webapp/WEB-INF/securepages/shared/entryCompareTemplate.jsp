@@ -162,11 +162,6 @@ limitations under the License.
 	<tpl if="releaseDate">
 		<p><b>Release Date:</b> {releaseDate}</p>
 	</tpl>
-	<div class="breadcrumbs">
-		<tpl for="parents" between="&nbsp; &gt; &nbsp;">
-			<a target="_parent" onclick="CoreUtil.saveAdvancedComponentSearch('{componentType}')" href="searchResults.jsp">{label}</a>
-		</tpl>
-	</div>
 	<tpl for="attributes">
 		<tpl if="badgeUrl">
 			<img src="{badgeUrl}" title="{codeDescription}" width="40" />

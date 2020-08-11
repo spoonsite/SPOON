@@ -46,7 +46,6 @@ public class UserToolAction
 		pageMap.put("Submissions", new PageModel("/WEB-INF/securepages/user/submissionManagement.jsp", new String[]{SecurityPermission.USER_SUBMISSIONS_PAGE}));
 		pageMap.put("Bulk-Upload", new PageModel("/WEB-INF/securepages/user/submissionManagement.jsp", new String[]{SecurityPermission.USER_SUBMISSIONS_PAGE}));
 		pageMap.put("Reports", new PageModel("/WEB-INF/securepages/shared/reports.jsp", new String[]{SecurityPermission.REPORTS_PAGE}));
-		pageMap.put("Searches", new PageModel("/WEB-INF/securepages/user/searches.jsp", new String[]{SecurityPermission.USER_SEARCHES_PAGE}));
 		pageMap.put("Relationships", new PageModel("/WEB-INF/securepages/user/visualSearch.jsp", new String[]{SecurityPermission.USER_RELATIONSHIPS_PAGE}));
 		pageMap.put("Change-Password", new PageModel("/WEB-INF/securepages/user/changePassword.jsp"));		
 

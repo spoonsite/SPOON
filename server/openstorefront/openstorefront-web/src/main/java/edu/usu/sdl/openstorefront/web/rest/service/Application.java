@@ -45,6 +45,7 @@ import edu.usu.sdl.openstorefront.core.view.SystemStatusView;
 import edu.usu.sdl.openstorefront.core.view.ThreadStatus;
 import edu.usu.sdl.openstorefront.doc.annotation.RequiredParam;
 import edu.usu.sdl.openstorefront.doc.security.RequireSecurity;
+import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.OSFCacheManager;
 import edu.usu.sdl.openstorefront.validation.CleanKeySanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
@@ -263,17 +264,32 @@ public class Application
 	@Path("/configproperties/{key}")
 	public Response getConfigPropertiesForKey(@PathParam("key") String key)
 	{
+		//Add keys here for unauthenticated access to properties. Do NOT add sensitive keys.
+		String[] unauthKeys = {
+			"help.url",
+			"max.post.size",
+			"filehistory.max.days",
+			"notification.max.days",
+			"userreview.autoapprove"
+		};
+
 		String value = PropertiesManager.getInstance().getValueDefinedDefault(key);
 
-		LookupModel lookupModel = new LookupModel();
-		lookupModel.setCode(key);
-		if (key.contains(PropertiesManager.PW_PROPERTY)) {
-			lookupModel.setDescription(StringUtils.leftPad("", value.length(), "*"));
-		} else {
-			lookupModel.setDescription(value);
-		}
+		//Block keys/properties requiring authorization from being returned. Exception for unauthKeys in list above
+		List<String> openKeys = Arrays.asList(unauthKeys);
+		if (openKeys.contains(key) || SecurityUtil.hasPermission(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_READ)) {
+			LookupModel lookupModel = new LookupModel();
+			lookupModel.setCode(key);
+			if (key.contains(PropertiesManager.PW_PROPERTY)) {
+				lookupModel.setDescription(StringUtils.leftPad("", value.length(), "*"));
+			} else {
+				lookupModel.setDescription(value);
+			}
 
-		return sendSingleEntityResponse(lookupModel);
+			return sendSingleEntityResponse(lookupModel);
+		} else {
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
 	}
 
 	@POST

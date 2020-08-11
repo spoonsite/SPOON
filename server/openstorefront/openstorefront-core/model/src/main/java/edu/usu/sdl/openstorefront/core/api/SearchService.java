@@ -18,7 +18,6 @@ package edu.usu.sdl.openstorefront.core.api;
 import edu.usu.sdl.openstorefront.core.entity.AttributeCodePk;
 import edu.usu.sdl.openstorefront.core.entity.Component;
 import edu.usu.sdl.openstorefront.core.entity.SearchOptions;
-import edu.usu.sdl.openstorefront.core.entity.SystemSearch;
 import edu.usu.sdl.openstorefront.core.model.ComponentAll;
 import edu.usu.sdl.openstorefront.core.model.search.AdvanceSearchResult;
 import edu.usu.sdl.openstorefront.core.model.search.SearchModel;
@@ -150,15 +149,6 @@ public interface SearchService
 	 * @return
 	 */
 	public List<SearchSuggestion> searchSuggestions(String query, int maxResult, String componentType);
-
-	/**
-	 * Saves a public/global Search
-	 *
-	 * @param systemSearch
-	 * @return the saved search record
-	 */
-	@ServiceInterceptor(TransactionInterceptor.class)
-	public SystemSearch saveSearch(SystemSearch systemSearch);
 
 	/**
 	 * Inactivate public/global search To avoid issues with existing links we

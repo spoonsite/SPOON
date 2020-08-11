@@ -93,29 +93,7 @@
 				handler: function(){
 					actionLoadContent('Entry-Template');
 				}
-			});		
-			dataMenu.push({
-				text: 'Submissions',
-				menu: {
-					items: [
-						{
-							text: 'Submissions Form Templates',
-							permission: 'ADMIN-SUBMISSION-FORM-TEMPLATE-PAGE',
-							handler: function(){
-								actionLoadContent('Custom-Forms');
-							}							
-						},
-						{
-							text: 'Partial Submissions',
-							permission: 'ADMIN-PARTIAL-SUBMISSIONS-PAGE',
-							handler: function(){
-								actionLoadContent('Partial-Submissions');
-							}		
-						}
-					]
-				}
 			});
-	
 			dataMenu.push({
 				text: 'Help',
 				menu: {
@@ -177,13 +155,6 @@
 				permission: ['ADMIN-RELATIONSHIPS-PAGE'],
 				handler: function(){
 					actionLoadContent('Relationships');
-				}				
-			});			
-			dataMenu.push({
-				text: 'Searches',
-				permission: ['ADMIN-SEARCHES-PAGE'],
-				handler: function(){
-					actionLoadContent('Searches');
 				}				
 			});	
 			dataMenu.push({

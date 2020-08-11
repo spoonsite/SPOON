@@ -114,7 +114,7 @@ Ext.define('OSF.landing.DefaultCategory', {
 			};
 
 			CoreUtil.sessionStorage().setItem('searchRequest', Ext.encode(searchRequest));
-			window.location.href = 'searchResults.jsp';	
+			window.location.href = '/openstorefront/#/search';	
 		};		
 		CoreUtil.pageActions.viewCategories = viewCategories;
 		
