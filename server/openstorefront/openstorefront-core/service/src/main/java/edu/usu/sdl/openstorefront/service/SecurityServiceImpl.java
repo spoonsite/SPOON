@@ -972,16 +972,12 @@ public class SecurityServiceImpl
 		if (userProfile.getLastEmailTime() != null) {
 			long time_since_last = System.currentTimeMillis() - userProfile.getLastEmailTime();
 			if ( time_since_last < RATE_LIMIT_MILLIS) {
-				// userProfile.setLastEmailTime(System.currentTimeMillis());	// Resets delay on premature attempt
 				updateEmailTimeAllProfiles(userProfiles);
-				// ServiceProxy.getProxy().getUserService().saveUserProfile(userProfile);
 				return true;
 			}
 		}
 		
-		// userProfile.setLastEmailTime(System.currentTimeMillis());
 		updateEmailTimeAllProfiles(userProfiles);
-		// ServiceProxy.getProxy().getUserService().saveUserProfile(userProfile);
 		return false;
 	}
 
