@@ -112,9 +112,8 @@
 				};
 				store.loadPage(1);				
 			},
-			navigateToContactPage: function(partID) {
-				let path = "/openstorefront/#/entry-detail/" + partID;
-				location.href=path
+			contactPage : (partID) => {
+				location.href="/openstorefront/#/entry-detail/" + partID;
 			}
 		};
 
@@ -245,9 +244,7 @@
 							'	</tpl>',
 							'</div>',
 							'<div class="dark-purple fs-13 my-8 mx-3">',
-							'	<div class="a.details-table">',
-							'		{[DetailPage.navigateToContactPage(values.componentId)]}',
-							'	</div>',
+							'	<a href="#" class="a.details-table" onclick="DetailPage.contactPage(\'{componentId}\')">Contact Vendor</a>',
 							'</div>',
 							'<tpl for="attributes">',
 							'	<tpl if="badgeUrl">',
