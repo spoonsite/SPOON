@@ -355,6 +355,7 @@ public class SecurityServiceImpl
 				userProfile.setUserTypeCode(UserTypeCode.END_USER);
 			}
 			userProfile.setNotifyOfNew(Boolean.FALSE);
+			userProfile.setLastEmailTime(System.currentTimeMillis());
 			UserProfile savedUserProfile = getUserService().saveUserProfile(userProfile);
 
 			userRegistration.setUserProfileId(savedUserProfile.getInternalGuid());
@@ -909,13 +910,15 @@ public class SecurityServiceImpl
 		userProfileExample.setEmail(emailAddress);
 
 		List<UserProfile> userProfiles = userProfileExample.findByExample();
-		for (UserProfile userProfile : userProfiles) {
-			if (username == null) {
-				username = "<b>" + userProfile.getUsername() + "</b>"
-						+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
-			} else {
-				username += "<br> " + "<b>" + userProfile.getUsername() + "</b>"
-						+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
+		if (!userProfiles.isEmpty() && !emailRecentlySent(userProfiles)) {			
+			for (UserProfile userProfile : userProfiles) {
+				if (username == null) {
+					username = "<b>" + userProfile.getUsername() + "</b>"
+							+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
+				} else {
+					username += "<br> " + "<b>" + userProfile.getUsername() + "</b>"
+							+ " (" + userProfile.getFirstName() + " " + userProfile.getLastName() + ")";
+				}
 			}
 		}
 
@@ -955,6 +958,38 @@ public class SecurityServiceImpl
 			userContext.getRoles().add(guestRole);
 		}
 		return userContext;
+	}
+
+	/**
+	 * Checks the rate at which emails can be sent from the unauthenticated API's for forgot username or password to the same email
+	 * 
+	 * @param email The email to check rate
+	 * @return Boolean representing if email has been recently sent to the address
+	 */
+	public Boolean emailRecentlySent(List<UserProfile> userProfiles) {
+		final int RATE_LIMIT_MILLIS = 30000; // 30 second rate limit
+		UserProfile userProfile = userProfiles.get(0);
+		if (userProfile.getLastEmailTime() != null) {
+			long time_since_last = System.currentTimeMillis() - userProfile.getLastEmailTime();
+			if ( time_since_last < RATE_LIMIT_MILLIS) {
+				updateEmailTimeAllProfiles(userProfiles);
+				return true;
+			}
+		}
+		
+		updateEmailTimeAllProfiles(userProfiles);
+		return false;
+	}
+
+	/**
+	 * Updates the lastEmailTime for all profiles associated with an email
+	 */
+	private List<UserProfile> updateEmailTimeAllProfiles(List<UserProfile> userProfiles) {
+		for (UserProfile profile : userProfiles) {
+			profile.setLastEmailTime(System.currentTimeMillis());
+			ServiceProxy.getProxy().getUserService().saveUserProfile(profile);
+		}
+		return userProfiles;
 	}
 
 }
