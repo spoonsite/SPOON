@@ -232,6 +232,7 @@ public class UserServiceImpl
 			userProfile.setNotifyOfNew(user.getNotifyOfNew());
 			userProfile.setOrganization(user.getOrganization());
 			userProfile.setUserTypeCode(user.getUserTypeCode());
+			userProfile.setLastEmailTime(user.getLastEmailTime());
 			if (StringUtils.isNotBlank(userProfile.getInternalGuid())) {
 				userProfile.setInternalGuid(getPersistenceService().generateId());
 			}

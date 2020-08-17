@@ -217,6 +217,7 @@ public class SecurityUtil
 		userContext.getUserProfile().setActiveStatus(UserProfile.INACTIVE_STATUS);
 		userContext.getUserProfile().setFirstName(OpenStorefrontConstant.SYSTEM_USER);
 		userContext.getUserProfile().setUsername(OpenStorefrontConstant.SYSTEM_USER);
+		userContext.getUserProfile().setLastEmailTime(System.currentTimeMillis());
 
 		//psuedo role with all permission and access to all data
 		SecurityRole systemRole = new SecurityRole();
