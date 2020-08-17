@@ -113,9 +113,7 @@
 				store.loadPage(1);				
 			},
 			navigateToContactPage: function(partID) {
-				console.log(partID);
 				let path = "/openstorefront/#/entry-detail/" + partID;
-				console.log(path);
 				location.href=path
 			}
 		};
@@ -248,7 +246,7 @@
 							'</div>',
 							'<div class="dark-purple fs-13 my-8 mx-3">',
 							'	<div class="a.details-table">',
-							'		{[DetailPage.navigateToContactPage(values.componentId)]}',	//give values.id?
+							'		{[DetailPage.navigateToContactPage(values.componentId)]}',
 							'	</div>',
 							'</div>',
 							'<tpl for="attributes">',
@@ -257,18 +255,6 @@
 							'	</tpl>',
 							'</tpl>',
 							{
-								contactVendor: function(partID){
-									// sendToEmail = "support@spoonsite.com";
-									// if(contacts.length > 0){
-									// 	sendToEmail = contacts[0].email;
-									// }
-									if (partID == undefined) {
-										console.log("No part found")
-										partID = '';
-									}
-									console.log(`The part ID used: ` + partID);
-									return `<u class="pointer dark-purple" onclick="DetailPage.navigateToContactPage()">Contact Vendor</u>`
-								},
 								partType: function (attributes) {
 									partType = "";
 									for(var i=0; i<attributes.length; i++){
