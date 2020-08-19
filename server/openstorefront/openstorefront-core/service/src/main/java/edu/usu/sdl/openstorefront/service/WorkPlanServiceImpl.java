@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -63,8 +64,8 @@ public class WorkPlanServiceImpl
 		implements WorkPlanService
 {
 	// homemade mutex for case of deleting workplans while WorkPlanSyncJob is running.
-	// may need to be volatile as different threads will be influencing value simutaneously
-	private volatile boolean runningJobMustDie = false;
+	// needs to be AtomicBoolean as different threads will be influencing value simutaneously
+	private AtomicBoolean runningJobMustDie = new AtomicBoolean(false);
 
 	private static final Logger LOG = Logger.getLogger(WorkPlanServiceImpl.class.getName());
 
@@ -224,7 +225,7 @@ public class WorkPlanServiceImpl
 	public void removeWorkPlan(String workPlanId, WorkPlanRemoveMigration workPlanRemoveMigration)
 	{
 		// stop currently running WorkPlanSync Job (if there is one) so it doesn't interfere with deletion
-		runningJobMustDie = true;
+		runningJobMustDie.set(false);
 		
 		WorkPlan workPlan = getPersistenceService().findById(WorkPlan.class, workPlanId);
 		if (workPlan != null) {
@@ -585,11 +586,11 @@ public class WorkPlanServiceImpl
 		}
 	}
 
-	@Override
+	@Override 
 	public void syncWorkPlanLinks()
 	{
 		// only catch "interrupts" thrown in the middle of running Job, therefore initalize as false
-		runningJobMustDie = false;
+//		runningJobMustDie.set(false);
 		
 		//process all entries (x at time)
 		int maxResultsToProcess = 200;
@@ -613,7 +614,8 @@ public class WorkPlanServiceImpl
 				try {
 					
 					// Die if commanded to whilst still in process of syncing workPlanLinks
-					if(runningJobMustDie){
+					// .getAndSet returns the previous 
+					if(runningJobMustDie.getAndSet(false)){
 						NotificationEvent notificationEvent = new NotificationEvent();
 						notificationEvent.setEventType(NotificationEventType.REPORT);
 						notificationEvent.setMessage("General Note: Work Plan Sync Job was interrupted. This is because a WorkPlan was deleted while it was running. The WorkPlanSync Job should run again later as normal. ");
