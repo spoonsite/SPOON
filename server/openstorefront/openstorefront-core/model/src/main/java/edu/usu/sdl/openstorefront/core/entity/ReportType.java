@@ -31,7 +31,6 @@ public class ReportType
 {
 
 	public static final String ACTION_REPORT = "ACTION";
-	public static final String ENTRIES_BY_CAT_REPORT = "CATCOMP";
 	public static final String ENTRIES_BY_ORG_REPORT = "CMPORG";
 	public static final String ENTRY_DETAIL_REPORT = "TYPECOMP";
 	public static final String ENTRY_LISTING_REPORT = "ENTRYLIST";
@@ -59,7 +58,6 @@ public class ReportType
 		Map<String, LookupEntity> codeMap = new HashMap<>();
 
 		codeMap.put(ACTION_REPORT, newLookup(ReportType.class, ACTION_REPORT, "Action", "Report on items that need administrative attention."));
-		codeMap.put(ENTRIES_BY_CAT_REPORT, newLookup(ReportType.class, ENTRIES_BY_CAT_REPORT, "Entries by Category", "Reports on entries in a category."));
 		codeMap.put(ENTRIES_BY_ORG_REPORT, newLookup(ReportType.class, ENTRIES_BY_ORG_REPORT, "Entries by Organization", "Reports on entries that belong to an organization"));
 		codeMap.put(ENTRY_DETAIL_REPORT, newLookup(ReportType.class, ENTRY_DETAIL_REPORT, "Entry Detail", "Exports entry details"));
 		codeMap.put(ENTRY_LISTING_REPORT, newLookup(ReportType.class, ENTRY_LISTING_REPORT, "Entry Listing", "List approved entries in a summary"));
@@ -75,7 +73,6 @@ public class ReportType
 
 		//update metadata
 		((ReportType) codeMap.get(ACTION_REPORT)).setRequiredPermission(SecurityPermission.RUN_ACTION_REPORT);
-		((ReportType) codeMap.get(ENTRIES_BY_CAT_REPORT)).setRequiredPermission(SecurityPermission.RUN_ENTRIES_BY_CAT_REPORT);
 		((ReportType) codeMap.get(ENTRIES_BY_ORG_REPORT)).setRequiredPermission(SecurityPermission.RUN_ENTRIES_BY_ORG_REPORT);
 		((ReportType) codeMap.get(ENTRY_DETAIL_REPORT)).setRequiredPermission(SecurityPermission.RUN_ENTRY_DETAIL_REPORT);
 		((ReportType) codeMap.get(ENTRY_LISTING_REPORT)).setRequiredPermission(SecurityPermission.RUN_ENTRY_LISTING_REPORT);
@@ -91,7 +88,6 @@ public class ReportType
 
 		//update metadata for component type reports
 		((ReportType) codeMap.get(ENTRIES_BY_ORG_REPORT)).setComponentReport(true);
-		((ReportType) codeMap.get(ENTRIES_BY_CAT_REPORT)).setComponentReport(true);
 		((ReportType) codeMap.get(ENTRY_REPORT)).setComponentReport(true);
 		((ReportType) codeMap.get(ENTRY_DETAIL_REPORT)).setComponentReport(true);
 		((ReportType) codeMap.get(ENTRY_LISTING_REPORT)).setComponentReport(true);
