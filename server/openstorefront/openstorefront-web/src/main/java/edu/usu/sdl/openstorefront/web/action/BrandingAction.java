@@ -30,6 +30,7 @@ import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
+import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ErrorResolution;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.HandlesEvent;
@@ -133,6 +134,22 @@ public class BrandingAction
 				.setFilename(generalMedia.getFile().getOriginalName())
 				.createRangeResolution();
 
+	}
+
+	//Default handler manages bad names and returns a 404
+	@DefaultHandler
+	public Resolution defaultHandle() throws FileNotFoundException {
+		if (name.equals("GeneralMedia")) {
+			generalMedia();
+		} else if (name.equals("Override")) {
+			brandingCssOverride();
+		} else if (name.equals("CSS")) {
+			cssPage();
+		}
+		
+		System.out.println("	Name of request: " + name);
+		System.out.println("ERROR: Branding not found, nothing returned");
+		return new ErrorResolution(404);		
 	}
 
 	public String getTemplate()
