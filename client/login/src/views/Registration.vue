@@ -202,7 +202,7 @@
         </v-btn>
       </div>
       <div class="btn2 pb-2">
-      <v-btn block dark @click="cancel()"><v-icon light class="custom-icon">cancel</v-icon>Cancel</v-btn>
+      <v-btn block dark to="/"><v-icon light class="custom-icon">cancel</v-icon>Return to Login</v-btn>
       </div>
     </div>
 
@@ -220,7 +220,7 @@
           Return to login screen to login with your new username and password.
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="$router.push('/')"><v-icon class="custom-icon">fas fa-sign-in-alt</v-icon>Return to Login</v-btn>
+          <v-btn to="/"><v-icon class="custom-icon">fas fa-sign-in-alt</v-icon>Return to Login</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -356,11 +356,6 @@ export default {
     },
     signup () {
       return 0
-    },
-    cancel () {
-      this.$refs.userInformationForm.reset()
-      this.$refs.verifyForm.reset()
-      this.$refs.credentialsForm.reset()
     },
     responseErrorHandler (response, message) {
       this.$toasted.error(message)
