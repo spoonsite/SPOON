@@ -209,7 +209,7 @@
 				  });
 				  socket.on('WATCH', function (args) {
 
-					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'watch', 'msg': args.message + '<i>View the changes <a href="view.jsp?fullPage=true&id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
+					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'watch', 'msg': args.message + '<i> View the changes <a href="view.jsp?fullPage=true&id='+args.entityId+'"><strong>here</strong></a>.</i>', 'id': 'watch_'+ args.eventId};
 					handleAlert(alert, args);
 				  });
 				  socket.on('IMPORT', function (args) {					
@@ -221,7 +221,7 @@
 					handleAlert(alert, args);
 				  });
 				  socket.on('REPORT', function (args) {					
-					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i>View/Download the report <a href="UserTool.action?load=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
+					var alert = {'type': args.entityMetaDataStatus ? alertStatus(args.entityMetaDataStatus): 'report', 'msg': args.message + '<i> View/Download the report <a href="AdminTool.action?load=Reports"><strong>here</strong></a></i>.', 'id': 'report_'+ args.eventId};					
 					handleAlert(alert, args);
 				  });
 				  socket.on('ADMIN', function (args) {					
