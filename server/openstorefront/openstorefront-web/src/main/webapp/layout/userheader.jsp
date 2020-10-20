@@ -221,16 +221,6 @@
 								},
 								{
 									xtype: 'tbfill'
-								},
-								{
-									text: 'Change password',
-									id: 'main-menu-changepassword',
-									scale   : 'large',
-									iconCls: 'fa fa-2x fa-key icon-button-color-key icon-correction-key',
-									hidden: true,
-									handler: function(){
-										actionLoadContent('Change-Password');
-									}										
 								}			
 							]
 						}
@@ -257,20 +247,6 @@
 					Ext.getCmp('main-menu-submissions').setHidden(false);
 				}
 			});	
-			
-			Ext.Ajax.request({
-				url: 'api/v1/service/security/realmname',
-				success: function(response, opts) {
-					var data = Ext.decode(response.responseText);
-					
-					Ext.Array.each(data, function(realm) {
-						if (realm.code === 'StorefrontRealm') {
-							Ext.getCmp('main-menu-changepassword').setHidden(false);
-						}
-					});
-					
-				}
-			});
 			
 			Ext.defer(function(){
 				Ext.getCmp('topNavPanel').updateLayout(true, true);
