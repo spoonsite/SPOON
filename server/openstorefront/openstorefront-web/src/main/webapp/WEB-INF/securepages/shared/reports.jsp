@@ -1128,29 +1128,6 @@
 
 							}
 						}
-						else if (reportType === 'CATCOMP') {
-							optionsToAdd.push({
-								xtype: 'combobox',
-								name: 'category',
-								itemId: 'category',
-								fieldLabel: 'Select Category<span class="field-required" />',
-								store: {
-									autoLoad: true,
-									proxy: {
-										type: 'ajax',
-										url: 'api/v1/resource/attributes/attributetypes',
-										reader: {
-											type: 'json',
-											rootProperty: 'data'
-										}
-									}
-								},
-								displayField: 'description',
-								valueField: 'attributeType',
-								editable: false,
-								allowBlank: true
-							});
-						}
 						else if (reportType === 'LINKVALID') {
 							optionsToAdd.push(
 								{

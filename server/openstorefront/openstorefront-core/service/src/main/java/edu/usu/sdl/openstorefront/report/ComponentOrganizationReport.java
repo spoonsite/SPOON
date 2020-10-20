@@ -144,12 +144,13 @@ public class ComponentOrganizationReport
 			cvsGenerator.addLine(lineModel.getOrganization());
 
 			for (EntryOrgDetailModel detailModel : lineModel.getEntries()) {
+				// System.out.println("-------> detail model: Approved dts = " + detailModel.getApprovedDts() + " lastSub = " + detailModel.getLastSubmitDts());
 				cvsGenerator.addLine(
 					"",
 					detailModel.getName(),
 					// Imported entries dont have lastSubmitDts @see{Component#submittedDts}
 					detailModel.getLastSubmitDts() == null ? null : sdf.format(detailModel.getLastSubmitDts()),
-					sdf.format(detailModel.getApprovedDts()),
+					detailModel.getApprovedDts() == null ? null : sdf.format(detailModel.getApprovedDts()),
 					sdf.format(detailModel.getLastActivityDts()),
 					detailModel.getApprovalState());
 			}
