@@ -144,7 +144,6 @@ public class ComponentOrganizationReport
 			cvsGenerator.addLine(lineModel.getOrganization());
 
 			for (EntryOrgDetailModel detailModel : lineModel.getEntries()) {
-				// System.out.println("-------> detail model: Approved dts = " + detailModel.getApprovedDts() + " lastSub = " + detailModel.getLastSubmitDts());
 				cvsGenerator.addLine(
 					"",
 					detailModel.getName(),
