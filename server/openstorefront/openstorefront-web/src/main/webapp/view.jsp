@@ -113,8 +113,8 @@
 				store.loadPage(1);				
 			},
 			contactPage : (partID) => {
-				location.href="/openstorefront/#/entry-detail/" + partID;
-			}
+				location.href="/openstorefront/#/entry-detail/" + partID + "?openContact=true";	// opens contact vendor dialogue in front-end page
+			},
 		};
 
 		Ext.onReady(function(){		

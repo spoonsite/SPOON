@@ -610,6 +610,11 @@ export default {
       )
     }
 
+    console.log('Query param:' + this.$route.params.openContact)
+    if (this.$route.query.openContact) {
+      this.contactVendorDialog = true
+    }
+
     this.$http
       .get(`/openstorefront/api/v1/service/application/configproperties/userreview.autoapprove`)
       .then(response => (this.autoApprove = response.data.description === 'true'))
