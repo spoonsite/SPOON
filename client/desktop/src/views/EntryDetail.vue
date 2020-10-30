@@ -610,7 +610,6 @@ export default {
       )
     }
 
-    console.log('Query param:' + this.$route.params.openContact)
     if (this.$route.query.openContact) {
       this.contactVendorDialog = true
     }
