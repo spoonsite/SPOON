@@ -134,44 +134,6 @@ public class NotificationService
 	}
 
 	@POST
-	@APIDescription("Sends an email to a vendor (Backwards compatibility with old Extjs entry detail page")
-	// @RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
-	@Path("/contact-vendor")
-	public Response contactVendor(
-			@RequiredParam ContactVendorMessage contactVendorMessage)
-	{
-		ValidationModel validationModel = new ValidationModel(contactVendorMessage);
-		validationModel.setConsumeFieldsOnly(true);
-		ValidationResult validationResult = ValidationUtil.validate(validationModel);
-		if (validationResult.valid()) {
-			Email email = MailManager.newEmail();
-			// subject
-			email.setSubject("SpoonSite User Request for Information");
-			// message
-			email.setText(contactVendorMessage.getMessage());
-
-			// to and from
-			String toEmail = contactVendorMessage.getUserToEmail();
-
-			String fromEmail = contactVendorMessage.getUserFromEmail();
-
-			email.addRecipient("", toEmail, Message.RecipientType.TO);
-			email.setFromAddress("", fromEmail);
-			email.setReplyToAddress("", fromEmail);
-			try {
-				MailManager.send(email, true);
-			} catch (Exception e) {
-				SimpleRestError simpleRestError = new SimpleRestError();
-				simpleRestError.setError(e.toString());
-				return Response.ok(simpleRestError).build();
-			}
-			return Response.ok().build();
-		} else {
-			return Response.ok(validationResult.toRestError()).build();
-		}
-	}
-
-	@POST
 	@APIDescription("Sends an email to a vendor")
 	// @RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
 	@Path("/contact-vendor-template")
