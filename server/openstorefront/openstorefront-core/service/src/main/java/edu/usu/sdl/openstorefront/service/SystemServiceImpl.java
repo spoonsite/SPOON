@@ -46,7 +46,10 @@ import edu.usu.sdl.openstorefront.service.manager.PluginManager;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.service.SanitizeMediaService;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -72,6 +75,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -426,13 +431,52 @@ public class SystemServiceImpl
 		Objects.requireNonNull(temporaryMedia.getName(), "Name must be set.");
 
 		temporaryMedia.setFileName(temporaryMedia.getFileName());
+		File tmpFile = null;
 		try (InputStream in = fileInput) {
-			Files.copy(in, temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+			// Read content to a temporary (virtual) file
+			tmpFile = File.createTempFile(null, ".tmp");
+			// tmpFile.setWritable(true);		//TODO: Is this needed? Default temp file behavior?
+			try (FileOutputStream out = new FileOutputStream(tmpFile)) {
+				IOUtils.copy(in, out);
+			} catch (IOException e) {
+				throw new OpenStorefrontRuntimeException("Unable to read media from source. Check URL source.", e);
+			}
+
+			SanitizeMediaService sanitizer = new SanitizeMediaService(tmpFile, temporaryMedia.getMimeType());
+			
+			// Sanitizer will change file. Write modified file to long-term storage
+			if (sanitizer.sanitizable()) {
+				if (sanitizer.sanitize()) {
+					tmpFile = sanitizer.getSanitzedFile();
+					Files.copy(Paths.get(tmpFile.getAbsolutePath()), temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+				} else {
+					// return and log that file is unsafe
+					Logger LOG = Logger.getLogger(tmpFile.getName());
+					LOG.log(Level.FINE, "Unsafe file:" + tmpFile.getName());
+					throw new OpenStorefrontRuntimeException("Media upload may be malicious or corrupted");
+				}
+				
+			} else {
+				// Return and log notice/error that file is not supported
+				Logger LOG = Logger.getLogger(tmpFile.getName());
+				LOG.log(Level.FINE, "Unsupported file type:" + tmpFile.getName());
+				throw new OpenStorefrontRuntimeException("Unsupported Media");
+			}
+				
+
+			// Files.copy(in, temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);	//original
 			temporaryMedia.populateBaseCreateFields();
 			getPersistenceService().persist(temporaryMedia);
 			return temporaryMedia;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		} finally {
+			// Delete temp file/cleanup
+			if (tmpFile != null) { 
+				try {
+					tmpFile.delete();	
+				} catch (SecurityException e) {}	//ignore
+			}
 		}
 	}
 

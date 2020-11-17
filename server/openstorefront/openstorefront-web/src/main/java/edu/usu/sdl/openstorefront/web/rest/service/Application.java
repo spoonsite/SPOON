@@ -300,6 +300,7 @@ public class Application
 	public Response retrieveMedia(MediaRetrieveRequestModel retrieveRequest) throws MalformedURLException, IOException
 	{
 		TemporaryMedia temporaryMedia = service.getSystemService().retrieveTemporaryMedia(retrieveRequest.getURL());
+		System.out.println("--->> Temporary media data:\n  >> MimeType: " + temporaryMedia.getMimeType() + "\n	>>Path to media" + temporaryMedia.pathToMedia() + "\n	>>Original URL" + temporaryMedia.getOriginalSourceURL());
 
 		if (temporaryMedia == null) {
 			return Response.status(404).build();
