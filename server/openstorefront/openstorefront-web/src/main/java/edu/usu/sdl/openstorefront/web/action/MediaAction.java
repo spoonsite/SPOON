@@ -456,51 +456,6 @@ public class MediaAction
 				.createRangeResolution();
 	}
 
-	@HandlesEvent("UploadTemporaryMedia")
-	public Resolution uploadTemporaryMedia()
-	{
-		Map<String, String> errors = new HashMap<>();
-		if (temporaryMedia != null) {
-			temporaryMedia.setActiveStatus(ComponentMedia.ACTIVE_STATUS);
-			temporaryMedia.setUpdateUser(SecurityUtil.getCurrentUserName());
-			temporaryMedia.setCreateUser(SecurityUtil.getCurrentUserName());
-			temporaryMedia.setOriginalFileName(StringProcessor.getJustFileName(file.getFileName()));
-			temporaryMedia.setOriginalSourceURL("fileUpload");
-			temporaryMedia.setMimeType(file.getContentType());
-			temporaryMedia.setName(temporaryMedia.getName()
-					+ OpenStorefrontConstant.GENERAL_KEY_SEPARATOR
-					+ StringProcessor.uniqueId()
-			);
-			String key = SecurityUtil.getCurrentUserName() + file.getFileName() + temporaryMedia.getName();
-			String hash = key;
-			try {
-				hash = StringProcessor.getHexFromBytes(MessageDigest.getInstance("SHA-1").digest(key.getBytes()));
-			} catch (NoSuchAlgorithmException ex) {
-				throw new OpenStorefrontRuntimeException("Hash Format not available", "Coding issue", ex);
-			}
-			temporaryMedia.setFileName(hash);
-
-			ValidationModel validationModel = new ValidationModel(temporaryMedia);
-			validationModel.setConsumeFieldsOnly(true);
-			ValidationResult validationResult = ValidationUtil.validate(validationModel);
-			if (validationResult.valid()) {
-				try {
-					temporaryMedia = service.getSystemService().saveTemporaryMedia(temporaryMedia, file.getInputStream());
-					return streamResults(temporaryMedia, MediaType.TEXT_HTML);
-				} catch (IOException ex) {
-					throw new OpenStorefrontRuntimeException("Unable to able to save media.", "Contact System Admin. Check disk space and permissions.", ex);
-				} finally {
-					deleteUploadFile(file);
-				}
-			} else {
-				errors.put("file", validationResult.toHtmlString());
-			}
-		} else {
-			errors.put("temporaryMedia", "Missing temporary media information");
-		}
-		return streamUploadResponse(errors);
-	}
-
 	@RequireSecurity(value = {
 		SecurityPermission.ADMIN_ENTRY_MEDIA_MANAGEMENT,
 		SecurityPermission.ADMIN_ENTRY_EVALSECTION_MANAGEMENT,

@@ -293,22 +293,6 @@ public class Application
 	}
 
 	@POST
-	@APIDescription("Instruct the server to download a media file from a URL and save the file to temporary media")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/retrievemedia")
-	public Response retrieveMedia(MediaRetrieveRequestModel retrieveRequest) throws MalformedURLException, IOException
-	{
-		TemporaryMedia temporaryMedia = service.getSystemService().retrieveTemporaryMedia(retrieveRequest.getURL());
-
-		if (temporaryMedia == null) {
-			return Response.status(404).build();
-		}
-
-		return Response.ok(temporaryMedia).build();
-	}
-
-	@POST
 	@RequireSecurity(SecurityPermission.ADMIN_SYSTEM_MANAGEMENT_CONFIG_PROP_READ)
 	@APIDescription("Save a config property")
 	@Produces(MediaType.APPLICATION_JSON)
