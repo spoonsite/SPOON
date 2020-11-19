@@ -56,7 +56,7 @@ public class PdfDocumentDetectorImpl implements DocumentDetector {
 			}
 		} catch (Exception e) {
 			safeState = false;
-			LOG.warn("Error during Pdf file analysis !", e);
+			LOG.warn("Error during Pdf file analysis: could not sanitize file.");
 		}
 		return safeState;
 	}

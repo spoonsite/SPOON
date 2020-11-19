@@ -434,8 +434,7 @@ public class SystemServiceImpl
 		File tmpFile = null;
 		try (InputStream in = fileInput) {
 			// Read content to a temporary (virtual) file
-			tmpFile = File.createTempFile(null, ".tmp");
-			// tmpFile.setWritable(true);		//TODO: Is this needed? Default temp file behavior?
+			tmpFile = File.createTempFile("TEMP", null);
 			try (FileOutputStream out = new FileOutputStream(tmpFile)) {
 				IOUtils.copy(in, out);
 			} catch (IOException e) {
@@ -448,17 +447,16 @@ public class SystemServiceImpl
 			if (sanitizer.sanitizable()) {
 				if (sanitizer.sanitize()) {
 					tmpFile = sanitizer.getSanitzedFile();
+					LOG.log(Level.FINE, "Media Upload File was successfully sanitized");
 					Files.copy(Paths.get(tmpFile.getAbsolutePath()), temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 				} else {
 					// return and log that file is unsafe
-					Logger LOG = Logger.getLogger(tmpFile.getName());
 					LOG.log(Level.FINE, "Unsafe file:" + tmpFile.getName());
-					throw new OpenStorefrontRuntimeException("Media upload may be malicious or corrupted");
+					throw new OpenStorefrontRuntimeException("Media upload may be malicious or corrupted. File not uploaded or saved.");
 				}
 				
 			} else {
 				// Return and log notice/error that file is not supported
-				Logger LOG = Logger.getLogger(tmpFile.getName());
 				LOG.log(Level.FINE, "Unsupported file type:" + tmpFile.getName());
 				throw new OpenStorefrontRuntimeException("Unsupported Media");
 			}
@@ -470,6 +468,8 @@ public class SystemServiceImpl
 			return temporaryMedia;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		} catch (Exception ex) {
+			LOG.log(Level.FINE, "An Error occurred while handling the temporary file");
 		} finally {
 			// Delete temp file/cleanup
 			if (tmpFile != null) { 
@@ -478,6 +478,7 @@ public class SystemServiceImpl
 				} catch (SecurityException e) {}	//ignore
 			}
 		}
+		return temporaryMedia;
 	}
 
 	@Override

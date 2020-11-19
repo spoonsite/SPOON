@@ -79,7 +79,7 @@ public class ExcelDocumentDetectorImpl implements DocumentDetector {
 		}
 		catch (Exception e) {
 			safeState = false;
-			LOG.warn("Error during Excel file analysis !", e);
+			LOG.warn("Error during Excel file analysis: could not sanitize file.");
 		}
 		return safeState;
 	}

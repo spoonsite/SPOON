@@ -155,7 +155,7 @@ public class ImageDocumentSanitizerImpl implements DocumentSanitizer {
                                 break;
                             }
                             default: {
-                                throw new IOException("Format of the original image is not supported for write operation !");
+                                throw new IOException("Format of the original image is not supported for write operation!");
                             }
 
                         }
@@ -170,7 +170,7 @@ public class ImageDocumentSanitizerImpl implements DocumentSanitizer {
 
         } catch (Exception e) {
             safeState = false;
-            LOG.warn("Error during Image file processing !", e);
+            LOG.warn("Error during Image file processing: Could not sanitize file.");
         }
 
         return safeState;

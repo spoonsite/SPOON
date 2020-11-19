@@ -64,7 +64,7 @@ public class PowerpointDocumentDetectorImpl implements DocumentDetector {
             }
         } catch (Exception e) {
             safeState = false;
-            LOG.warn("Error during Powerpoint file analysis !", e);
+            LOG.warn("Error during Powerpoint file analysis: could not sanitize file.");
         }
         return safeState;
     }

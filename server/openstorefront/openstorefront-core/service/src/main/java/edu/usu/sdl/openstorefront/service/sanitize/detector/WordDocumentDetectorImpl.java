@@ -84,7 +84,7 @@ public class WordDocumentDetectorImpl implements DocumentDetector {
 		}
 		catch (Exception e) {
 			safeState = false;
-			LOG.warn("Error during Word file analysis !", e);
+			LOG.warn("Error during Word file analysis: could not sanitize file.");
 		}
 		return safeState;
 	}
