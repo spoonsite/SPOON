@@ -111,7 +111,10 @@
 					return request;
 				};
 				store.loadPage(1);				
-			}
+			},
+			contactPage : (partID) => {
+				location.href="/openstorefront/#/entry-detail/" + partID + "?openContact=true";	// opens contact vendor dialogue in front-end page
+			},
 		};
 
 		Ext.onReady(function(){		
@@ -241,9 +244,7 @@
 							'	</tpl>',
 							'</div>',
 							'<div class="dark-purple fs-13 my-8 mx-3">',
-							'	<div class="a.details-table">',
-							'		{[this.contactVendor(values.contacts)]}',
-							'	</div>',
+							'	<a href="#" class="a.details-table" onclick="DetailPage.contactPage(\'{componentId}\')">Contact Vendor</a>',
 							'</div>',
 							'<tpl for="attributes">',
 							'	<tpl if="badgeUrl">',
@@ -251,13 +252,6 @@
 							'	</tpl>',
 							'</tpl>',
 							{
-								contactVendor: function(contacts){
-									sendToEmail = "support@spoonsite.com";
-									if(contacts.length > 0){
-										sendToEmail = contacts[0].email;
-									}
-									return '<u class="pointer dark-purple" onclick="CoreUtil.showContactVendorWindow(sendToEmail)">Contact Vendor</u>'
-								},
 								partType: function (attributes) {
 									partType = "";
 									for(var i=0; i<attributes.length; i++){
