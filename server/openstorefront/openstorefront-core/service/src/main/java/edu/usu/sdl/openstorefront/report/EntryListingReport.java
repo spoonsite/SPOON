@@ -195,6 +195,9 @@ public class EntryListingReport
 	{
 		EntryListingReportLineModel lineModel = new EntryListingReportLineModel();
 
+		lineModel.setName(component.getName());
+		lineModel.setShortDescription(component.getDescription());
+		lineModel.setEntryType(component.getComponentType());
 		lineModel.setComponentId(component.getComponentId());
 		lineModel.setViewLink(viewLinkBase + component.getComponentId());
 
@@ -203,7 +206,7 @@ public class EntryListingReport
 		lineModel.setLastUpdatedDts(component.getLastActivityDts());
 		lineModel.setlastVendorUpdateApprovedDate(component.getApprovedDts());
 
-		lineModel.setEvaluationStatus("");
+		lineModel.setEvaluationStatus("Evaluations not in use");
 
 		List<Evaluation> evals = evalMap.get(component.getComponentId());
 		if (evals != null) {
@@ -333,7 +336,6 @@ public class EntryListingReport
 		} catch (TemplateException | IOException e) {
 			throw new OpenStorefrontRuntimeException(e);
 		}
-
 		return renderedTemplate;
 	}
 

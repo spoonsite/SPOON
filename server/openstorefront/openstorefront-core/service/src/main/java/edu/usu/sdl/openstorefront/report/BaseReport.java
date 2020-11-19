@@ -131,9 +131,6 @@ public abstract class BaseReport<T extends BaseReportModel>
 				case ReportType.SUBMISSIONS_REPORT:
 					baseReport = new SubmissionsReport(report);
 					break;
-				case ReportType.ENTRIES_BY_CAT_REPORT:
-					baseReport = new CategoryComponentReport(report);
-					break;
 				case ReportType.ENTRY_DETAIL_REPORT:
 					baseReport = new ComponentDetailReport(report);
 					break;

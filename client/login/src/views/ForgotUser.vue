@@ -50,6 +50,10 @@ export default {
   }),
   methods: {
     submitEmail () {
+      // if the form is invalid do not send the request
+      if (!this.valid) {
+        return
+      }
       this.loading = true
       this.$http.get(`/openstorefront/api/v1/service/security/forgotusername?emailAddress=${this.email.toLowerCase()}`)
         .then(response => {

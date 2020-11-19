@@ -149,7 +149,7 @@ public class ComponentOrganizationReport
 					detailModel.getName(),
 					// Imported entries dont have lastSubmitDts @see{Component#submittedDts}
 					detailModel.getLastSubmitDts() == null ? null : sdf.format(detailModel.getLastSubmitDts()),
-					sdf.format(detailModel.getApprovedDts()),
+					detailModel.getApprovedDts() == null ? null : sdf.format(detailModel.getApprovedDts()),
 					sdf.format(detailModel.getLastActivityDts()),
 					detailModel.getApprovalState());
 			}

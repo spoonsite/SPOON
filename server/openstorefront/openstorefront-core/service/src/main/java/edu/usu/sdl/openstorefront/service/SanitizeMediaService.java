@@ -59,7 +59,6 @@ public class SanitizeMediaService {
             return false;
         }
         return true;
-        
     }
 
     /**
@@ -67,12 +66,6 @@ public class SanitizeMediaService {
      * @return boolean
      */
     public boolean sanitize() {
-        // if (this.documentSanitizer != null) {
-        //     return this.documentSanitizer.madeSafe(this.file);
-        // }
-        // if (this.documentDetector != null) {
-        //     return this.documentDetector.isSafe(this.file);
-        // }
         return (documentSanitizer == null) ? documentDetector.isSafe(this.file) : documentSanitizer.madeSafe(this.file);
     }
 
