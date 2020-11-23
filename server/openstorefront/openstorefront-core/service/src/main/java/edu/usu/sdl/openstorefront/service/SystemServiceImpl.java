@@ -441,18 +441,19 @@ public class SystemServiceImpl
 				throw new OpenStorefrontRuntimeException("Unable to read media from source. Check URL source.", e);
 			}
 
+			//NOTE: TemporaryMedia files are only used in tinyMCE now, which only has picture uploads implemented; Only image files can be used and sanitized
 			SanitizeMediaService sanitizer = new SanitizeMediaService(tmpFile, temporaryMedia.getMimeType());
 			
 			// Sanitizer will change file. Write modified file to long-term storage
-			if (sanitizer.sanitizable()) {
-				if (sanitizer.sanitize()) {
+			if (sanitizer.setSanitizer()) {
+				sanitizer.sanitize();
+				if (sanitizer.isSanitized()) {
 					tmpFile = sanitizer.getSanitzedFile();
 					LOG.log(Level.FINE, "Media Upload File was successfully sanitized");
 					Files.copy(Paths.get(tmpFile.getAbsolutePath()), temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 				} else {
 					// return and log that file is unsafe
-					LOG.log(Level.FINE, "Unsafe file:" + tmpFile.getName());
-					throw new OpenStorefrontRuntimeException("Media upload may be malicious or corrupted. File not uploaded or saved.");
+					LOG.log(Level.WARNING, "Media upload may be malicious or corrupted. File not uploaded or saved.\nUnsafe file: " + temporaryMedia.getName());
 				}
 				
 			} else {
@@ -461,8 +462,6 @@ public class SystemServiceImpl
 				throw new OpenStorefrontRuntimeException("Unsupported Media");
 			}
 				
-
-			// Files.copy(in, temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);	//original
 			temporaryMedia.populateBaseCreateFields();
 			getPersistenceService().persist(temporaryMedia);
 			return temporaryMedia;

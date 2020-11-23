@@ -2,7 +2,6 @@
  * https://github.com/righettod/document-upload-protection 
  */
 
-
 package edu.usu.sdl.openstorefront.service.sanitize.sanitizer;
 
 import org.apache.commons.imaging.ImageInfo;
@@ -17,8 +16,6 @@ import org.apache.commons.imaging.formats.tiff.TiffImageParser;
 import org.apache.commons.imaging.formats.wbmp.WbmpImageParser;
 import org.apache.commons.imaging.formats.xbm.XbmImageParser;
 import org.apache.commons.imaging.formats.xpm.XpmImageParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -43,12 +40,6 @@ import java.util.Iterator;
  * @see "http://commons.apache.org/proper/commons-imaging/formatsupport.html"
  */
 public class ImageDocumentSanitizerImpl implements DocumentSanitizer {
-
-    /**
-     * LOGGER
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(ImageDocumentSanitizerImpl.class);
-
 
     /**
      * {@inheritDoc}
@@ -116,8 +107,7 @@ public class ImageDocumentSanitizerImpl implements DocumentSanitizer {
                     } else {
                         ImageParser imageParser;
                         //Handle only formats for which Apache Commons Imaging can successfully write (YES in Write column of the reference link) the image format
-                        //See reference link in the class header
-                        switch (formatName) {
+                        switch (formatName) {   //TODO rework as non-switch
                             case "TIFF": {
                                 imageParser = new TiffImageParser();
                                 break;
@@ -170,7 +160,6 @@ public class ImageDocumentSanitizerImpl implements DocumentSanitizer {
 
         } catch (Exception e) {
             safeState = false;
-            LOG.warn("Error during Image file processing: Could not sanitize file.");
         }
 
         return safeState;

@@ -16,11 +16,6 @@
 package edu.usu.sdl.openstorefront.service;
 
 import java.io.File;
-import edu.usu.sdl.openstorefront.service.sanitize.detector.DocumentDetector;
-import edu.usu.sdl.openstorefront.service.sanitize.detector.ExcelDocumentDetectorImpl;
-import edu.usu.sdl.openstorefront.service.sanitize.detector.PdfDocumentDetectorImpl;
-import edu.usu.sdl.openstorefront.service.sanitize.detector.PowerpointDocumentDetectorImpl;
-import edu.usu.sdl.openstorefront.service.sanitize.detector.WordDocumentDetectorImpl;
 import edu.usu.sdl.openstorefront.service.sanitize.sanitizer.DocumentSanitizer;
 import edu.usu.sdl.openstorefront.service.sanitize.sanitizer.ImageDocumentSanitizerImpl;
 
@@ -31,42 +26,39 @@ import edu.usu.sdl.openstorefront.service.sanitize.sanitizer.ImageDocumentSaniti
 public class SanitizeMediaService {
     File file;
     String mimeType;
-    DocumentDetector documentDetector = null;
     DocumentSanitizer documentSanitizer = null;
+    Boolean sanitized = false;
 
     public SanitizeMediaService(File file, String mimeType) {
         this.file = file;
         this.mimeType = mimeType;
-
     }
     
     /**
      * Attempts to assign a sanitizer method to the file
      * @return boolean
      */
-    public boolean sanitizable() {
+    public boolean setSanitizer() {
         if (mimeType.contains("image")) {
             documentSanitizer = new ImageDocumentSanitizerImpl();
-        } else if (mimeType.contains("pdf")) {
-            documentDetector = new PdfDocumentDetectorImpl();
-        } else if (mimeType.contains("msword")) {
-            documentDetector = new WordDocumentDetectorImpl();
-        } else if (mimeType.contains("excel")) {
-            documentDetector = new ExcelDocumentDetectorImpl();
-        } else if (mimeType.contains("powerpoint")) {
-            documentDetector = new PowerpointDocumentDetectorImpl();
-        } else {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
      * Runs the sanitation on the file
      * @return boolean
      */
-    public boolean sanitize() {
-        return (documentSanitizer == null) ? documentDetector.isSafe(this.file) : documentSanitizer.madeSafe(this.file);
+    public void sanitize() {
+        this.sanitized = documentSanitizer.madeSafe(this.file);
+    }
+
+    /**
+     * @return boolean
+     */
+    public boolean isSanitized() {
+        return this.sanitized;
     }
 
     /**
