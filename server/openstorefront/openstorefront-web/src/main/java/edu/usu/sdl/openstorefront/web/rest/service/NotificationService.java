@@ -135,7 +135,7 @@ public class NotificationService
 
 	@POST
 	@APIDescription("Sends an email to a vendor")
-	// @RequireSecurity(SecurityPermission.ADMIN_MESSAGE_MANAGEMENT_CREATE)
+	@RequireSecurity(SecurityPermission.USER_PROFILE_PAGE)
 	@Path("/contact-vendor-template")
 	public Response contactVendorTemplate(
 			@RequiredParam ContactVendorMessage contactVendorMessage)
