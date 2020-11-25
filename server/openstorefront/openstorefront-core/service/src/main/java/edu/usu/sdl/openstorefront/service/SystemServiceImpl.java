@@ -454,8 +454,9 @@ public class SystemServiceImpl
 				if (sanitizedFile.isPresent()) {
 					// Save the new sanitized file 
 					LOG.log(Level.FINE, "The uploaded file: " + temporaryMedia.getName() + " was successfully sanitized.");
-					// !WARN: be careful not to leave files still existing, cleanup all files after attempting sanitizing
 					Files.copy(Paths.get(sanitizedFile.get().getAbsolutePath()), temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+					//delete sanitized file after copying to be saved
+					sanitizedFile.get().delete();
 				}
 				else {
 					LOG.log(Level.WARNING, "The uploaded file may contain malicious code or be corruped. File not uploaded or saved: " + temporaryMedia.getName());
@@ -472,7 +473,7 @@ public class SystemServiceImpl
 		} catch (Exception ex) {
 			LOG.log(Level.FINE, "An Error occurred while handling the temporary file");
 		} finally {
-			// Delete temp file/cleanup
+			// Delete original uploaded file (TempFile)
 			if (tmpFile != null) { 
 				try {
 					tmpFile.delete();	
