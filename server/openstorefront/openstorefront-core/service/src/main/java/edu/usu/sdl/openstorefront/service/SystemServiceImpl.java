@@ -43,6 +43,7 @@ import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.PluginManager;
+import edu.usu.sdl.openstorefront.service.sanitize.sanitizer.DocumentSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
@@ -73,6 +74,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -442,26 +444,26 @@ public class SystemServiceImpl
 			}
 
 			//NOTE: TemporaryMedia files are only used in tinyMCE now, which only has picture uploads implemented; Only image files can be used and sanitized
-			SanitizeMediaService sanitizer = new SanitizeMediaService(tmpFile, temporaryMedia.getMimeType());
+			SanitizeMediaService mediaSanitizer = new SanitizeMediaService();
 			
-			// Sanitizer will change file. Write modified file to long-term storage
-			if (sanitizer.setSanitizer()) {
-				sanitizer.sanitize();
-				if (sanitizer.isSanitized()) {
-					tmpFile = sanitizer.getSanitzedFile();
-					LOG.log(Level.FINE, "Media Upload File was successfully sanitized");
-					Files.copy(Paths.get(tmpFile.getAbsolutePath()), temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
-				} else {
-					// return and log that file is unsafe
-					LOG.log(Level.WARNING, "Media upload may be malicious or corrupted. File not uploaded or saved.\nUnsafe file: " + temporaryMedia.getName());
+			// get the sanitizer for the file type, if it exists
+			Optional<DocumentSanitizer> documentSanitizer = mediaSanitizer.getSanitizer(temporaryMedia.getMimeType());
+			if (documentSanitizer.isPresent()) {
+				// Sanitize the file
+				Optional<File> sanitizedFile = mediaSanitizer.sanitize(documentSanitizer.get(), tmpFile);
+				if (sanitizedFile.isPresent()) {
+					// Save the new sanitized file 
+					LOG.log(Level.FINE, "The uploaded file: " + temporaryMedia.getName() + " was successfully sanitized.");
+					// !WARN: be careful not to leave files still existing, cleanup all files after attempting sanitizing
+					Files.copy(Paths.get(sanitizedFile.get().getAbsolutePath()), temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
 				}
-				
+				else {
+					LOG.log(Level.WARNING, "The uploaded file may contain malicious code or be corruped. File not uploaded or saved: " + temporaryMedia.getName());
+				}
 			} else {
-				// Return and log notice/error that file is not supported
-				LOG.log(Level.FINE, "Unsupported file type:" + tmpFile.getName());
-				throw new OpenStorefrontRuntimeException("Unsupported Media");
+				LOG.log(Level.WARNING, "Media Upload file " + temporaryMedia.getName() + " is not a sanitizable image file.");
 			}
-				
+							
 			temporaryMedia.populateBaseCreateFields();
 			getPersistenceService().persist(temporaryMedia);
 			return temporaryMedia;

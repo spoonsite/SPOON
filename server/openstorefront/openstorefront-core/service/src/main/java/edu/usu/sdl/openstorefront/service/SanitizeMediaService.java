@@ -16,56 +16,39 @@
 package edu.usu.sdl.openstorefront.service;
 
 import java.io.File;
+import java.util.Optional;
+
+import org.apache.poi.util.TempFile;
+
 import edu.usu.sdl.openstorefront.service.sanitize.sanitizer.DocumentSanitizer;
 import edu.usu.sdl.openstorefront.service.sanitize.sanitizer.ImageDocumentSanitizerImpl;
-
-/**
+ 
+ /**
  * @author Jake Cook
  * Handler for running the sanitizer process on files
  */
 public class SanitizeMediaService {
-    File file;
-    String mimeType;
-    DocumentSanitizer documentSanitizer = null;
-    Boolean sanitized = false;
 
-    public SanitizeMediaService(File file, String mimeType) {
-        this.file = file;
-        this.mimeType = mimeType;
-    }
+    public SanitizeMediaService() {}
     
     /**
-     * Attempts to assign a sanitizer method to the file
-     * @return boolean
+     * returns a sanitizer or error if file is not a sanitizable type
+     * @return Optional<DocumentSanitizer>
      */
-    public boolean setSanitizer() {
+    public Optional<DocumentSanitizer> getSanitizer(String mimeType) {
+        DocumentSanitizer documentSanitizer = null;
         if (mimeType.contains("image")) {
             documentSanitizer = new ImageDocumentSanitizerImpl();
-            return true;
         }
-        return false;
+        return Optional.ofNullable(documentSanitizer);
     }
 
     /**
      * Runs the sanitation on the file
-     * @return boolean
+     * @return Optional<File>
      */
-    public void sanitize() {
-        this.sanitized = documentSanitizer.madeSafe(this.file);
+    public Optional<File> sanitize(DocumentSanitizer sanitizer, File file) {
+        return sanitizer.makeSafe(file);  // TODO: have 'makeSafe' return a file rather than change in place;
     }
 
-    /**
-     * @return boolean
-     */
-    public boolean isSanitized() {
-        return this.sanitized;
-    }
-
-    /**
-     * Returns the file object as modified by the sanitized process
-     * @return File
-     */
-    public File getSanitzedFile() {
-        return this.file;
-    }
 }
