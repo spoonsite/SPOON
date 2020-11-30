@@ -171,7 +171,6 @@ public class ImageDocumentSanitizerImpl implements DocumentSanitizer {
             LOG.warn("The file was unable to be copied for sanitation.");
             return sanitizedFile;
         } catch (Exception e) {
-            //TODO: return the actual File
             return sanitizedFile;
         }
 

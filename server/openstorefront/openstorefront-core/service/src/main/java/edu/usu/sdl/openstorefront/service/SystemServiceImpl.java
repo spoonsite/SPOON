@@ -459,7 +459,7 @@ public class SystemServiceImpl
 					sanitizedFile.get().delete();
 				}
 				else {
-					LOG.log(Level.WARNING, "The uploaded file may contain malicious code or be corruped. File not uploaded or saved: " + temporaryMedia.getName());
+					LOG.log(Level.WARNING, "The uploaded file may contain malicious code or be corrupted. File not uploaded or saved: " + temporaryMedia.getName());
 				}
 			} else {
 				LOG.log(Level.WARNING, "Media Upload file " + temporaryMedia.getName() + " is not a sanitizable image file.");

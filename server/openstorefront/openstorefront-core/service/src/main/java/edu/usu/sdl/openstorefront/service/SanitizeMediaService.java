@@ -18,8 +18,6 @@ package edu.usu.sdl.openstorefront.service;
 import java.io.File;
 import java.util.Optional;
 
-import org.apache.poi.util.TempFile;
-
 import edu.usu.sdl.openstorefront.service.sanitize.sanitizer.DocumentSanitizer;
 import edu.usu.sdl.openstorefront.service.sanitize.sanitizer.ImageDocumentSanitizerImpl;
  
@@ -48,7 +46,7 @@ public class SanitizeMediaService {
      * @return Optional<File>
      */
     public Optional<File> sanitize(DocumentSanitizer sanitizer, File file) {
-        return sanitizer.makeSafe(file);  // TODO: have 'makeSafe' return a file rather than change in place;
+        return sanitizer.makeSafe(file);
     }
 
 }
