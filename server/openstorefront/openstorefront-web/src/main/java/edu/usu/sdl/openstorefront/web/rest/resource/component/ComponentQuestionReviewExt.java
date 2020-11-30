@@ -22,6 +22,7 @@ import edu.usu.sdl.openstorefront.common.util.OpenStorefrontConstant;
 import edu.usu.sdl.openstorefront.core.annotation.APIDescription;
 import edu.usu.sdl.openstorefront.core.annotation.DataType;
 import edu.usu.sdl.openstorefront.core.api.query.QueryByExample;
+import edu.usu.sdl.openstorefront.core.entity.ApprovalStatus;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestion;
 import edu.usu.sdl.openstorefront.core.entity.ComponentQuestionResponse;
 import edu.usu.sdl.openstorefront.core.entity.ComponentReview;
@@ -349,6 +350,8 @@ public abstract class ComponentQuestionReviewExt
 		ComponentQuestionResponse responseExample = new ComponentQuestionResponse();
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
+		// TODO: show owner's responses otherwise only show ACTIVE_STATUS
+		responseExample.setActiveStatus(ApprovalStatus.ACTIVE_STATUS);
 		return service.getPersistenceService().queryByExample(responseExample);
 	}
 
@@ -372,6 +375,8 @@ public abstract class ComponentQuestionReviewExt
 		responseExample.setComponentId(componentId);
 		responseExample.setQuestionId(questionId);
 		responseExample.setResponseId(responseId);
+		// TODO: show owner's responses otherwise only show ACTIVE_STATUS
+		responseExample.setActiveStatus(ApprovalStatus.ACTIVE_STATUS);
 		ComponentQuestionResponse questionResponse = service.getPersistenceService().queryOneByExample(responseExample);
 		return sendSingleEntityResponse(questionResponse);
 	}
