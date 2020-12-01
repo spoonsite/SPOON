@@ -43,10 +43,14 @@ import edu.usu.sdl.openstorefront.core.view.SystemErrorModel;
 import edu.usu.sdl.openstorefront.security.SecurityUtil;
 import edu.usu.sdl.openstorefront.service.manager.DBLogManager;
 import edu.usu.sdl.openstorefront.service.manager.PluginManager;
+import edu.usu.sdl.openstorefront.service.sanitize.sanitizer.DocumentSanitizer;
 import edu.usu.sdl.openstorefront.validation.ValidationModel;
 import edu.usu.sdl.openstorefront.validation.ValidationResult;
 import edu.usu.sdl.openstorefront.validation.ValidationUtil;
+import edu.usu.sdl.openstorefront.service.SanitizeMediaService;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -70,8 +74,11 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -426,14 +433,54 @@ public class SystemServiceImpl
 		Objects.requireNonNull(temporaryMedia.getName(), "Name must be set.");
 
 		temporaryMedia.setFileName(temporaryMedia.getFileName());
+		File tmpFile = null;
 		try (InputStream in = fileInput) {
-			Files.copy(in, temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+			// Read content to a temporary (virtual) file
+			tmpFile = File.createTempFile("TEMP", null);
+			try (FileOutputStream out = new FileOutputStream(tmpFile)) {
+				IOUtils.copy(in, out);
+			} catch (IOException e) {
+				throw new OpenStorefrontRuntimeException("Unable to read media from source. Check URL source.", e);
+			}
+
+			//NOTE: TemporaryMedia files are only used in tinyMCE now, which only has picture uploads implemented; Only image files can be used and sanitized
+			SanitizeMediaService mediaSanitizer = new SanitizeMediaService();
+			
+			// get the sanitizer for the file type, if it exists
+			Optional<DocumentSanitizer> documentSanitizer = mediaSanitizer.getSanitizer(temporaryMedia.getMimeType());
+			if (documentSanitizer.isPresent()) {
+				// Sanitize the file
+				Optional<File> sanitizedFile = mediaSanitizer.sanitize(documentSanitizer.get(), tmpFile);
+				if (sanitizedFile.isPresent()) {
+					// Save the new sanitized file 
+					LOG.log(Level.FINE, "The uploaded file: " + temporaryMedia.getName() + " was successfully sanitized.");
+					Files.copy(Paths.get(sanitizedFile.get().getAbsolutePath()), temporaryMedia.pathToMedia(), StandardCopyOption.REPLACE_EXISTING);
+					//delete sanitized file after copying to be saved
+					sanitizedFile.get().delete();
+				}
+				else {
+					LOG.log(Level.WARNING, "The uploaded file may contain malicious code or be corrupted. File not uploaded or saved: " + temporaryMedia.getName());
+				}
+			} else {
+				LOG.log(Level.WARNING, "Media Upload file " + temporaryMedia.getName() + " is not a sanitizable image file.");
+			}
+							
 			temporaryMedia.populateBaseCreateFields();
 			getPersistenceService().persist(temporaryMedia);
 			return temporaryMedia;
 		} catch (IOException ex) {
 			throw new OpenStorefrontRuntimeException("Unable to store media file.", "Contact System Admin.  Check file permissions and disk space ", ex);
+		} catch (Exception ex) {
+			LOG.log(Level.FINE, "An Error occurred while handling the temporary file");
+		} finally {
+			// Delete original uploaded file (TempFile)
+			if (tmpFile != null) { 
+				try {
+					tmpFile.delete();	
+				} catch (SecurityException e) {}	//ignore
+			}
 		}
+		return temporaryMedia;
 	}
 
 	@Override
