@@ -1351,7 +1351,7 @@ public class CoreComponentServiceImpl
 		if (StringUtils.isNotBlank(componentId)) {
 			ComponentAll element = (ComponentAll) OSFCacheManager.getComponentCache().get(componentId);
 			if (element == null) {
-				// element found in cache
+				// element not found in cache
 				componentAll = new ComponentAll();
 
 				Component componentExample = new Component();
