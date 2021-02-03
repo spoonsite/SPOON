@@ -607,6 +607,12 @@ public class ComponentSubmissionResource
 							componentAll.getMedia().clear();
 							componentAll.getMedia().addAll(mediaMap.values());
 
+							ComponentResource componentResourceExample = new ComponentResource();
+							componentResourceExample.setActiveStatus(ComponentResource.ACTIVE_STATUS);
+							componentResourceExample.setComponentId(exstingComponent.getComponentId());
+							List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(componentResourceExample);
+							componentAll.getResources().addAll(componentResources);
+
 							//clean out duplicate resources
 							Map<String, ComponentResource> resourceMap = new HashMap<>();
 							for (ComponentResource resource : componentAll.getResources()) {
