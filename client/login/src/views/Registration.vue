@@ -283,7 +283,7 @@ export default {
       usernameRules: [
         v => !!v || 'Username is required',
         v =>
-          /^\w+$/.test(v) ||
+          /^\w+$\s\\/.test(v) ||
           'Username must be valid'
       ],
       password2Rules: [
