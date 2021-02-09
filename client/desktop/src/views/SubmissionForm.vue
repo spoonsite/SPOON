@@ -462,7 +462,7 @@
             <v-text-field label="Description" v-model="link.description" />
           </div>
           <div>
-            <v-btn title="delete" icon @click="removeLink(index)">
+            <v-btn title="delete" icon @click="removeResourceLink(link);">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </div>
@@ -1326,6 +1326,22 @@ export default {
           this.$toasted.error('Problem with deleting attached image from submission')
         })
     },
+    removeResourceLink(resource) {
+      let resourceId = resource.resourceId
+      resource.loading = true
+      this.$http
+        .delete(`/openstorefront/api/v1/resource/componentsubmissions/${this.id}/resources/${resourceId}/force`)
+        .then(response => {
+          this.$toasted.show('Deleted attached resource link from submission')
+          this.resources.links = this.resources.links.filter(el => el.resourceId !== resourceId)
+          resource.loading = false
+        })
+        .catch(e => {
+          resource.loading = false
+          console.error('Problem with deleting attached link from submission', e)
+          this.$toasted.error('Problem with deleting attached link from submission')
+        })
+    },
     lookupType(resourceTypeCode) {
       let result = ''
       this.resourceType.forEach(el => {
@@ -1409,9 +1425,6 @@ export default {
     },
     addLink() {
       this.resources.links.push({ resourceType: '', link: '', description: '', securityMarking: '' })
-    },
-    removeLink(index) {
-      this.resources.links.splice(index, 1)
     },
     addNewTag: _.debounce(
       function(bluring) {

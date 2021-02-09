@@ -613,7 +613,7 @@ public class ComponentSubmissionResource
 							List<ComponentResource> componentResources = service.getPersistenceService().queryByExample(componentResourceExample);
 							componentAll.getResources().addAll(componentResources);
 
-							//clean out duplicate resouces
+							//clean out duplicate resources
 							Map<String, ComponentResource> resourceMap = new HashMap<>();
 							for (ComponentResource resource : componentAll.getResources()) {
 								String id = resource.getResourceId();
