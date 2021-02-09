@@ -462,7 +462,7 @@
             <v-text-field label="Description" v-model="link.description" />
           </div>
           <div>
-            <v-btn title="delete" icon @click="removeResourceLink(link); /*removeLink(index) */">
+            <v-btn title="delete" icon @click="removeResourceLink(link);">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </div>
@@ -1425,9 +1425,6 @@ export default {
     },
     addLink() {
       this.resources.links.push({ resourceType: '', link: '', description: '', securityMarking: '' })
-    },
-    removeLink(index) {
-      this.resources.links.splice(index, 1)
     },
     addNewTag: _.debounce(
       function(bluring) {
