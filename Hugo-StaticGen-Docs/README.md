@@ -40,35 +40,7 @@ The documentation is hosted at https://spoonsite.github.io using github pages. T
 
 4. Commit and push the new build
 
-This process can be automated with the following script:
-
-```bash
-#!/bin/bash
-
-# The location of the spoonsite repo
-SPOON="/c/dev/spoonsite"
-
-cd $SPOON/Hugo-StaticGen-Docs
-
-# Also assumes spoonsite.github.io has also been cloned
-DEPLOY="../../spoonsite.github.io"
-DATE=$(date)
-
-echo "building site"
-rm -r public/*
-hugo
-
-echo "cleaning out old site"
-rm -r $DEPLOY/*
-
-echo "copying build to $DEPLOY"
-cp -r public/* $DEPLOY
-
-cd $DEPLOY
-git add -A
-git commit -m "Build on $DATE"
-git push
-```
+This process can be automated with the `publish.sh` script.
 
 ## The DocDock Theme
 
