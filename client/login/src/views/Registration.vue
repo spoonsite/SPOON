@@ -283,8 +283,8 @@ export default {
       usernameRules: [
         v => !!v || 'Username is required',
         v =>
-          /^\w+$\s\\/.test(v) ||
-          'Username must be valid'
+          /^\w{5,}$/.test(v) ||
+          'Username must be at least 5 characters and no special characters'
       ],
       password2Rules: [
         v => !!v || 'Password verification is required',
