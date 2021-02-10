@@ -6,6 +6,74 @@ weight = 9999
 
 For more information, please see [GitHub](https://github.com/spoonsite/SPOON/releases).
 
+## Release Notes for v2.12.3
+
+This is the final release before the handoff of SPOON to NASA. A lot of bug and security fixes.
+
+### Task
+
+- [SPOON-1472] - Redirect or remove UserTool>'Change Password'
+- [SPOON-1474] - Clean unused code from the view.jsp page and associated pages/components
+- [SPOON-1480] - Investigate missing default branding
+- [SPOON-1485] - Investigate sending bulk email to SPOON users
+- [SPOON-1489] - Update backup documentation
+- [SPOON-1492] - Review SPOON documentation
+- [SPOON-1494] - Investigate Mail Delivery Failure to Multiple Recipients
+
+
+### Story
+
+- [SPOON-1117] - Replace OrientDB with MongoDB
+- [SPOON-1160] - Investigate Metadata exploit for api/v1/resource/components/{id}/metadata/(metadataid)
+- [SPOON-1161] - Implement Weak Password Checking for api/v1/resource/users/currentuser/resetpassword ie... checking against the top 10000 worst passwords.
+- [SPOON-1162] - Fix api/v1/resource/users/{username}/resetpassword
+- [SPOON-1164] - Investigate api/v1/resource/userprofiles/{id}
+- [SPOON-1171] - Fix api/v1/service/application/configproperties/{key}
+- [SPOON-1172] - Fix api/v1/service/application/retrievemedia
+- [SPOON-1173] - investigate api/v1/service/notification/contact-vendor
+- [SPOON-1174] - Investigate api/v1/service/security/forgotusername
+- [SPOON-1175] - Investigate api/v1/service/security/{username}/resetpassword
+- [SPOON-1329] - Make error handling consistent in all Vue Files
+- [SPOON-1354] - Change SPOON slides to the new wider view and new logo
+- [SPOON-1446] - Prepare mockup designs to Craig and Lauren 4/22 meeting
+- [SPOON-1453] - Log out doesn't redirect properly
+- [SPOON-1464] - Delete All Code Related to the Old Submissions Form
+- [SPOON-1465] - Remove advanced save search feature
+- [SPOON-1469] - Remove old login and user pages
+- [SPOON-1475] - Review the security of /api/v1/service/notification/contact-vendor-template
+
+
+### Bug
+
+- [SPOON-1027] - 48 LSP (4,4,3) Copying & Pasting External media (picture) claims to fail in Pop-up (But actually Works)
+- [SPOON-1235] - Cancel on the contact form does nothing
+- [SPOON-1237] - Logging on as a user (userdude/userDude1!) gives an error on the homepage about watches
+- [SPOON-1238] - Tags, duplicate and confusing GUI button
+- [SPOON-1239] - Tag deletion confirmation text is drastic and confusing
+- [SPOON-1240] - When toggling status on an entry comments are not optional, but the ui says they are
+- [SPOON-1241] - Searching for Attributes in Search Filters does not work properly
+- [SPOON-1245] - Need to remove link in descripton toolbar for Insert Saved Search
+- [SPOON-1246] - Recalcitrant Disclaimer Popup
+- [SPOON-1250] - No longer able to send a test message from the profile page
+- [SPOON-1254] - The word "Storefornt" appears in an admin setting
+- [SPOON-1258] - Update Version to 2.11
+- [SPOON-1316] - File generates logs like crazy
+- [SPOON-1334] - Merging an organization dumps the approved parts of mergee- organization into Workplan Progress
+- [SPOON-1368] - Unapproved/pending answers to questions should not be sent
+- [SPOON-1371] - DO FIRST: Reports are now Admin only; remove ones that are OBE, fix or remove failing reports
+- [SPOON-1375] - Deleted WorkPlan's Links Become Orphans
+- [SPOON-1457] - Can't add attributes in admin add entry attribute tab
+- [SPOON-1458] - Import exported file fails with SYSTEM error
+- [SPOON-1463] - Investigate: Entry Listing report fails
+- [SPOON-1468] - Admin Notification message links to wrong report path
+- [SPOON-1470] - Registration 'Cancel' button should redirect back to Login Page
+- [SPOON-1471] - Investigate branding error
+- [SPOON-1473] - Form submitting on the "Forgot User" page even with invalid email when pressing the enter key
+- [SPOON-1482] - Unable to Approve Component Update Submissions
+- [SPOON-1483] - Duplicate external links on page refresh
+- [SPOON-1493] - Duplicate username created
+- [SPOON-1502] - Investigate Imports Failing
+
 ## Release Notes for v2.12.2
 
 This is another patch release. The changes are mostly code cleanup. The user shouldn't notice any changes in behavior or in the UI.
