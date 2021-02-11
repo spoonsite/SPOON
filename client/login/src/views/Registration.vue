@@ -282,9 +282,9 @@ export default {
       },
       usernameRules: [
         v => !!v || 'Username is required',
-        v =>
-          /^\w+$\s\\/.test(v) ||
-          'Username must be valid'
+        v => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) ||
+          /^\w{5,}$/.test(v) ||
+          'Username must be at least 5 characters, no special characters, or email'
       ],
       password2Rules: [
         v => !!v || 'Password verification is required',
